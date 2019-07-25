@@ -1,0 +1,84 @@
+<script>
+  export default {
+    data() {
+      return {
+        items: [],
+        target: null
+      }
+    },
+    props: ['id', 'structure', 'customParams', 'customFunctions', 'immediate'],
+    created () {
+      this.fillDataStructure(
+        this.structure, this.customParams,
+        this.customFunctions, this.toItems
+      );
+      if (this.structure && this.structure.target) {
+        this.target = this.structure.target;
+      }
+    },
+    methods: {
+      sendError(message) {
+        this.$emit('showSnackbar', { color : 'error', text: message });
+      },
+      
+      toItems(dataset, rules, structure, addedParams, metadata) {
+        for (var rowIndx in dataset) {
+          this.toItem(dataset[rowIndx], rules);
+        }
+      },
+
+      toItem(eachRow, rules) {
+        var eachItem = eachRow;
+        for (var ruleIndx in rules) {
+          if (rules[ruleIndx].fixed !== null && rules[ruleIndx].fixed !== undefined) {
+            eachItem[rules[ruleIndx].prop] = rules[ruleIndx].fixed;
+          } else if (rules[ruleIndx].named_prop !== null && rules[ruleIndx].named_prop !== undefined) {
+            let value = eachRow[rules[ruleIndx].named_prop];
+            if (rules[ruleIndx].null_value && (value == "null" || value == null)){
+              value = rules[ruleIndx].null_value;
+            }
+            eachItem[rules[ruleIndx].prop] = value;
+          } else if (rules[ruleIndx].function) {
+            eachItem[rules[ruleIndx].prop] = this.runNamedFunction(rules[ruleIndx], eachRow, this.customFunctions);
+          } else if (rules[ruleIndx].template){
+            eachItem[rules[ruleIndx].prop] = this.applyInterpol(
+                                                rules[ruleIndx],
+                                                this.customParams,
+                                                this.customFunctions,
+                                                eachRow,
+                                                this.sendInvalidInterpol
+                                              );            
+          }
+        }
+        this.items.push(eachItem);
+      },
+
+      sendSelection() {
+        if (this.immediate == null || this.immediate == undefined || this.immediate) {
+          this.$emit(
+            this.structure.selection.event,
+            { id: this.id, item: this.chosen,
+              type: this.structure.type,
+              rules: this.structure.selection.rules,
+              target: this.target 
+            }
+          );
+        }
+      },
+
+      sendDefaultSelection() {
+        if (this.immediate == null || this.immediate == undefined || this.immediate) {
+          this.$emit(
+            "default-selection",
+            { id: this.id, item: this.chosen,
+              type: this.structure.type,
+              rules: this.structure.selection.rules,
+              target: this.target 
+            }
+          );
+        }
+      }
+      
+    }
+  }
+</script>

@@ -1,0 +1,17 @@
+## referências
+# https://br.vuejs.org/v2/guide/unit-testing.html
+# https://vuejs.org/v2/cookbook/unit-testing-vue-components.html
+# https://jestjs.io/docs/en/getting-started.html#content
+# https://www.npmjs.com/package/jest-sonar-reporter
+
+## Como instalar
+yarn add --dev jest
+yarn add --dev jest-sonar-reporter
+npm install --save-dev @vue/test-utils
+npm install --save-dev vue-jest
+npm install --save-dev babel-jest
+npm install --save-dev jest-serializer-vue
+
+## Como rodar
+# Do dir app
+yarn test

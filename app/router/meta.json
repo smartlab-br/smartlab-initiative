@@ -1,0 +1,82 @@
+{
+  "root": {
+    "title": "Smartlab",
+    "description": "Iniciativa Smartlab de Trabalho Decente",
+    "keywords": "vue 2.0, vuetify"
+  },
+  "localidade": {
+    "title": "Smartlab - Retrato de Localidade",
+    "description": "Retrato de uma localidade de acordo com informações compiladas pela Iniciativa Smartlab de Trabalho Decente",
+    "keywords": "localidade"
+  },
+  "mapa": {
+    "title": "Smartlab - Mapa Exploratório",
+    "description": "Mapa Exploratório",
+    "keywords": "mapa"
+  },
+  "td": {
+    "title": "Smartlab - Observatório do Trabalho Decente",
+    "description": "Observatório do Trabalho Decente",
+    "keywords": "observatorio"
+  },
+  "trabalhodecente": {
+    "title": "Smartlab - Observatório do Trabalho Decente",
+    "description": "Observatório do Trabalho Decente",
+    "keywords": "observatorio"
+  },
+  "te": {
+    "title": "Smartlab - Observatório da Erradicação do Trabalho Escravo e Tráfico de Pessoas",
+    "description": "Observatório da Erradicação do Trabalho Escravo e Tráfico de Pessoas",
+    "keywords": "observatorio"
+  },
+  "trabalhoescravo": {
+    "title": "Smartlab - Observatório da Erradicação do Trabalho Escravo e Tráfico de Pessoas",
+    "description": "Observatório da Erradicação do Trabalho Escravo e Tráfico de Pessoas",
+    "keywords": "observatorio"
+  },
+  "sst": {
+    "title": "Smartlab - Observatório de Segurança e Saúde no Trabaho",
+    "description": "Observatório de Segurança e Saúde no Trabaho",
+    "keywords": "observatorio"
+  },
+  "ti": {
+    "title": "Smartlab - Observatório da Prevenção e da Erradicação do Trabaho Infantil",
+    "description": "Observatório da Erradicação do Trabaho Infantil",
+    "keywords": "observatorio"
+  },
+  "trabalhoinfantil": {
+    "title": "Smartlab - Observatório da Prevenção e da Erradicação do Trabaho Infantil",
+    "description": "Observatório da Erradicação do Trabaho Infantil",
+    "keywords": "observatorio"
+  },
+  "des": {
+    "title": "Smartlab - Observatório da Diversidade e da Igualdade de Oportunidades no Trabalho",
+    "description": "Observatório da Diversidade e da Igualdade de Oportunidades no Trabalho",
+    "keywords": "observatorio"
+  },
+  "diversidade": {
+    "title": "Smartlab - Observatório da Diversidade e da Igualdade de Oportunidades no Trabalho",
+    "description": "Observatório da Diversidade e da Igualdade de Oportunidades no Trabalho",
+    "keywords": "observatorio"
+  },
+  "smartmap": {
+    "title": "Smartlab - SmartMap - Modo Avançado ",
+    "description": "SmartMap - Modo Avançado",
+    "keywords": "mapa"
+  },
+  "estudo": {
+    "title": "Smartlab - Estudo temático",
+    "description": "Estudo temático",
+    "keywords": "estudo"
+  },
+  "embreve": {
+    "title": "Smartlab - Em Breve",
+    "description": "Observatório do Trabalho Decente",
+    "keywords": "observatorio"
+  },
+  "saibamais": {
+    "title": "Smartlab - Sobre",
+    "description": "Sobre",
+    "keywords": "saibamais"
+  }
+}
