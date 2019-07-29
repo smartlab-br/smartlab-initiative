@@ -9,7 +9,7 @@
           <div class="display-4-obs ubuntu">Iniciativa SmartLab</div>
           <div class="display-1-obs ubuntu-condensed">Promoção do Trabalho Decente Guiada por Dados</div>
         </v-flex>
-        <v-layout px-5 row wrap>
+        <v-layout px-5 row wrap :v-if="observatorios">
           <v-flex 
             v-for="(observatorio, indxObs) in observatorios"
             :key="'linked_card_obs_' + indxObs"
@@ -69,7 +69,6 @@
       return {
         show: false,
         displayHeight: "auto",
-        observatorios: null,
         parceiros: null,
         conheca: null,
         history: null,
@@ -84,7 +83,6 @@
       }
     },
     created () {
-      this.observatorios = this.getObservatories();    
       // this.parceiros = this.getPartners();
       // this.conheca = this.getAbout();
       // this.history = this.getHistory();
@@ -107,6 +105,11 @@
     },
     beforeDestroy: function() {
       window.removeEventListener('resize', this.resizeFirstSection);
+    },
+    computed: {
+      observatorios: function() {
+        return this.getObservatories();
+      }
     },
     methods: {
       assessPageBottom() {

@@ -5,10 +5,16 @@ const ObservatoriesModel = {
     Vue.mixin({
       data() {
         return {
-          observatories: require("json-loader!yaml-loader!../../trabalhodecente-viewconf/br/observatorios.yaml").observatorios
+          observatories: null
         }
       },
+      created() {
+        this.loadYaml("br/observatorios", this.setObservatories);
+      },
       methods: {
+        setObservatories(content) {
+          this.observatories = content.observatorios;
+        },
         getObservatories() {
           return this.observatories;
         },

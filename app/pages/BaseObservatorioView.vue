@@ -43,7 +43,7 @@
       }
 
       if (this.idObservatorio) {
-        let observatorio = require("json-loader!yaml-loader!../trabalhodecente-viewconf/br/observatorio/" + this.idObservatorio + ".yaml");
+        let observatorio = this.loadYaml("br/observatorio/" + this.idObservatorio);
         this.$emit('alterToolbar', observatorio.theme.toolbar);
         this.observatorio = observatorio;
         if (observatorio.tematicos){

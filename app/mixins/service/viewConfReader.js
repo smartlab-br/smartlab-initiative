@@ -5,28 +5,18 @@ const ViewConfReader = {
 	install(Vue, options) {
 		Vue.mixin({
 			data() {
-				return { }
+				return {
+				}
 			},
 			methods: {
-				async loadYaml(location) {
-					//location = "/br/about.yaml";
-					let basePath = "https://raw.githubusercontent.com/smartlab-br/smartlab-initiative-viewconf/master";
-					
-					// if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'staging') {
-						// var request = new XMLHttpRequest();
-						// request.open('GET', '/bar/foo.txt', false);  // `false` makes the request synchronous
-						// request.send(null);
-
-						// console.log(yaml.safeLoad(request.responseText));
-						// return yaml.safeLoad(request.responseText);
-						console.log(basePath + location);
-						let response = await axios.get(basePath + location);
-						console.log(response.data);
-						this.about = yaml.safeLoad(response.data, { json: true });
-						//console.log(this.about);
-					// } else {
-						//   this.data = require("json-loader!yaml-loader!../../trabalhodecente-viewconf/br/about.yaml");
-					// }
+				async loadYaml(location, cbFunction) {
+					let env = 'production'; //process.env.NODE_ENV
+					if (env === 'production' || env === 'staging') {
+						let basePath = "https://raw.githubusercontent.com/smartlab-br/smartlab-initiative-viewconf/master/";
+						let response = await axios.get(basePath + location + ".yaml");
+						if (cbFunction) cbFunction(yaml.safeLoad(response.data, { json: true }));
+					}
+					//return require("json-loader!yaml-loader!../../trabalhodecente-viewconf/" + location + ".yaml");
 					
 				},
 				fillDataStructure(structure, customParams, customFunctions,

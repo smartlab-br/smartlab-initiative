@@ -479,7 +479,7 @@
       let msgErro = this.getMensagemErro(this.$route.params.idLocalidade);
       
       if (tmpIdObs) {
-        let observatorio = require("json-loader!yaml-loader!../trabalhodecente-viewconf/br/observatorio/" + tmpIdObs + ".yaml");
+        let observatorio = this.loadYaml("br/observatorio/" + tmpIdObs);
         if (observatorio.tematicos) {
           let thematicDatasets = ['centralindicadores'];
           for (let indxTematico in observatorio.tematicos){
@@ -593,7 +593,7 @@
         
         this.setActiveDim(this.$route.params.idLocalidade, tmpIdObs, this.$route.query.dimensao);
 
-        this.customParams.deck = require("json-loader!yaml-loader!../trabalhodecente-viewconf/br/autocard.yaml");
+        this.customParams.deck = this.loadYaml("br/autocard");
 
         // Carrega a topologia do município
         if (this.$route.params.idLocalidade == 0){ //Brasil
@@ -656,12 +656,12 @@
 
         let baseStruct = Object.assign(
           {},
-          require("json-loader!yaml-loader!../trabalhodecente-viewconf/br/localidade/base.yaml"),
-          require("json-loader!yaml-loader!../trabalhodecente-viewconf/br/localidade/" + escopo + "/base.yaml"),
-          require("json-loader!yaml-loader!../trabalhodecente-viewconf/br/observatorio/base.yaml"),
-          require("json-loader!yaml-loader!../trabalhodecente-viewconf/br/" + observatorioDir + "base.yaml"),
-          require("json-loader!yaml-loader!../trabalhodecente-viewconf/br/" + observatorioDir + "localidade/base.yaml"),
-          require("json-loader!yaml-loader!../trabalhodecente-viewconf/br/" + observatorioDir + "localidade/" + escopo + "/base.yaml")
+          this.loadYaml("br/localidade/base"),
+          this.loadYaml("br/localidade/" + escopo + "/base"),
+          this.loadYaml("br/observatorio/base"),
+          this.loadYaml("br/" + observatorioDir + "base"),
+          this.loadYaml("br/" + observatorioDir + "localidade/base"),
+          this.loadYaml("br/" + observatorioDir + "localidade/" + escopo + "/base")
         );
         
         window.fetch("/trabalhodecente-viewconf/br/" + observatorioDir + "localidade/" + escopo + "/" + idDimensao + ".yaml")
@@ -669,7 +669,7 @@
             let dimStruct = Object.assign(
               {},
               baseStruct,
-              require("json-loader!yaml-loader!../trabalhodecente-viewconf/br/" + observatorioDir + "localidade/" + escopo + "/" + idDimensao + ".yaml")
+              this.loadYaml("br/" + observatorioDir + "localidade/" + escopo + "/" + idDimensao)
             );
 
             this.dimStruct = dimStruct;
@@ -691,7 +691,7 @@
             let dimStruct = Object.assign(
               {},
               baseStruct,
-              require("json-loader!yaml-loader!../trabalhodecente-viewconf/br/" + observatorioDir + "localidade/default/" + idDimensao + ".yaml")
+              this.loadYaml("br/" + observatorioDir + "localidade/default/" + idDimensao)
             );
 
             this.dimStruct = dimStruct;
@@ -710,7 +710,7 @@
             }
           })
           .catch((e) => {
-            let dimStruct = require("json-loader!yaml-loader!../trabalhodecente-viewconf/br/" + observatorioDir + "localidade/default/" + idDimensao + ".yaml");
+            let dimStruct = this.loadYaml("br/" + observatorioDir + "localidade/default/" + idDimensao);
             
             this.dimStruct = dimStruct;
             if (dimStruct.tematicos) {
