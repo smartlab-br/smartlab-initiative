@@ -1,0 +1,17 @@
+npm-debug.log
+trabalhodecente-viewconf
+.scannerwork
+app/.scannerwork
+app/public
+app/start-dev.sh
+test/report.xml
+*/coverage
+*/**/coverage/lcov-report
+*/**/coverage/clover.xml
+*/**/coverage/coverage-final.json
+*/**/coverage/lcov.info
+*/**/coverage/junit/junit.xml
+*/**/coverage/cobertura-coverage.xml
+*/**/test/report.xml
+\.DS_Store
+setenv.sh
