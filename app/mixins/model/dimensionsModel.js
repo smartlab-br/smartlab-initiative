@@ -13,11 +13,15 @@ const DimensionsModel = {
         setGlobalDimensions(content) {
           this.globalDimensions = content;
         },
-        getDimensions(idObservatorio = null) {
+        getDimensions(idObservatorio = null, cbFunction = null) {
           if (idObservatorio === null || idObservatorio === undefined) {
-            return this.globalDimensions.dimensoes;
+            if (cbFunction) { 
+              cbFunction(this.globalDimensions.dimensoes);
+            } else {
+              return this.globalDimensions.dimensoes;
+            }
           }
-          return this.loadYaml("br/dimensao/" + idObservatorio).dimensoes;
+          this.loadYaml("br/dimensao/" + idObservatorio, cbFunction);
         },
 
         findDimensionById(id) {

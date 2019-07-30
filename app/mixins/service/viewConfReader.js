@@ -12,7 +12,7 @@ const ViewConfReader = {
 				async loadYaml(location, cbFunction) {
 					let env = 'production'; //process.env.NODE_ENV
 					if (env === 'production' || env === 'staging') {
-						let basePath = "https://raw.githubusercontent.com/smartlab-br/smartlab-initiative-viewconf/master/";
+						let basePath = "https://raw.githubusercontent.com/smartlab-br/smartlab-initiative-viewconf/" + env + "/";
 						let response = await axios.get(basePath + location + ".yaml");
 						if (cbFunction) cbFunction(yaml.safeLoad(response.data, { json: true }));
 					}
