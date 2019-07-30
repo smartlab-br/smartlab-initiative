@@ -16,9 +16,42 @@ const ViewConfReader = {
 						let response = await axios.get(basePath + location + ".yaml");
 						if (cbFunction) cbFunction(yaml.safeLoad(response.data, { json: true }));
 					}
-					//return require("json-loader!yaml-loader!../../trabalhodecente-viewconf/" + location + ".yaml");
-					
+					//return require("json-loader!yaml-loader!../../trabalhodecente-viewconf/" + location + ".yaml");	
 				},
+
+				async loadYamlArray(currentStruct, yamlArray, finalCbFunction) {
+					let promises = [];
+					let fnFinalCb = finalCbFunction;
+					for (let yamlConf of yamlArray) {
+						let env = 'production'; //process.env.NODE_ENV
+						if (env === 'production' || env === 'staging') {
+							let basePath = "https://raw.githubusercontent.com/smartlab-br/smartlab-initiative-viewconf/" + env + "/";
+							let promise = new Promise(
+								function(resolve, reject) {
+									axios.get(basePath + yamlConf.main + ".yaml")
+										.then(response => {
+											resolve(yaml.safeLoad(response.data, { json: true }))
+										});
+								}
+							);
+							promises.push(promise);
+						}
+						//return require("json-loader!yaml-loader!../../trabalhodecente-viewconf/" + location + ".yaml");						
+					}
+
+					// Define a execução após a realização de todos os promises
+					Promise.all(promises).then(
+						(structs) => {
+							let result = {};
+							for (let struct of structs) {
+								result = Object.assign(result, struct);
+							}
+							
+							fnFinalCb(result);
+						}
+					);
+				},
+
 				fillDataStructure(structure, customParams, customFunctions,
 								  cbFunction, addedParams) {
 					if (structure !== null && structure !== undefined) {

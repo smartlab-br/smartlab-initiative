@@ -16,9 +16,9 @@ const DimensionsModel = {
         getDimensions(idObservatorio = null, cbFunction = null) {
           if (idObservatorio === null || idObservatorio === undefined) {
             if (cbFunction) { 
-              cbFunction(this.globalDimensions.dimensoes);
+              cbFunction(this.globalDimensions);
             } else {
-              return this.globalDimensions.dimensoes;
+              return this.globalDimensions;
             }
           }
           this.loadYaml("br/dimensao/" + idObservatorio, cbFunction);

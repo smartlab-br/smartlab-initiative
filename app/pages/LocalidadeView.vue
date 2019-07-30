@@ -52,7 +52,7 @@
           </v-tabs>
         </v-flex>        
         <v-flex column pt-1 px-5 xs12 >
-          <v-flex v-if="ind_principais.length == 0 && localidade != null" class="text-xs-center pa-0">
+          <v-flex v-if="ind_principais && ind_principais.length == 0 && localidade != null" class="text-xs-center pa-0">
             <v-progress-circular indeterminate color="primary"></v-progress-circular>        
           </v-flex>
           <v-flex pt-5></v-flex>
@@ -105,7 +105,7 @@
               </v-layout>
             </v-flex>
             <v-flex xs12 md4 lg3 :class="{'px-3': $vuetify.breakpoint.mdAndDown, 'px-4': $vuetify.breakpoint.lgAndUp}">
-              <v-flex pt-0 column wrap v-if="sections.length > 0" > 
+              <v-flex pt-0 column wrap v-if="sections && sections.length > 0" > 
                 <v-flex v-for="(cardLink, cardLinkIndx) in cardLinks"
                   :key="cardLink.id ? cardLink.id : ('sec' + cardLinkIndx)" py-0>
                   <!--<v-icon color="accent">arrow_right</v-icon>-->
@@ -126,7 +126,7 @@
     <!-- Indicadores principais: Empregadores, Vínculos Formais, Municípios, Estabelecimentos, % MEI e EPPs -->
     <v-container fluid  xs12  class="pa-0 ma-0">
       <v-layout class="bg-page grey lighten-2" column pa-0 ma-0>
-        <v-layout  v-if="sections.length > 0" 
+        <v-layout  v-if="sections && sections.length > 0" 
           v-for="(secao, indexSecao) in sections"  
           :key="secao.id"
           row wrap>
@@ -461,43 +461,15 @@
    
     created () {
       let tmpIdObs = this.identifyObservatory(this.$route.path.split('/')[1]);
-
-      let dimensoesTmp = [];
-      for (let dim of this.getDimensions(tmpIdObs)) {
-        if (dim.status != 'EM BREVE') {
-           dimensoesTmp.push(dim);
-        }
-      }
-      this.dimensoes = dimensoesTmp;
-
+      this.getDimensions(tmpIdObs, this.setSiblingDimensions);
       this.idObservatorio = tmpIdObs;
       
-      // this.idLocalidade = this.$store.state.favLocation;
-
       let scope = this.getEscopo(this.$route.params.idLocalidade);
       let auId = this.getIdLocalidadeFromRoute(this.$route.params.idLocalidade);
       let msgErro = this.getMensagemErro(this.$route.params.idLocalidade);
       
       if (tmpIdObs) {
-        let observatorio = this.loadYaml("br/observatorio/" + tmpIdObs);
-        if (observatorio.tematicos) {
-          let thematicDatasets = ['centralindicadores'];
-          for (let indxTematico in observatorio.tematicos){
-            thematicDatasets.push(observatorio.tematicos[indxTematico].dataset);
-            if (parseInt(indxTematico) + 1 == observatorio.tematicos.length) { 
-              this.getMultipleGlobalDatasets(thematicDatasets, scope, auId, this.keepLoading);
-            }
-          }
-        } else {
-          this.getGlobalDataset(
-            'centralindicadores',
-            scope,
-            msgErro,
-            auId,
-            this.keepLoading
-          );
-        }
-        this.$emit('alterToolbar', observatorio.theme.toolbar);
+        this.loadYaml("br/observatorio/" + tmpIdObs, this.setObservatorio);
       } else {
         this.getGlobalDataset(
           'centralindicadores',
@@ -567,6 +539,41 @@
     methods: {
       scrollDown(){
         window.scrollBy(0, window.innerHeight / 2);        
+      },
+
+      setSiblingDimensions(content) {
+        let dimensoesTmp = [];
+        for (let dim of content.dimensoes) {
+          if (dim.status != 'EM BREVE') {
+            dimensoesTmp.push(dim);
+          }
+        }
+        this.dimensoes = dimensoesTmp;
+      },
+
+      setObservatorio(content) {
+        let scope = this.getEscopo(this.$route.params.idLocalidade);
+        let auId = this.getIdLocalidadeFromRoute(this.$route.params.idLocalidade);
+        let msgErro = this.getMensagemErro(this.$route.params.idLocalidade);
+      
+        if (content.tematicos) {
+          let thematicDatasets = ['centralindicadores'];
+          for (let indxTematico in content.tematicos){
+            thematicDatasets.push(content.tematicos[indxTematico].dataset);
+            if (parseInt(indxTematico) + 1 == content.tematicos.length) { 
+              this.getMultipleGlobalDatasets(thematicDatasets, scope, auId, this.keepLoading);
+            }
+          }
+        } else {
+          this.getGlobalDataset(
+            'centralindicadores',
+            scope,
+            msgErro,
+            auId,
+            this.keepLoading
+          );
+        }
+        this.$emit('alterToolbar', content.theme.toolbar);
       },
 
       setVisibleCardMaxIndex(){
@@ -654,79 +661,33 @@
           observatorioDir = 'observatorio/' + idObservatorio + '/';
         }
 
-        let baseStruct = Object.assign(
-          {},
-          this.loadYaml("br/localidade/base"),
-          this.loadYaml("br/localidade/" + escopo + "/base"),
-          this.loadYaml("br/observatorio/base"),
-          this.loadYaml("br/" + observatorioDir + "base"),
-          this.loadYaml("br/" + observatorioDir + "localidade/base"),
-          this.loadYaml("br/" + observatorioDir + "localidade/" + escopo + "/base")
-        );
-        
-        window.fetch("/trabalhodecente-viewconf/br/" + observatorioDir + "localidade/" + escopo + "/" + idDimensao + ".yaml")
-          .then((res) => { // Caso tenha encontrado o yaml correto
-            let dimStruct = Object.assign(
-              {},
-              baseStruct,
-              this.loadYaml("br/" + observatorioDir + "localidade/" + escopo + "/" + idDimensao)
-            );
+        let baseStructYamls = [
+          { main: "br/localidade/base" },
+          { main: "br/localidade/" + escopo + "/base" },
+          { main: "br/observatorio/base" },
+          { main: "br/" + observatorioDir + "base" },
+          { main: "br/" + observatorioDir + "localidade/base" },
+          { main: "br/" + observatorioDir + "localidade/" + escopo + "/base", alt: "br/" + observatorioDir + "localidade/default/base" },
+          { main: "br/" + observatorioDir + "localidade/" + escopo + "/" + idDimensao, alt: "br/" + observatorioDir + "localidade/default/" + idDimensao }
+        ];
+        this.loadYamlArray({}, baseStructYamls, this.setDimension);
+      },
 
-            this.dimStruct = dimStruct;
-            if (dimStruct.tematicos) {
-              let thematicDatasets = ['centralindicadores'];
-              for (let tematico of dimStruct.tematicos){
-                thematicDatasets.push(tematico.dataset);
-              }
-              this.getMultipleGlobalDatasets(
-                thematicDatasets,
-                escopo,
-                this.getIdLocalidadeFromRoute(this.$route.params.idLocalidade),
-                this.keepLoadingDimension);
-            } else {
-              this.keepLoadingDimension();
-            }
-          },
-          (rej) => { // Carrega o yaml BASE, porque não encontrou o correto
-            let dimStruct = Object.assign(
-              {},
-              baseStruct,
-              this.loadYaml("br/" + observatorioDir + "localidade/default/" + idDimensao)
-            );
-
-            this.dimStruct = dimStruct;
-            if (dimStruct.tematicos) {
-              let thematicDatasets = ['centralindicadores'];
-              for (let tematico of dimStruct.tematicos){
-                thematicDatasets.push(tematico.dataset);
-              }
-              this.getMultipleGlobalDatasets(
-                thematicDatasets,
-                escopo,
-                this.getIdLocalidadeFromRoute(this.$route.params.idLocalidade),
-                this.keepLoadingDimension);
-            } else {
-              this.keepLoadingDimension();
-            }
-          })
-          .catch((e) => {
-            let dimStruct = this.loadYaml("br/" + observatorioDir + "localidade/default/" + idDimensao);
-            
-            this.dimStruct = dimStruct;
-            if (dimStruct.tematicos) {
-              let thematicDatasets = ['centralindicadores'];
-              for (let tematico of dimStruct.tematicos){
-                thematicDatasets.push(tematico.dataset);
-              }
-              this.getMultipleGlobalDatasets(
-                thematicDatasets,
-                escopo,
-                this.getIdLocalidadeFromRoute(this.$route.params.idLocalidade),
-                this.keepLoadingDimension);
-            } else {
-              this.keepLoadingDimension();
-            }
-          });
+      setDimension(content) {
+        this.dimStruct = content;
+        if (content.tematicos) {
+          let thematicDatasets = ['centralindicadores'];
+          for (let tematico of content.tematicos){
+            thematicDatasets.push(tematico.dataset);
+          }
+          this.getMultipleGlobalDatasets(
+            thematicDatasets,
+            escopo,
+            this.getIdLocalidadeFromRoute(this.$route.params.idLocalidade),
+            this.keepLoadingDimension);
+        } else {
+          this.keepLoadingDimension();
+        }
       },
 
       keepLoadingDimension() {
