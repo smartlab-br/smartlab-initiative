@@ -3,28 +3,36 @@ const DimensionsModel = {
     Vue.mixin({
       data() {
         return {
-          globalDimensions: require("json-loader!yaml-loader!../../trabalhodecente-viewconf/br/dimensao/base.yaml").dimensoes
+          globalDimensions: null
         }
       },
+      created() {
+        this.loadYaml("br/dimensao/base", this.setGlobalDimensions);
+      },
       methods: {
-        getDimensions(idObservatorio = null) {
+        setGlobalDimensions(content) {
+          this.globalDimensions = content;
+        },
+        getDimensions(idObservatorio = null, cbFunction = null) {
           if (idObservatorio === null || idObservatorio === undefined) {
-            return this.globalDimensions;
+            if (cbFunction) { 
+              cbFunction(this.globalDimensions);
+            } else {
+              return this.globalDimensions;
+            }
           }
-          return require("json-loader!yaml-loader!../../trabalhodecente-viewconf/br/dimensao/" + idObservatorio + ".yaml").dimensoes;
+          this.loadYaml("br/dimensao/" + idObservatorio, cbFunction);
         },
 
         findDimensionById(id) {
-          for (var eachDim in this.globalDimensions) {
-            if (this.globalDimensions[eachDim].id == id) {
-              return this.globalDimensions[eachDim];
-            }
+          for (var eachDim of this.globalDimensions.dimensoes) {
+            if (eachDim.id == id) return eachDim;
           }
-          return this.globalDimensions[0];
+          return this.globalDimensions.dimensoes[0];
         },
 
         getDimensionByObservatoryAndId(obs, id = null) {
-          let dims = require("json-loader!yaml-loader!../../trabalhodecente-viewconf/br/dimensao/" + obs + ".yaml").dimensoes;
+          let dims = this.loadYaml("br/dimensao/" + obs).dimensoes;
           for (let indx in dims) {
             if ((id === null || id === undefined) && dims[indx].default) return dims[indx];
             if (dims[indx].id == id) return dims[indx];

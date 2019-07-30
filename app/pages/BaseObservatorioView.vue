@@ -1,4 +1,5 @@
 <script>
+  import axios from 'axios';
   import BaseLandingView from './BaseLandingView.vue';
 
   export default {
@@ -20,50 +21,29 @@
         customFunctions: {},
         topology: null,
 
-        dialogMapLoading: false
+        dialogMapLoading: false,
+
+        hasOdometers: true,
+        loadedOdometers: false
       }
     },
     created () {
       // fetch the data when the view is created and the data is
       // already being observed
-      this.getGlobalDataset(
-        'centralindicadores',
-        'brasil',
-        'Falha ao carregar indicadores do Brasil',
-        null,
-        this.keepLoading
-      );
-
-      let scope = 'brasil';
-      let auId = 0;
-      let msgErro = 'Falha ao carregar indicadores do Brasil';
-      
       if (this.idObservatorio === null || this.idObservatorio === undefined) {
         this.idObservatorio = this.identifyObservatory(this.$route.path.split('/')[1]);
       }
 
       if (this.idObservatorio) {
-        let observatorio = require("json-loader!yaml-loader!../trabalhodecente-viewconf/br/observatorio/" + this.idObservatorio + ".yaml");
-        this.$emit('alterToolbar', observatorio.theme.toolbar);
-        this.observatorio = observatorio;
-        if (observatorio.tematicos){
-          for(let indxTematico in observatorio.tematicos){
-            this.getGlobalDataset(observatorio.tematicos[indxTematico].dataset, 
-                                  scope,
-                                  msgErro,
-                                  auId);
-          }
+        this.loadYaml("br/observatorio/" + this.idObservatorio, this.setObservatorio);
+      } else {
+        this.setDimensionsArea();
+
+        if (this.$vuetify.breakpoint.smAndDown) {
+          this.obsMaxSlice = 11;
+          this.obsSlice = 0;
+          this.obsSliceSize = 1;
         }
-
-        this.setGroupingAndFiltering(observatorio);
-      }
-
-      this.setDimensionsArea();
-
-      if (this.$vuetify.breakpoint.smAndDown) {
-        this.obsMaxSlice = 11;
-        this.obsSlice = 0;
-        this.obsSliceSize = 1;
       }
     },
     beforeDestroy: function() {
@@ -111,12 +91,59 @@
         this.idLocalidade = id;
       },
       
-      keepLoading() {
-        // let observatorio = require("json-loader!yaml-loader!../trabalhodecente-viewconf/br/observatorio/" + this.idObservatorio + ".yaml");
-        // this.$emit('alterToolbar', this.observatorio.theme.toolbar);
-        // this.observatorio = observatorio;
+      setObservatorio(content) {   
+        let scope = 'brasil';
+        let auId = 0;
+        let msgErro = 'Falha ao carregar indicadores do Brasil';
+      
+        let observatorio = content;
+        this.$emit('alterToolbar', observatorio.theme.toolbar);
+        this.observatorio = observatorio;
 
-        // this.fetchMapData();
+        this.getGlobalDataset(
+          'centralindicadores',
+          'brasil',
+          'Falha ao carregar indicadores do Brasil',
+          null,
+          this.keepLoading
+        );
+
+        if (observatorio.tematicos){
+          for(let indxTematico in observatorio.tematicos){
+            this.getGlobalDataset(observatorio.tematicos[indxTematico].dataset, 
+                                  scope,
+                                  msgErro,
+                                  auId);
+          }
+        }
+
+        if (observatorio.prevalencia && observatorio.prevalencia.odometers){
+          this.hasOdometers = true;
+          if (this.idObservatorio == "sst"){
+            let url="/sst";
+            axios(this.getAxiosOdometrosOptions(url))
+              .then(result => {
+                let odometros = JSON.parse(result.data);
+                this.customParams.odometros = odometros;
+                this.loadedOdometers = true;
+            })
+          }
+        } else {
+          this.hasOdometers = false;
+        }
+
+        this.setGroupingAndFiltering(observatorio);
+
+        this.setDimensionsArea();
+
+        if (this.$vuetify.breakpoint.smAndDown) {
+          this.obsMaxSlice = 11;
+          this.obsSlice = 0;
+          this.obsSliceSize = 1;
+        }
+      },
+
+      keepLoading() {
         if (this.observatorio.prevalencia) {
           this.fillDataStructure(
             this.observatorio.prevalencia.title,

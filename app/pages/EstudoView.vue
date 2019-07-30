@@ -178,7 +178,7 @@
       // let auId = 0;
       
       if (this.idEstudo) {
-        let estudo = require("json-loader!yaml-loader!../trabalhodecente-viewconf/br/estudo/" + this.idEstudo + ".yaml");
+        let estudo = this.loadYaml("br/estudo/" + this.idEstudo);
         this.estudo = estudo;
         //this.selectCoords("br", "uf", 0);
         this.selectCoords("uf", "municipio", 23);
@@ -210,7 +210,7 @@
     },
     methods: {
       keepLoading() {
-        let estudo = require("json-loader!yaml-loader!../trabalhodecente-viewconf/br/estudo/" + this.idEstudo + ".yaml");
+        let estudo = this.loadYaml("br/estudo/" + this.idEstudo);
         this.$emit('alterToolbar', estudo.theme.toolbar);
         this.estudo = estudo;
 

@@ -1,7 +1,7 @@
 <template>
   <v-layout row wrap class="pa-0">
-    <v-flex fluid grid-list-lg xs12 class="first-section pa-0" :style="displayHeight">
-      <v-layout xs12 class="bg-parallax" v-if="observatorio"
+    <v-flex v-if="observatorio" fluid grid-list-lg xs12 class="first-section pa-0" :style="displayHeight">
+      <v-layout xs12 class="bg-parallax"
         height="auto" :style="currentParallax"></v-layout>
       <v-layout xs12 class="bg-parallax ma-0"></v-layout>
       <v-layout row wrap px-3 justify-center class="parallax-content">
@@ -68,7 +68,7 @@
       </flpo-articles-highlights>
     </v-container>
     -->
-    <v-container v-if="observatorio.prevalencia" fluid ma-0 pa-0
+    <v-container v-if="observatorio && observatorio.prevalencia" fluid ma-0 pa-0
       :style="'background-color:' + assessZebraBG(0) + ';'">
       <v-layout row wrap>
         <!--
@@ -334,9 +334,7 @@
         displayHeight: "auto",
         dims: null,
         mapEnabled: false,
-        isPageBottom: true,
-        hasOdometers: true,
-        loadedOdometers: false
+        isPageBottom: true
       }
     },
     mounted: function() {
@@ -347,23 +345,6 @@
       this.idLocalidade = this.$store.state.favLocation;
       this.mapEnabled = false;
       this.checkFavoriteAnalysisUnit();
-      if (this.observatorio.prevalencia && this.observatorio.prevalencia.odometers){
-        this.hasOdometers = true;
-      } else {
-         this.hasOdometers = false;
-      }
-      if (this.observatorio.prevalencia && this.observatorio.prevalencia.odometers){
-        if (this.idObservatorio == "sst"){
-          let url="/sst";
-          axios(this.getAxiosOdometrosOptions(url))
-            .then(result => {
-              let odometros = JSON.parse(result.data);
-              this.customParams.odometros = odometros;
-              this.loadedOdometers = true;
-          })
-        }
-      }
-      
     },
     beforeDestroy () {
       window.removeEventListener('scroll', this.assessPageBottom);
@@ -414,9 +395,13 @@
       },
 
       setDimensionsArea() {
-        this.dims = this.getDimensions(this.idObservatorio);
+        this.getDimensions(this.idObservatorio, this.setDimensionsStyles);
+      },
 
-        switch (this.dims.length) {
+      setDimensionsStyles(content) {
+        this.dims = content.dimensoes;
+
+        switch (content.dimensoes.length) {
           case 12:
             this.slicing = "xs12 sm6 md4";
             break;

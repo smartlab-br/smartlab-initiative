@@ -3,10 +3,16 @@ const AboutModel = {
     Vue.mixin({
       data() {
         return {
-          about: require("json-loader!yaml-loader!../../trabalhodecente-viewconf/br/about.yaml")
+          about: null
         }
       },
+      created() {
+        this.loadYaml("br/about", this.setAbout);
+      },
       methods: {
+        setAbout(content) {
+          this.about = content;
+        },
         getFullAbout() {
           return this.about;
         },
