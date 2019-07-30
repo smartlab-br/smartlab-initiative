@@ -675,6 +675,7 @@
 
       setDimension(content) {
         this.dimStruct = content;
+        console.log(content);
         if (content.tematicos) {
           let thematicDatasets = ['centralindicadores'];
           for (let tematico of content.tematicos){

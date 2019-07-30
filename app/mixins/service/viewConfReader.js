@@ -21,33 +21,63 @@ const ViewConfReader = {
 
 				async loadYamlArray(currentStruct, yamlArray, finalCbFunction) {
 					let promises = [];
-					let fnFinalCb = finalCbFunction;
-					for (let yamlConf of yamlArray) {
-						let env = 'production'; //process.env.NODE_ENV
-						if (env === 'production' || env === 'staging') {
-							let basePath = "https://raw.githubusercontent.com/smartlab-br/smartlab-initiative-viewconf/" + env + "/";
-							let promise = new Promise(
+					let promises_alt = [];
+					
+					let env = 'development'; //process.env.NODE_ENV
+					let basePath = "/static/smartlab-initiative-viewconf/";
+					if (env === 'production' || env === 'staging') {
+						basePath = "https://raw.githubusercontent.com/smartlab-br/smartlab-initiative-viewconf/" + env + "/";
+					}
+
+					// TODO Need to intercept 404 errors thrown to the browser console.
+					for (let yamlConfIndex in yamlArray) {	
+						promises[yamlConfIndex] = new Promise(
+							function(resolve, reject) {
+								axios.get(basePath + yamlArray[yamlConfIndex].main + ".yaml")
+									.then(response => {
+										resolve(yaml.safeLoad(response.data, { json: true }))
+									});
+							}
+						);
+
+						if (yamlArray[yamlConfIndex].alt) {
+							promises_alt[yamlConfIndex] = new Promise(
 								function(resolve, reject) {
-									axios.get(basePath + yamlConf.main + ".yaml")
+									axios.get(basePath + yamlArray[yamlConfIndex].alt + ".yaml")
 										.then(response => {
-											resolve(yaml.safeLoad(response.data, { json: true }))
-										});
+											resolve(yaml.safeLoad(response.data, { json: true }));
+										}).catch(error => { console.log(error); resolve(null); });
 								}
 							);
-							promises.push(promise);
 						}
-						//return require("json-loader!yaml-loader!../../trabalhodecente-viewconf/" + location + ".yaml");						
 					}
 
 					// Define a execução após a realização de todos os promises
 					Promise.all(promises).then(
 						(structs) => {
-							let result = {};
-							for (let struct of structs) {
-								result = Object.assign(result, struct);
+							let checked = [];
+							let result = currentStruct ? currentStruct : {};
+							console.log(structs);
+							for (let structIndx in structs) {
+								if (structs[structIndx]) {
+									console.log(structs[structIndx]);
+									checked.push(structIndx);
+									result = Object.assign(result, structs[structIndx]);
+								}
 							}
 							
-							fnFinalCb(result);
+							Promise.all(promises_alt).then(
+								(structs_alt) => {
+									console.log(structs_alt);
+									console.log(checked);
+									for (let structIndx in structs_alt) {
+										if (structs_alt[structIndx] && !checked.includes(structIndx)) {
+											result = Object.assign(result, structs_alt[structIndx]);
+										}
+									}
+									finalCbFunction(result);
+								}
+							);
 						}
 					);
 				},
