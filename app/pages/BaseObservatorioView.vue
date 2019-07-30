@@ -1,4 +1,5 @@
 <script>
+  import axios from 'axios';
   import BaseLandingView from './BaseLandingView.vue';
 
   export default {

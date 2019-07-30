@@ -52,6 +52,8 @@ export default context => {
         store.state.GA_ID_BASE = process.env.GA_ID_BASE;
         store.state.GA_ID_DV = process.env.GA_ID_DV;
 
+        store.state.GIT_VIEWCONF_TAG_URL = process.env.GIT_VIEWCONF_TAG_URL;
+
         store.state.DATAHUB_API_BASE_URL = process.env.DATAHUB_API_BASE_URL;     
         store.state.DATAHUB_APP_KEY = process.env.DATAHUB_APP_KEY;
       
