@@ -256,7 +256,8 @@ const IndicatorsModel = {
               }
 
               if (args.length == struct[indxCmb].fn_args.length) {
-                nuIndic.vl_indicador = fnCmb.apply(null, args);
+                let prop = struct[indxCmb].named_prop ? struct[indxCmb].named_prop : 'vl_indicador';
+                nuIndic[prop] = fnCmb.apply(null, args);
               
                 // Verifica se já existem os registro no dataset combinado
                 let found = false;
