@@ -6,6 +6,12 @@ pipeline {
         label 'master'
     }
     stages {
+        stage('Pull Docker image') {
+            steps {
+                pullDockerImage()
+            }
+        }
+
         stage('Execute unit tests') {
             agent {
                 docker { 
@@ -37,6 +43,12 @@ pipeline {
             }
         }
    }
+}
+
+def pullDockerImage() {
+    //pull img docker
+    def img_vue = docker.image('smartlab/vuetify:latest')
+    img_vue.pull()
 }
 
 def executeUnitTests() {
