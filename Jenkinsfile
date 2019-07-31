@@ -6,12 +6,6 @@ pipeline {
         label 'master'
     }
     stages {
-        stage('Checkout') {
-            steps {
-                checkout_pull()
-            }
-        }
-
         stage('Execute unit tests') {
             agent {
                 docker { 
@@ -43,15 +37,6 @@ pipeline {
             }
         }
    }
-}
-
-def checkout_pull() {
-    dir ("app/trabalhodecente-viewconf") {
-        git credentialsId: '', url: GIT_YAML
-    }
-    //pull img docker
-    def img_vue = docker.image('smartlab/vuetify:latest')
-    img_vue.pull()
 }
 
 def executeUnitTests() {
