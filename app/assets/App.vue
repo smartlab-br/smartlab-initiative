@@ -711,16 +711,6 @@
       }
     },
     mounted: function() {
-      // TODO Remover apos lancamento de demais observatorios
-      if (this.$store.state.PHASE_OUT && this.$store.state.PHASE_OUT == 'S' && !this.$route.path.includes('embreve')) {
-        let obsCheckAvailable = this.identifyObservatoryById(this.identifyObservatory(this.$route.path.split('/')[1]));
-
-        if (obsCheckAvailable && obsCheckAvailable != 'trabalhodecente') {
-          this.pushRoute('/' + obsCheckAvailable + '/embreve/', false);
-          return;
-        }
-      }
-
       // this.checkFavoriteAnalysisUnit();
 
       if (!this.$cookies.isKey("cookieAccept")){
@@ -738,15 +728,6 @@
       window.addEventListener('scroll', this.assessVisibleLeftDrawerTitle);
     },
     watch: {
-      "$route": function(newVal, oldVal) { // TODO Remover apos lancamento de demais observatorios
-        if (this.$store.state.PHASE_OUT && this.$store.state.PHASE_OUT == 'S' && !newVal.path.includes('embreve')) {
-          let idCheckAvailable = this.identifyObservatory(newVal.path.split('/')[1]);
-
-          if (idCheckAvailable && idCheckAvailable == 'des') {
-            this.pushRoute('/' + this.identifyObservatoryById(idCheckAvailable) + '/embreve/', false)
-          }
-        }
-      },
       gsFavLocation(newVal, oldVal) {
         if (newVal) {
           this.$cookies.set("currentAnalysisUnit", newVal.id, -1); // Never expires

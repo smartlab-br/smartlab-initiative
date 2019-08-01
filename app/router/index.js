@@ -76,20 +76,6 @@ export function createRouter () {
             ga('send', 'pageview')
         }
 
-        // TODO Remover no lancamento dos demais observatorios
-        // if (process.env.PHASE_OUT && !to.path.includes('embreve')) {
-        //   let idCheckAvailable = this.identifyObservatory(to.path.split('/')[1]);
-          
-        //   if (idCheckAvailable && idCheckAvailable != 'td' && idCheckAvailable != 'sst') {
-        //     next({ "path": '/embreve/'+idCheckAvailable })
-        //   } else {
-        //     next()
-        //   }
-        // } else {
-        //   next()
-        // }
-
-        // TODO Reativar no lancamento dos demais observatorios
         next()
     })
 

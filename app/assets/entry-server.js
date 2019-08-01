@@ -48,7 +48,6 @@ export default context => {
         // inline the state in the HTML response. This allows the client-side
         // store to pick-up the server-side state without having to duplicate
         // the initial data fetching on the client.
-        //store.state.PHASE_OUT = process.env.PHASE_OUT;  
         store.state.GA_ID_BASE = process.env.GA_ID_BASE;
         store.state.GA_ID_DV = process.env.GA_ID_DV;
 

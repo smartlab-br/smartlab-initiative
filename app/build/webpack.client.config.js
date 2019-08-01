@@ -16,7 +16,6 @@ const config = merge(base, {
       'process.env.GA_ID_DV': JSON.stringify(process.env.GA_ID_DV),
       'process.env.GIT_VIEWCONF_TAG_URL': JSON.stringify(process.env.GIT_VIEWCONF_TAG_URL),
       'process.env.VUE_ENV': '"client"',
-      'process.env.PHASE_OUT': JSON.stringify(process.env.PHASE_OUT || 'N'),
       'process.env.DATAHUB_API_BASE_URL': JSON.stringify(process.env.DATAHUB_API_BASE_URL || 'http://localhost:8080'),
       'process.env.DATAHUB_APP_KEY': JSON.stringify(process.env.DATAHUB_APP_KEY || 'key'),
       'process.env.MAILER_API_BASE_URL': JSON.stringify(process.env.MAILER_API_BASE_URL || 'http://localhost:8080'),
