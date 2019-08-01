@@ -65,9 +65,9 @@ const NumberFormatter = {
             // Se contrair o dado, ver o formato resultante
             if (magnitude > 0) {
               casasDecimais = collapse.casasDecimais ? collapse.casasDecimais : null;
-              formato = collapse.formato ? collapse.formato : null;
-              unitPrefix = formato == 'monetario' ? openUiTags + "R$" + closeUiTags : '';
+              formato = collapse.format ? collapse.format : null;
             }
+            unitPrefix = formato == 'monetario' ? openUiTags + "R$" + closeUiTags : '';
             // if (magnitude > 0) {
             //   unitPrefix = "&plusmn;" + unitPrefix;
             // }
