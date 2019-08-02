@@ -417,6 +417,9 @@
           case 6:
             this.slicing = "xs12 sm6 md4";
             break;
+          case 5:
+            this.slicing = "xs12 sm6 md4";
+            break;
           case 4:
             this.slicing = "xs12 sm6";
             break;
