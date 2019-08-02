@@ -3,7 +3,7 @@
     <v-layout column :class="'minicard fill-height' + colorClass + ' ' + relevance">
       <v-layout v-if="structure.desc_position == 'right'" row >
         <v-flex shrink class="minicard-value"  v-html = "value"></v-flex>
-        <v-flex pl-1 grow v-if="structure.desc_position == 'right'" class="title-obs-desc minicard-description" v-html = "description != null ? description.toUpperCase() : ''"></v-flex>
+        <v-flex pl-1 v-if="structure.desc_position == 'right'" class="title-obs-desc minicard-description" v-html = "description != null ? description.toUpperCase() : ''"></v-flex>
       </v-layout>
       <div v-else class="minicard-value"  v-html = "value"></div>
       <div class="minicard-chart" v-if="dataset !== null && dataset.length > 1 && structure && structure.chart && structure.chart.options !== null">
