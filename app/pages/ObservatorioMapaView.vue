@@ -12,7 +12,7 @@
       </v-layout>
     </v-flex>
     -->
-    <v-container v-if="observatorio.prevalencia" fluid ma-0 pa-0
+    <v-container v-if="observatorio && observatorio.prevalencia" fluid ma-0 pa-0
       :style="'background-color:' + assessZebraBG(0) + ';'">
       <v-layout row wrap>
         <v-layout pa-3 row wrap justify-center v-show="mapTextLoading || !thematicLoaded">
@@ -170,14 +170,14 @@
       }
     },
     mounted: function() {
-      if (this.observatorio.prevalencia) {
-        this.fetchMapData();
-      }
       this.idLocalidade = this.$store.state.favLocation;
       this.checkFavoriteAnalysisUnit();
     },
     methods: {
       setGroupingAndFiltering(observatorio) {
+        if (observatorio.prevalencia) {
+          this.fetchMapData();
+        }
         if (observatorio.prevalencia && observatorio.prevalencia.default_group){
           this.activeGroup = observatorio.prevalencia.default_group;
         }
