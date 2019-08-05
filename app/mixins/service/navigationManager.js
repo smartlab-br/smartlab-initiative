@@ -9,7 +9,7 @@ const NavigationManager = {
       methods: {
         searchAnalysisUnit(searchItem, idObservatorio = null) {
           // TODO Remover apos lancamento de demais observatorios
-          if (idObservatorio && idObservatorio == 'des') return;
+          // if (idObservatorio && idObservatorio == 'des') return;
           if (searchItem === null || searchItem === undefined) {
             // this.snackAlert({ color : 'error', text: "Nenhum item selecionado" });
             return;

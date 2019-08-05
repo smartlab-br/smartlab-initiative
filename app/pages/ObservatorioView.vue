@@ -107,9 +107,9 @@
           -->
         </v-flex>
 
-        <v-flex sm12 md3>
-          <v-layout column wrap>
-            <v-layout row align-end fill-height wrap pl-3 pt-3 pr-4 class="subheading mb-0" 
+        <v-flex sm12 md4 lg3>
+          <v-layout column>
+            <v-layout row align-end fill-height wrap pl-3 pt-3 pr-2 class="subheading mb-0" 
               v-on:mousedown="!mapEnabled ? dialogMapLoading = true : dialogMapLoading = false"
               v-on:click="enableMap">
               <v-flex class="headline-obs card-title pb-0 pl-3">
@@ -167,7 +167,7 @@
           </v-layout>
         </v-flex>
 
-        <v-flex sm12 md6 pt-4 style="position:relative">
+        <v-flex sm12 md8 lg6 pt-4 style="position:relative">
           <!--
           <v-layout justify-end ma-0 pa-0>
             <v-btn small flat
@@ -234,7 +234,7 @@
           </v-flex>
         </v-flex>
 
-        <v-flex sm12 md3>
+        <v-flex sm12 md12 lg3>
           <flpo-composite-text
             v-if="observatorio && observatorio.prevalencia && observatorio.prevalencia.description_right && 
                   (!hasOdometers || loadedOdometers)"
@@ -415,6 +415,9 @@
             this.slicing = "xs12 sm6 lg3";
             break;
           case 6:
+            this.slicing = "xs12 sm6 md4";
+            break;
+          case 5:
             this.slicing = "xs12 sm6 md4";
             break;
           case 4:

@@ -541,8 +541,8 @@
             blocked: false,
             rippleColor: 'indigo--text darken-3' },
           { app_icon: 'coord-06', title: 'Diversidade no Trabalho',
-            to: '', external: false,
-            blocked: true,
+            to: '/diversidade', external: false,
+            blocked: false,
             rippleColor: 'deep-purple--text darken-2' },
           // { icon: 'flight_takeoff', title: 'Migrações e Trabalho',
           //   to: '/', external: false }

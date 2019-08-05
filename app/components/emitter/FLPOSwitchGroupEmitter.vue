@@ -52,4 +52,7 @@
 </script>
 
 <style>
+.control-top-align .v-input__slot {
+    align-items: baseline;
+}
 </style>

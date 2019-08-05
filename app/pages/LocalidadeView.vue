@@ -356,9 +356,9 @@
             let reg = /de \d{4} a \d{4}/g;
             return str.match(reg);
             },
-          get_text_from_parentheses: function(str){ 
+          get_text_from_parentheses_ds: function(d, str){ 
             let reg = /\(.*\)/;
-            var returnStr = str.match(reg);
+            var returnStr = String(str).match(reg);
             returnStr = String(returnStr).replace('(', '').replace(')', '');
             return returnStr;
             },
