@@ -53,6 +53,8 @@
         // caso não possa ser limpo (clearable), seleciona o primeiro registro
         } else if (structure.clearable != null && structure.clearable != undefined && !structure.clearable){
           this.chosen = this.items[0];
+        } else {
+          this.chosen = null;
         }
         if (this.chosen != null){
           this.sendDefaultSelection();

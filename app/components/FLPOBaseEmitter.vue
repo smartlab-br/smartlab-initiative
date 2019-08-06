@@ -6,7 +6,7 @@
         target: null
       }
     },
-    props: ['id', 'structure', 'customParams', 'customFunctions', 'immediate', 'reactiveFilter'],
+    props: ['id', 'structure', 'customParams', 'customFunctions', 'immediate', 'reactiveFilter', 'reactiveParent'],
     created () {
       this.fillDataStructure(
         this.structure, this.customParams,
@@ -18,7 +18,7 @@
     },
     watch: {
       reactiveFilter: function(newVal, oldVal) {
-        if (this.structure.child && newVal != oldVal) {
+        if (this.reactiveParent.includes(this.structure.parent) && newVal != oldVal) {
           this.fillDataStructure(
             this.structure, this.customParams,
             this.customFunctions, this.toItems,

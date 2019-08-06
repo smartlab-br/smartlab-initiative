@@ -72,6 +72,7 @@
           <flpo-select-emitter
             v-if="descSection.type == 'select'"
             :id = "descSection.id + '_' + id" 
+            :reactive-parent = "reactiveParent"
             :reactive-filter="reactiveFilter"
             :custom-params="customParams"
             :structure="descSection"
@@ -189,7 +190,8 @@
         dataset: [],
         metadata: [],
         datasetsComplete: 0,
-        reactiveFilter: null
+        reactiveFilter: null,
+        reactiveParent: null
       }
     },
     props: ['id','activeGroup', 'sectionClass'],
@@ -214,6 +216,7 @@
     methods: {
       triggerSelect(payload) {
         this.reactiveFilter = payload.item;
+        this.reactiveParent = payload.id;
         this.$emit('selection', payload);
       },
 
