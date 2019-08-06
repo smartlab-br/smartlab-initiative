@@ -6,7 +6,7 @@
         target: null
       }
     },
-    props: ['id', 'structure', 'customParams', 'customFunctions', 'immediate'],
+    props: ['id', 'structure', 'customParams', 'customFunctions', 'immediate', 'reactiveFilter'],
     created () {
       this.fillDataStructure(
         this.structure, this.customParams,
@@ -14,6 +14,17 @@
       );
       if (this.structure && this.structure.target) {
         this.target = this.structure.target;
+      }
+    },
+    watch: {
+      reactiveFilter: function(newVal, oldVal) {
+        if (this.structure.child && newVal != oldVal) {
+          this.fillDataStructure(
+            this.structure, this.customParams,
+            this.customFunctions, this.toItems,
+            { "react": newVal }
+          );
+        }
       }
     },
     methods: {

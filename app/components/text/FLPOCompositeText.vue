@@ -72,6 +72,7 @@
           <flpo-select-emitter
             v-if="descSection.type == 'select'"
             :id = "descSection.id + '_' + id" 
+            :reactive-filter="reactiveFilter"
             :custom-params="customParams"
             :structure="descSection"
             :custom-functions="customFunctions"

@@ -28,6 +28,7 @@
     methods: {
 
       toItems(dataset, rules, structure, addedParams, metadata) {
+        this.items = [];
         for (var rowIndx in dataset) {
           this.toItem(dataset[rowIndx], rules);
         }
