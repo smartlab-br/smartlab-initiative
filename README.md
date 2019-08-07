@@ -1,5 +1,98 @@
 # smartlab-initiative
-Front-end of the Smartlab Initiative
+
+This repository holds the code for the front-end of the [Smartlab Initiative](https://smartlabbr.org). We invite all the community to join us in our mission and contribute. To do so, we recommend reading [this](https://github.com/MarcDiethelm/contributing/blob/master/README.md) first.
+
+# Creating a local environment
+
+To run the project locally, you'll need to download and install [node (with npm)](https://nodejs.org/en/), if you don't have it, and go through some setup first.
+
+## Step 1. Fork & Clone smartlab-initiative
+
+Please, read [this](https://help.github.com/en/articles/fork-a-repo) to better understand why and how to fork a project.
+
+## Step 2. Create a reference to the platform content repository
+
+### If you don't want to change the content
+
+If you don't want to work in the content, just set an environment variable:
+
+```
+GIT_VIEWCONF_TAG_URL=https://raw.githubusercontent.com/smartlab-br/smartlab-initiative-viewconf/master/
+```
+
+### To be able to change the content
+
+Otherwise, if you want to be able to change the content and see it working locally, you have to fork and clone [this repository](https://github.com/smartlab-br/smartlab-initiative-viewconf) under the `/app/static/` dir.
+
+## Step 3. Subscribe to datahub-api & acidentometros-api
+
+At the moment, we're working in a self-service subscription. Until it becomes a reality, please, send us an e-mail (smartlab-dev@mpt.mp.br) - we'll be glad to provide you with an API Key. Remember, though, that the access is not guaranteed - we might want to know you a little better (where you're from, if you're representing an organization, if there are more people in the organization that will use the data and so on...).
+
+## Step 4. Set environment variables
+
+```
+DATAHUB_API_BASE_URL = <the endpoint to the datahub-api>
+DATAHUB_APP_KEY = <your application credential obtained in the subscription step>
+      
+ACIDENTOMETROS_API_BASE_URL = <the endpoint to the datahub-api>
+ACIDENTOMETROS_APP_KEY = <your application credential obtained in the subscription step>
+```
+
+## Step 5. Run the project
+
+Go to the app folder and run scripts for installing and building the project:
+
+```
+$ cd app
+$ npm install
+$ npm run dev
+```
+
+## I can see it running! Now what?
+
+You can start contributing! Just make sure to create a pull request to the **contrib** branch, otherwise it may be dismissed. We strongly recommend adding automated tests to the codebase. Read [this](https://help.github.com/en/articles/creating-a-pull-request) to understand better about pull requests.
+
+We'll do our best to give a quick feedback - bear in mind we're a small team, though.
+
+### How to contribute
+
+There are plenty of ways to contribute to opensource projects, as we can read in [this post](https://opensource.guide/how-to-contribute/). Some examples:
+
+1. Translation of content (editing smartlab-initiative-viewconf yamls);
+2. Code optimization;
+3. Enhancing unit testing coverage;
+4. Proposing new features and
+5. Repository and code documentation.
+
+### Attention to the working repository!
+
+If you're working in the `smartlab-initiative-viewconf` repository, make sure you're running git commands (pushes, branching, sending pull-requests) from it. Since in some cases you may have nested repositories, it's a common mistake to change the files and forget that the inner one is actually completely independent.
+
+### Do I need to be in a team to collaborate?
+
+No, you don't! This is an opensource project and we intend to keep it as democratic as we can. Anyone can clone, fork and send pull requests to our repositories. We'll check the PR code quality and if it can be merged without breaking stuff. As long as the PR is clean and sent to the correct branch (```contrib```), we'll do our best to approve it timely.
+
+Eventually, we'll come up with a policy to add people to our ranks, as committers. When we do so, the access will be granted per repository or team (with a set of repositories under their responsibility).
+
+## Some tools you can use
+
+### Git
+
+[Gitkraken](https://www.gitkraken.com/)
+
+[Github Desktop](https://desktop.github.com/)
+
+[Sourcetree](https://www.sourcetreeapp.com/)
+
+### Coding
+
+There are a lot of tools to help in editing the files - some of them offer integration with terminal and other tools. Here are some alternatives:
+
+[VS Code](https://alternativeto.net/software/visual-studio-code/)
+
+[Webstorm](https://www.jetbrains.com/webstorm/promo/?gclid=CjwKCAjwm4rqBRBUEiwAwaWjjFPojlKd6gF4AJaHr79alREonOUlUFzQzLs0H1LqL7ROL5Ps6w4yaxoC1KAQAvD_BwE&gclsrc=aw.ds)
+
+[Atom](https://atom.io/)
 
 # Third-party components used in our platform
 
