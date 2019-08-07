@@ -4,6 +4,7 @@
       :outline="isOutline"
       v-model="chosen"
       :label="structure.label" item-text="label"
+      :placeholder="structure.placeholder"
       item-value="id" class="input-group--focused" return-object
       :color="structure.color !== null ? structure.color : 'primary'"
       :multiple="structure.multiple ? structure.multiple : false"
