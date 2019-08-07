@@ -58,6 +58,7 @@
           <v-layout row wrap pb-4>
             <flpo-minicard v-for="(miniCard, index) in descSection.cards" :key="index"
               :reactive-filter="reactiveFilter"
+              :custom-filters="customFilters"
               :structure="miniCard" :customFunctions="customFunctions"
               :customParams="customParams" :row-class="descSection.rowClass">
             </flpo-minicard>
@@ -194,7 +195,7 @@
         reactiveParent: null
       }
     },
-    props: ['id','activeGroup', 'sectionClass'],
+    props: ['id','activeGroup', 'sectionClass', 'customFilters'],
     created () {
       for (var indxDesc in this.structure) {
         if (this.structure[indxDesc].type === 'chart') {

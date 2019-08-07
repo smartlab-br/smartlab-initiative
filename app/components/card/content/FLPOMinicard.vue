@@ -25,6 +25,7 @@
 
 <script>
   import FLPOBaseLayout from '../../FLPOBaseLayout.vue';
+  import axios from "axios";
 
   export default {
     extends: FLPOBaseLayout,
@@ -40,7 +41,7 @@
         dataset: null
       }
     },
-    props: ['rowClass', 'reactiveFilter'],
+    props: ['rowClass', 'reactiveFilter', 'customFilters'],
     created () {
       this.relevance = this.structure.relevance;
       if (this.structure.cls) this.cardClass = this.structure.cls;
@@ -58,21 +59,25 @@
     },
     watch: {
       reactiveFilter: function(newVal, oldVal) {
-        if (newVal != oldVal) {
-          this.fillDataStructure(
-            this.structure, this.customParams,
-            this.customFunctions, this.fillMinicard,
-            { "react": newVal }
-          );
-          if (this.structure.chart) {
+        if (newVal != oldVal) { 
+          if (this.structure.api_reactive){
             this.fillDataStructure(
-              this.structure.chart, this.customParams,
-              this.customFunctions, this.setDataset,
+              this.structure, this.customParams,
+              this.customFunctions, this.fillMinicard,
               { "react": newVal }
             );
+            if (this.structure.chart) {
+              this.fillDataStructure(
+                this.structure.chart, this.customParams,
+                this.customFunctions, this.setDataset,
+                { "react": newVal }
+              );
+            }
+          } else if (this.structure.reactive){
+            this.updateReactiveDataStructure(this.customFilters.filterUrl);
           }
         }
-      }
+      },
     },
     computed: {
       chartId: function() {
@@ -253,7 +258,26 @@
 
           this.fillProp(base_object_list, rule.args, preloaded, addedParams, metadata);
         }
-      }
+      },
+
+      updateReactiveDataStructure(filterUrl){
+        let apiUrl = this.applyInterpol(this.structure.api, this.customParams, this.customFunctions);
+        apiUrl = apiUrl + filterUrl;
+        axios(this.getAxiosOptions(apiUrl))
+        .then(result => {
+          this.fillMinicard(
+            this.reformDataset(
+              JSON.parse(result.data).dataset,
+              this.structure.api.options,
+              this.customFunctions
+            ),
+            this.structure.args,
+            this.structure,
+            {},
+            JSON.parse(result.data).metadata
+          );
+        });
+      },
     }
   }
 </script>
