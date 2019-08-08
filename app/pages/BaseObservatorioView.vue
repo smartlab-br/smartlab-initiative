@@ -18,7 +18,9 @@
         cmpTitle: null,
         cmpTitleComment: null,
         customParams: {},
-        customFunctions: {},
+        customFunctions: {
+          calc_subtraction: function(a, b) {  return a - b; },
+        },
         topology: null,
 
         dialogMapLoading: false,
