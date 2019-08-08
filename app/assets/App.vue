@@ -346,6 +346,13 @@
             class="cursor-pointer mb-1 ml-0" alt="Instituto Brasileiro de Geografia e Estatística"
             height="50px"
           />
+          <img v-if="this.identifyObservatory(this.$route.path.split('/')[1]) == 'des'"
+            v-on:click="pushRoute('https://www.pactoglobal.org.br', true)" 
+            src="/static/smartlab/pacto.svg"
+            class="cursor-pointer mb-1 ml-0" alt="Pacto Global - Rede Brasil"
+            max-height="80%"
+            min-height="50%"
+          />
           
         </v-flex>
         <v-flex xs6 sm3 md3 lg3 xl3 class="text-xs-left text-sm-right text-md-center"
