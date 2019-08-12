@@ -25,6 +25,7 @@ class ObservatoriesModel {
             rippleColor: 'deep-purple--text darken-2',
             color: colors.deepPurple.darken4, textColor: "deep-purple--text darken-4" }
     ];
+    isLoading = false;
 
     constructor() {
         this.isLoading = true;
@@ -34,18 +35,19 @@ class ObservatoriesModel {
     setObservatories(content, context) {
         context.observatories = content.observatorios;
         context.isLoading = false;
-
-        //Vue.set(Vue.prototype.$observatories, 'observatories', content.observatorios);
-        //Vue.set(Vue.prototype.$observatories, 'isLoading', false);
-        
-        // Vue.prototype.$observatories.observatories = content.observatorios;
-        // Vue.prototype.$observatories.isLoading = false;
     }
 
     getObservatories() {
-        if (!this.observatories && !this.isLoading) { // Start loading only once
+        console.log(this);
+        if ((this.observatories == null && this.observatories == undefined) && !this.isLoading) { // Start loading only once
             this.isLoading = true;
+            console.log("chk 2");
+            console.log(YamlFetcherService.loadYaml("br/observatorios", this.setObservatories));
             YamlFetcherService.loadYaml("br/observatorios", this.setObservatories);
+        } else {
+            console.log("chk 3");
+            console.log(this.observatories);
+            return this.observatories;
         }
     }
     

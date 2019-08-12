@@ -47,15 +47,11 @@ import ObservatoriesModel from './model/singleton/observatoriesModel'
 Vue.prototype.$observatories = new ObservatoriesModel();
 import AboutModel from './model/singleton/aboutModel'
 Vue.prototype.$about = new AboutModel();
+import DimensionsModel from './model/singleton/dimensionsModel'
+Vue.prototype.$dimensions = new DimensionsModel();
 // 1.2 Mixins
-// import AboutModel from '../mixins/model/aboutModel.js'
-// Vue.use(AboutModel)
-import DimensionsModel from '../mixins/model/dimensionsModel.js'
-Vue.use(DimensionsModel)
 import IndicatorsModel from '../mixins/model/indicatorsModel.js'
 Vue.use(IndicatorsModel)
-// import ObservatoriesModel from '../mixins/model/observatoriesModel.js'
-// Vue.use(ObservatoriesModel)
 import PlacesModel from '../mixins/model/placesModel.js'
 Vue.use(PlacesModel)
 import TranslationModel from '../mixins/model/translationModel.js'

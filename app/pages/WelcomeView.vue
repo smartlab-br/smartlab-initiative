@@ -4,7 +4,7 @@
       <!-- <v-parallax xs12 class="bg-parallax" height="auto" src="static/parallax/home.png"></v-parallax>-->
       <v-layout xs12 class="bg-parallax-home" height="auto" style="background-image:url('/static/parallax/td.jpg');background-position: center center; background-size: cover;"></v-layout> 
       <v-layout xs12 class="bg-parallax-home ma-0"></v-layout>
-      <v-layout row wrap fill-height align-center justify-center pa-0 class="parallax-content-home" :v-if="observatorios">
+      <v-layout row wrap fill-height align-center justify-center pa-0 class="parallax-content-home" :v-if="$observatories.getObservatories()">
         <v-flex id="screenTitle" xs12 class="white--text text-xs-center" style="line-height: normal;">
           <div class="display-4-obs ubuntu">Iniciativa SmartLab</div>
           <div class="display-1-obs ubuntu-condensed">Promoção do Trabalho Decente Guiada por Dados</div>
@@ -108,7 +108,10 @@
     },
     computed: {
       observatorios: function() {
+        // console.log(this.$observatories);
+        console.log("chk 1");
         console.log(this.$observatories);
+        console.log(this.$observatories.getObservatories());
         return this.$observatories.observatories;
       }
     },
