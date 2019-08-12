@@ -249,7 +249,7 @@
                                     each_row.fillOpacity :
                                     0.5
                                   ),
-                    radius: value != null ? value * multiplier + base : 0
+                    radius: value != null ? value > 0 ? value * multiplier + base : base : 0
                   }
                 ).on("click", this.circleClick);
 
