@@ -173,7 +173,7 @@
               </v-list-tile-content>
               <v-list-tile-action style="min-width: 120px">
                 <v-layout row wrap>
-                  <v-layout px-1 v-for="(search_item, indxSearch) in getObservatoriesSearchOptions()"
+                  <v-layout px-1 v-for="(search_item, indxSearch) in $observatories.getObservatoriesSearchOptions()"
                   :key="'search_item_obs_' + indxSearch">
                     <v-layout column wrap align-center
                       v-if="data.item.exclude_from == null || data.item.exclude_from == undefined || !data.item.exclude_from.includes(search_item.id)"
@@ -626,14 +626,16 @@
           title: ''
         };
 
-        let tmpObs = this.getObservatoryById(this.identifyObservatory(this.$route.path.split('/')[1]));
-        if (tmpObs) {
-          observ = tmpObs;
-        } else if (this.$route.path.indexOf("saibamais") != -1){ //Sobre
-          observ = {
-            short_title: "Sobre",
-            title: "Sobre"
-          };
+        if (this.$observatories.getObservatories() !== null && this.$observatories.getObservatories() != undefined) {
+          let tmpObs = this.$observatories.getObservatoryById(this.identifyObservatory(this.$route.path.split('/')[1]));
+          if (tmpObs) {
+            observ = tmpObs;
+          } else if (this.$route.path.indexOf("saibamais") != -1){ //Sobre
+            observ = {
+              short_title: "Sobre",
+              title: "Sobre"
+            };
+          }
         }
 
         if (!this.visibleTitle || (this.$route && (this.$route.path.indexOf("localidade") != -1 || 

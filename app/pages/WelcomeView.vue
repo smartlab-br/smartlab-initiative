@@ -108,7 +108,8 @@
     },
     computed: {
       observatorios: function() {
-        return this.getObservatories();
+        console.log(this.$observatories);
+        return this.$observatories.observatories;
       }
     },
     methods: {
