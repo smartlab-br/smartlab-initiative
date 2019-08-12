@@ -1,8 +1,10 @@
 <template>
   <v-layout primary row wrap>
     <v-layout xs12 sm8 offset-xs0 offset-sm2 class="py-5" style="width:100%"> 
-      <v-container grid-list-lg style="display:block;"> 
-        <flpo-sobre-layout :v-if="content && activeTab" :content="content" :active-tab="activeTab"></flpo-sobre-layout>
+      <v-container :v-if="$about && $about.about" grid-list-lg style="display:block;"> 
+        <flpo-sobre-layout :content="$about.about" :active-tab="activeTab"
+          :v-if="$about.about != null && $about.about != undefined && activeTab">
+        </flpo-sobre-layout>
       </v-container>
     </v-layout>
   </v-layout>
@@ -23,9 +25,9 @@
       activeTab: function() {
         return this.$route.params.tab;
       },
-      content: function() {
-        return this.getFullAbout();
-      }
+      // content: function() {
+      //   return this.$about.getFullAbout();
+      // }
     },
     mounted: function() {
       this.changeTheme('default');

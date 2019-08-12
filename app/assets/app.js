@@ -45,9 +45,11 @@ Vue.use(VueCookies)
 // 1.1 Singletons
 import ObservatoriesModel from './model/singleton/observatoriesModel'
 Vue.prototype.$observatories = new ObservatoriesModel();
+import AboutModel from './model/singleton/aboutModel'
+Vue.prototype.$about = new AboutModel();
 // 1.2 Mixins
-import AboutModel from '../mixins/model/aboutModel.js'
-Vue.use(AboutModel)
+// import AboutModel from '../mixins/model/aboutModel.js'
+// Vue.use(AboutModel)
 import DimensionsModel from '../mixins/model/dimensionsModel.js'
 Vue.use(DimensionsModel)
 import IndicatorsModel from '../mixins/model/indicatorsModel.js'
