@@ -133,7 +133,6 @@
         //   })
         //   .legend(false);
         // }
-
         let grafico = viz
             .select(containerId)  // container DIV to hold the visualization
             .data(slicedDS)  // data to use with the visualization
@@ -141,6 +140,19 @@
             .topojsonId((t) => { return t.properties[options.topo_key]; })
             .detectResize(true);
             
+
+        if (options.clickable){
+          let searchFunction = this.searchAnalysisUnit;
+          viz = viz.on("click", function(d) {
+                let place = {};
+                place.id = String(d[options.id_field]);
+                place.to = '/localidade/' + d[options.id_field] + '?';
+                if (this._tooltip) {
+                        this._tooltipClass.data([]).render();
+                }                
+                searchFunction(place);
+              });     
+        }  
         return grafico;
       },
 
@@ -181,6 +193,7 @@
 
       generateViz(options) {
         var tooltip_function = options.tooltip_function ? options.tooltip_function : this.defaultTooltip;
+        options.clickable = options.clickable == true || options.clickable == undefined  ? true : false;
         var headers = this.headers;
         var removed_text_list = options.removed_text_list;
 
