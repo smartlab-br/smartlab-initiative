@@ -1,9 +1,9 @@
 <template>
   <v-layout primary row wrap>
     <v-layout xs12 sm8 offset-xs0 offset-sm2 class="py-5" style="width:100%"> 
-      <v-container :v-if="$about && $about.about" grid-list-lg style="display:block;"> 
-        <flpo-sobre-layout :content="$about.about" :active-tab="activeTab"
-          :v-if="$about.about != null && $about.about != undefined && activeTab">
+      <v-container :v-if="sobre" grid-list-lg style="display:block;"> 
+        <flpo-sobre-layout :content="sobre" :active-tab="activeTab"
+          :v-if="sobre && activeTab">
         </flpo-sobre-layout>
       </v-container>
     </v-layout>
@@ -13,13 +13,19 @@
   export default {
     data () {
       return {
+        sobre: null
       }
     },
     created () {
-      // this.content = this.getFullAbout();
       // fetch the data when the view is created and the data is
       // already being observed
       // fetchData();
+      let tmpAbout = this.$about.getAbout();
+      if (tmpAbout instanceof Promise) {
+        tmpAbout.then((result) => { this.sobre = result });
+      } else {
+        this.sobre = tmpAbout;
+      }
     },
     computed: {
       activeTab: function() {

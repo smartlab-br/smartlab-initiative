@@ -1,31 +1,25 @@
 import YamlFetcherService from '../../service/singleton/yamlFetcher'
 
 class AboutModel {
-    constructor(content) {
-        if (content) {
-            this.observatories = content;
-        } else {
-            this.isLoading = true;
-            YamlFetcherService.loadYaml("br/about", this.setAbout, this);
-        }
-    }
+    constructor(content) { }
 
-    setAbout(content, context) {
-        context.about = content;
-        context.isLoading = false;
-    }
-
-    getAbout() {
-        if (!this.about && !this.isLoading) { // Start loading only once
-            this.isLoading = true;
-            YamlFetcherService.loadYaml("br/about", this.setAbout, this);
-        }
-    }
-
-    getFullAbout() {
+    setAbout(content) {
+        this.about = content;
+        this.isLoading = false;
         return this.about;
     }
+
     getAbout() {
+        if ((this.about == null && this.about == undefined) && !this.isLoading) { // Start loading only once
+            this.isLoading = true;
+            return YamlFetcherService.loadYaml("br/about")
+                .then((result) => { return this.setAbout(result); });
+        } else {
+            return this.about;
+        }
+    }
+
+    getPlatform() {
         return this.about.plataforma.sections;
     }
     getHistory() {
