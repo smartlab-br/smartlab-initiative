@@ -298,7 +298,7 @@
        :class="{'px-2 py-4': $vuetify.breakpoint.xsAndup, 
                 'px-3 py-4': $vuetify.breakpoint.mdAndDown, 
                 'px-5 py-5': $vuetify.breakpoint.lgAndUp}" app>
-        <v-flex xs3 sm3 md1 lg2 xl2 :class="{'pt-5 pb-3': $vuetify.breakpoint.smAndDown }" >
+        <v-flex xs2 sm1 md1 lg2 xl2 :class="{'pt-5 pb-3': $vuetify.breakpoint.smAndDown }" >
              <v-layout row wrap class="text-xs-left">
                <v-flex xs12>
                 <a class="white--text" v-on:click="pushRoute('/saibamais/smartlab', false)">
@@ -307,7 +307,7 @@
                </v-flex>
              </v-layout>
         </v-flex>
-        <v-flex xs9 sm6 md6 lg5 xl4 class="text-xs-right text-sm-center" :class="{'pt-5 pb-3': $vuetify.breakpoint.smAndDown }">
+        <v-flex xs10 sm11 md7 lg5 xl4 class="text-xs-right text-md-center" :class="{'pt-5 pb-3': $vuetify.breakpoint.smAndDown }">
           <!-- TODO Devolver os ajustes de tamanho depois do lançamento
             max-height="80%"
             min-height="50%" -->
@@ -353,16 +353,22 @@
             max-height="80%"
             min-height="50%"
           />
+          <img v-if="this.identifyObservatory(this.$route.path.split('/')[1]) == 'des'"
+            v-on:click="pushRoute('http://www.onumulheres.org.br/', true)" 
+            src="/static/smartlab/onumulheres.svg"
+            class="cursor-pointer mb-2 ml-0" alt="ONU Mulheres"
+            height="30px"
+          />
           
         </v-flex>
-        <v-flex xs6 sm3 md3 lg3 xl3 class="text-xs-left text-sm-right text-md-center"
+        <v-flex xs6 sm6 md2 lg3 xl3 class="text-xs-left text-sm-left text-md-center"
             :class="{'pt-5 pb-3': $vuetify.breakpoint.smAndDown }" >
               <a class="white--text mr-3" v-on:click="pushRoute('https://github.com/smartlab-br', true)"><v-icon color="white">fab fa-github</v-icon></a>
               <a class="white--text mr-3" v-on:click="pushRoute('https://hub.docker.com/u/smartlab/', true)"><v-icon color="white">fab fa-docker</v-icon></a>
               <a class="white--text mr-3" v-on:click="pushRoute('', true)"><v-icon color="white">fab fa-facebook</v-icon></a>
               <a class="white--text" v-on:click="pushRoute('', true)"><v-icon color="white">fab fa-twitter</v-icon></a>
         </v-flex>
-        <v-flex xs6 sm12 md2 lg2 xl3 class="text-xs-right text-sm-center text-md-right"
+        <v-flex xs6 sm6 md2 lg2 xl3 class="text-xs-right text-sm-right text-md-right"
             :class="{'pt-5 pb-3': $vuetify.breakpoint.smAndDown }" >
               <v-icon class="mr-2" color="white">fab fa-lic</v-icon><span class="hidden-xs-only hidden-md-only">Licenças: </span> 
               <a class="white--text" v-on:click="pushRoute('https://creativecommons.org/licences/by-nc-sa/4.0/', true)"><u>CC BY 4.0</u></a>
