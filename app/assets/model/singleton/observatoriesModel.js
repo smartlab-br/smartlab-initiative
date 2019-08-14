@@ -25,19 +25,16 @@ class ObservatoriesModel {
             rippleColor: 'deep-purple--text darken-2',
             color: colors.deepPurple.darken4, textColor: "deep-purple--text darken-4" }
     ];
-    isLoading = false;
 
     constructor() {}
 
     setObservatories(content) {
         this.observatories = content.observatorios;
-        this.isLoading = false;
         return this.observatories;
     }
 
     getObservatories() {
-        if ((this.observatories == null && this.observatories == undefined) && !this.isLoading) { // Start loading only once
-            this.isLoading = true;
+        if (this.observatories == null && this.observatories == undefined) { // Start loading only once
             return YamlFetcherService.loadYaml("br/observatorios")
                 .then((result) => { 
                     return this.setObservatories(result);
