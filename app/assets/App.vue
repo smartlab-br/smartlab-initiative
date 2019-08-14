@@ -356,8 +356,8 @@
           <img v-if="this.identifyObservatory(this.$route.path.split('/')[1]) == 'des'"
             v-on:click="pushRoute('http://www.onumulheres.org.br/', true)" 
             src="/static/smartlab/onumulheres.svg"
-            class="cursor-pointer mb-2 ml-0" alt="ONU Mulheres"
-            height="30px"
+            class="cursor-pointer ml-2" alt="ONU Mulheres"
+            height="20px" style="margin-bottom: 12px;"
           />
           
         </v-flex>
