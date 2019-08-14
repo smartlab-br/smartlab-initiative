@@ -583,6 +583,7 @@
         currentAnalysisUnit: null,
         currentPlaceType: null,
         observatorios: null,
+        dim: { label: null }
       }
     },
     created () {    
@@ -593,6 +594,12 @@
           dimensions: 'SUCCESS', indicators: 'SUCCESS',
           places: 'LOADING'//, mpt_units: 'LOADING'
         }
+      }
+
+      let observ = this.identifyObservatory(this.$route.path.split('/')[1]);
+      if (observ != null && (this.$route.query.dimensao || this.$route.params.idLocalidade)) {
+        this.$dimensions.getDimensionByObservatoryAndId(observ, this.$route.query.dimensao)
+          .then((result) => { this.dim = result; });
       }
       
       this.buildAllSearchOptions();
@@ -654,12 +661,8 @@
       computedSubtitle: function() {
         let observ = this.identifyObservatory(this.$route.path.split('/')[1]);
 
-        let dim = { label: null };
-        if (observ != null && (this.$route.query.dimensao || this.$route.params.idLocalidade)) {
-          dim = this.getDimensionByObservatoryAndId(observ, this.$route.query.dimensao);
-        }
-        if (!this.visibleTitle && dim && dim.short_desc){
-          return dim.short_desc;
+        if (!this.visibleTitle && this.dim && this.dim.short_desc){
+          return this.dim.short_desc;
         }
 
         if (observ != null && this.$route.params.idEstudo ){

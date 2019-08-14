@@ -461,7 +461,7 @@
    
     created () {
       let tmpIdObs = this.identifyObservatory(this.$route.path.split('/')[1]);
-      this.getDimensions(tmpIdObs, this.setSiblingDimensions);
+      this.$dimensions.getDimensions(tmpIdObs, this.setSiblingDimensions);
       this.idObservatorio = tmpIdObs;
       
       let scope = this.getEscopo(this.$route.params.idLocalidade);

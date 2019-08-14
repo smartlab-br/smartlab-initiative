@@ -395,7 +395,7 @@
       },
 
       setDimensionsArea() {
-        this.getDimensions(this.idObservatorio, this.setDimensionsStyles);
+        this.$dimensions.getDimensions(this.idObservatorio, this.setDimensionsStyles);
       },
 
       setDimensionsStyles(content) {
