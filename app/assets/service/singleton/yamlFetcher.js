@@ -4,15 +4,18 @@ import axios from 'axios'
 class YamlFetcherService {
     constructor() {}
 
-    static async loadYaml(location, cbFunction, context) {
+    static loadYaml(location, cbFunction, context) {
         let basePath = "/static/smartlab-initiative-viewconf/";
         if (this.$store && this.$store.state && this.$store.state.GIT_VIEWCONF_TAG_URL) {
             basePath = this.$store.state.GIT_VIEWCONF_TAG_URL;
         } else if (process.env.GIT_VIEWCONF_TAG_URL) {
             basePath = process.env.GIT_VIEWCONF_TAG_URL;
         }
-        let response = await axios.get(basePath + location + ".yaml");
-        cbFunction(yaml.safeLoad(response.data, { json: true }), context);
+        return axios.get(basePath + location + ".yaml")
+            .then((response) => {
+                return yaml.safeLoad(response.data, { json: true });
+            });
+        
     }
 
     async loadYamlArray(currentStruct, yamlArray, finalCbFunction) {

@@ -27,26 +27,22 @@ class ObservatoriesModel {
     ];
     isLoading = false;
 
-    constructor() {
-        this.isLoading = true;
-        YamlFetcherService.loadYaml("br/observatorios", this.setObservatories, this);
-    }
+    constructor() {}
 
-    setObservatories(content, context) {
-        context.observatories = content.observatorios;
-        context.isLoading = false;
+    setObservatories(content) {
+        this.observatories = content.observatorios;
+        this.isLoading = false;
+        return this.observatories;
     }
 
     getObservatories() {
-        console.log(this);
         if ((this.observatories == null && this.observatories == undefined) && !this.isLoading) { // Start loading only once
             this.isLoading = true;
-            console.log("chk 2");
-            console.log(YamlFetcherService.loadYaml("br/observatorios", this.setObservatories));
-            YamlFetcherService.loadYaml("br/observatorios", this.setObservatories);
+            return YamlFetcherService.loadYaml("br/observatorios")
+                .then((result) => { 
+                    return this.setObservatories(result);
+                });
         } else {
-            console.log("chk 3");
-            console.log(this.observatories);
             return this.observatories;
         }
     }

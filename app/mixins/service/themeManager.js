@@ -102,6 +102,7 @@ const ThemeManager = {
       },
       methods: {
         getObsTheme(observatorio) {
+          console.log(observatorio);
           return this.themeLibrary[observatorio];
         },
         

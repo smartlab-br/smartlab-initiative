@@ -582,6 +582,7 @@
         hintAutocomplete: '',
         currentAnalysisUnit: null,
         currentPlaceType: null,
+        observatorios: null,
       }
     },
     created () {    
@@ -626,7 +627,7 @@
           title: ''
         };
 
-        if (this.$observatories.getObservatories() !== null && this.$observatories.getObservatories() != undefined) {
+        if (this.observatorios) {
           let tmpObs = this.$observatories.getObservatoryById(this.identifyObservatory(this.$route.path.split('/')[1]));
           if (tmpObs) {
             observ = tmpObs;
