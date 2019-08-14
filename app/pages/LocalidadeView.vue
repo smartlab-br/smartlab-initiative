@@ -674,6 +674,7 @@
       },
 
       setDimension(content) {
+        let escopo = this.getEscopo(this.$route.params.idLocalidade);
         this.dimStruct = content;
         if (content.tematicos) {
           let thematicDatasets = ['centralindicadores'];
