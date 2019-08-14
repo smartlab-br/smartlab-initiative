@@ -5,14 +5,12 @@ class DimensionsModel {
 
     setDimensions(content) {
         this.dimensions = content;
-        this.isLoading = false;
         return this.dimensions;
     }
 
     getDimensions(idObservatorio = null, cbFunction = null) {
         if (idObservatorio === null || idObservatorio === undefined) {
-            if ((this.dimensions == null && this.dimensions == undefined) && !this.isLoading) { // Start loading only once
-                this.isLoading = true;
+            if (this.dimensions == null && this.dimensions == undefined) { // Start loading only once
                 return YamlFetcherService.loadYaml("br/dimensao/base")
                     .then((result) => {
                         if (cbFunction) {
@@ -33,7 +31,7 @@ class DimensionsModel {
     }
     
     findDimensionById(id) {
-        if (this.dimensions && this.isLoading) { // Only when loaded
+        if (this.dimensions) { // Only when loaded
             for (var eachDim of this.dimensions.dimensoes) {
                 if (eachDim.id == id) return eachDim;
             }

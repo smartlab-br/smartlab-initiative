@@ -5,13 +5,11 @@ class AboutModel {
 
     setAbout(content) {
         this.about = content;
-        this.isLoading = false;
         return this.about;
     }
 
     getAbout() {
-        if ((this.about == null && this.about == undefined) && !this.isLoading) { // Start loading only once
-            this.isLoading = true;
+        if (this.about == null && this.about == undefined) { // Start loading only once
             return YamlFetcherService.loadYaml("br/about")
                 .then((result) => { return this.setAbout(result); });
         } else {
