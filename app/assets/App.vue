@@ -173,7 +173,7 @@
               </v-list-tile-content>
               <v-list-tile-action style="min-width: 120px">
                 <v-layout row wrap>
-                  <v-layout px-1 v-for="(search_item, indxSearch) in getObservatoriesSearchOptions()"
+                  <v-layout px-1 v-for="(search_item, indxSearch) in $observatories.getObservatoriesSearchOptions()"
                   :key="'search_item_obs_' + indxSearch">
                     <v-layout column wrap align-center
                       v-if="data.item.exclude_from == null || data.item.exclude_from == undefined || !data.item.exclude_from.includes(search_item.id)"
@@ -595,6 +595,8 @@
         hintAutocomplete: '',
         currentAnalysisUnit: null,
         currentPlaceType: null,
+        observatorios: null,
+        dim: { label: null }
       }
     },
     created () {    
@@ -605,6 +607,12 @@
           dimensions: 'SUCCESS', indicators: 'SUCCESS',
           places: 'LOADING'//, mpt_units: 'LOADING'
         }
+      }
+
+      let observ = this.identifyObservatory(this.$route.path.split('/')[1]);
+      if (observ != null && (this.$route.query.dimensao || this.$route.params.idLocalidade)) {
+        this.$dimensions.getDimensionByObservatoryAndId(observ, this.$route.query.dimensao)
+          .then((result) => { this.dim = result; });
       }
       
       this.buildAllSearchOptions();
@@ -639,14 +647,16 @@
           title: ''
         };
 
-        let tmpObs = this.getObservatoryById(this.identifyObservatory(this.$route.path.split('/')[1]));
-        if (tmpObs) {
-          observ = tmpObs;
-        } else if (this.$route.path.indexOf("saibamais") != -1){ //Sobre
-          observ = {
-            short_title: "Sobre",
-            title: "Sobre"
-          };
+        if (this.observatorios) {
+          let tmpObs = this.$observatories.getObservatoryById(this.identifyObservatory(this.$route.path.split('/')[1]));
+          if (tmpObs) {
+            observ = tmpObs;
+          } else if (this.$route.path.indexOf("saibamais") != -1){ //Sobre
+            observ = {
+              short_title: "Sobre",
+              title: "Sobre"
+            };
+          }
         }
 
         if (!this.visibleTitle || (this.$route && (this.$route.path.indexOf("localidade") != -1 || 
@@ -664,12 +674,8 @@
       computedSubtitle: function() {
         let observ = this.identifyObservatory(this.$route.path.split('/')[1]);
 
-        let dim = { label: null };
-        if (observ != null && (this.$route.query.dimensao || this.$route.params.idLocalidade)) {
-          dim = this.getDimensionByObservatoryAndId(observ, this.$route.query.dimensao);
-        }
-        if (!this.visibleTitle && dim && dim.short_desc){
-          return dim.short_desc;
+        if (!this.visibleTitle && this.dim && this.dim.short_desc){
+          return this.dim.short_desc;
         }
 
         if (observ != null && this.$route.params.idEstudo ){
