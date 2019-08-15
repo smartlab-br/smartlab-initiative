@@ -141,18 +141,18 @@
             .detectResize(true);
             
 
-        if (options.clickable){
-          let searchFunction = this.searchAnalysisUnit;
-          viz = viz.on("click", function(d) {
-                let place = {};
-                place.id = String(d[options.id_field]);
-                place.to = '/localidade/' + d[options.id_field] + '?';
-                if (this._tooltip) {
-                        this._tooltipClass.data([]).render();
-                }                
-                searchFunction(place);
-              });     
-        }  
+        // if (options.clickable){
+        //   let searchFunction = this.searchAnalysisUnit;
+        //   viz = viz.on("click", function(d) {
+        //         let place = {};
+        //         place.id = String(d[options.id_field]);
+        //         place.to = '/localidade/' + d[options.id_field] + '?';
+        //         if (this._tooltip) {
+        //                 this._tooltipClass.data([]).render();
+        //         }                
+        //         searchFunction(place);
+        //       });     
+        // }  
         return grafico;
       },
 

@@ -69,10 +69,10 @@ const TooltipManager = {
         
           if (text == '') text = 'Tooltip!';
           text += filter; 
-          if (options && options.clickable){
-            text += "<br/><hr class='tooltip_divider'>";
-            text += "<br/><em>Clique na unidade geográfica para carregá-la</em>";
-          }
+          // if (options && options.clickable){
+          //   text += "<br/><hr class='tooltip_divider'>";
+          //   text += "<br/><em>Clique na unidade geográfica para carregá-la</em>";
+          // }
           return text;
         }
       }
