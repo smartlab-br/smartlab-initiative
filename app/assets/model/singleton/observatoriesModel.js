@@ -45,7 +45,7 @@ class ObservatoriesModel {
     }
     
     getObservatoryById(id) {
-        if (this.observatories && !this.isLoading) {
+        if (this.observatories) {
             for (let item of this.observatories) {
                 if (item.id == id) return item;
             }

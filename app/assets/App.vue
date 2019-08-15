@@ -609,6 +609,13 @@
         }
       }
 
+      let tmpObs = this.$observatories.getObservatories();
+      if (tmpObs instanceof Promise) {
+        tmpObs.then((result) => { this.observatorios = result });
+      } else {
+        this.observatorios = tmpObs;
+      }
+
       let observ = this.identifyObservatory(this.$route.path.split('/')[1]);
       if (observ != null && (this.$route.query.dimensao || this.$route.params.idLocalidade)) {
         this.$dimensions.getDimensionByObservatoryAndId(observ, this.$route.query.dimensao)
