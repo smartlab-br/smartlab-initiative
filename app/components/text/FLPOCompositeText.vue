@@ -58,6 +58,7 @@
           <v-layout row wrap pb-4>
             <flpo-minicard v-for="(miniCard, index) in descSection.cards" :key="index"
               :reactive-filter="reactiveFilter"
+              :custom-filters="customFilters"
               :structure="miniCard" :customFunctions="customFunctions"
               :customParams="customParams" :row-class="descSection.rowClass">
             </flpo-minicard>
@@ -72,6 +73,8 @@
           <flpo-select-emitter
             v-if="descSection.type == 'select'"
             :id = "descSection.id + '_' + id" 
+            :reactive-parent = "reactiveParent"
+            :reactive-filter="reactiveFilter"
             :custom-params="customParams"
             :structure="descSection"
             :custom-functions="customFunctions"
@@ -188,10 +191,11 @@
         dataset: [],
         metadata: [],
         datasetsComplete: 0,
-        reactiveFilter: null
+        reactiveFilter: null,
+        reactiveParent: null
       }
     },
-    props: ['id','activeGroup', 'sectionClass'],
+    props: ['id','activeGroup', 'sectionClass', 'customFilters'],
     created () {
       for (var indxDesc in this.structure) {
         if (this.structure[indxDesc].type === 'chart') {
@@ -213,6 +217,7 @@
     methods: {
       triggerSelect(payload) {
         this.reactiveFilter = payload.item;
+        this.reactiveParent = payload.id;
         this.$emit('selection', payload);
       },
 

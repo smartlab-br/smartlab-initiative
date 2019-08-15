@@ -59,6 +59,7 @@
                       :structure="structure.description"
                       :custom-params="customParams"
                       :custom-functions="customFunctions"
+                      :custom-filters="customFilters"
                       v-on:selection="triggerSelect"
                       v-on:default-selection="triggerDefaultSelect"
                       v-on:resendInvalidInterpol="changeTextToInvalidInterpol">

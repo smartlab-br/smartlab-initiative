@@ -173,7 +173,7 @@
               </v-list-tile-content>
               <v-list-tile-action style="min-width: 120px">
                 <v-layout row wrap>
-                  <v-layout px-1 v-for="(search_item, indxSearch) in getObservatoriesSearchOptions()"
+                  <v-layout px-1 v-for="(search_item, indxSearch) in $observatories.getObservatoriesSearchOptions()"
                   :key="'search_item_obs_' + indxSearch">
                     <v-layout column wrap align-center
                       v-if="data.item.exclude_from == null || data.item.exclude_from == undefined || !data.item.exclude_from.includes(search_item.id)"
@@ -298,7 +298,7 @@
        :class="{'px-2 py-4': $vuetify.breakpoint.xsAndup, 
                 'px-3 py-4': $vuetify.breakpoint.mdAndDown, 
                 'px-5 py-5': $vuetify.breakpoint.lgAndUp}" app>
-        <v-flex xs3 sm3 md1 lg2 xl2 :class="{'pt-5 pb-3': $vuetify.breakpoint.smAndDown }" >
+        <v-flex xs2 sm1 md1 lg2 xl2 :class="{'pt-5 pb-3': $vuetify.breakpoint.smAndDown }" >
              <v-layout row wrap class="text-xs-left">
                <v-flex xs12>
                 <a class="white--text" v-on:click="pushRoute('/saibamais/smartlab', false)">
@@ -307,7 +307,7 @@
                </v-flex>
              </v-layout>
         </v-flex>
-        <v-flex xs9 sm6 md6 lg5 xl4 class="text-xs-right text-sm-center" :class="{'pt-5 pb-3': $vuetify.breakpoint.smAndDown }">
+        <v-flex xs10 sm11 md7 lg5 xl4 class="text-xs-right text-md-center" :class="{'pt-5 pb-3': $vuetify.breakpoint.smAndDown }">
           <!-- TODO Devolver os ajustes de tamanho depois do lançamento
             max-height="80%"
             min-height="50%" -->
@@ -346,16 +346,29 @@
             class="cursor-pointer mb-1 ml-0" alt="Instituto Brasileiro de Geografia e Estatística"
             height="50px"
           />
+          <img v-if="this.identifyObservatory(this.$route.path.split('/')[1]) == 'des'"
+            v-on:click="pushRoute('https://www.pactoglobal.org.br', true)" 
+            src="/static/smartlab/pacto.svg"
+            class="cursor-pointer mb-1 ml-0" alt="Pacto Global - Rede Brasil"
+            max-height="80%"
+            min-height="50%"
+          />
+          <img v-if="this.identifyObservatory(this.$route.path.split('/')[1]) == 'des'"
+            v-on:click="pushRoute('http://www.onumulheres.org.br/', true)" 
+            src="/static/smartlab/onumulheres.svg"
+            class="cursor-pointer ml-2" alt="ONU Mulheres"
+            height="20px" style="margin-bottom: 12px;"
+          />
           
         </v-flex>
-        <v-flex xs6 sm3 md3 lg3 xl3 class="text-xs-left text-sm-right text-md-center"
+        <v-flex xs6 sm6 md2 lg3 xl3 class="text-xs-left text-sm-left text-md-center"
             :class="{'pt-5 pb-3': $vuetify.breakpoint.smAndDown }" >
               <a class="white--text mr-3" v-on:click="pushRoute('https://github.com/smartlab-br', true)"><v-icon color="white">fab fa-github</v-icon></a>
               <a class="white--text mr-3" v-on:click="pushRoute('https://hub.docker.com/u/smartlab/', true)"><v-icon color="white">fab fa-docker</v-icon></a>
               <a class="white--text mr-3" v-on:click="pushRoute('', true)"><v-icon color="white">fab fa-facebook</v-icon></a>
               <a class="white--text" v-on:click="pushRoute('', true)"><v-icon color="white">fab fa-twitter</v-icon></a>
         </v-flex>
-        <v-flex xs6 sm12 md2 lg2 xl3 class="text-xs-right text-sm-center text-md-right"
+        <v-flex xs6 sm6 md2 lg2 xl3 class="text-xs-right text-sm-right text-md-right"
             :class="{'pt-5 pb-3': $vuetify.breakpoint.smAndDown }" >
               <v-icon class="mr-2" color="white">fab fa-lic</v-icon><span class="hidden-xs-only hidden-md-only">Licenças: </span> 
               <a class="white--text" v-on:click="pushRoute('https://creativecommons.org/licences/by-nc-sa/4.0/', true)"><u>CC BY 4.0</u></a>
@@ -541,8 +554,8 @@
             blocked: false,
             rippleColor: 'indigo--text darken-3' },
           { app_icon: 'coord-06', title: 'Diversidade no Trabalho',
-            to: '', external: false,
-            blocked: true,
+            to: '/diversidade', external: false,
+            blocked: false,
             rippleColor: 'deep-purple--text darken-2' },
           // { icon: 'flight_takeoff', title: 'Migrações e Trabalho',
           //   to: '/', external: false }
@@ -582,6 +595,8 @@
         hintAutocomplete: '',
         currentAnalysisUnit: null,
         currentPlaceType: null,
+        observatorios: null,
+        dim: { label: null }
       }
     },
     created () {    
@@ -592,6 +607,12 @@
           dimensions: 'SUCCESS', indicators: 'SUCCESS',
           places: 'LOADING'//, mpt_units: 'LOADING'
         }
+      }
+
+      let observ = this.identifyObservatory(this.$route.path.split('/')[1]);
+      if (observ != null && (this.$route.query.dimensao || this.$route.params.idLocalidade)) {
+        this.$dimensions.getDimensionByObservatoryAndId(observ, this.$route.query.dimensao)
+          .then((result) => { this.dim = result; });
       }
       
       this.buildAllSearchOptions();
@@ -626,14 +647,16 @@
           title: ''
         };
 
-        let tmpObs = this.getObservatoryById(this.identifyObservatory(this.$route.path.split('/')[1]));
-        if (tmpObs) {
-          observ = tmpObs;
-        } else if (this.$route.path.indexOf("saibamais") != -1){ //Sobre
-          observ = {
-            short_title: "Sobre",
-            title: "Sobre"
-          };
+        if (this.observatorios) {
+          let tmpObs = this.$observatories.getObservatoryById(this.identifyObservatory(this.$route.path.split('/')[1]));
+          if (tmpObs) {
+            observ = tmpObs;
+          } else if (this.$route.path.indexOf("saibamais") != -1){ //Sobre
+            observ = {
+              short_title: "Sobre",
+              title: "Sobre"
+            };
+          }
         }
 
         if (!this.visibleTitle || (this.$route && (this.$route.path.indexOf("localidade") != -1 || 
@@ -651,12 +674,8 @@
       computedSubtitle: function() {
         let observ = this.identifyObservatory(this.$route.path.split('/')[1]);
 
-        let dim = { label: null };
-        if (observ != null && (this.$route.query.dimensao || this.$route.params.idLocalidade)) {
-          dim = this.getDimensionByObservatoryAndId(observ, this.$route.query.dimensao);
-        }
-        if (!this.visibleTitle && dim && dim.short_desc){
-          return dim.short_desc;
+        if (!this.visibleTitle && this.dim && this.dim.short_desc){
+          return this.dim.short_desc;
         }
 
         if (observ != null && this.$route.params.idEstudo ){

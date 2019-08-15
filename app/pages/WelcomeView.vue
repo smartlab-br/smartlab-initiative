@@ -4,7 +4,7 @@
       <!-- <v-parallax xs12 class="bg-parallax" height="auto" src="static/parallax/home.png"></v-parallax>-->
       <v-layout xs12 class="bg-parallax-home" height="auto" style="background-image:url('/static/parallax/td.jpg');background-position: center center; background-size: cover;"></v-layout> 
       <v-layout xs12 class="bg-parallax-home ma-0"></v-layout>
-      <v-layout row wrap fill-height align-center justify-center pa-0 class="parallax-content-home" :v-if="observatorios">
+      <v-layout row wrap fill-height align-center justify-center pa-0 class="parallax-content-home" v-if="observatorios">
         <v-flex id="screenTitle" xs12 class="white--text text-xs-center" style="line-height: normal;">
           <div class="display-4-obs ubuntu">Iniciativa SmartLab</div>
           <div class="display-1-obs ubuntu-condensed">Promoção do Trabalho Decente Guiada por Dados</div>
@@ -76,6 +76,7 @@
         
         readMoreLimit: 437,
         
+        observatorios: null,
         obsSlice: 0,
         obsSliceSize: 2,
         obsSliceClass: 'xs12 sm6 md4 xl2',
@@ -83,11 +84,13 @@
       }
     },
     created () {
-      // this.parceiros = this.getPartners();
-      // this.conheca = this.getAbout();
-      // this.history = this.getHistory();
-      // fetch the data when the view is created and the data is
-      // already being observed
+      let tmpObs = this.$observatories.getObservatories();
+      if (tmpObs instanceof Promise) {
+        tmpObs.then((result) => { this.observatorios = result });
+      } else {
+        this.observatorios = tmpObs;
+      }
+      
       if (this.$vuetify.breakpoint.smAndDown) {
         this.obsMaxSlice = 11;
         this.obsSlice = 0;
@@ -107,9 +110,6 @@
       window.removeEventListener('resize', this.resizeFirstSection);
     },
     computed: {
-      observatorios: function() {
-        return this.getObservatories();
-      }
     },
     methods: {
       assessPageBottom() {

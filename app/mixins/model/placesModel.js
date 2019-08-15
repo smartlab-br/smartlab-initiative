@@ -309,7 +309,9 @@ const PlacesModel = {
                 localidade.tipo = 'UF';
                 localidade.img = "/static/thumbs/municipios/" + id + ".jpg";
 
-                cb(localidade, map);
+                if (cb){
+                  cb(localidade, map);
+                }
               }, error => {
                 console.error(error.toString());
                 this.sendError("Falha ao buscar dados do estado");
@@ -354,8 +356,9 @@ const PlacesModel = {
                 localidade.tipo = 'Município';
                 localidade.img = "/static/thumbs/municipios/" + id + ".jpg";
                 this.localidade = localidade;
-
-                cb(localidade, map);
+                if (cb){
+                  cb(localidade, map);
+                }
               }, error => {
                 console.error(error.toString());
                 this.sendError("Falha ao buscar dados do município");

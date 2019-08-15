@@ -219,6 +219,14 @@
       },
 
       setFilter(payload) {
+
+        //Limpa filtros dos selects que tem payload como pai (parent)
+        for (let item of this.structure.description) {
+          if (item.type &&  item.type == "select" && payload.id.includes(item.parent)){
+            this.customFilters[item.selection.rules.api.args[0].named_prop] = null;
+          }
+        }
+
         if (payload.type && payload.type === 'switch-group') {
           this.customParams.enabled = payload.enabled;
         } else if (payload.type && payload.type === 'check') {

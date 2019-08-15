@@ -356,9 +356,9 @@
             let reg = /de \d{4} a \d{4}/g;
             return str.match(reg);
             },
-          get_text_from_parentheses: function(str){ 
+          get_text_from_parentheses_ds: function(d, str){ 
             let reg = /\(.*\)/;
-            var returnStr = str.match(reg);
+            var returnStr = String(str).match(reg);
             returnStr = String(returnStr).replace('(', '').replace(')', '');
             return returnStr;
             },
@@ -461,7 +461,7 @@
    
     created () {
       let tmpIdObs = this.identifyObservatory(this.$route.path.split('/')[1]);
-      this.getDimensions(tmpIdObs, this.setSiblingDimensions);
+      this.$dimensions.getDimensions(tmpIdObs, this.setSiblingDimensions);
       this.idObservatorio = tmpIdObs;
       
       let scope = this.getEscopo(this.$route.params.idLocalidade);
@@ -674,6 +674,7 @@
       },
 
       setDimension(content) {
+        let escopo = this.getEscopo(this.$route.params.idLocalidade);
         this.dimStruct = content;
         if (content.tematicos) {
           let thematicDatasets = ['centralindicadores'];
