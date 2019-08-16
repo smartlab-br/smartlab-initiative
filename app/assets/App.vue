@@ -616,12 +616,6 @@
         this.observatorios = tmpObs;
       }
 
-      let observ = this.identifyObservatory(this.$route.path.split('/')[1]);
-      if (observ != null && (this.$route.query.dimensao || this.$route.params.idLocalidade)) {
-        this.$dimensions.getDimensionByObservatoryAndId(observ, this.$route.query.dimensao)
-          .then((result) => { this.dim = result; });
-      }
-      
       this.buildAllSearchOptions();
       this.themeEval();
     },
@@ -754,6 +748,14 @@
       window.addEventListener('scroll', this.assessVisibleLeftDrawerTitle);
     },
     watch: {
+      '$route.fullPath': function(newVal, oldVal) {
+        this.dim = { label: null }
+        let observ = this.identifyObservatory(this.$route.path.split('/')[1]);
+        if (observ != null && (this.$route.query.dimensao || this.$route.params.idLocalidade)) {
+          this.$dimensions.getDimensionByObservatoryAndId(observ, this.$route.query.dimensao)
+            .then((result) => { this.dim = result; });
+        }
+      },
       gsFavLocation(newVal, oldVal) {
         if (newVal) {
           this.$cookies.set("currentAnalysisUnit", newVal.id, -1); // Never expires
