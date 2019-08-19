@@ -85,12 +85,12 @@
     },
     created () {
       let tmpObs = this.$observatories.getObservatories();
-      if (tmpObs instanceof Promise) {
+      if ((tmpObs instanceof Promise) || tmpObs.then) {
         tmpObs.then((result) => { this.observatorios = result });
       } else {
         this.observatorios = tmpObs;
       }
-      
+
       if (this.$vuetify.breakpoint.smAndDown) {
         this.obsMaxSlice = 11;
         this.obsSlice = 0;

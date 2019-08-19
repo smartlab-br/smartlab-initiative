@@ -21,7 +21,7 @@
       // already being observed
       // fetchData();
       let tmpAbout = this.$about.getAbout();
-      if (tmpAbout instanceof Promise) {
+      if ((tmpAbout instanceof Promise) || tmpAbout.then) {
         tmpAbout.then((result) => { this.sobre = result });
       } else {
         this.sobre = tmpAbout;
