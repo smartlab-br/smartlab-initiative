@@ -296,7 +296,7 @@
         visibleCardMaxIndex: 1, //dois primeiros cards
         custom_functions: {
           concat_values(indicador, value1, value2, value3 = "", value4 = "", value5 = "") {return value1 + ' ' + value2 + ' ' + value3 + ' ' + value4 + ' ' + value5; },
-          calc_subtraction: function(a, b) {  return a - b; },
+          calc_subtraction: function(a, b, c = 0) {  return a - (b - c); },
           calc_complemetary_absolut_from_percentage: function(percentage, abs_total) {
             return (abs_total * (100 - percentage)) / 100;
           },

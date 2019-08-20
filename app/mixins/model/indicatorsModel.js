@@ -196,9 +196,8 @@ const IndicatorsModel = {
           for (let eachRow in sliced) {
             let args = [];
             let addedSelf = false;
-            let nuIndic = Object.assign({}, sliced[eachRow]);
-
             for (let indxCmb in struct) {
+              let nuIndic = Object.assign({}, sliced[eachRow]);
               let fnCmb = functions[struct[indxCmb].function];
 
               for (let indxArgs in struct[indxCmb].fn_args) {
