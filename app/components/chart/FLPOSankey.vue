@@ -7,7 +7,6 @@
 
 <script>
   import * as d3 from 'd3'
-  import * as d3chrom from 'd3-scale-chromatic'
   import * as d3Sankey from 'd3-sankey'
 
   export default {
@@ -67,8 +66,6 @@
               links: lns.map(d => Object.assign({}, d)),
               layout: 32
             });
-
-            const edgeColor = "input";
 
             svg.append("g")
               .selectAll("rect")

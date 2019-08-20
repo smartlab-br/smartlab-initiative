@@ -440,7 +440,7 @@
             this.sendInvalidInterpol
           );
 
-          if (finalLbl && finalLbl !== null && finalLbl !== undefined) {
+          if (finalLbl) {
             this.chartFooter[addedParams.chartId] = finalLbl;
             this.updatedChartFooters++;
             return;

@@ -1,4 +1,4 @@
-import YamlFetcherService from '../../service/singleton/yamlFetcher'
+import YamlFetcherService from '../../service/singleton/yamlFetcherService'
 
 class AboutModel {
     constructor(content) { }
