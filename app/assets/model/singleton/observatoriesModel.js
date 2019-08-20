@@ -1,6 +1,5 @@
 import colors from 'vuetify/es5/util/colors'
-import YamlFetcherService from '../../service/singleton/yamlFetcher'
-import Vue from 'vue';
+import YamlFetcherService from '../../service/singleton/yamlFetcherService'
 
 class ObservatoriesModel {
     observatoriesSearchOptions = [

@@ -325,7 +325,6 @@
 <script>
 
   import BaseObservatorioView from './BaseObservatorioView.vue';
-  import axios from 'axios';
 
   export default {
     extends: BaseObservatorioView,
