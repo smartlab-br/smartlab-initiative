@@ -141,19 +141,30 @@
             .detectResize(true);
             
 
-        // if (options.clickable){
-        //   let searchFunction = this.searchAnalysisUnit;
-        //   viz = viz.on("click", function(d) {
-        //         let place = {};
-        //         place.id = String(d[options.id_field]);
-        //         place.to = '/localidade/' + d[options.id_field] + '?';
-        //         if (this._tooltip) {
-        //                 this._tooltipClass.data([]).render();
-        //         }                
-        //         searchFunction(place);
-        //       });     
-        // }  
+        let searchFunction = this.searchAnalysisUnit;
+        let clickedPlace = "";
+        let hasTouch = this.hasTouch;
+        if (options.clickable){
+          viz = viz.on("click", function(d) {
+                if (clickedPlace == d[options.id_field] || !hasTouch()) {
+                  let place = {};
+                  place.id = String(d[options.id_field]);
+                  place.to = '/localidade/' + d[options.id_field] + '?';
+                  if (this._tooltip) {
+                          this._tooltipClass.data([]).render();
+                  }                
+                  searchFunction(place);
+                }
+                clickedPlace = d[options.id_field];
+              });     
+        }  
         return grafico;
+      },
+
+      hasTouch() { //identify touchable devices (mobile and tablet)
+        return (('ontouchstart' in window) ||       // html5 browsers
+                (navigator.maxTouchPoints > 0) ||   // future IE
+                (navigator.msMaxTouchPoints > 0));  // current IE10
       },
 
       // postGenerate(){
