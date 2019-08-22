@@ -295,10 +295,10 @@
 
   #bg-zoom {
     position: relative;
-    -webkit-animation: bg-zoom 300s 0s infinite;
-    -moz-animation: bg-zoom 300s 0s infinite;
-    -o-animation: bg-zoom 300s 0s infinite;
-    animation: bg-zoom 300s 0s infinite;
+    -webkit-animation: bg-zoom 300s ease-out 0s infinite;
+    -moz-animation: bg-zoom 300s ease-out 0s infinite;
+    -o-animation: bg-zoom 300s ease-out 0s infinite;
+    animation: bg-zoom 300s ease-out 0s infinite;
   }
 
 </style>
