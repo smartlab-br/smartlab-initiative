@@ -468,7 +468,7 @@
       let scope = this.getEscopo(this.$route.params.idLocalidade);
       let auId = this.getIdLocalidadeFromRoute(this.$route.params.idLocalidade);
       let msgErro = this.getMensagemErro(this.$route.params.idLocalidade);
-      
+
       if (tmpIdObs) {
         this.loadYaml("br/observatorio/" + tmpIdObs, this.setObservatorio);
       } else {
@@ -519,6 +519,11 @@
       }
     },
     mounted: function() {
+
+      if (this.$route.params.idLocalidade && this.$cookies.get("currentAnalysisUnit") != this.$route.params.idLocalidade) {
+        this.$cookies.set("currentAnalysisUnit", this.$route.params.idLocalidade, -1); // Never expires
+      }
+      
       this.checkFavoriteAnalysisUnit();
       window.addEventListener('scroll', this.assessPageBottom);
       window.addEventListener('scroll', this.setVisibleCardMaxIndex);

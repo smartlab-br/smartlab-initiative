@@ -41,6 +41,7 @@
       if(this.options.height_proportion){
         this.heightProportion = this.options.height_proportion;
       }
+      this.options.clickable = this.options.clickable == true || this.options.clickable == undefined  ? true : false;
     },
     mounted: function() {
       require('../../node_modules/leaflet/dist/leaflet.js');
@@ -420,21 +421,24 @@
 
       circleClick(e) {
         let tooltip_function = this.options.tooltip_function ? this[this.options.tooltip_function] : this.defaultLeafletTooltip;
-        tooltip_function(e.target, this.headers, this.options.removed_text_list);
+        tooltip_function(e.target, this.headers, this.options.removed_text_list, this.options);
       },
 
       changeCursor(image){
         this.$refs[this.id].style.cursor = image;
       },
 
-      obsTETooltip(target, tooltip_list = [], removed_text_list = []){
+      obsTETooltip(target, tooltip_list = [], removed_text_list = [], options = null){
         let url = "/te/indicadoresmunicipais/rerank?categorias=cd_mun_ibge,cd_uf,cd_indicador,nm_municipio_uf,nu_competencia_max,nu_competencia_min&valor=vl_indicador&agregacao=sum&filtros=nn-vl_indicador,and,in-cd_indicador-'te_ope'-'te_rgt'-'te_nat'-'te_res'-'te_inspecoes'-'te_insp_rgt',and,post-eq-cd_mun_ibge-"+ target.options.rowData.cd_mun_ibge;
         // let url = "/te/indicadoresmunicipais?categorias=cd_mun_ibge,nm_municipio_uf,nu_competencia_max,nu_competencia_min&valor=vl_indicador&agregacao=sum&pivot=cd_indicador&filtros=nn-vl_indicador,and,in-cd_indicador-'te_ope'-'te_rgt'-'te_nat'-'te_res'-'te_inspecoes',and,eq-cd_mun_ibge-"+ target.options.rowData.cd_mun_ibge;
         let urlIndicadores = "/indicadoresmunicipais?categorias=cd_indicador,ds_indicador_radical,nu_competencia,nu_competencia_max,nu_competencia_min,vl_indicador&filtros=nn-vl_indicador,and,in-cd_indicador-'06_01_09_01'-'01_16_02_00'-'01_15_01_00'-'01_14_13_00',and,eq-cd_mun_ibge-"+ target.options.rowData.cd_mun_ibge+",and,eq-nu_competencia-nu_competencia_max&ordenacao=ds_indicador_radical";
         let text = "";
+        if (options && options.clickable){
+          text += "<p class='text-xs-right ma-0'><a href='" + this.getUrlByPlace(target.options.rowData.cd_mun_ibge) + "' class='primary--text font-weight-black'>IR PARA</a></p>";
+        }
         if (this.customParams.filterUrl && this.customParams.filterUrl != ""){
           url = url + this.customParams.filterUrl;
-          text = "Considerados os seguintes filtros: " + this.customParams.filterText;
+          text += "Considerados os seguintes filtros: " + this.customParams.filterText;
         }
         this.changeCursor('wait');
         axios.all([axios(this.getAxiosOptions(url)),
@@ -557,53 +561,58 @@
           }));
       },
 
-      obsTITooltip(target, tooltip_list = [], removed_text_list = []){
-        let urlSinan = "/indicadoresmunicipais?categorias=nm_municipio_uf,ds_agreg_primaria,ds_fonte,nu_competencia_min,nu_competencia_max&valor=vl_indicador&agregacao=sum&filtros=eq-cd_indicador-'06_05_13_00',and,eq-cd_mun_ibge-"+ target.options.rowData.cd_mun_ibge;
+      obsTITooltip(target, tooltip_list = [], removed_text_list = [], options = null){
+        // let urlSinan = "/indicadoresmunicipais?categorias=nm_municipio_uf,ds_agreg_primaria,ds_fonte,nu_competencia_min,nu_competencia_max&valor=vl_indicador&agregacao=sum&filtros=eq-cd_indicador-'06_05_13_00',and,eq-cd_mun_ibge-"+ target.options.rowData.cd_mun_ibge;
         let urlCatMenores = "/sst/cats?categorias=1&valor=nm_municipio_uf,cd_municipio_ibge&agregacao=COUNT&filtros=lt-idade_cat-18,and,eq-cd_municipio_ibge_dv-"+ target.options.rowData.cd_mun_ibge;
         let urlProvaBrasil = "/ti/provabrasil?categorias=nm_municipio_uf,nu_ano_prova_brasil-nu_competencia&valor=vl_indicador&agregacao=sum&filtros=nn-vl_indicador,and,ne-vl_indicador-0,and,eq-nu_ano_prova_brasil-2017,and,eq-cd_tr_fora-1,and,eq-cd_municipio_ibge_dv-"+ target.options.rowData.cd_mun_ibge;
         let urlPotAprendizes = "/indicadoresmunicipais?categorias=nm_municipio_uf,nu_competencia,ds_fonte&valor=vl_indicador&agregacao=sum&filtros=eq-cd_indicador-'12_03_03_00',and,eq-nu_competencia-nu_competencia_max,and,eq-cd_municipio_ibge_dv-"+ target.options.rowData.cd_mun_ibge;
         let urlTENascimento = "/te/indicadoresmunicipais?categorias=nm_municipio_uf&valor=vl_indicador&agregacao=sum&filtros=eq-cd_indicador-'te_nat_idade',and,lt-cast(ds_agreg_primaria as smallint)-18,and,eq-cd_mun_ibge-"+ target.options.rowData.cd_mun_ibge;
-        let urlTEResidencia = "/te/indicadoresmunicipais?categorias=nm_municipio_uf&valor=vl_indicador&agregacao=sum&filtros=eq-cd_indicador-'te_res_idade',and,lt-cast(ds_agreg_primaria as smallint)-18,and,eq-cd_mun_ibge-"+ target.options.rowData.cd_mun_ibge;
+        // let urlTEResidencia = "/te/indicadoresmunicipais?categorias=nm_municipio_uf&valor=vl_indicador&agregacao=sum&filtros=eq-cd_indicador-'te_res_idade',and,lt-cast(ds_agreg_primaria as smallint)-18,and,eq-cd_mun_ibge-"+ target.options.rowData.cd_mun_ibge;
         let urlMapear = "/ti/mapear?categorias=nm_municipio_uf&agregacao=count&filtros=eq-cd_municipio_ibge_dv-"+ target.options.rowData.cd_mun_ibge;
         let urlCenso = "/indicadoresmunicipais?categorias=nm_municipio_uf,ds_agreg_primaria,ds_fonte,nu_competencia&valor=vl_indicador&agregacao=sum&filtros=eq-cd_indicador-'06_01_01_01',and,eq-nu_competencia-nu_competencia_max,and,eq-cd_mun_ibge-"+ target.options.rowData.cd_mun_ibge;
         let urlCensoAgro = "/ti/censoagromunicipal?categorias=nm_municipio_uf,qt_ocupados_menores14&filtros=eq-cod_mun-"+ target.options.rowData.cd_mun_ibge;
         let text = "";
+        if (options && options.clickable){
+          text += "<p class='text-xs-right ma-0'><a href='" + this.getUrlByPlace(target.options.rowData.cd_mun_ibge) + "' class='primary--text font-weight-black'>IR PARA</a></p>";
+        }
         if (this.customParams.filterUrl && this.customParams.filterUrl != ""){
-          urlSinan = urlSinan + this.customParams.filterUrl;
+          // urlSinan = urlSinan + this.customParams.filterUrl;
           urlCatMenores = urlCatMenores + this.customParams.filterUrl;
           urlProvaBrasil = urlProvaBrasil + this.customParams.filterUrl;
           urlPotAprendizes = urlPotAprendizes + this.customParams.filterUrl;
           urlTENascimento = urlTENascimento + this.customParams.filterUrl;
-          urlTEResidencia = urlTEResidencia + this.customParams.filterUrl;
+          // urlTEResidencia = urlTEResidencia + this.customParams.filterUrl;
           urlMapear = urlMapear + this.customParams.filterUrl;
           urlCenso = urlCenso + this.customParams.filterUrl;
           urlCensoAgro = urlCensoAgro + this.customParams.filterUrl;
-          text = "Considerados os seguintes filtros: " + this.customParams.filterText;
+          text += "Considerados os seguintes filtros: " + this.customParams.filterText;
         }
-        axios.all([axios(this.getAxiosOptions(urlSinan)),
+        axios.all([
+                  //  axios(this.getAxiosOptions(urlSinan)),
                    axios(this.getAxiosOptions(urlCatMenores)),
                    axios(this.getAxiosOptions(urlProvaBrasil)),
                    axios(this.getAxiosOptions(urlPotAprendizes)),
                    axios(this.getAxiosOptions(urlTENascimento)),
-                   axios(this.getAxiosOptions(urlTEResidencia)),
+                  //  axios(this.getAxiosOptions(urlTEResidencia)),
                    axios(this.getAxiosOptions(urlMapear)),
                    axios(this.getAxiosOptions(urlCenso)),
                    axios(this.getAxiosOptions(urlCensoAgro))])
-          .then(axios.spread((resultSinan, 
+          .then(axios.spread((
+                              // resultSinan, 
                               resultCatMenores, 
                               resultProvaBrasil, 
                               resultPotAprendizes, 
                               resultTENascimento, 
-                              resultTEResidencia, 
+                              // resultTEResidencia, 
                               resultMapear, 
                               resultCenso, 
                               resultCensoAgro) => {
-            let dtSinan = JSON.parse(resultSinan.data).dataset[0];
+            // let dtSinan = JSON.parse(resultSinan.data).dataset[0];
             let dtProvaBrasil = JSON.parse(resultProvaBrasil.data).dataset[0];
             let dtCatMenores = JSON.parse(resultCatMenores.data).dataset[0];
             let dtPotAprendizes = JSON.parse(resultPotAprendizes.data).dataset[0];
             let dtTENascimento = JSON.parse(resultTENascimento.data).dataset[0];
-            let dtTEResidencia = JSON.parse(resultTEResidencia.data).dataset[0];
+            // let dtTEResidencia = JSON.parse(resultTEResidencia.data).dataset[0];
             let dtMapear = JSON.parse(resultMapear.data).dataset[0];
             let dtCenso = JSON.parse(resultCenso.data).dataset[0];
             let dtCensoAgro = JSON.parse(resultCensoAgro.data).dataset[0];
@@ -624,9 +633,9 @@
             text += "<tr><td class='font-weight-bold brown--text'>COM VÍNCULOS DE EMPREGO</td></tr>";
             text += "<tr><td>" + (dtCatMenores && dtCatMenores.agr_count_cd_municipio_ibge ? this.formatNumber(dtCatMenores.agr_count_cd_municipio_ibge,"inteiro") + " notificações de acidentes de menores de 18 anos" : "Não houve notificações de acidentes de menores de 18 anos")+ "</td></tr>";
             text += "<tr><td>Fonte: CATWEB 2012 a 2018</td></tr>";
-            text += "<tr><td class='font-weight-bold orange--text'>SEGUNDO AS NOTIFICAÇÕES SINAN</td></tr>";
-            text += "<tr><td>" + (dtSinan && dtSinan.agr_sum_vl_indicador ? this.formatNumber(dtSinan.agr_sum_vl_indicador,"inteiro") + " notificações relacionadas ao trabalho de "+ dtSinan.ds_agreg_primaria : "Não houve notificações relacionadas ao trabalho de Crianças e Adolescentes ( 0 a 17 anos)") +"</td></tr>";
-            text += "<tr><td>Fonte: MS - SINAN 2007 a 2018</td></tr>";
+            // text += "<tr><td class='font-weight-bold orange--text'>SEGUNDO AS NOTIFICAÇÕES SINAN</td></tr>";
+            // text += "<tr><td>" + (dtSinan && dtSinan.agr_sum_vl_indicador ? this.formatNumber(dtSinan.agr_sum_vl_indicador,"inteiro") + " notificações relacionadas ao trabalho de "+ dtSinan.ds_agreg_primaria : "Não houve notificações relacionadas ao trabalho de Crianças e Adolescentes ( 0 a 17 anos)") +"</td></tr>";
+            // text += "<tr><td>Fonte: MS - SINAN 2007 a 2018</td></tr>";
             text += "<tr><td class='font-weight-bold'>EXPLORADOS PELO TRABALHO ESCRAVO</td></tr>";
             text += "<tr><td class='font-weight-bold red--text'>LOCAL DE NASCIMENTO</td></tr>";
             text += "<tr><td>" + (dtTENascimento && dtTENascimento.agr_sum_vl_indicador ? this.formatNumber(dtTENascimento.agr_sum_vl_indicador,"inteiro") + " menores resgatados do trabalho escravo são naturais do município" : "Não houve menores resgatados do trabalho escravo naturais desse município")+ "</td></tr>";
@@ -645,10 +654,13 @@
           }))
       },
 
-      obsSSTTooltip(target, tooltip_list = [], removed_text_list = []) {
+      obsSSTTooltip(target, tooltip_list = [], removed_text_list = [], options = null) {
+        let text = "";
+        if (options && options.clickable){
+          text += "<p class='text-xs-right ma-0'><a href='" + this.getUrlByPlace(target.options.rowData.cd_municipio_ibge_dv) + "' class='primary--text font-weight-black'>IR PARA</a></p>";
+        }
         if (target.options.rowData.codigo == "sinan"){
           let urlIndicadores = "/indicadoresmunicipais?categorias=nm_municipio_uf,ds_agreg_primaria,ds_fonte&valor=vl_indicador&agregacao=sum&ordenacao=ds_agreg_primaria&filtros=nn-vl_indicador,and,ne-vl_indicador-0,and,in-cd_indicador-'06_05_01_00'-'06_05_02_00'-'06_05_03_00'-'06_05_04_00'-'06_05_05_00'-'06_05_06_00'-'06_05_07_00'-'06_05_08_00'-'06_05_09_00'-'06_05_11_00'-'06_05_12_00',and,ge-nu_competencia-'2012',and,eq-cd_mun_ibge-"+ target.options.rowData.cd_mun_ibge;
-          let text = "";
 //          if (this.customParams.filterUrl && this.customParams.filterUrl != ""){
 //            url = url + this.customParams.filterUrl;
 //            text = "Considerados os seguintes filtros: " + this.customParams.filterText;
@@ -681,10 +693,9 @@
         let txtTipoQtde = "";
         let txtColor = "";
         let filtro = "";
-        let text = "";
         if (this.customParams.filterUrl && this.customParams.filterUrl != ""){
           filtro = this.customParams.filterUrl;
-          text = "Considerados os seguintes filtros: " + this.customParams.filterText;
+          text += "Considerados os seguintes filtros: " + this.customParams.filterText;
         }
         
         if (target.options.rowData.codigo == "cat"){  
@@ -772,9 +783,9 @@
         }
       },
 
-      defaultLeafletTooltip(target, tooltip_list = [], removed_text_list = []) { 
+      defaultLeafletTooltip(target, tooltip_list = [], removed_text_list = [], options = null) { 
         let d = target.options.rowData;
-        target.bindPopup(this.defaultTooltip(d, tooltip_list, removed_text_list)).openPopup();
+        target.bindPopup(this.defaultTooltip(d, tooltip_list, removed_text_list, options)).openPopup();
       },
 
       addDeafultMarker(localidade, map) {
