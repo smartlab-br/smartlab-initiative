@@ -25,7 +25,7 @@
       }
     },
     props: ['dataset', 'id', 'options', 'customParams', 'customFunctions',
-            'topology', 'headers'],
+            'topology', 'headers', 'selectedPlace'],
     watch: {
       dataset: function (nuDS, oldDS) {
         this.reloadMap();
@@ -80,7 +80,9 @@
       leaflet_map.fitBounds(bounds, { padding: [10, 10] });
 
       // Adiciona o marker do município apenas se houver idLocalidade
-      if (this.customParams && this.customParams.idLocalidade  && this.customParams.idLocalidade.length == 7) { // Município
+      if (this.selectedPlace && this.selectedPlace.length == 7){
+        this.findPlaceByID(this.selectedPlace, leaflet_map, this.addDeafultMarker);
+      } else if (this.customParams && this.customParams.idLocalidade  && this.customParams.idLocalidade.length == 7) { // Município
         this.findPlaceByID(this.customParams.idLocalidade, leaflet_map, this.addDeafultMarker);
       }
           
