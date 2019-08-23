@@ -956,6 +956,17 @@
                   }
                 }
               }
+              if (card.description){
+                for (let itemDesc of card.description){
+                  if (itemDesc.type == "select" && itemDesc.selection && itemDesc.selection.rules.api){
+                    for (let argApi of itemDesc.selection.rules.api.args){
+                      if (argApi.named_prop == "cd_uf"){
+                        argApi.named_prop = "cd_uf_compare";
+                      }
+                    }
+                  }
+                }
+              }
             }
           }
           if (item.chart){
