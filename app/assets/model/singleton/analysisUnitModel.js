@@ -6,6 +6,12 @@ class AnalysisUnitModel {
     { id: 'PRT120500000', uf: 29, label: "PRT 5a Região - Sede" }
   ]
   currentAnalysisUnit = null
+  searchDataset = {
+    dataset: [],
+    loadStatus: { 
+      places: 'LOADING'//, mpt_units: 'LOADING'
+    }
+  }
   
   constructor() {}
 
@@ -26,6 +32,10 @@ class AnalysisUnitModel {
       return idAU == this.currentAnalysisUnit;
     }
     return idAU == VueCookies.get("currentAnalysisUnit");
+  }
+
+  getSearchDataset() {
+    return this.searchDataset.dataset ? this.searchDataset.dataset : [];
   }
 
   getIdLocalidade(context, estado, municipio, setCookie, callback) {
@@ -67,10 +77,10 @@ class AnalysisUnitModel {
       });
   }
 
-  getUFFromPlace(context, id) {
-    for (let item in context.$store.state.searchDataset.dataset) {
-      if (context.$store.state.searchDataset.dataset[item].id == id) {
-        return context.$store.state.searchDataset.dataset[item].uf;
+  getUFFromPlace(id) {
+    for (let item of this.searchDataset.dataset) {
+      if (item.id == id) {
+        return item.uf;
       }
     }
     return null;
@@ -78,7 +88,9 @@ class AnalysisUnitModel {
 
   buildAllSearchOptions(context, scope = null) {
     //this.buildMPTOptions(scope);
-    this.buildPlacesOptions(context, scope);
+    return [ // Promises
+      this.buildPlacesOptions(context, scope)
+    ];
   }
   
   buildMPTOptions(context, scope = null) {
@@ -89,7 +101,7 @@ class AnalysisUnitModel {
           let unidadesMPT = JSON.parse(result.data).dataset;
           
           for (let indxPRT in unidadesMPT) {
-            context.$store.state.searchDataset.dataset.push({
+            this.searchDataset.dataset.push({
               id: unidadesMPT[indxPRT].cd_unidade,
               uf: unidadesMPT[indxPRT].cd_uf,
               label: unidadesMPT[indxPRT].nm_unidade,
@@ -101,7 +113,7 @@ class AnalysisUnitModel {
             });
 
             if (indxPRT == unidadesMPT.length - 1) {
-              context.$store.state.searchDataset.loadStatus['mpt_units'] = 'SUCCESS';
+              this.searchDataset.loadStatus['mpt_units'] = 'SUCCESS';
             }
           }
         }, error => {
@@ -114,7 +126,7 @@ class AnalysisUnitModel {
 
   buildPlacesOptions(context, scope = null) {
     if (scope == null || scope.includes('Brasil')) {
-      context.$store.state.searchDataset.dataset.push({
+      this.searchDataset.dataset.push({
         id: 0,
         label: "Brasil",
         scope: 'br',
@@ -127,7 +139,7 @@ class AnalysisUnitModel {
     }
 
     let url = "/municipios?categorias=cd_municipio_ibge_dv,nm_municipio_uf,cd_uf,nm_uf,cd_mesorregiao,nm_mesorregiao,cd_microrregiao,nm_microrregiao&ordenacao=cd_municipio_ibge_dv";
-    axios(context.getAxiosOptions(url))
+    return axios(context.getAxiosOptions(url))
       .then(result => {
         let municipios = JSON.parse(result.data).dataset;
         //let cd_regiao = 0;
@@ -141,7 +153,7 @@ class AnalysisUnitModel {
           //   // Inclui a região no select
           //   if (cd_regiao != parseInt(municipios[indxMunicipio].cd_municipio_ibge_dv.toString().substring(0, 1))) {
           //     cd_regiao = parseInt(municipios[indxMunicipio].cd_municipio_ibge_dv.toString().substring(0, 1));
-          //     context.$store.state.searchDataset.dataset.push({
+          //     this.searchDataset.dataset.push({
           //       id: cd_regiao,
           //       label: nm_regiao,
           //       scope: 'reg',
@@ -157,7 +169,7 @@ class AnalysisUnitModel {
             // Inclui a UF no select
             if (cd_uf != parseInt(municipios[indxMunicipio].cd_municipio_ibge_dv.toString().substring(0, 2))) {
               cd_uf = municipios[indxMunicipio].cd_municipio_ibge_dv.toString().substring(0, 2);
-              context.$store.state.searchDataset.dataset.push({
+              this.searchDataset.dataset.push({
                 id: cd_uf,
                 label: municipios[indxMunicipio].nm_uf,
                 scope: 'uf',
@@ -173,7 +185,7 @@ class AnalysisUnitModel {
           // Inclui a mesorregião no select
           // if (!added_meso.includes(municipios[indxMunicipio].cd_mesorregiao)) {
           //   added_meso.push(municipios[indxMunicipio].cd_mesorregiao);
-          //   context.$store.state.searchDataset.dataset.push({
+          //   this.searchDataset.dataset.push({
           //     id: municipios[indxMunicipio].cd_mesorregiao,
           //     label: municipios[indxMunicipio].nm_mesorregiao,
           //     to: "/localidade/" + municipios[indxMunicipio].cd_mesorregiao + "?",
@@ -186,7 +198,7 @@ class AnalysisUnitModel {
           // Inclui a microrregião no select
           // if (!added_meso.includes(municipios[indxMunicipio].cd_microrregiao)) {
           //   added_micro.push(municipios[indxMunicipio].cd_microrregiao);
-          //   context.$store.state.searchDataset.dataset.push({
+          //   this.searchDataset.dataset.push({
           //     id: municipios[indxMunicipio].cd_microrregiao,
           //     label: municipios[indxMunicipio].nm_microrregiao,
           //     to: "/localidade/" + municipios[indxMunicipio].cd_microrregiao + "?",
@@ -198,7 +210,7 @@ class AnalysisUnitModel {
 
           if (scope == null || scope.includes('Município')) {
             // Inclui o município no select
-            context.$store.state.searchDataset.dataset.push({
+            this.searchDataset.dataset.push({
               id: municipios[indxMunicipio].cd_municipio_ibge_dv,
               label: municipios[indxMunicipio].nm_municipio_uf,
               scope: 'mun',
@@ -210,12 +222,13 @@ class AnalysisUnitModel {
           }
 
           if (indxMunicipio == municipios.length - 1) {
-            context.$store.state.searchDataset.loadStatus['places'] = 'SUCCESS';
+            this.searchDataset.loadStatus['places'] = 'SUCCESS';
+            return 'SUCCESS';
           }
         }
       }, error => {
-        context.$store.state.searchDataset.loadStatus['places'] = 'ERROR';
-        context.sendError("Falha ao buscar lista das localidades");
+        this.searchDataset.loadStatus['places'] = 'ERROR';
+        return 'ERROR';
       });
   }
 

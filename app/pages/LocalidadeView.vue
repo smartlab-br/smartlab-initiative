@@ -608,10 +608,10 @@
           // this.selectCoords("/static/topojson/country.json");
           this.selectCoords("br", "uf", 0);
         } else if (this.$route.params.idLocalidade.includes("mptreg") || this.$route.params.idLocalidade.includes("MPTREG")) {
-          this.selectCoords("uf", "municipio", this.$analysisUnitModel.getUFFromPlace(this, this.$route.params.idLocalidade));
+          this.selectCoords("uf", "municipio", this.$analysisUnitModel.getUFFromPlace(this.$route.params.idLocalidade));
         } else if (this.$route.params.idLocalidade.includes("prt") || this.$route.params.idLocalidade.includes("PRT") ||
                    this.$route.params.idLocalidade.includes("ptm") || this.$route.params.idLocalidade.includes("PTM")) {
-          this.selectCoords("uf", "municipio", this.$analysisUnitModel.getUFFromPlace(this, this.$route.params.idLocalidade));
+          this.selectCoords("uf", "municipio", this.$analysisUnitModel.getUFFromPlace(this.$route.params.idLocalidade));
         } else if (this.$route.params.idLocalidade.length == 1){ //Região
           this.selectCoords("br", "uf", 0);
           // this.selectCoords("/static/topojson/regiao.json");

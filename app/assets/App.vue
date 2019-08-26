@@ -137,9 +137,8 @@
         <v-autocomplete
           tabindex = "21"
           ref = "autocompleteChangePlace"
-          v-if="$store && $store.state && $store.state.searchDataset &&
-                $store.state.searchDataset.dataset && $store.state.searchDataset.dataset.length > 0"
-          :items="$store.state.searchDataset.dataset"
+          v-if="$analysisUnitModel.getSearchDataset().length > 0"
+          :items="searchDataset"
           v-show="seen"
           persistent-hint
           v-model="gsItemBusca"
@@ -154,7 +153,7 @@
           class="input-group--focused global-search"
           return-object>
           <template slot="item" slot-scope="data">
-            <template v-if="$store.state.searchDataset.dataset.length < 2">
+            <template v-if="$analysisUnitModel.getSearchDataset().length < 2">
               <v-list-tile-content>
                 <v-progress-circular :size="20" indeterminate color="primary">
                 </v-progress-circular>
@@ -479,8 +478,7 @@
           <v-card-title class="headline-obs">Informe o município a ser visualizado ou sua localidade:</v-card-title>
           <v-card-text>
           <v-autocomplete
-            v-if="$store && $store.state && $store.state.searchDataset &&
-                  $store.state.searchDataset.dataset && $store.state.searchDataset.dataset.length > 0"
+            v-if="$analysisUnitModel.getSearchDataset().length > 0"
             :items="computedSearchItemsMunicipio"
             persistent-hint
             v-model="gsFavLocation"
@@ -495,7 +493,7 @@
             class="input-group--focused global-search"
             return-object>
             <template slot="item" slot-scope="data">
-              <template v-if="$store.state.searchDataset.dataset.length < 2">
+              <template v-if="$analysisUnitModel.getSearchDataset().length < 2">
                 <v-list-tile-content>
                   <v-progress-circular :size="20" indeterminate color="primary">
                   </v-progress-circular>
@@ -573,6 +571,7 @@
         snackText: 'Hello, I\'m a snackbar',
         gsItemBusca: null,
         gsFavLocation: null, 
+        gsLoadingStatusSearchOptions: 'LOADING',
         locationDialog: false,
         //Formulário Relate um problema
         valid: true,
@@ -601,13 +600,6 @@
     },
     created () {    
       this.$store.state.gDatasets = {};
-      this.$store.state.searchDataset = {
-        dataset: [],
-        loadStatus: { 
-          dimensions: 'SUCCESS', indicators: 'SUCCESS',
-          places: 'LOADING'//, mpt_units: 'LOADING'
-        }
-      }
 
       let tmpObs = this.$observatories.getObservatories();
       if (tmpObs instanceof Promise) {
@@ -616,7 +608,26 @@
         this.observatorios = tmpObs;
       }
 
-      this.$analysisUnitModel.buildAllSearchOptions(this);
+      Promise.all(this.$analysisUnitModel.buildAllSearchOptions(this))
+        .then(
+          results => {
+            let hasLoading = false;
+            for (let eachResult in results) {
+                if (eachResult == 'ERROR') {
+                  this.gsLoadingStatusSearchOptions = eachResult;
+                  return;
+                }
+                if (eachResult == 'LOADING') {
+                  hasLoading = true;
+                }
+            }
+            this.gsLoadingStatusSearchOptions = hasLoading ? 'LOADING' : 'SUCCESS';
+          },
+          error => {
+            this.gsLoadingStatusSearchOptions = 'ERROR';
+            this.sendError("Falha ao buscar lista das localidades");
+          }
+        );
       this.themeEval();
     },
     computed: {
@@ -629,17 +640,6 @@
           return fullPath.substring(0, fullPath.indexOf('#'));
         }
         return fullPath;
-      },
-      gsLoadingStatusSearchOptions: function() {
-        var minStatus = 'SUCCESS';
-        for (var indx in this.$store.state.searchDataset.loadStatus) {
-          if (this.$store.state.searchDataset.loadStatus[indx] == 'ERROR') {
-            return 'ERROR';
-          } else if (this.$store.state.searchDataset.loadStatus[indx] == 'LOADING') {
-            minStatus = 'LOADING';
-          }
-        }
-        return minStatus;
       },
       computedTitle: function() {
         // Assess the current observatory
@@ -724,7 +724,7 @@
       //   return '';
       // },
       computedSearchItemsMunicipio: function() {
-        let items = this.$store.state.searchDataset.dataset;
+        let items = this.$analysisUnitModel.getSearchDataset();
         return items.filter(function(el) {
           return el.scope == "mun";
         })
