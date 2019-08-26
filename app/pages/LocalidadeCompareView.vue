@@ -60,10 +60,10 @@
             <div class="display-3-obs py-3" v-html="dimensao_ativa != null ? (dimensao_ativa.title != null ? dimensao_ativa.title : dimensao_ativa.label) : ''">
             </div>
             <v-layout justify-center>
-              <v-btn small class="theme--light" color="accent"
+              <v-btn small class="accent--text" color="transparent"
                 @click.native="removeCompare">
                 <v-icon left>remove</v-icon>
-                Retirar comparação
+                Remover comparação
               </v-btn>
             </v-layout>
             <v-layout pa-0 row wrap justify-center>

@@ -85,7 +85,7 @@
               v-html="masterIndicator">
             </v-layout>
             <v-layout justify-center>
-              <v-btn small class="theme--light" color="accent"
+              <v-btn small class="accent--text" color="transparent"
                 @click.native="compareDialog = true">
                 <v-icon left>add</v-icon>
                 Adicionar comparação
