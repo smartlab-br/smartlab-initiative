@@ -10,7 +10,10 @@ class AnalysisUnitModel {
   constructor() {}
 
   getCurrentAnalysisUnit() {
-    return this.currentAnalysisUnit;
+    if (this.currentAnalysisUnit) {
+      return this.currentAnalysisUnit;
+    }
+    return VueCookies.get("currentAnalysisUnit");
   }
 
   setCurrentAnalysisUnit(idAU) {
@@ -32,7 +35,7 @@ class AnalysisUnitModel {
         var infoMunicipio = JSON.parse(result.data).dataset;
         if (infoMunicipio.length > 0) {
           if (callback) callback(infoMunicipio[0]);
-          context.$cookies.set("currentAnalysisUnit", infoMunicipio[0].cd_municipio_ibge_dv, -1); // Never expires
+          VueCookies.set("currentAnalysisUnit", infoMunicipio[0].cd_municipio_ibge_dv, -1); // Never expires
           this.currentAnalysisUnit = infoMunicipio[0].cd_municipio_ibge_dv;
         } else {
           context.$emit('showLocationDialog');
@@ -288,6 +291,10 @@ class AnalysisUnitModel {
     return idLoc.substring(0,2);
   }
 
+  findCurrentPlace(context, map, cb) {
+    this.findPlaceByID(context, this.getCurrentAnalysisUnit(), map, cb);
+  }
+
   findPlaceByID(context, id, map, cb) {
     var url = null;
     var localidade = {};
@@ -371,15 +378,15 @@ class AnalysisUnitModel {
 
   checkFavoriteAnalysisUnit(context) {
     if (context.idObservatorio && context.idObservatorio == 'td' && 
-      context.$cookies.isKey("currentAnalysisUnit") && context.$cookies.get("currentAnalysisUnit").length != 7){
+      VueCookies.isKey("currentAnalysisUnit") && VueCookies.get("currentAnalysisUnit").length != 7){
       context.$emit('showLocationDialog');
-    } else if (!context.$cookies.isKey("currentAnalysisUnit") || context.$cookies.get("currentAnalysisUnit") == null ) {
+    } else if (!VueCookies.isKey("currentAnalysisUnit") || VueCookies.get("currentAnalysisUnit") == null ) {
       // Se não houver cookie, invoca o cliente geo_ip
       context.getClientGeo(context.getClientGeoCallback);
       // context.$emit('showLocationDialog');
     } else {
-      this.currentAnalysisUnit = context.$cookies.get("currentAnalysisUnit");
-      // context.getGlobalDatasetsIdLocalidade(context.$cookies.get("currentAnalysisUnit"));
+      this.currentAnalysisUnit = VueCookies.get("currentAnalysisUnit");
+      // context.getGlobalDatasetsIdLocalidade(VueCookies.get("currentAnalysisUnit"));
     }
   }
 }

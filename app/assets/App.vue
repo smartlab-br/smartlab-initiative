@@ -737,10 +737,8 @@
         this.snackbarCookies = true;
       }
 
-      if (this.$cookies.isKey("currentAnalysisUnit")){
-        this.$analysisUnitModel.findPlaceByID(this, this.$cookies.get("currentAnalysisUnit"),null,this.changeMiddleToolbar);
-      } 
-
+      this.$analysisUnitModel.findCurrentPlace(this, null, this.changeMiddleToolbar);
+    
       this.langs = this.$translationModel.findAllLocales();
       this.lang = this.$translationModel.findBrowserLocale(this);
 

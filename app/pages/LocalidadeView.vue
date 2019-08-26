@@ -519,7 +519,7 @@
       }
     },
     mounted: function() {
-      if (this.$route.params.idLocalidade && this.$cookies.get("currentAnalysisUnit") != this.$route.params.idLocalidade) {
+      if (!this.$analysisUnitModel.isCurrent(this.$route.params.idLocalidade)) {
         this.$analysisUnitModel.setCurrentAnalysisUnit(this.$route.params.idLocalidade);
       }
       
