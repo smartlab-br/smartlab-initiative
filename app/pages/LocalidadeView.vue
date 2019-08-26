@@ -266,37 +266,48 @@
         <v-card>
           <v-card-title class="headline-obs">Comparar com:</v-card-title>
           <v-card-text>
-          <v-autocomplete
-            v-if="$store && $store.state && $store.state.searchDataset &&
-                  $store.state.searchDataset.dataset && $store.state.searchDataset.dataset.length > 0"
-            :items="computedSearchItems"
-            persistent-hint
-            v-model="idLocalidade_compare"
-            item-text="label"
-            :placeholder="localidade ? localidade.scope: ''"
-            item-value="id"
-            :filter="customFilter"
-            @blur="idLocalidade_compare = null"
-            class="input-group--focused global-search"
-            return-object>
-            <template slot="item" slot-scope="data">
-              <template v-if="$store.state.searchDataset.dataset.length < 2">
-                <v-list-tile-content>
-                  <v-progress-circular :size="20" indeterminate color="primary">
-                  </v-progress-circular>
-                </v-list-tile-content>
-              </template>
-              <template v-else>
-                <!--<v-list-tile-avatar>
-                  <v-icon>{{ data.item.icon }}</v-icon>
-                </v-list-tile-avatar>-->
-                <v-list-tile-content>
-                  <v-list-tile-title v-html="data.item.label"></v-list-tile-title>
-                  <!--<v-list-tile-sub-title v-html="data.item.detail"></v-list-tile-sub-title>-->
-                </v-list-tile-content>
-              </template>
-            </template>  
-          </v-autocomplete>
+          <v-layout align-right row wrap>
+            <v-flex xs12>
+              <v-autocomplete
+                v-if="$store && $store.state && $store.state.searchDataset &&
+                      $store.state.searchDataset.dataset && $store.state.searchDataset.dataset.length > 0"
+                :items="computedSearchItems"
+                persistent-hint
+                v-model="idLocalidade_compare"
+                item-text="label"
+                :placeholder="localidade ? localidade.scope: ''"
+                item-value="id"
+                :filter="customFilter"
+                @blur="idLocalidade_compare = null"
+                class="input-group--focused global-search"
+                return-object>
+                <template slot="item" slot-scope="data">
+                  <template v-if="$store.state.searchDataset.dataset.length < 2">
+                    <v-list-tile-content>
+                      <v-progress-circular :size="20" indeterminate color="primary">
+                      </v-progress-circular>
+                    </v-list-tile-content>
+                  </template>
+                  <template v-else>
+                    <!--<v-list-tile-avatar>
+                      <v-icon>{{ data.item.icon }}</v-icon>
+                    </v-list-tile-avatar>-->
+                    <v-list-tile-content>
+                      <v-list-tile-title v-html="data.item.label"></v-list-tile-title>
+                      <!--<v-list-tile-sub-title v-html="data.item.detail"></v-list-tile-sub-title>-->
+                    </v-list-tile-content>
+                  </template>
+                </template>  
+              </v-autocomplete>
+            </v-flex>
+            <v-flex xs12 text-xs-right>
+              <v-btn small class="theme--light" color="accent"
+                @click.native="compareDialog = false">
+                <v-icon left>close</v-icon>
+                Fechar
+              </v-btn>
+            </v-flex>
+          </v-layout>
         </v-card-text>
       </v-card>
     </v-dialog>
