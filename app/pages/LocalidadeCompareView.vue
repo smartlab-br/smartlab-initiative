@@ -57,11 +57,11 @@
           </v-flex>
           <v-flex pt-5></v-flex>
           <v-flex id="screenTitle" class="white--text text-xs-center pa-5 line-height-1">
-            <div class="display-2-obs pt-3" v-html="dimensao_ativa != null ? (dimensao_ativa.title != null ? dimensao_ativa.title : dimensao_ativa.label) : ''">
+            <div class="display-3-obs py-3" v-html="dimensao_ativa != null ? (dimensao_ativa.title != null ? dimensao_ativa.title : dimensao_ativa.label) : ''">
             </div>
-            <v-layout pa-0 row wrap>
-              <v-flex xs6>
-                <div class="display-3-obs">
+            <v-layout pa-0 row wrap justify-center>
+              <v-flex md6 lg5 :class="{'pr-4': $vuetify.breakpoint.mdAndDown, 'pr-5': $vuetify.breakpoint.lgAndUp}">
+                <div class="display-2-obs">
                     {{ localidade != null ? localidade.nm_localidade : '' }}
                     <v-tooltip v-if="presentation" bottom class="icon-vertical-align-middle">
                       <v-icon color="accent"
@@ -98,8 +98,8 @@
                   </flpo-minicard>
                 </v-layout>
               </v-flex>
-              <v-flex xs6>
-                <div class="display-3-obs">
+              <v-flex md6 lg5 :class="{'pl-4': $vuetify.breakpoint.mdAndDown, 'pl-5': $vuetify.breakpoint.lgAndUp}">
+                <div class="display-2-obs">
                     {{ localidade_compare != null ? localidade_compare.nm_localidade : '' }}
                     <v-tooltip v-if="presentation_compare" bottom class="icon-vertical-align-middle">
                       <v-icon color="accent"
@@ -601,9 +601,6 @@
       cardLinksLoaded: function() {
         return this.totalLinksSections == this.cardLinks.length;
       },
-      cardLinksLoaded: function() {
-        return this.totalLinksSections == this.cardLinks.length;
-      },
       idLocalidadeD6: function() {
         return this.idLocalidade.toString().substring(0,6); //sem dígito
       },
@@ -826,22 +823,23 @@
 
         this.idLocalidade = idLocalidade;
         this.idLocalidade_compare = this.$route.query.compare;
+        let idLocalidade_compare = this.$route.query.compare;
 
         this.customParams.idLocalidade = idLocalidade;
         this.customParams.idLocalidade_compare = this.$route.query.compare;
 
         // if (idLocalidade.length > 2) {
         this.customParams.cd_uf = idLocalidade.substring(0,2);
-        this.customParams.cd_uf_compare = this.idLocalidade_compare.substring(0,2);
+        this.customParams.cd_uf_compare = idLocalidade_compare.substring(0,2);
         // }
         if (idLocalidade.length > 6) {
           this.customParams.idLocalidadeD6 = idLocalidade.substring(0,6);
-          this.customParams.idLocalidade_compareD6 = this.idLocalidade_compare.substring(0,6);
+          this.customParams.idLocalidade_compareD6 = idLocalidade_compare.substring(0,6);
         }
 
         this.fetchDataLocalidade(idLocalidade, 'localidade');
 
-        this.fetchDataLocalidade(this.idLocalidade_compare, 'localidade_compare');
+        this.fetchDataLocalidade(idLocalidade_compare, 'localidade_compare');
         
 
         let escopo = this.getEscopo(idLocalidade);
@@ -918,7 +916,7 @@
       },
 
       changeToCompareStructure(struct){
-        let compareStruct = JSON.stringify(struct).replace(/idLocalidade/g,"idLocalidade_compare");
+        let compareStruct = JSON.stringify(struct).replace(/idLocalidade/g,"idLocalidade_compare").replace(/\"base_object\":\"localidade\"/g,"\"base_object\":\"localidade_compare\"");
         for(let dataset of this.thematicDatasets){
           compareStruct = compareStruct.replace(new RegExp(dataset, "g"),dataset+"_compare");
         }
@@ -971,6 +969,13 @@
           }
           if (item.chart){
             item.chart.id = 'compare_'+item.chart.id;
+          }
+          if (item.api){
+            for (let argItem of item.api.args){
+              if (argItem.named_prop == "cd_uf"){
+                argItem.named_prop = "cd_uf_compare";
+              }
+            }
           }
         }
         return compareStruct;        
@@ -1043,8 +1048,8 @@
           axios(this.getAxiosOptions(url))
             .then(result => {
               localidade = JSON.parse(result.data).dataset[0];
-              localidade.id_localidade = this.localidade.cd_uf;
-              localidade.nm_localidade = this.localidade.nm_uf;
+              localidade.id_localidade = localidade.cd_uf;
+              localidade.nm_localidade = localidade.nm_uf;
               localidade.tipo = 'UF';
               localidade.img = "/static/thumbs/municipios/" + idLocalidade + ".jpg";
               this[nm_var] = localidade;
@@ -1058,8 +1063,8 @@
           axios(this.getAxiosOptions(url))
             .then(result => {
               localidade = JSON.parse(result.data).dataset[0];
-              localidade.id_localidade = this.localidade.cd_mesorregiao;
-              localidade.nm_localidade = this.localidade.nm_mesorregiao;
+              localidade.id_localidade = localidade.cd_mesorregiao;
+              localidade.nm_localidade = localidade.nm_mesorregiao;
               localidade.tipo = 'Mesorregião';
               localidade.img = "/static/thumbs/municipios/" + idLocalidade + ".jpg";
               this[nm_var] = localidade;
@@ -1073,8 +1078,8 @@
           axios(this.getAxiosOptions(url))
             .then(result => {
               localidade = JSON.parse(result.data).dataset[0];
-              localidade.id_localidade = this.localidade.cd_microrregiao;
-              localidade.nm_localidade = this.localidade.nm_microrregiao;
+              localidade.id_localidade = localidade.cd_microrregiao;
+              localidade.nm_localidade = localidade.nm_microrregiao;
               localidade.tipo = 'Microrregião';
               localidade.img = "/static/thumbs/municipios/" + idLocalidade + ".jpg";
               this[nm_var] = localidade;
