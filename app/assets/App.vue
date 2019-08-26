@@ -741,8 +741,8 @@
         this.findPlaceByID(this.$cookies.get("currentAnalysisUnit"),null,this.changeMiddleToolbar);
       } 
 
-      this.langs = this.findAllLocales();
-      this.lang = this.findBrowserLocale();
+      this.langs = this.$translationModel.findAllLocales();
+      this.lang = this.$translationModel.findBrowserLocale(this);
 
       window.addEventListener('scroll', this.assessVisibleTitle);
       window.addEventListener('scroll', this.assessVisibleLeftDrawerTitle);
@@ -827,7 +827,7 @@
       },
 
       // changeLocale() {
-      //   this.setLocale(this.lang);
+      //   this.setLocale(this, this.lang);
       // },
 
       getGlobalDatasetIdLocalidade(idLocalidade) {

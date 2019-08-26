@@ -49,13 +49,13 @@ import AboutModel from './model/singleton/aboutModel'
 Vue.prototype.$about = new AboutModel();
 import DimensionsModel from './model/singleton/dimensionsModel'
 Vue.prototype.$dimensions = new DimensionsModel();
+import TranslationModel from './model/singleton/translationModel'
+Vue.prototype.$translationModel = new TranslationModel();
 // 1.2 Mixins
 import IndicatorsModel from '../mixins/model/indicatorsModel.js'
 Vue.use(IndicatorsModel)
 import PlacesModel from '../mixins/model/placesModel.js'
 Vue.use(PlacesModel)
-import TranslationModel from '../mixins/model/translationModel.js'
-Vue.use(TranslationModel)
 
 // 2. Services
 import AxiosCallSetup from '../mixins/service/axiosCallSetup.js'
