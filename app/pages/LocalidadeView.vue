@@ -84,6 +84,13 @@
             <v-layout pa-1 justify-center class="subheading master-indicator" v-if="masterIndicator"
               v-html="masterIndicator">
             </v-layout>
+            <v-layout justify-center>
+              <v-btn small class="theme--light" color="accent"
+                @click.native="compareDialog = true">
+                <v-icon left>add</v-icon>
+                Adicionar comparação
+              </v-btn>
+            </v-layout>
             <div class="display-2-obs pt-3" v-html="dimensao_ativa != null ? (dimensao_ativa.title != null ? dimensao_ativa.title : dimensao_ativa.label) : ''">
             </div>
           </v-flex>
@@ -255,6 +262,44 @@
         Carregando dados
       </v-progress-circular>
     </v-layout>
+    <v-dialog width="500px" v-model="compareDialog">
+        <v-card>
+          <v-card-title class="headline-obs">Comparar com:</v-card-title>
+          <v-card-text>
+          <v-autocomplete
+            v-if="$store && $store.state && $store.state.searchDataset &&
+                  $store.state.searchDataset.dataset && $store.state.searchDataset.dataset.length > 0"
+            :items="computedSearchItems"
+            persistent-hint
+            v-model="idLocalidade_compare"
+            item-text="label"
+            :placeholder="localidade ? localidade.scope: ''"
+            item-value="id"
+            :filter="customFilter"
+            @blur="idLocalidade_compare = null"
+            class="input-group--focused global-search"
+            return-object>
+            <template slot="item" slot-scope="data">
+              <template v-if="$store.state.searchDataset.dataset.length < 2">
+                <v-list-tile-content>
+                  <v-progress-circular :size="20" indeterminate color="primary">
+                  </v-progress-circular>
+                </v-list-tile-content>
+              </template>
+              <template v-else>
+                <!--<v-list-tile-avatar>
+                  <v-icon>{{ data.item.icon }}</v-icon>
+                </v-list-tile-avatar>-->
+                <v-list-tile-content>
+                  <v-list-tile-title v-html="data.item.label"></v-list-tile-title>
+                  <!--<v-list-tile-sub-title v-html="data.item.detail"></v-list-tile-sub-title>-->
+                </v-list-tile-content>
+              </template>
+            </template>  
+          </v-autocomplete>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
   </v-layout>
 </template>
 
@@ -294,6 +339,8 @@
         thematicLoaded: 0,
         isFavorite: false,
         visibleCardMaxIndex: 1, //dois primeiros cards
+        compareDialog: false,
+        idLocalidade_compare: null,
         custom_functions: {
           concat_values(indicador, value1, value2, value3 = "", value4 = "", value5 = "") {return value1 + ' ' + value2 + ' ' + value3 + ' ' + value4 + ' ' + value5; },
           calc_subtraction: function(a, b, c = 0) {  return a - (b - c); },
@@ -482,6 +529,14 @@
         this.$emit('alterToolbar', null);
       }
     },
+    watch: {
+      idLocalidade_compare(newVal, oldVal) {
+        if (newVal) {
+          let url = this.$route.fullPath.replace('/localidade/','/localidadecompare/') + '&compare=' + newVal.id;
+          this.pushRoute(url);
+        }
+      }
+    },
     computed: {
       cardLinksLoaded: function() {
         return this.totalLinksSections == this.cardLinks.length;
@@ -516,7 +571,23 @@
           return this.dimensoes[this.dimensoes.length - 1].id === this.dimensao_ativa.id;
         }
         return true;
-      }
+      },
+      computedSearchItems: function() {
+        if (this.idLocalidade) {
+          if (this.idLocalidade.length == 7){ //município
+          let items = this.$store.state.searchDataset.dataset;
+          return items.filter(function(el) {
+            return el.scope == "mun";
+          })
+          } else if (this.idLocalidade.length == 2){ //UF
+            let items = this.$store.state.searchDataset.dataset;
+            return items.filter(function(el) {
+              return el.scope == "uf";
+            })
+          }
+        }
+      },
+      
     },
     mounted: function() {
 

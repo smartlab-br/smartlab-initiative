@@ -59,6 +59,13 @@
           <v-flex id="screenTitle" class="white--text text-xs-center pa-5 line-height-1">
             <div class="display-3-obs py-3" v-html="dimensao_ativa != null ? (dimensao_ativa.title != null ? dimensao_ativa.title : dimensao_ativa.label) : ''">
             </div>
+            <v-layout justify-center>
+              <v-btn small class="theme--light" color="accent"
+                @click.native="removeCompare">
+                <v-icon left>remove</v-icon>
+                Retirar comparação
+              </v-btn>
+            </v-layout>
             <v-layout pa-0 row wrap justify-center>
               <v-flex md6 lg5 :class="{'pr-4': $vuetify.breakpoint.mdAndDown, 'pr-5': $vuetify.breakpoint.lgAndUp}">
                 <div class="display-2-obs">
@@ -409,6 +416,8 @@
         visibleCardMaxIndex: 1, //dois primeiros cards
         datasetsLoaded: false,
         datasetsCompareLoaded: false,
+        datasetsDimLoaded: false,
+        datasetsDimCompareLoaded: false,
         custom_functions: {
           concat_values(indicador, value1, value2, value3 = "", value4 = "", value5 = "") {return value1 + ' ' + value2 + ' ' + value3 + ' ' + value4 + ' ' + value5; },
           calc_subtraction: function(a, b, c = 0) {  return a - (b - c); },
@@ -671,6 +680,16 @@
           this.keepLoading();
         }
       },
+      datasetsDimLoaded: function() {
+        if (this.datasetsDimLoaded && this.datasetsDimCompareLoaded){
+          this.keepLoadingDimension();
+        }
+      },
+      datasetsDimCompareLoaded: function() {
+        if (this.datasetsDimLoaded && this.datasetsDimCompareLoaded){
+          this.keepLoadingDimension();
+        }
+      },
       localidade: function(){
           this.$emit('alterMiddleToolbar', { "localidade": this.localidade });
       }
@@ -861,18 +880,27 @@
       },
 
       setDimension(content) {
-        let escopo = this.getEscopo(this.$route.params.idLocalidade);
+        let escopo = this.getEscopo(this.idLocalidade);
         this.dimStruct = content;
         if (content.tematicos) {
+          this.datasetsDimLoaded = false;
+          this.datasetsDimCompareLoaded = false;
           let thematicDatasets = ['centralindicadores'];
           for (let tematico of content.tematicos){
             thematicDatasets.push(tematico.dataset);
           }
+          this.thematicDatasets = thematicDatasets;
           this.getMultipleGlobalDatasets(
             thematicDatasets,
             escopo,
-            this.getIdLocalidadeFromRoute(this.$route.params.idLocalidade),
-            this.keepLoadingDimension);
+            this.idLocalidade,
+            () => { this.datasetsDimLoaded = true});
+          this.getMultipleGlobalDatasets(
+            thematicDatasets,
+            escopo,
+            this.idLocalidade_compare,
+            () => { this.datasetsDimCompareLoaded = true},
+            "_compare");
         } else {
           this.keepLoadingDimension();
         }
@@ -1255,6 +1283,10 @@
           this.$store.state.favLocation = this.$route.params.idLocalidade;
         }
         this.isFavorite = !this.isFavorite;
+      },
+      removeCompare() {
+          let url = this.$route.path.replace('/localidadecompare/','/localidade/') + '?dimensao=' + this.$route.query.dimensao;
+          this.pushRoute(url);
       }
     }
   }
