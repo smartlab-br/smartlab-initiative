@@ -189,7 +189,7 @@
           } else if (rule.id === undefined) { //caso um id de um indicador não tenha sido especificado, é porque somente um foi passado no preloaded
             //nesse caso, o valor é buscado na primeira posição da lista de indicadores e formatado caso a propriedade format tenha sido informada
             if (base_object_list && base_object_list.length > 0) {
-              this[rule.prop] = this.getAttributeFromIndicatorInstance(rule, null, base_object_list[0]);
+              this[rule.prop] = this.$indicatorsModel.getAttributeFromIndicatorInstance(this, rule, null, base_object_list[0]);
             } else if (rule.default !== null && rule.default !== undefined) {
               this[rule.prop] = rule.default;
             } else {
@@ -198,7 +198,7 @@
           } else {
             //se o campo não é fixed ou tenha mais de um indicador informado no preloaded, 
             //é necessário iterar a lista de indicadores para procurar qual está sendo especificado para o campo objeto da iteração
-            this[rule.prop] = this.getIndicatorValueFromStructure(rule, null, base_object_list);
+            this[rule.prop] = this.$indicatorsModel.getIndicatorValueFromStructure(this, rule, null, base_object_list);
           }
 
           // caso comment tenha a opção color_changing

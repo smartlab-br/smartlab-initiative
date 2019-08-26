@@ -268,10 +268,10 @@ const DatasetManager = {
           let min = [];
           let max = [];
           for (let indxDS in dataset) {
-            if (this.isMinInYear({}, dataset, dataset[indxDS], value_field)) {
+            if (this.$indicatorsModel.isMinInYear({}, dataset, dataset[indxDS], value_field)) {
               min.push(dataset[indxDS]);
             }
-            if (this.isMaxInYear({}, dataset, dataset[indxDS], value_field)) {
+            if (this.$indicatorsModel.isMaxInYear({}, dataset, dataset[indxDS], value_field)) {
               max.push(dataset[indxDS]);
             }
           }

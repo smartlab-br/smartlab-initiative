@@ -18,7 +18,7 @@ const TextManager = {
               } else if (struct.args[indx].fixed) {
                 iterArg = struct.args[indx].fixed;
               } else if (Array.isArray(base_object) && struct.args[indx].id){
-                iterArg = this.getIndicatorValueFromStructure(struct.args[indx], null, base_object);
+                iterArg = this.$indicatorsModel.getIndicatorValueFromStructure(this, struct.args[indx], null, base_object);
                 args.push(iterArg);
                 continue;
               } else if (struct.args[indx].named_prop) {

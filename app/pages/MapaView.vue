@@ -228,7 +228,8 @@ export default {
     };
   },
   created() {
-    this.buildIndicatorsOptions(
+    this.$indicatorsModel.buildIndicatorsOptions(
+      this,
       this.pushIndicatorOption,
       this.setIndicatorStatusOption,
       this.identifyObservatory(this.$route.path.split('/')[1])

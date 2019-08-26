@@ -41,8 +41,7 @@ Vue.use(VueCookies)
 
 ///////////////////////////////
 // Habilitando plugins in-house
-// 1. Models
-// 1.1 Singletons
+// 1. Models (singletons)
 import ObservatoriesModel from './model/singleton/observatoriesModel'
 Vue.prototype.$observatories = new ObservatoriesModel();
 import AboutModel from './model/singleton/aboutModel'
@@ -53,10 +52,8 @@ import TranslationModel from './model/singleton/translationModel'
 Vue.prototype.$translationModel = new TranslationModel();
 import AnalysisUnitModel from './model/singleton/analysisUnitModel'
 Vue.prototype.$analysisUnitModel = new AnalysisUnitModel();
-// 1.2 Mixins
-import IndicatorsModel from '../mixins/model/indicatorsModel.js'
-Vue.use(IndicatorsModel)
-
+import IndicatorsModel from './model/singleton/indicatorsModel'
+Vue.prototype.$indicatorsModel = new IndicatorsModel();
 
 // 2. Services
 import AxiosCallSetup from '../mixins/service/axiosCallSetup.js'
