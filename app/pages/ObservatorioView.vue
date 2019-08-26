@@ -343,7 +343,7 @@
       this.assessPageBottom();
       this.idLocalidade = this.$store.state.favLocation;
       this.mapEnabled = false;
-      this.checkFavoriteAnalysisUnit();
+      this.$analysisUnitModel.checkFavoriteAnalysisUnit(this);
     },
     beforeDestroy () {
       window.removeEventListener('scroll', this.assessPageBottom);

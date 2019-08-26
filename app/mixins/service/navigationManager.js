@@ -50,7 +50,7 @@ const NavigationManager = {
 
           this.$cookies.set("currentAnalysisUnit", searchItem.id, -1); // Never expires
           this.$store.state.favLocation = searchItem.id;
-          this.findPlaceByID(searchItem.id,null,this.changeMiddleToolbar);
+          this.$analysisUnitModel.findPlaceByID(this, searchItem.id,null,this.changeMiddleToolbar);
 
           this.pushRoute(url);   
         },

@@ -171,7 +171,7 @@
     },
     mounted: function() {
       this.idLocalidade = this.$store.state.favLocation;
-      this.checkFavoriteAnalysisUnit();
+      this.$analysisUnitModel.checkFavoriteAnalysisUnit(this);
     },
     methods: {
       setGroupingAndFiltering(observatorio) {

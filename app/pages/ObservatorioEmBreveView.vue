@@ -41,7 +41,7 @@
       this.resizeFirstSection();
       window.addEventListener('resize', this.resizeFirstSection);
       this.idLocalidade = this.$store.state.favLocation;
-      this.checkFavoriteAnalysisUnit();
+      this.$analysisUnitModel.checkFavoriteAnalysisUnit(this);
       
     },
     computed: {

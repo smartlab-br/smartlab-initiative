@@ -524,7 +524,7 @@
         this.$cookies.set("currentAnalysisUnit", this.$route.params.idLocalidade, -1); // Never expires
       }
       
-      this.checkFavoriteAnalysisUnit();
+      this.$analysisUnitModel.checkFavoriteAnalysisUnit(this);
       window.addEventListener('scroll', this.assessPageBottom);
       window.addEventListener('scroll', this.setVisibleCardMaxIndex);
       this.assessPageBottom();
@@ -613,10 +613,10 @@
           // this.selectCoords("/static/topojson/country.json");
           this.selectCoords("br", "uf", 0);
         } else if (this.$route.params.idLocalidade.includes("mptreg") || this.$route.params.idLocalidade.includes("MPTREG")) {
-          this.selectCoords("uf", "municipio", this.getUFFromPlace(this.$route.params.idLocalidade));
+          this.selectCoords("uf", "municipio", this.$analysisUnitModel.getUFFromPlace(this, this.$route.params.idLocalidade));
         } else if (this.$route.params.idLocalidade.includes("prt") || this.$route.params.idLocalidade.includes("PRT") ||
                    this.$route.params.idLocalidade.includes("ptm") || this.$route.params.idLocalidade.includes("PTM")) {
-          this.selectCoords("uf", "municipio", this.getUFFromPlace(this.$route.params.idLocalidade));
+          this.selectCoords("uf", "municipio", this.$analysisUnitModel.getUFFromPlace(this, this.$route.params.idLocalidade));
         } else if (this.$route.params.idLocalidade.length == 1){ //Região
           this.selectCoords("br", "uf", 0);
           // this.selectCoords("/static/topojson/regiao.json");
@@ -754,7 +754,7 @@
 
           this.$emit('alterMiddleToolbar', { title: 'Brasil', subTitle: this.dimensao_ativa.short_des, localidade: this.localidade });
         } else if (idLocalidade.includes("mptreg") || idLocalidade.includes("MPTREG")) {
-          let localidade = this.getPRTPTMInstance(idLocalidade.substring(0,6), idLocalidade.substring(6));
+          let localidade = this.$analysisUnitModel.getPRTPTMInstance(this, idLocalidade.substring(0,6), idLocalidade.substring(6));
           this.localidade = localidade;
           this.customParams.localidade = localidade;
           this.$emit('alterMiddleToolbar', { "localidade": localidade });
@@ -781,12 +781,12 @@
             });
         } else if (idLocalidade.length == 1){ //Região
           this.localidade.id_localidade = idLocalidade;
-          this.localidade.nm_localidade = this.getRegion(idLocalidade);
+          this.localidade.nm_localidade = this.$analysisUnitModel.getRegion(idLocalidade);
           this.localidade.tipo = '';
           this.localidade.img = "/static/thumbs/municipios/" + idLocalidade + ".jpg";
           this.customParams.localidade = this.localidade;
 
-          this.$emit('alterMiddleToolbar', this.getRegion(idLocalidade));
+          this.$emit('alterMiddleToolbar', this.$analysisUnitModel.getRegion(idLocalidade));
         } else if (idLocalidade.length == 2){ //Estado
           url = "/municipios?categorias=cd_uf,nm_uf&filtros=eq-cd_uf-" + idLocalidade;
           axios(this.getAxiosOptions(url))

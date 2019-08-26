@@ -63,9 +63,9 @@
           var callback = this.setAttribute;
           var cb_args = [sectionType, type];
           if (scope == 'br') {
-            this.setTotalMunicipios(callback, cb_args);
+            this.$analysisUnitModel.setTotalMunicipios(this, callback, cb_args);
           } else {
-            this.setTotalMunicipiosPorUF(idLocalidade.substring(0,2), callback, cb_args);
+            this.$analysisUnitModel.setTotalMunicipiosPorUF(this, idLocalidade.substring(0,2), callback, cb_args);
           }
         }
       },
@@ -73,7 +73,7 @@
       setTotalMunPorUF(sectionType, type) {
         var callback = this.setAttribute;
         var cb_args = [sectionType, type];
-        this.setTotalMunicipiosPorUF(this.customParams.idLocalidade.substring(0,2), callback, cb_args);
+        this.$analysisUnitModel.setTotalMunicipiosPorUF(this, this.customParams.idLocalidade.substring(0,2), callback, cb_args);
       },
 
       setAttribute(sectionType, type, value) {

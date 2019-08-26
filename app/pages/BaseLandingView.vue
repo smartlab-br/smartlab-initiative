@@ -46,7 +46,7 @@
           // this.sendError("Falha ao determinar a localidade. (Código 2)");
         } else {
           // this.infoGeoIp = info;
-          this.getIdLocalidade(info.state, info.city, true, this.getIdLocalidadeCallback);
+          this.$analysisUnitModel.getIdLocalidade(this, info.state, info.city, true, this.getIdLocalidadeCallback);
         }
       },
 

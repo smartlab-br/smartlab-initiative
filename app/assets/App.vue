@@ -616,7 +616,7 @@
         this.observatorios = tmpObs;
       }
 
-      this.buildAllSearchOptions();
+      this.$analysisUnitModel.buildAllSearchOptions(this);
       this.themeEval();
     },
     computed: {
@@ -738,7 +738,7 @@
       }
 
       if (this.$cookies.isKey("currentAnalysisUnit")){
-        this.findPlaceByID(this.$cookies.get("currentAnalysisUnit"),null,this.changeMiddleToolbar);
+        this.$analysisUnitModel.findPlaceByID(this, this.$cookies.get("currentAnalysisUnit"),null,this.changeMiddleToolbar);
       } 
 
       this.langs = this.$translationModel.findAllLocales();
@@ -761,7 +761,7 @@
           this.$cookies.set("currentAnalysisUnit", newVal.id, -1); // Never expires
           this.$store.state.favLocation = newVal.id;
           this.locationDialog = false;
-          this.findPlaceByID(newVal.id,null,this.changeMiddleToolbar);
+          this.$analysisUnitModel.findPlaceByID(this, newVal.id,null,this.changeMiddleToolbar);
           if(this.$route.path.indexOf("localidade") != -1){ //página de localidade
             this.searchAnalysisUnit(newVal);
           } else if (this.$refs.currentRoute.setIdLocalidade) { //página de observatorio

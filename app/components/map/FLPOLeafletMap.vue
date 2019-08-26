@@ -81,7 +81,7 @@
 
       // Adiciona o marker do município apenas se houver idLocalidade
       if (this.customParams && this.customParams.idLocalidade  && this.customParams.idLocalidade.length == 7) { // Município
-        this.findPlaceByID(this.customParams.idLocalidade, leaflet_map, this.addDeafultMarker);
+        this.$analysisUnitModel.findPlaceByID(this, this.customParams.idLocalidade, leaflet_map, this.addDeafultMarker);
       }
           
       // let tileLayer = L.tileLayer(
