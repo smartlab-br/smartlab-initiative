@@ -166,8 +166,8 @@
       changeToGeoIP(parametro) {
         if (this.idLocalidade) {
           return this.replaceArgs(parametro, [this.idLocalidade]);
-        } else if (this.$store.state.favLocation) {
-          return this.replaceArgs(parametro, [this.$store.state.favLocation]);
+        } else if (this.$analysisUnitModel.getCurrentAnalysisUnit()) {
+          return this.replaceArgs(parametro, [this.$analysisUnitModel.getCurrentAnalysisUnit()]);
         } else {
           return this.replaceArgs(parametro, [0]);
         }

@@ -37,7 +37,7 @@
       </v-layout>
       <v-layout px-5 pb-5 mb-5
         :class="{'mx-5': $vuetify.breakpoint.smAndUp, 'mx-0': $vuetify.breakpoint.xsOnly}">
-        <v-layout row wrap :v-if="dims && $store && $store.state && $store.state.favLocation" >
+        <v-layout row wrap :v-if="dims && $store && $store.state && $analysisUnitModel.getCurrentAnalysisUnit()" >
           <v-flex v-for="(dimension, indxDim) in dims" :key="dimension.id"
             :class="'pa-3 ' + slicing">
             <!--
@@ -341,7 +341,7 @@
       window.addEventListener('resize', this.resizeFirstSection);
       window.addEventListener('scroll', this.assessPageBottom);
       this.assessPageBottom();
-      this.idLocalidade = this.$store.state.favLocation;
+      this.idLocalidade = this.$analysisUnitModel.getCurrentAnalysisUnit();
       this.mapEnabled = false;
       this.$analysisUnitModel.checkFavoriteAnalysisUnit(this);
     },

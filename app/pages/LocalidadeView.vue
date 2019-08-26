@@ -519,9 +519,8 @@
       }
     },
     mounted: function() {
-
       if (this.$route.params.idLocalidade && this.$cookies.get("currentAnalysisUnit") != this.$route.params.idLocalidade) {
-        this.$cookies.set("currentAnalysisUnit", this.$route.params.idLocalidade, -1); // Never expires
+        this.$analysisUnitModel.setCurrentAnalysisUnit(this.$route.params.idLocalidade);
       }
       
       this.$analysisUnitModel.checkFavoriteAnalysisUnit(this);
@@ -531,11 +530,7 @@
       window.addEventListener('resize', this.resizeFirstSection);
       this.resizeFirstSection();
 
-      if (this.$cookies.isKey("currentAnalysisUnit")) {
-        this.isFavorite = this.$route.params.idLocalidade == this.$cookies.get("currentAnalysisUnit");
-      } else {
-        this.isFavorite = this.$route.params.idLocalidade == this.$store.state.favLocation;
-      }
+      this.$analysisUnitModel.isCurrent(this.$route.params.idLocalidade);
     },
     beforeDestroy () {
       window.removeEventListener('scroll', this.assessPageBottom);
@@ -993,18 +988,19 @@
         }
       },
 
-      toggleFavorite() {
-        if (this.isFavorite) {
-          if (this.$cookies.isKey("currentAnalysisUnit")) {
-            this.$cookies.remove("currentAnalysisUnit");
-          }
-          this.$store.state.favLocation = null;
-        } else {
-          this.$cookies.set("currentAnalysisUnit", this.$route.params.idLocalidade, -1);
-          this.$store.state.favLocation = this.$route.params.idLocalidade;
-        }
-        this.isFavorite = !this.isFavorite;
-      }
+      // TODO Revisar isso aqui, jogando para algum controle de preferências (App-wide) do usuário logado
+      // toggleFavorite() {
+      //   if (this.isFavorite) {
+      //     if (this.$cookies.isKey("currentAnalysisUnit")) {
+      //       this.$cookies.remove("currentAnalysisUnit");
+      //     }
+      //     this.$store.state.favLocation = null;
+      //   } else {
+      //     this.$cookies.set("currentAnalysisUnit", this.$route.params.idLocalidade, -1);
+      //     this.$store.state.favLocation = this.$route.params.idLocalidade;
+      //   }
+      //   this.isFavorite = !this.isFavorite;
+      // }
     }
   }
 </script>

@@ -758,8 +758,7 @@
       },
       gsFavLocation(newVal, oldVal) {
         if (newVal) {
-          this.$cookies.set("currentAnalysisUnit", newVal.id, -1); // Never expires
-          this.$store.state.favLocation = newVal.id;
+          this.$analysisUnitModel.setCurrentAnalysisUnit(newVal.id);
           this.locationDialog = false;
           this.$analysisUnitModel.findPlaceByID(this, newVal.id,null,this.changeMiddleToolbar);
           if(this.$route.path.indexOf("localidade") != -1){ //página de localidade

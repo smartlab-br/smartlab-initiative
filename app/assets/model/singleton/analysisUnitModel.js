@@ -1,11 +1,29 @@
 import axios from 'axios'
+import VueCookies from 'vue-cookies'
 
 class AnalysisUnitModel {
   placePRTPTM = [
     { id: 'PRT120500000', uf: 29, label: "PRT 5a Região - Sede" }
   ]
+  currentAnalysisUnit = null
   
-  constructor() { }
+  constructor() {}
+
+  getCurrentAnalysisUnit() {
+    return this.currentAnalysisUnit;
+  }
+
+  setCurrentAnalysisUnit(idAU) {
+    VueCookies.set("currentAnalysisUnit", idAU, -1); // Never expires
+    this.currentAnalysisUnit = idAU;
+  }
+
+  isCurrent(idAU) {
+    if (this.currentAnalysisUnit) {
+      return idAU == this.currentAnalysisUnit;
+    }
+    return idAU == VueCookies.get("currentAnalysisUnit");
+  }
 
   getIdLocalidade(context, estado, municipio, setCookie, callback) {
     let url = "/municipios?categorias=cd_municipio_ibge_dv,nm_municipio_uf-nm_localidade&filtros=eq-nm_uf-\"" + estado + "\",and,eq-nm_municipio-\"" + municipio + "\"";
@@ -15,7 +33,7 @@ class AnalysisUnitModel {
         if (infoMunicipio.length > 0) {
           if (callback) callback(infoMunicipio[0]);
           context.$cookies.set("currentAnalysisUnit", infoMunicipio[0].cd_municipio_ibge_dv, -1); // Never expires
-          context.$store.state.favLocation = infoMunicipio[0].cd_municipio_ibge_dv;
+          this.currentAnalysisUnit = infoMunicipio[0].cd_municipio_ibge_dv;
         } else {
           context.$emit('showLocationDialog');
           if (callback) callback(null);
@@ -360,7 +378,7 @@ class AnalysisUnitModel {
       context.getClientGeo(context.getClientGeoCallback);
       // context.$emit('showLocationDialog');
     } else {
-      context.$store.state.favLocation = context.$cookies.get("currentAnalysisUnit");
+      this.currentAnalysisUnit = context.$cookies.get("currentAnalysisUnit");
       // context.getGlobalDatasetsIdLocalidade(context.$cookies.get("currentAnalysisUnit"));
     }
   }

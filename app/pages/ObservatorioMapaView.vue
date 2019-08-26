@@ -170,7 +170,7 @@
       }
     },
     mounted: function() {
-      this.idLocalidade = this.$store.state.favLocation;
+      this.idLocalidade = this.$analysisUnitModel.getCurrentAnalysisUnit();
       this.$analysisUnitModel.checkFavoriteAnalysisUnit(this);
     },
     methods: {
