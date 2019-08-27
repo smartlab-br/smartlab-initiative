@@ -50,6 +50,12 @@ export function createRouter () {
         route('/trabalhoescravo/localidade/:idLocalidade', 'Localidade'),
         route('/trabalhoinfantil/localidade/:idLocalidade', 'Localidade'),
 
+        route('/trabalhodecente/localidadecompare/:idLocalidade', 'LocalidadeCompare'),
+        route('/diversidade/localidadecompare/:idLocalidade', 'LocalidadeCompare'),
+        route('/sst/localidadecompare/:idLocalidade', 'LocalidadeCompare'),
+        route('/trabalhoescravo/localidadecompare/:idLocalidade', 'LocalidadeCompare'),
+        route('/trabalhoinfantil/localidadecompare/:idLocalidade', 'LocalidadeCompare'),
+
         route('/trabalhodecente/smartmap', 'ObservatorioMapa'),
         route('/diversidade/smartmap', 'ObservatorioMapa'),
         route('/sst/smartmap', 'ObservatorioMapa'),

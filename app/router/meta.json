@@ -9,6 +9,11 @@
     "description": "Retrato de uma localidade de acordo com informações compiladas pela Iniciativa Smartlab de Trabalho Decente",
     "keywords": "localidade"
   },
+  "localidadecompare": {
+    "title": "Smartlab - Comparação entre Localidades",
+    "description": "Comparação entre localidades de acordo com informações compiladas pela Iniciativa Smartlab de Trabalho Decente",
+    "keywords": "localidadecompare"
+  },
   "mapa": {
     "title": "Smartlab - Mapa Exploratório",
     "description": "Mapa Exploratório",

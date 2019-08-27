@@ -18,7 +18,7 @@
           [ structure.card_template,
             structure.datasource,
             structure.cd_indicador,
-            this.customParams.idLocalidade ]
+            this.selectedPlace ? this.selectedPlace : this.customParams.idLocalidade ]
         );
         if (structure.coefficient) url = url + "&coefficient=" + structure.coefficient;
         if (structure.term) {

@@ -150,6 +150,7 @@
                             v-if = "dataset && dataset[chart.id] !== null && chart.type == 'MAP_LEAFLET' && chart.options !== null &&
                                     ((chart.options.type == 'topo' && topology) || (chart.options.type !== 'topo'))"
                             :id="chartId[chart.id]"
+                            :selected-place="selectedPlace"
                             :dataset="dataset[chart.id]"
                             :options="chart.options"
                             :headers="chart.headers"
@@ -161,6 +162,7 @@
                           <flpo-topojson-map
                             v-if="dataset && dataset[chart.id] && dataset[chart.id].length >= 0 && chart.type == 'MAP_TOPOJSON' && chart.options !== null && topology"
                             :id="chartId[chart.id]"
+                            :selected-place="selectedPlace"
                             :dataset="dataset[chart.id]"
                             :options="chart.options"
                             :headers="chart.headers"
