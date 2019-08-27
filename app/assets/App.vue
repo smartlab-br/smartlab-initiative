@@ -137,8 +137,8 @@
         <v-autocomplete
           tabindex = "21"
           ref = "autocompleteChangePlace"
-          v-if="$analysisUnitModel.getSearchDataset().length > 0"
-          :items="searchDataset"
+          v-if="auOptions.length > 0"
+          :items="auOptions"
           v-show="seen"
           persistent-hint
           v-model="gsItemBusca"
@@ -153,7 +153,7 @@
           class="input-group--focused global-search"
           return-object>
           <template slot="item" slot-scope="data">
-            <template v-if="$analysisUnitModel.getSearchDataset().length < 2">
+            <template v-if="auOptions.length < 2">
               <v-list-tile-content>
                 <v-progress-circular :size="20" indeterminate color="primary">
                 </v-progress-circular>
@@ -478,7 +478,7 @@
           <v-card-title class="headline-obs">Informe o município a ser visualizado ou sua localidade:</v-card-title>
           <v-card-text>
           <v-autocomplete
-            v-if="$analysisUnitModel.getSearchDataset().length > 0"
+            v-if="auOptions.length > 0"
             :items="computedSearchItemsMunicipio"
             persistent-hint
             v-model="gsFavLocation"
@@ -493,7 +493,7 @@
             class="input-group--focused global-search"
             return-object>
             <template slot="item" slot-scope="data">
-              <template v-if="$analysisUnitModel.getSearchDataset().length < 2">
+              <template v-if="auOptions.length < 2">
                 <v-list-tile-content>
                   <v-progress-circular :size="20" indeterminate color="primary">
                   </v-progress-circular>
@@ -572,6 +572,7 @@
         gsItemBusca: null,
         gsFavLocation: null, 
         gsLoadingStatusSearchOptions: 'LOADING',
+        auOptions: [],
         locationDialog: false,
         //Formulário Relate um problema
         valid: true,
@@ -609,25 +610,24 @@
       }
 
       Promise.all(this.$analysisUnitModel.buildAllSearchOptions(this))
-        .then(
-          results => {
-            let hasLoading = false;
-            for (let eachResult in results) {
-                if (eachResult == 'ERROR') {
-                  this.gsLoadingStatusSearchOptions = eachResult;
-                  return;
-                }
-                if (eachResult == 'LOADING') {
-                  hasLoading = true;
-                }
-            }
-            this.gsLoadingStatusSearchOptions = hasLoading ? 'LOADING' : 'SUCCESS';
-          },
-          error => {
-            this.gsLoadingStatusSearchOptions = 'ERROR';
-            this.sendError("Falha ao buscar lista das localidades");
+        .then((results) => {
+          let hasLoading = false;
+          for (let eachResult in results) {
+              if (eachResult == 'ERROR') {
+                this.gsLoadingStatusSearchOptions = eachResult;
+                return;
+              }
+              if (eachResult == 'LOADING') hasLoading = true;
           }
-        );
+          this.gsLoadingStatusSearchOptions = hasLoading ? 'LOADING' : 'SUCCESS';
+          this.auOptions = this.$analysisUnitModel.getSearchDataset();
+        })
+        .catch((error) => {
+          this.gsLoadingStatusSearchOptions = 'ERROR';
+          this.auOptions = this.$analysisUnitModel.getSearchDataset();
+          this.sendError("Falha ao buscar lista das localidades");
+        });
+
       this.themeEval();
     },
     computed: {
@@ -724,7 +724,7 @@
       //   return '';
       // },
       computedSearchItemsMunicipio: function() {
-        let items = this.$analysisUnitModel.getSearchDataset();
+        let items = this.auOptions;
         return items.filter(function(el) {
           return el.scope == "mun";
         })
