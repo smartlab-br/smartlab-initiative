@@ -60,20 +60,22 @@
         } else if (idLocalidade.length == 5){ //Microrregião
           // TODO
         } else {
-          var callback = this.setAttribute;
-          var cb_args = [sectionType, type];
           if (scope == 'br') {
-            this.$analysisUnitModel.setTotalMunicipios(this, callback, cb_args);
+            this.$analysisUnitModel.getTotalMunicipios(this)
+              .then((result) => { this.setAttribute(sectionType, type, result); })
+              .catch((error) => { this.sendError(error); });
           } else {
-            this.$analysisUnitModel.setTotalMunicipiosPorUF(this, idLocalidade.substring(0,2), callback, cb_args);
+            this.$analysisUnitModel.getTotalMunicipiosPorUF(this, idLocalidade.substring(0,2))
+              .then((result) => { this.setAttribute(sectionType, type, result); })
+              .catch((error) => { this.sendError(error); });
           }
         }
       },
 
       setTotalMunPorUF(sectionType, type) {
-        var callback = this.setAttribute;
-        var cb_args = [sectionType, type];
-        this.$analysisUnitModel.setTotalMunicipiosPorUF(this, this.customParams.idLocalidade.substring(0,2), callback, cb_args);
+        this.$analysisUnitModel.getTotalMunicipiosPorUF(this, idLocalidade.substring(0,2))
+              .then((result) => { this.setAttribute(sectionType, type, result); })
+              .catch((error) => { this.sendError(error); });
       },
 
       setAttribute(sectionType, type, value) {

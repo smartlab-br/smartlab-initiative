@@ -91,8 +91,8 @@ class AnalysisUnitModel {
   buildMPTOptions(context, scope = null) {
     if (scope == null || scope.includes('MPT')) {
       let url = "/municipios?categorias=cd_unidade,nm_unidade,cd_uf&agregacao=distinct";
-      axios(context.getAxiosOptions(url))
-        .then(result => {
+      return axios(context.getAxiosOptions(url))
+        .then((result) => {
           let unidadesMPT = JSON.parse(result.data).dataset;
           
           for (let indxPRT in unidadesMPT) {
@@ -106,16 +106,10 @@ class AnalysisUnitModel {
               to: "/localidade/" + unidadesMPT[indxPRT].cd_unidade + "?",
               type: "place"
             });
-
-            if (indxPRT == unidadesMPT.length - 1) {
-              this.loadStatus['mpt_units'] = 'SUCCESS';
-            }
           }
-        }, error => {
-          console.error(error.toString());
-          context.sendError("Falha ao buscar total das localidades");
-          reject({ code: 500 });
-        });
+          return 'SUCCESS';
+        }, (error) => { reject(error); }
+      );
     }
   }
 
@@ -217,9 +211,8 @@ class AnalysisUnitModel {
           }
         }
         return 'SUCCESS';
-      }, error => {
-        reject();
-      });
+      }, (error) => { reject(error); }
+    );
   }
 
   getRegion(idRegiao) {
@@ -246,48 +239,31 @@ class AnalysisUnitModel {
     return regiao;
   }
 
-  setTotalMunicipios(context, callback, cb_args) {
+  getTotalMunicipios(context) {
     var url = "/municipios?categorias=cd_municipio_ibge_dv";
-    axios(context.getAxiosOptions(url))
-      .then(result => {
-        var nu_args = cb_args.slice(0, 3);
-        nu_args.push(JSON.parse(result.data).dataset.length);
-        callback.apply(null, nu_args);
-      }, error => {
-        context.sendError("Falha ao buscar total das localidades");
-        reject({ code: 500 });
-      });
+    return axios(context.getAxiosOptions(url))
+      .then(
+        (result) => { return JSON.parse(result.data).dataset.length; },
+        (error) => { reject("Falha ao buscar total das localidades"); }
+      );
   }
 
-  setTotalMunicipiosPorUF(context, uf, callback, cb_args) {
+  getTotalMunicipiosPorUF(context, uf) {
     var url = "/municipios?categorias=cd_municipio_ibge_dv,cd_uf&filtros=eq-cd_uf-"+uf;
-    axios(context.getAxiosOptions(url))
-      .then(result => {
-        var nu_args = cb_args.slice(0, 3);
-        nu_args.push(JSON.parse(result.data).dataset.length);
-        callback.apply(null, nu_args);
-      }, error => {
-        context.sendError("Falha ao buscar total das localidades");
-        reject({ code: 500 });
-      });
+    return axios(context.getAxiosOptions(url))
+      .then(
+        (result) => { return JSON.parse(result.data).dataset.length; },
+        (error) => { reject("Falha ao buscar total das localidades"); }
+      );
   }
 
-  findAllUF(context, callback, cb_args) {
+  findAllUF(context) {
     var url = "/municipios?categorias=cd_uf,sg_uf,nm_uf&valor=cd_uf&agregacao=distinct";
-    axios(context.getAxiosOptions(url))
-      .then(result => {
-        if (callback) {
-          var nu_args = []
-          nu_args.push(JSON.parse(result.data).dataset);
-          nu_args.push(cb_args);
-          callback.apply(null, nu_args);
-        } else {
-          return JSON.parse(result.data).dataset;
-        }
-      }, error => {
-        context.sendError("Falha ao buscar Unidades Federativas");
-        reject({ code: 500 });
-      });
+    return axios(context.getAxiosOptions(url))
+      .then(
+        (result) => { return JSON.parse(result.data).dataset; },
+        (error) => { reject("Falha ao buscar Unidades Federativas"); }
+      );
   }
 
   getStateFromId(idLoc) {
