@@ -46,27 +46,30 @@
           // this.sendError("Falha ao determinar a localidade. (Código 2)");
         } else {
           // this.infoGeoIp = info;
-          this.$analysisUnitModel.getIdLocalidade(this, info.state, info.city, true, this.getIdLocalidadeCallback);
-        }
-      },
-
-      getIdLocalidadeCallback(idLocalidade) {
-        if (idLocalidade != null) {
-          this.idLocalidade = idLocalidade.cd_municipio_ibge_dv;
-          this.$emit('alterMiddleToolbar', { "localidade": idLocalidade });
-        } else {
-          this.$emit('showLocationDialog');
-          // console.error("Falha ao consultar API de municípios.");
-          // this.sendError("Não foi possível determinar a localidade IBGE.");
+          this.$analysisUnitModel.getIdLocalidade(this, info.state, info.city)
+            .then(
+              (result) => {
+                if (result != null) {
+                  this.idLocalidade = result.cd_municipio_ibge_dv;
+                  this.$analysisUnitModel.setCurrentAnalysisUnit(result.cd_municipio_ibge_dv);
+                  this.$emit('alterMiddleToolbar', { "localidade": result });
+                } else {
+                  this.$emit('showLocationDialog');
+                  // console.error("Falha ao consultar API de municípios.");
+                  // this.sendError("Não foi possível determinar a localidade IBGE.");
+                }
+              }
+            )
+            .catch((error) => { this.$emit('showLocationDialog'); });
         }
       },
 
       checkCurrentAnalysisUnit() {
         let currAU = this.$analysisUnitModel.getCurrentAnalysisUnit();
-        if (this.idObservatorio && this.idObservatorio == 'td' && currAU && currAU.length != 7) {
+        if (this.idObservatorio && this.idObservatorio == 'td' && currAU && currAU.toString().length != 7) {
           this.$emit('showLocationDialog');
         } else if (!currAU) { // Se não houver cookie, invoca o cliente geo_ip
-          this.getClientGeo(context.getClientGeoCallback);
+          this.getClientGeo(this.getClientGeoCallback);
         } else {
           this.currentAnalysisUnit = currAU;
         }

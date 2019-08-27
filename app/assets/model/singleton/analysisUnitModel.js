@@ -33,22 +33,22 @@ class AnalysisUnitModel {
     return this.options ? this.options : [];
   }
 
-  getIdLocalidade(context, estado, municipio, setCookie, callback) {
+  getIdLocalidade(context, estado, municipio) {
     let url = "/municipios?categorias=cd_municipio_ibge_dv,nm_municipio_uf-nm_localidade&filtros=eq-nm_uf-\"" + estado + "\",and,eq-nm_municipio-\"" + municipio + "\"";
-    axios(context.getAxiosOptions(url))
-      .then(result => {
-        var infoMunicipio = JSON.parse(result.data).dataset;
-        if (infoMunicipio.length > 0) {
-          if (callback) callback(infoMunicipio[0]);
-          VueCookies.set("currentAnalysisUnit", infoMunicipio[0].cd_municipio_ibge_dv, -1); // Never expires
-          this.currentAnalysisUnit = infoMunicipio[0].cd_municipio_ibge_dv;
-        } else {
-          context.$emit('showLocationDialog');
-          if (callback) callback(null);
-        }
-      }, error => {
-        context.$emit('showLocationDialog');
-      });
+    return axios(context.getAxiosOptions(url))
+      .then(
+        (result) => {
+          var infoMunicipio = JSON.parse(result.data).dataset;
+          if (infoMunicipio.length > 0) {
+            VueCookies.set("currentAnalysisUnit", infoMunicipio[0].cd_municipio_ibge_dv, -1); // Never expires
+            this.currentAnalysisUnit = infoMunicipio[0].cd_municipio_ibge_dv;
+            return infoMunicipio[0];
+          } else {
+            throw "Localidade não encontrada!";
+          }
+        },
+        (error) => { reject(); }
+      );
   }
 
   getPRTPTMInstance(context, scope, id, callback) {
@@ -277,6 +277,8 @@ class AnalysisUnitModel {
   findPlaceByID(context, id, map, cb) {
     var url = null;
     var localidade = {};
+
+    if (id == null || id == undefined) return;
 
     if (id == 0){ //Brasil
       localidade.id_localidade = 0;
