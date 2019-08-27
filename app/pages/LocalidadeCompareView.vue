@@ -50,12 +50,12 @@
                {{ dimensao.short_desc }}
             </v-tab>
           </v-tabs>
-          <v-flex xs12 v-show="!visibleTitle">
+          <v-flex xs12 py-0 v-show="!visibleTitle">
             <v-layout row wrap primary white--text text-xs-center display-1-obs v-if="idLocalidade && idLocalidade_compare && $route.path.includes('localidadecompare')">
-              <v-flex xs6 v-if="localidade && localidade.nm_localidade">
+              <v-flex xs6 py-0 v-if="localidade && localidade.nm_localidade">
                 {{ localidade.nm_localidade}}
               </v-flex>
-              <v-flex xs6 v-if="localidade_compare && localidade_compare.nm_localidade">
+              <v-flex xs6 py-0 v-if="localidade_compare && localidade_compare.nm_localidade">
                 {{ localidade_compare.nm_localidade}}
               </v-flex>
             </v-layout>
@@ -254,7 +254,7 @@
                   </v-flex>
 
                   <v-flex xs6>
-                    <v-layout :id="'anchor_' + sections_compare[indexSecao].cards[cardIndex].id" ma-0 pa-0
+                    <v-layout ma-0 pa-0
                       :style="sections_compare[indexSecao].cards[cardIndex].type != 'headline' && sections_compare[indexSecao].cards[cardIndex].type != 'text' ? 'min-height:500px;': ''">
                       <v-layout v-if="sections_compare[indexSecao].cards[cardIndex].type && sections_compare[indexSecao].cards[cardIndex].type == 'text'"
                         :id="sections_compare[indexSecao].cards[cardIndex].id" px-4 pb-4>
@@ -282,6 +282,7 @@
                       <flpo-story-card-multiple-charts
                         v-else-if="sections_compare[indexSecao].cards[cardIndex].type && sections_compare[indexSecao].cards[cardIndex].type == 'multiple-charts' && topologyUfLoaded_compare  && topology_compare && ((indexSecao*100) + cardIndex  <= visibleCardMaxIndex)"
                         :structure="sections_compare[indexSecao].cards[cardIndex]"
+                        :selected-place="customParams.idLocalidade_compare"
                         :custom-params = "customParams"
                         :custom-functions = "custom_functions"
                         :topology = "topology_compare"
@@ -292,6 +293,7 @@
                       <flpo-story-card
                         v-else-if="topologyUfLoaded_compare  && topology_compare && ((indexSecao*100) + cardIndex  <= visibleCardMaxIndex)"
                         :structure="sections_compare[indexSecao].cards[cardIndex]"
+                        :selected-place="customParams.idLocalidade_compare"
                         :custom-params = "customParams"
                         :custom-functions = "custom_functions"
                         :topology = "topology_compare"
