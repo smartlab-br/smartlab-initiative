@@ -6,31 +6,42 @@ class TranslationModel {
       browser_langs: ['en', 'en-gb', 'en-GB'] } 
   ]
 
-  constructor() { }
+  constructor() {
+    this.currentLocale = 'pt'
+  }
 
   findAllLocales() {
     return this.locales;
   }
   
-  findBrowserLocale(context) {
-    if (context.$store.state.LOCALE) {
-      return context.$store.state.LOCALE;
-    }
+  findBrowserLocale() {
     var b_lang = navigator.language || navigator.userLanguage;
-    for (var lng in this.locales) {
-      if (this.locales[lng].browser_langs.includes(b_lang)) {
-        context.$store.state.LOCALE = this.locales[lng];
-        return this.locales[lng];
+    for (let lng of this.locales) {
+      if (lng.browser_langs.includes(b_lang)) return lng;
+    }
+    return this.locales[0];
+  }
+
+  getLocale() {
+    if (this.currentLocale) {
+      for (let lng of this.locales) {
+        if (lng.browser_langs.includes(this.currentLocale)) return lng;
       }
+    }
+    let locale = this.findBrowserLocale();
+    if (locale) {
+      this.currentLocale = locale.value;
+      return locale;
     }
   }
 
-  setLocale(context, locale) {
+  setLocale(locale) {
     // Sobrescreve apenas se efetivamente alterado
-    if (context.$store.state.LOCALE && locale && context.$store.state.LOCALE !== locale.value) {
-      context.$store.state.LOCALE = locale.value;
-    } else if ((context.$store.state.LOCALE == null || context.$store.state.LOCALE == undefined) && locale) {
-      context.$store.state.LOCALE = locale.value;
+    if (locale == null || locale == undefined) return;
+    if (this.currentLocale && this.currentLocale !== locale.value) {
+      this.currentLocale = locale.value;
+    } else if (this.currentLocale == null || this.currentLocale == undefined) {
+      this.currentLocale = locale.value;
     }
   }
 

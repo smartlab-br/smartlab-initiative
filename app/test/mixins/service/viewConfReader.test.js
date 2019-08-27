@@ -10,7 +10,7 @@ require('../../setup.js');
 import ViewConfReader from '../../../mixins/service/viewConfReader'
 import NumberFormatter from '../../../mixins/service/numberFormatter'
 import DatasetManager from '../../../mixins/service/datasetManager'
-import IndicatorsModel from '../../../mixins/model/indicatorsModel'
+import IndicatorsModel from '../../../assets/model/singleton/indicatorsModel'
 
 // Imports a component to serve as a bridge to the mixin
 import FLPOSobreLayout from '../../../components/FLPOSobreLayout'
@@ -19,7 +19,7 @@ import FLPOSobreLayout from '../../../components/FLPOSobreLayout'
 Vue.use(ViewConfReader)
 Vue.use(NumberFormatter)
 Vue.use(DatasetManager)
-Vue.use(IndicatorsModel)
+Vue.prototype.$indicatorsModel = new IndicatorsModel();
 
 // Tests
 describe('ViewConfReader', () => {
