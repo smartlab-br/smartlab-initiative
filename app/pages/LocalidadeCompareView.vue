@@ -646,7 +646,7 @@
         this.$cookies.set("currentAnalysisUnit", this.$route.params.idLocalidade, -1); // Never expires
       }
       
-      this.checkFavoriteAnalysisUnit();
+      this.checkCurrentAnalysisUnit();
       window.addEventListener('scroll', this.assessPageBottom);
       window.addEventListener('scroll', this.setVisibleCardMaxIndex);
       this.assessPageBottom();
@@ -1155,7 +1155,8 @@
         } else {
           let finalText = this.replaceArgs(
             structure.template,
-            this.indicatorsToValueArray(
+            this.$indicatorsModel.indicatorsToValueArray(
+              this,
               rules, 
               this.customFunctions, 
               base_object_list,
@@ -1251,6 +1252,7 @@
             // title: this.replaceArgs(
             //   structure.template,
             //   this.indicatorsToValueArray(
+            //     this,
             //     structure.args, 
             //     this.customFunctions, 
             //     base_object_list,

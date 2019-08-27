@@ -166,8 +166,8 @@
       changeToGeoIP(parametro) {
         if (this.idLocalidade) {
           return this.replaceArgs(parametro, [this.idLocalidade]);
-        } else if (this.$store.state.favLocation) {
-          return this.replaceArgs(parametro, [this.$store.state.favLocation]);
+        } else if (this.$analysisUnitModel.getCurrentAnalysisUnit()) {
+          return this.replaceArgs(parametro, [this.$analysisUnitModel.getCurrentAnalysisUnit()]);
         } else {
           return this.replaceArgs(parametro, [0]);
         }
@@ -186,7 +186,8 @@
           );
           // this[addedParams.attribute] = this.replaceArgs(
           //   structure.template,
-          //   this.indicatorsToValueArray(
+          //   this.$indicatorsModel.indicatorsToValueArray(
+          //     this,
           //     structure.args, 
           //     this.customFunctions, 
           //     base_object_list,

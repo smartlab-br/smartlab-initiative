@@ -269,8 +269,7 @@
           <v-layout align-right row wrap>
             <v-flex xs12>
               <v-autocomplete
-                v-if="$store && $store.state && $store.state.searchDataset &&
-                      $store.state.searchDataset.dataset && $store.state.searchDataset.dataset.length > 0"
+                v-if="auOptions.length > 0"
                 :items="computedSearchItems"
                 persistent-hint
                 v-model="idLocalidade_compare"
@@ -282,7 +281,7 @@
                 class="input-group--focused global-search"
                 return-object>
                 <template slot="item" slot-scope="data">
-                  <template v-if="$store.state.searchDataset.dataset.length < 2">
+                  <template v-if="auOptions.length < 2">
                     <v-list-tile-content>
                       <v-progress-circular :size="20" indeterminate color="primary">
                       </v-progress-circular>
@@ -350,6 +349,7 @@
         thematicLoaded: 0,
         isFavorite: false,
         visibleCardMaxIndex: 1, //dois primeiros cards
+        auOptions: [],
         compareDialog: false,
         idLocalidade_compare: null,
         custom_functions: {
@@ -591,12 +591,12 @@
       computedSearchItems: function() {
         if (this.idLocalidade) {
           if (this.idLocalidade.length == 7){ //município
-          let items = this.$store.state.searchDataset.dataset;
+          let items = this.auOptions;
           return items.filter(function(el) {
             return el.scope == "mun";
           })
           } else if (this.idLocalidade.length == 2){ //UF
-            let items = this.$store.state.searchDataset.dataset;
+            let items = this.auOptions;
             return items.filter(function(el) {
               return el.scope == "uf";
             })
@@ -606,22 +606,36 @@
       
     },
     mounted: function() {
-
-      if (this.$route.params.idLocalidade && this.$cookies.get("currentAnalysisUnit") != this.$route.params.idLocalidade) {
-        this.$cookies.set("currentAnalysisUnit", this.$route.params.idLocalidade, -1); // Never expires
+      if (!this.$analysisUnitModel.isCurrent(this.$route.params.idLocalidade)) {
+        this.$analysisUnitModel.setCurrentAnalysisUnit(this.$route.params.idLocalidade);
       }
       
-      this.checkFavoriteAnalysisUnit();
+      this.checkCurrentAnalysisUnit();
       window.addEventListener('scroll', this.assessPageBottom);
       window.addEventListener('scroll', this.setVisibleCardMaxIndex);
       this.assessPageBottom();
       window.addEventListener('resize', this.resizeFirstSection);
       this.resizeFirstSection();
 
-      if (this.$cookies.isKey("currentAnalysisUnit")) {
-        this.isFavorite = this.$route.params.idLocalidade == this.$cookies.get("currentAnalysisUnit");
+      this.$analysisUnitModel.isCurrent(this.$route.params.idLocalidade);
+
+      let auOptions = this.$analysisUnitModel.getSearchDataset();
+      if ((auOptions instanceof Promise) || auOptions.then) {
+        auOptions.then((result) => { this.auOptions = result });
+      } else if (Array.isArray(auOptions) && auOptions.length > 0) {
+        let first = auOptions[0];
+        if ((first instanceof Promise) || first.then) {
+          Promise.all(auOptions)
+            .then((results) => { this.auOptions = this.$analysisUnitModel.getOptions(); })
+            .catch((error) => {
+              this.auOptions = this.$analysisUnitModel.getOptions();
+              this.sendError("Falha ao buscar lista das localidades");
+            });
+        } else {
+          this.auOptions = auOptions;  
+        }
       } else {
-        this.isFavorite = this.$route.params.idLocalidade == this.$store.state.favLocation;
+        this.auOptions = auOptions;
       }
     },
     beforeDestroy () {
@@ -700,10 +714,10 @@
           // this.selectCoords("/static/topojson/country.json");
           this.selectCoords("br", "uf", 0);
         } else if (this.$route.params.idLocalidade.includes("mptreg") || this.$route.params.idLocalidade.includes("MPTREG")) {
-          this.selectCoords("uf", "municipio", this.getUFFromPlace(this.$route.params.idLocalidade));
+          this.selectCoords("uf", "municipio", this.$analysisUnitModel.getUFFromPlace(this.$route.params.idLocalidade));
         } else if (this.$route.params.idLocalidade.includes("prt") || this.$route.params.idLocalidade.includes("PRT") ||
                    this.$route.params.idLocalidade.includes("ptm") || this.$route.params.idLocalidade.includes("PTM")) {
-          this.selectCoords("uf", "municipio", this.getUFFromPlace(this.$route.params.idLocalidade));
+          this.selectCoords("uf", "municipio", this.$analysisUnitModel.getUFFromPlace(this.$route.params.idLocalidade));
         } else if (this.$route.params.idLocalidade.length == 1){ //Região
           this.selectCoords("br", "uf", 0);
           // this.selectCoords("/static/topojson/regiao.json");
@@ -841,7 +855,7 @@
 
           this.$emit('alterMiddleToolbar', { title: 'Brasil', subTitle: this.dimensao_ativa.short_des, localidade: this.localidade });
         } else if (idLocalidade.includes("mptreg") || idLocalidade.includes("MPTREG")) {
-          let localidade = this.getPRTPTMInstance(idLocalidade.substring(0,6), idLocalidade.substring(6));
+          let localidade = this.$analysisUnitModel.getPRTPTMInstance(this, idLocalidade.substring(0,6), idLocalidade.substring(6));
           this.localidade = localidade;
           this.customParams.localidade = localidade;
           this.$emit('alterMiddleToolbar', { "localidade": localidade });
@@ -868,12 +882,12 @@
             });
         } else if (idLocalidade.length == 1){ //Região
           this.localidade.id_localidade = idLocalidade;
-          this.localidade.nm_localidade = this.getRegion(idLocalidade);
+          this.localidade.nm_localidade = this.$analysisUnitModel.getRegion(idLocalidade);
           this.localidade.tipo = '';
           this.localidade.img = "/static/thumbs/municipios/" + idLocalidade + ".jpg";
           this.customParams.localidade = this.localidade;
 
-          this.$emit('alterMiddleToolbar', this.getRegion(idLocalidade));
+          this.$emit('alterMiddleToolbar', this.$analysisUnitModel.getRegion(idLocalidade));
         } else if (idLocalidade.length == 2){ //Estado
           url = "/municipios?categorias=cd_uf,nm_uf&filtros=eq-cd_uf-" + idLocalidade;
           axios(this.getAxiosOptions(url))
@@ -948,7 +962,8 @@
         } else {
           let finalText = this.replaceArgs(
             structure.template,
-            this.indicatorsToValueArray(
+            this.$indicatorsModel.indicatorsToValueArray(
+              this,
               rules, 
               this.customFunctions, 
               base_object_list,
@@ -1042,7 +1057,8 @@
                 )}
             // title: this.replaceArgs(
             //   structure.template,
-            //   this.indicatorsToValueArray(
+            //   this.$indicatorsModel.indicatorsToValueArray(
+            //     this,
             //     structure.args, 
             //     this.customFunctions, 
             //     base_object_list,
@@ -1078,18 +1094,19 @@
         }
       },
 
-      toggleFavorite() {
-        if (this.isFavorite) {
-          if (this.$cookies.isKey("currentAnalysisUnit")) {
-            this.$cookies.remove("currentAnalysisUnit");
-          }
-          this.$store.state.favLocation = null;
-        } else {
-          this.$cookies.set("currentAnalysisUnit", this.$route.params.idLocalidade, -1);
-          this.$store.state.favLocation = this.$route.params.idLocalidade;
-        }
-        this.isFavorite = !this.isFavorite;
-      }
+      // TODO Revisar isso aqui, jogando para algum controle de preferências (App-wide) do usuário logado
+      // toggleFavorite() {
+      //   if (this.isFavorite) {
+      //     if (this.$cookies.isKey("currentAnalysisUnit")) {
+      //       this.$cookies.remove("currentAnalysisUnit");
+      //     }
+      //     this.$store.state.favLocation = null;
+      //   } else {
+      //     this.$cookies.set("currentAnalysisUnit", this.$route.params.idLocalidade, -1);
+      //     this.$store.state.favLocation = this.$route.params.idLocalidade;
+      //   }
+      //   this.isFavorite = !this.isFavorite;
+      // }
     }
   }
 </script>

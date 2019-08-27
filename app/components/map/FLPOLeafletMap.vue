@@ -83,7 +83,7 @@
       if (this.selectedPlace && this.selectedPlace.length == 7){
         this.findPlaceByID(this.selectedPlace, leaflet_map, this.addDeafultMarker);
       } else if (this.customParams && this.customParams.idLocalidade  && this.customParams.idLocalidade.length == 7) { // Município
-        this.findPlaceByID(this.customParams.idLocalidade, leaflet_map, this.addDeafultMarker);
+        this.$analysisUnitModel.findPlaceByID(this, this.customParams.idLocalidade, leaflet_map, this.addDeafultMarker);
       }
           
       // let tileLayer = L.tileLayer(

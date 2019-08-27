@@ -137,9 +137,8 @@
         <v-autocomplete
           tabindex = "21"
           ref = "autocompleteChangePlace"
-          v-if="$store && $store.state && $store.state.searchDataset &&
-                $store.state.searchDataset.dataset && $store.state.searchDataset.dataset.length > 0"
-          :items="$store.state.searchDataset.dataset"
+          v-if="auOptions.length > 0"
+          :items="auOptions"
           v-show="seen"
           persistent-hint
           v-model="gsItemBusca"
@@ -154,7 +153,7 @@
           class="input-group--focused global-search"
           return-object>
           <template slot="item" slot-scope="data">
-            <template v-if="$store.state.searchDataset.dataset.length < 2">
+            <template v-if="auOptions.length < 2">
               <v-list-tile-content>
                 <v-progress-circular :size="20" indeterminate color="primary">
                 </v-progress-circular>
@@ -479,8 +478,7 @@
           <v-card-title class="headline-obs">Informe o município a ser visualizado ou sua localidade:</v-card-title>
           <v-card-text>
           <v-autocomplete
-            v-if="$store && $store.state && $store.state.searchDataset &&
-                  $store.state.searchDataset.dataset && $store.state.searchDataset.dataset.length > 0"
+            v-if="auOptions.length > 0"
             :items="computedSearchItemsMunicipio"
             persistent-hint
             v-model="gsFavLocation"
@@ -495,7 +493,7 @@
             class="input-group--focused global-search"
             return-object>
             <template slot="item" slot-scope="data">
-              <template v-if="$store.state.searchDataset.dataset.length < 2">
+              <template v-if="auOptions.length < 2">
                 <v-list-tile-content>
                   <v-progress-circular :size="20" indeterminate color="primary">
                   </v-progress-circular>
@@ -573,6 +571,8 @@
         snackText: 'Hello, I\'m a snackbar',
         gsItemBusca: null,
         gsFavLocation: null, 
+        gsLoadingStatusSearchOptions: 'LOADING',
+        auOptions: [],
         locationDialog: false,
         //Formulário Relate um problema
         valid: true,
@@ -601,13 +601,6 @@
     },
     created () {    
       this.$store.state.gDatasets = {};
-      this.$store.state.searchDataset = {
-        dataset: [],
-        loadStatus: { 
-          dimensions: 'SUCCESS', indicators: 'SUCCESS',
-          places: 'LOADING'//, mpt_units: 'LOADING'
-        }
-      }
 
       let tmpObs = this.$observatories.getObservatories();
       if (tmpObs instanceof Promise) {
@@ -616,7 +609,25 @@
         this.observatorios = tmpObs;
       }
 
-      this.buildAllSearchOptions();
+      Promise.all(this.$analysisUnitModel.buildAllSearchOptions(this))
+        .then((results) => {
+          let hasLoading = false;
+          for (let eachResult in results) {
+              if (eachResult == 'ERROR') {
+                this.gsLoadingStatusSearchOptions = eachResult;
+                return;
+              }
+              if (eachResult == 'LOADING') hasLoading = true;
+          }
+          this.gsLoadingStatusSearchOptions = hasLoading ? 'LOADING' : 'SUCCESS';
+          this.auOptions = this.$analysisUnitModel.getOptions();
+        })
+        .catch((error) => {
+          this.gsLoadingStatusSearchOptions = 'ERROR';
+          this.auOptions = this.$analysisUnitModel.getOptions();
+          this.sendError("Falha ao buscar lista das localidades");
+        });
+
       this.themeEval();
     },
     computed: {
@@ -629,17 +640,6 @@
           return fullPath.substring(0, fullPath.indexOf('#'));
         }
         return fullPath;
-      },
-      gsLoadingStatusSearchOptions: function() {
-        var minStatus = 'SUCCESS';
-        for (var indx in this.$store.state.searchDataset.loadStatus) {
-          if (this.$store.state.searchDataset.loadStatus[indx] == 'ERROR') {
-            return 'ERROR';
-          } else if (this.$store.state.searchDataset.loadStatus[indx] == 'LOADING') {
-            minStatus = 'LOADING';
-          }
-        }
-        return minStatus;
       },
       computedTitle: function() {
         // Assess the current observatory
@@ -724,25 +724,23 @@
       //   return '';
       // },
       computedSearchItemsMunicipio: function() {
-        let items = this.$store.state.searchDataset.dataset;
+        let items = this.auOptions;
         return items.filter(function(el) {
           return el.scope == "mun";
         })
       }
     },
     mounted: function() {
-      // this.checkFavoriteAnalysisUnit();
+      // this.checkCurrentAnalysisUnit();
 
       if (!this.$cookies.isKey("cookieAccept")){
         this.snackbarCookies = true;
       }
 
-      if (this.$cookies.isKey("currentAnalysisUnit")){
-        this.findPlaceByID(this.$cookies.get("currentAnalysisUnit"),null,this.changeMiddleToolbar);
-      } 
-
-      this.langs = this.findAllLocales();
-      this.lang = this.findBrowserLocale();
+      this.$analysisUnitModel.findCurrentPlace(this, null, this.changeMiddleToolbar);
+    
+      this.langs = this.$translationModel.findAllLocales();
+      this.lang = this.$translationModel.findBrowserLocale(this);
 
       window.addEventListener('scroll', this.assessVisibleTitle);
       window.addEventListener('scroll', this.assessVisibleLeftDrawerTitle);
@@ -758,10 +756,9 @@
       },
       gsFavLocation(newVal, oldVal) {
         if (newVal) {
-          this.$cookies.set("currentAnalysisUnit", newVal.id, -1); // Never expires
-          this.$store.state.favLocation = newVal.id;
+          this.$analysisUnitModel.setCurrentAnalysisUnit(newVal.id);
           this.locationDialog = false;
-          this.findPlaceByID(newVal.id,null,this.changeMiddleToolbar);
+          this.$analysisUnitModel.findPlaceByID(this, newVal.id,null,this.changeMiddleToolbar);
           if(this.$route.path.indexOf("localidade") != -1){ //página de localidade
             this.searchAnalysisUnit(newVal);
           } else if (this.$refs.currentRoute.setIdLocalidade) { //página de observatorio
@@ -827,7 +824,7 @@
       },
 
       // changeLocale() {
-      //   this.setLocale(this.lang);
+      //   this.setLocale(this, this.lang);
       // },
 
       getGlobalDatasetIdLocalidade(idLocalidade) {

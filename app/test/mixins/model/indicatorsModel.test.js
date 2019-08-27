@@ -7,7 +7,7 @@ Vue.use(Vuetify)
 
 require('../../setup.js');
 
-import IndicatorsModel from '../../../mixins/model/indicatorsModel'
+import IndicatorsModel from '../../../assets/model/singleton/indicatorsModel'
 import NumberFormatter from '../../../mixins/service/numberFormatter'
 import ViewConfReader from '../../../mixins/service/viewConfReader.js'
 
@@ -15,27 +15,27 @@ import ViewConfReader from '../../../mixins/service/viewConfReader.js'
 import FLPOSobreLayout from '../../../components/FLPOSobreLayout'
 
 // Sets the mixin in the Vue instance
-Vue.use(IndicatorsModel)
 Vue.use(NumberFormatter)
 Vue.use(ViewConfReader)
+Vue.prototype.$indicatorsModel = new IndicatorsModel();
 
 // Tests
 describe('IndicatorsModel', () => {
   test('Retorna vazio quando nenhuma estrutura é passada para pegar um atributo de um indicador', () => {
     const wrapper = mount(FLPOSobreLayout, { sync: false })
-    let result = wrapper.vm.getAttributeFromIndicatorInstance(null, {}, {});
+    let result = wrapper.vm.$indicatorsModel.getAttributeFromIndicatorInstance(null, {}, {});
     expect(result).toEqual(null);
   })
 
   test('Retorna vazio quando nenhum indicador é passado para pegar um atributo', () => {
     const wrapper = mount(FLPOSobreLayout, { sync: false })
-    let result = wrapper.vm.getAttributeFromIndicatorInstance({}, {}, null);
+    let result = wrapper.vm.$indicatorsModel.getAttributeFromIndicatorInstance(wrapper.vm, {}, {}, null);
     expect(result).toEqual(null);
   })
 
   test('Retorna o valor padrão de um atributo', () => {
     const wrapper = mount(FLPOSobreLayout, { sync: false })
-    let result = wrapper.vm.getAttributeFromIndicatorInstance({ default: 'default' }, {}, null);
+    let result = wrapper.vm.$indicatorsModel.getAttributeFromIndicatorInstance(wrapper.vm, { default: 'default' }, {}, null);
     expect(result).toEqual('default');
   })
 
@@ -43,7 +43,7 @@ describe('IndicatorsModel', () => {
     const wrapper = mount(FLPOSobreLayout, { sync: false })
     let indicador = { vl_indicador: 123.45 };
     let structure = { named_prop: 'vl_indicador'};
-    let result = wrapper.vm.getAttributeFromIndicatorInstance(structure, {}, indicador);
+    let result = wrapper.vm.$indicatorsModel.getAttributeFromIndicatorInstance(wrapper.vm, structure, {}, indicador);
     expect(result).toEqual(123.45);
   })
 
@@ -58,7 +58,7 @@ describe('IndicatorsModel', () => {
         { named_prop: 'vl_indicador' }
       ]
     };
-    let result = wrapper.vm.getAttributeFromIndicatorInstance(structure, customFunctions, indicador);
+    let result = wrapper.vm.$indicatorsModel.getAttributeFromIndicatorInstance(wrapper.vm, structure, customFunctions, indicador);
     expect(result).toEqual(246.9);
   })
 
@@ -66,7 +66,7 @@ describe('IndicatorsModel', () => {
     const wrapper = mount(FLPOSobreLayout, { sync: false })
     let indicador = { vl_indicador: 123.45 };
     let structure = { named_prop: 'vl_indicador', format: 'inteiro'};
-    let result = wrapper.vm.getAttributeFromIndicatorInstance(structure, {}, indicador);
+    let result = wrapper.vm.$indicatorsModel.getAttributeFromIndicatorInstance(wrapper.vm, structure, {}, indicador);
     expect(result).toEqual('123');
   })
 
@@ -76,7 +76,7 @@ describe('IndicatorsModel', () => {
     let cbInvalid = jest.fn();
     let structure = { default: 'default', required: true };
 
-    let result = wrapper.vm.getAttributeFromIndicatorInstance(structure, {}, null, cbInvalid);
+    let result = wrapper.vm.$indicatorsModel.getAttributeFromIndicatorInstance(wrapper.vm, structure, {}, null, cbInvalid);
     expect(result).toEqual('default');
     expect(cbInvalid).toHaveBeenCalled();
   })
@@ -87,7 +87,7 @@ describe('IndicatorsModel', () => {
     let cbInvalid = jest.fn();
     let structure = { required: true };
 
-    let result = wrapper.vm.getAttributeFromIndicatorInstance(structure, {}, null, cbInvalid);
+    let result = wrapper.vm.$indicatorsModel.getAttributeFromIndicatorInstance(wrapper.vm, structure, {}, null, cbInvalid);
     expect(result).toEqual('Sem Registros');
     expect(cbInvalid).toHaveBeenCalled();
   })
@@ -113,7 +113,7 @@ describe('IndicatorsModel', () => {
       }
     ];
 
-    let result = wrapper.vm.combineIndicators(ds, structure, funcs);
+    let result = wrapper.vm.$indicatorsModel.combineIndicators(ds, structure, funcs);
     expect(result).toEqual([
       { "cd_indicador": 'cmb', "ds_indicador": 'combined', 
         "nu_competencia": 2099, "vl_indicador": 55.55555555555556,
@@ -131,7 +131,7 @@ describe('IndicatorsModel', () => {
       { cd_indicador: '1', nu_competencia: 2047, vl_indicador: 1 }
     ]
     
-    let result = wrapper.vm.isMaxOnSlice(null, ds, ds[0], 'nu_competencia');
+    let result = wrapper.vm.$indicatorsModel.isMaxOnSlice(null, ds, ds[0], 'nu_competencia');
     expect(result).toEqual(true);
   })
 
@@ -144,7 +144,7 @@ describe('IndicatorsModel', () => {
       { cd_indicador: '1', nu_competencia: 2136, vl_indicador: 2.7 }
     ]
     
-    let result = wrapper.vm.isMinOnSlice(null, ds, ds[1], 'nu_competencia');
+    let result = wrapper.vm.$indicatorsModel.isMinOnSlice(null, ds, ds[1], 'nu_competencia');
     expect(result).toEqual(true);
   })
 
@@ -156,7 +156,7 @@ describe('IndicatorsModel', () => {
       { cd_indicador: '1', nu_competencia: 2047, vl_indicador: 1 }
     ]
     
-    let result = wrapper.vm.isMaxOnSlice(null, ds, ds[1], 'nu_competencia');
+    let result = wrapper.vm.$indicatorsModel.isMaxOnSlice(null, ds, ds[1], 'nu_competencia');
     expect(result).toEqual(false);
   })
 
@@ -171,7 +171,7 @@ describe('IndicatorsModel', () => {
       { cd_indicador: '2', nu_competencia: 2047, vl_indicador: 1 }
     ]
     
-    let result = wrapper.vm.slice(structure, ds);
+    let result = wrapper.vm.$indicatorsModel.slice(structure, ds);
     expect(result).toEqual([
       { cd_indicador: '1', nu_competencia: 2047, vl_indicador: 1 },
       { cd_indicador: '2', nu_competencia: 2047, vl_indicador: 1 }
@@ -189,7 +189,7 @@ describe('IndicatorsModel', () => {
       { cd_indicador: '2', nu_competencia: 2047, vl_indicador: 1 }
     ]
     
-    let result = wrapper.vm.slice(structure, ds);
+    let result = wrapper.vm.$indicatorsModel.slice(structure, ds);
     expect(result).toEqual([
       { cd_indicador: '1', nu_competencia: 2099, vl_indicador: 1.8 },
       { cd_indicador: '2', nu_competencia: 2099, vl_indicador: 1.8 }
@@ -212,7 +212,7 @@ describe('IndicatorsModel', () => {
     ]
     let invalidate = jest.fn();
     
-    let result = wrapper.vm.indicatorsToValueArray(args, {}, ds, invalidate);
+    let result = wrapper.vm.$indicatorsModel.indicatorsToValueArray(wrapper.vm, args, {}, ds, invalidate);
     expect(result).toEqual([
       1.8,
       1.8,

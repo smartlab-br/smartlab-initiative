@@ -245,7 +245,8 @@
           );
           // this[addedParams.attribute] = this.replaceArgs(
           //   structure.template,
-          //   this.indicatorsToValueArray(
+          //   this.$indicatorsModel.indicatorsToValueArray(
+          //     this,
           //     structure.args, 
           //     this.customFunctions, 
           //     base_object_list,
@@ -267,7 +268,8 @@
             id: addedParams.id,
             title: this.replaceArgs(
               this.structure.title.template,
-              this.indicatorsToValueArray(
+              this.$indicatorsModel.indicatorsToValueArray(
+                this,
                 this.structure.title.preloaded, 
                 this.customFunctions, 
                 base_object_list,
