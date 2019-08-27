@@ -269,8 +269,7 @@
           <v-layout align-right row wrap>
             <v-flex xs12>
               <v-autocomplete
-                v-if="$store && $store.state && $store.state.searchDataset &&
-                      $store.state.searchDataset.dataset && $store.state.searchDataset.dataset.length > 0"
+                v-if="auOptions.length > 0"
                 :items="computedSearchItems"
                 persistent-hint
                 v-model="idLocalidade_compare"
@@ -282,7 +281,7 @@
                 class="input-group--focused global-search"
                 return-object>
                 <template slot="item" slot-scope="data">
-                  <template v-if="$store.state.searchDataset.dataset.length < 2">
+                  <template v-if="auOptions.length < 2">
                     <v-list-tile-content>
                       <v-progress-circular :size="20" indeterminate color="primary">
                       </v-progress-circular>
@@ -350,6 +349,7 @@
         thematicLoaded: 0,
         isFavorite: false,
         visibleCardMaxIndex: 1, //dois primeiros cards
+        auOptions: [],
         compareDialog: false,
         idLocalidade_compare: null,
         custom_functions: {
@@ -586,12 +586,12 @@
       computedSearchItems: function() {
         if (this.idLocalidade) {
           if (this.idLocalidade.length == 7){ //município
-          let items = this.$store.state.searchDataset.dataset;
+          let items = this.auOptions;
           return items.filter(function(el) {
             return el.scope == "mun";
           })
           } else if (this.idLocalidade.length == 2){ //UF
-            let items = this.$store.state.searchDataset.dataset;
+            let items = this.auOptions;
             return items.filter(function(el) {
               return el.scope == "uf";
             })
@@ -613,6 +613,25 @@
       this.resizeFirstSection();
 
       this.$analysisUnitModel.isCurrent(this.$route.params.idLocalidade);
+
+      let auOptions = this.$analysisUnitModel.getSearchDataset();
+      if ((auOptions instanceof Promise) || auOptions.then) {
+        auOptions.then((result) => { this.auOptions = result });
+      } else if (Array.isArray(auOptions) && auOptions.length > 0) {
+        let first = auOptions[0];
+        if ((first instanceof Promise) || first.then) {
+          Promise.all(auOptions)
+            .then((results) => { this.auOptions = this.$analysisUnitModel.getOptions(); })
+            .catch((error) => {
+              this.auOptions = this.$analysisUnitModel.getOptions();
+              this.sendError("Falha ao buscar lista das localidades");
+            });
+        } else {
+          this.auOptions = auOptions;  
+        }
+      } else {
+        this.auOptions = auOptions;
+      }
     },
     beforeDestroy () {
       window.removeEventListener('scroll', this.assessPageBottom);

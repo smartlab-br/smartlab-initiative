@@ -620,11 +620,11 @@
               if (eachResult == 'LOADING') hasLoading = true;
           }
           this.gsLoadingStatusSearchOptions = hasLoading ? 'LOADING' : 'SUCCESS';
-          this.auOptions = this.$analysisUnitModel.getSearchDataset();
+          this.auOptions = this.$analysisUnitModel.getOptions();
         })
         .catch((error) => {
           this.gsLoadingStatusSearchOptions = 'ERROR';
-          this.auOptions = this.$analysisUnitModel.getSearchDataset();
+          this.auOptions = this.$analysisUnitModel.getOptions();
           this.sendError("Falha ao buscar lista das localidades");
         });
 

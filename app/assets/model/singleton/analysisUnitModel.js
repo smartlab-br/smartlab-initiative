@@ -7,6 +7,9 @@ class AnalysisUnitModel {
   ]
   currentAnalysisUnit = null
   options = []
+  loadStatus = {
+    places: null
+  }
   
   constructor() {}
 
@@ -29,8 +32,39 @@ class AnalysisUnitModel {
     return idAU == VueCookies.get("currentAnalysisUnit");
   }
 
-  getSearchDataset() {
+  getOptions() {
     return this.options ? this.options : [];
+  }
+
+  getSearchDataset() {
+    //return this.options ? this.options : [];
+    if (this.isLoaded()) return this.options; // If loaded, returns the dataset
+    if (!this.hasStartedLoading()) return this.buildAllSearchOptions(); // If loading hasn't been triggered, start loading an return a promise
+    // If it's loading, create a promise that waits until loading is finished to continue the execution
+    var context = this;
+    return new Promise(
+      function(resolve, reject) {
+        while (!context.isLoaded()) {
+          setTimeout(
+            (isLoaded) => { if (isLoaded) resolve()},
+          20, context.isLoaded());
+        }
+      }
+    )
+  }
+
+  hasStartedLoading() {
+    for (let indx in this.loadStatus) {
+      if (this.loadStatus[indx]) return true;
+    }
+    return false;
+  }
+  
+  isLoaded() {
+    for (let indx in this.loadStatus) {
+      if (this.loadStatus[indx] !== 'SUCCESS' && this.loadStatus[indx] !== 'ERROR') return false;
+    }
+    return true;
   }
 
   getIdLocalidade(context, estado, municipio) {
@@ -114,6 +148,8 @@ class AnalysisUnitModel {
   }
 
   buildPlacesOptions(context, scope = null) {
+    this.loadStatus.places = 'LOADING';
+
     if (scope == null || scope.includes('Brasil')) {
       this.options.push({
         id: 0,
@@ -210,8 +246,12 @@ class AnalysisUnitModel {
             });
           }
         }
+        this.loadStatus.places = 'SUCCESS';
         return 'SUCCESS';
-      }, (error) => { reject(error); }
+      }, (error) => {
+        this.loadStatus.places = 'ERROR';
+        reject(error);
+      }
     );
   }
 
