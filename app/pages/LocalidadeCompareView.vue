@@ -67,7 +67,7 @@
               </v-btn>
             </v-layout>
             <v-layout pa-0 row wrap justify-center>
-              <v-flex md6 lg5 :class="{'pr-4': $vuetify.breakpoint.mdAndDown, 'pr-5': $vuetify.breakpoint.lgAndUp}">
+              <v-flex xs6 lg5 :class="{'pr-4': $vuetify.breakpoint.mdAndDown, 'pr-5': $vuetify.breakpoint.lgAndUp}">
                 <div class="display-2-obs">
                     {{ localidade != null ? localidade.nm_localidade : '' }}
                     <v-tooltip v-if="presentation" bottom class="icon-vertical-align-middle">
@@ -105,7 +105,7 @@
                   </flpo-minicard>
                 </v-layout>
               </v-flex>
-              <v-flex md6 lg5 :class="{'pl-4': $vuetify.breakpoint.mdAndDown, 'pl-5': $vuetify.breakpoint.lgAndUp}">
+              <v-flex xs6 lg5 :class="{'pl-4': $vuetify.breakpoint.mdAndDown, 'pl-5': $vuetify.breakpoint.lgAndUp}">
                 <div class="display-2-obs">
                     {{ localidade_compare != null ? localidade_compare.nm_localidade : '' }}
                     <v-tooltip v-if="presentation_compare" bottom class="icon-vertical-align-middle">
@@ -955,16 +955,20 @@
               card.id = 'compare_'+card.id;
               if (card.api){
                 if (!Array.isArray(card.api)){
-                  for (let arg of card.api.args){
-                    if (arg.named_prop == "cd_uf"){
-                      arg.named_prop = "cd_uf_compare";
+                  if (card.api.args){
+                    for (let arg of card.api.args){
+                      if (arg.named_prop == "cd_uf"){
+                        arg.named_prop = "cd_uf_compare";
+                      }
                     }
                   }
                 } else {
                   for(let api of card.api){
-                    for (let arg of api.args){
-                      if (arg.named_prop == "cd_uf"){
-                        arg.named_prop = "cd_uf_compare";
+                    if (api.args){
+                      for (let arg of api.args){
+                        if (arg.named_prop == "cd_uf"){
+                          arg.named_prop = "cd_uf_compare";
+                        }
                       }
                     }
                   }
@@ -973,7 +977,7 @@
               if (card.charts){
                 for (let chart of card.charts){
                   chart.id = 'compare_'+chart.id;
-                  if (chart.api){
+                  if (chart.api && chart.api.args){
                     for (let arg of chart.api.args){
                       if (arg.named_prop == "cd_uf"){
                         arg.named_prop = "cd_uf_compare";
@@ -984,10 +988,25 @@
               }
               if (card.description){
                 for (let itemDesc of card.description){
-                  if (itemDesc.type == "select" && itemDesc.selection && itemDesc.selection.rules.api){
-                    for (let argApi of itemDesc.selection.rules.api.args){
-                      if (argApi.named_prop == "cd_uf"){
-                        argApi.named_prop = "cd_uf_compare";
+                  if (itemDesc.type == "select" && itemDesc.selection){
+                    if (itemDesc.selection.rules.api && itemDesc.selection.rules.api.template){
+                      for (let argApiSelect of itemDesc.selection.rules.api.args){
+                        if (argApiSelect.named_prop == "cd_uf"){
+                          argApiSelect.named_prop = "cd_uf_compare";
+                        }
+                      }
+                    } 
+                    if (itemDesc.default && itemDesc.default.named_prop == "cd_uf"){
+                      itemDesc.default.named_prop = "cd_uf_compare";
+                    }
+                  } else if (itemDesc.cards){
+                    for(let itemDescCard of itemDesc.cards){
+                      if (itemDescCard.api && itemDescCard.api.args){
+                        for (let argApi of itemDescCard.api.args){
+                          if (argApi.named_prop == "cd_uf"){
+                            argApi.named_prop = "cd_uf_compare";
+                          }
+                        }
                       }
                     }
                   }
@@ -998,7 +1017,7 @@
           if (item.chart){
             item.chart.id = 'compare_'+item.chart.id;
           }
-          if (item.api){
+          if (item.api && item.api.args){
             for (let argItem of item.api.args){
               if (argItem.named_prop == "cd_uf"){
                 argItem.named_prop = "cd_uf_compare";

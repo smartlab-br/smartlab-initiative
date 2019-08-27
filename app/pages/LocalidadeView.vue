@@ -84,7 +84,7 @@
             <v-layout pa-1 justify-center class="subheading master-indicator" v-if="masterIndicator"
               v-html="masterIndicator">
             </v-layout>
-            <v-layout justify-center>
+            <v-layout justify-center v-if='idLocalidade != 0'>
               <v-btn small class="accent--text" color="transparent"
                 @click.native="compareDialog = true">
                 <v-icon left>add</v-icon>
