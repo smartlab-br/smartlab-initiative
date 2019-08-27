@@ -40,8 +40,8 @@
     mounted: function() {
       this.resizeFirstSection();
       window.addEventListener('resize', this.resizeFirstSection);
-      this.idLocalidade = this.$store.state.favLocation;
-      this.checkFavoriteAnalysisUnit();
+      this.idLocalidade = this.$analysisUnitModel.getCurrentAnalysisUnit();
+      this.checkCurrentAnalysisUnit();
       
     },
     computed: {

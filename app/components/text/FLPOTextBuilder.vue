@@ -122,7 +122,8 @@
         } else {
           let finalText = this.replaceArgs(
             structure.template,
-            this.indicatorsToValueArray(
+            this.$indicatorsModel.indicatorsToValueArray(
+              this,
               rules, 
               this.customFunctions, 
               base_object_list,

@@ -98,7 +98,7 @@
       } 
     },
     mounted: function() {
-      this.checkFavoriteAnalysisUnit();
+      this.checkCurrentAnalysisUnit();
 
       // window.addEventListener('scroll', this.assessPageBottom);
       // this.assessPageBottom();

@@ -180,20 +180,37 @@ const ViewConfReader = {
 							);
 						} else if (structure.preloaded) {
 							// If the structure defines the usage of preloaded indicators.
-							cbFunction(
-								this.reformDataset(
-									this[structure.preloaded.function](
-										structure.preloaded, 
-										customParams && customParams[structure.preloaded.prop] ? customParams[structure.preloaded.prop] : this.$store.state.gDatasets[structure.preloaded.prop].ds,
-										Object.assign({}, customFunctions)
+							if (!this[structure.preloaded.function] && structure.preloaded.function == 'slice') {
+								cbFunction(
+									this.reformDataset(
+										this.$indicatorsModel.slice(
+											structure.preloaded, 
+											customParams && customParams[structure.preloaded.prop] ? customParams[structure.preloaded.prop] : this.$store.state.gDatasets[structure.preloaded.prop].ds,
+											Object.assign({}, customFunctions)
+										),
+										structure.preloaded.options,
+										customFunctions
 									),
-									structure.preloaded.options,
-									customFunctions
-								),
-								structure.args,
-								structure,
-								addedParams
-							);
+									structure.args,
+									structure,
+									addedParams
+								);
+							} else {
+								cbFunction(
+									this.reformDataset(
+										this[structure.preloaded.function](
+											structure.preloaded, 
+											customParams && customParams[structure.preloaded.prop] ? customParams[structure.preloaded.prop] : this.$store.state.gDatasets[structure.preloaded.prop].ds,
+											Object.assign({}, customFunctions)
+										),
+										structure.preloaded.options,
+										customFunctions
+									),
+									structure.args,
+									structure,
+									addedParams
+								);
+							}
 						} else if (structure.api !== null && structure.api !== undefined) {
 							if (!Array.isArray(structure.api)) {
 								// If the structure defines a single API call, execute the
@@ -328,11 +345,11 @@ const ViewConfReader = {
 						}
 
 						if (options.combine) {
-							dataset = dataset.concat(this.combineIndicators(dataset, options.combine, customFunctions, options.place_id_field));
+							dataset = dataset.concat(this.$indicatorsModel.combineIndicators(dataset, options.combine, customFunctions, options.place_id_field));
 
 							// Faz um slice, se declarado
 							if (options.slice) {
-                				dataset = this.slice(options.slice, dataset, {});
+                				dataset = this.$indicatorsModel.slice(options.slice, dataset, {});
 							}
 						}
 						

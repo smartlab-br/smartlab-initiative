@@ -170,8 +170,8 @@
       }
     },
     mounted: function() {
-      this.idLocalidade = this.$store.state.favLocation;
-      this.checkFavoriteAnalysisUnit();
+      this.idLocalidade = this.$analysisUnitModel.getCurrentAnalysisUnit();
+      this.checkCurrentAnalysisUnit();
     },
     methods: {
       setGroupingAndFiltering(observatorio) {

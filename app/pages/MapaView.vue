@@ -228,12 +228,13 @@ export default {
     };
   },
   created() {
-    this.buildIndicatorsOptions(
+    this.$indicatorsModel.buildIndicatorsOptions(
+      this,
       this.pushIndicatorOption,
       this.setIndicatorStatusOption,
       this.identifyObservatory(this.$route.path.split('/')[1])
     );
-    this.buildPlacesOptions(this.pushPlaceOption, this.setPlaceStatusOption);
+    this.$analysisUnitModel.buildPlacesOptions(this, this.pushPlaceOption, this.setPlaceStatusOption);
 
     var tp = this.$route.query.type;
     if (tp === undefined) {

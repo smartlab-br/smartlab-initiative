@@ -48,9 +48,8 @@ const NavigationManager = {
           //   url = "/" + this.identifyObservatoryById(obsDefault) + searchItem.to;  
           }
 
-          this.$cookies.set("currentAnalysisUnit", searchItem.id, -1); // Never expires
-          this.$store.state.favLocation = searchItem.id;
-          this.findPlaceByID(searchItem.id,null,this.changeMiddleToolbar);
+          this.$analysisUnitModel.setCurrentAnalysisUnit(searchItem.id);
+          this.$analysisUnitModel.findPlaceByID(this, searchItem.id,null,this.changeMiddleToolbar);
 
           this.pushRoute(url);   
         },
@@ -58,7 +57,6 @@ const NavigationManager = {
         pushRoute(link, external=false, isGo=false) {
           this.toolbar = null;
           if (!external && link !== null && link !== undefined) {
-            // this.currentAnalysisUnit = null;
             if (!isGo) {
               this.$router.push(link);
             } else {
