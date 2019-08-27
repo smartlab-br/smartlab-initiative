@@ -57,61 +57,101 @@
           </v-flex>
           <v-flex pt-5></v-flex>
           <v-flex id="screenTitle" class="white--text text-xs-center pa-5 line-height-1">
-            <div class="display-3-obs">
-                {{ localidade != null ? localidade.nm_localidade : '' }}
-                <v-tooltip v-if="presentation" bottom class="icon-vertical-align-middle">
-                  <v-icon color="accent"
-                    class="pb-1"
-                    slot="activator">
-                    info
-                  </v-icon>
-                  <flpo-text-builder
-                    :custom-params="customParams"
-                    :custom-functions="custom_functions"
-                    :structure="presentation">
-                  </flpo-text-builder>
-                </v-tooltip>
-                <!--
-                <span class="icon-vertical-align-middle">
-                  <v-icon :color="isFavorite ? 'amber' : 'grey'"
-                    class="pb-1"
-                    v-on:click="toggleFavorite">
-                    star
-                  </v-icon>
-                </span>
-                -->
+            <div class="display-3-obs py-3" v-html="dimensao_ativa != null ? (dimensao_ativa.title != null ? dimensao_ativa.title : dimensao_ativa.label) : ''">
             </div>
-            <v-layout pa-1 justify-center class="subheading master-indicator" v-if="masterIndicator"
-              v-html="masterIndicator">
-            </v-layout>
-            <v-layout justify-center v-if='idLocalidade != 0'>
+            <v-layout justify-center>
               <v-btn small class="accent--text" color="transparent"
-                @click.native="compareDialog = true">
-                <v-icon left>add</v-icon>
-                Adicionar comparação
+                @click.native="removeCompare">
+                <v-icon left>remove</v-icon>
+                Remover comparação
               </v-btn>
             </v-layout>
-            <div class="display-2-obs pt-3" v-html="dimensao_ativa != null ? (dimensao_ativa.title != null ? dimensao_ativa.title : dimensao_ativa.label) : ''">
-            </div>
-          </v-flex>
+            <v-layout pa-0 row wrap justify-center>
+              <v-flex xs6 lg5 :class="{'pr-4': $vuetify.breakpoint.mdAndDown, 'pr-5': $vuetify.breakpoint.lgAndUp}">
+                <div class="display-2-obs">
+                    {{ localidade != null ? localidade.nm_localidade : '' }}
+                    <v-tooltip v-if="presentation" bottom class="icon-vertical-align-middle">
+                      <v-icon color="accent"
+                        class="pb-1"
+                        slot="activator">
+                        info
+                      </v-icon>
+                      <flpo-text-builder
+                        :custom-params="customParams"
+                        :custom-functions="custom_functions"
+                        :structure="presentation">
+                      </flpo-text-builder>
+                    </v-tooltip>
+                    <!--
+                    <span class="icon-vertical-align-middle">
+                      <v-icon :color="isFavorite ? 'amber' : 'grey'"
+                        class="pb-1"
+                        v-on:click="toggleFavorite">
+                        star
+                      </v-icon>
+                    </span>
+                    -->
+                </div>
+                <v-layout pa-1 justify-center class="subheading master-indicator" v-if="masterIndicator"
+                  v-html="masterIndicator">
+                </v-layout>
+                <v-layout row wrap justify-center>
+                  <flpo-minicard
+                    v-if="ind_principais && unlockLoading"
+                    v-for="(miniCardPrincipal, indexMinicardsPrincipal) in ind_principais"
+                    :key="'minicard_principal_'+indexMinicardsPrincipal"
+                    :structure="miniCardPrincipal" :customFunctions="custom_functions"
+                    :customParams="customParams" :row-class="miniCardPrincipal.rowClass">
+                  </flpo-minicard>
+                </v-layout>
+              </v-flex>
+              <v-flex xs6 lg5 :class="{'pl-4': $vuetify.breakpoint.mdAndDown, 'pl-5': $vuetify.breakpoint.lgAndUp}">
+                <div class="display-2-obs">
+                    {{ localidade_compare != null ? localidade_compare.nm_localidade : '' }}
+                    <v-tooltip v-if="presentation_compare" bottom class="icon-vertical-align-middle">
+                      <v-icon color="accent"
+                        class="pb-1"
+                        slot="activator">
+                        info
+                      </v-icon>
+                      <flpo-text-builder
+                        :custom-params="customParams"
+                        :custom-functions="custom_functions"
+                        :structure="presentation_compare">
+                      </flpo-text-builder>
+                    </v-tooltip>
+                    <!--
+                    <span class="icon-vertical-align-middle">
+                      <v-icon :color="isFavorite ? 'amber' : 'grey'"
+                        class="pb-1"
+                        v-on:click="toggleFavorite">
+                        star
+                      </v-icon>
+                    </span>
+                    -->
+                </div>
+                <v-layout pa-1 justify-center class="subheading master-indicator" v-if="masterIndicator_compare"
+                  v-html="masterIndicator_compare">
+                </v-layout>
+                <v-layout row wrap justify-center>
+                  <flpo-minicard
+                    v-if="ind_principais_compare && unlockLoading"
+                    v-for="(miniCardPrincipal, indexMinicardsPrincipal) in ind_principais_compare"
+                    :key="'minicard_principal_'+indexMinicardsPrincipal"
+                    :structure="miniCardPrincipal" :customFunctions="custom_functions"
+                    :customParams="customParams" :row-class="miniCardPrincipal.rowClass">
+                  </flpo-minicard>
+                </v-layout>
+              </v-flex>
+          </v-layout>
+        </v-flex>
           <!-- <div :v-if="localidade !== null && localidade.tipo !== null" class="display-1-obs white--text text-xs-center pb-5">
             {{ currentContext }}
           </div> -->
           <v-layout row wrap justify-center pt-4>
-            <v-flex white--text subheading xs12 md4 lg3 :class="{'px-3': $vuetify.breakpoint.mdAndDown, 'px-4': $vuetify.breakpoint.lgAndUp}" v-html="dimensao_ativa.description">
+            <v-flex white--text subheading xs4 :class="{'px-3': $vuetify.breakpoint.mdAndDown, 'px-4': $vuetify.breakpoint.lgAndUp}" v-html="dimensao_ativa.description">
             </v-flex>
-            <v-flex text-xs-center xs12 md3 :class="{'px-3': $vuetify.breakpoint.mdAndDown, 'px-4': $vuetify.breakpoint.lgAndUp}" >
-              <v-layout row wrap justify-center>
-                <flpo-minicard
-                  v-if="ind_principais && unlockLoading"
-                  v-for="(miniCardPrincipal, indexMinicardsPrincipal) in ind_principais"
-                  :key="'minicard_principal_'+indexMinicardsPrincipal"
-                  :structure="miniCardPrincipal" :customFunctions="custom_functions"
-                  :customParams="customParams" :row-class="miniCardPrincipal.rowClass">
-                </flpo-minicard>
-              </v-layout>
-            </v-flex>
-            <v-flex xs12 md4 lg3 :class="{'px-3': $vuetify.breakpoint.mdAndDown, 'px-4': $vuetify.breakpoint.lgAndUp}">
+            <v-flex xs4 :class="{'px-3': $vuetify.breakpoint.mdAndDown, 'px-4': $vuetify.breakpoint.lgAndUp}">
               <v-flex pt-0 column wrap v-if="sections && sections.length > 0" > 
                 <v-flex v-for="(cardLink, cardLinkIndx) in cardLinks"
                   :key="cardLink.id ? cardLink.id : ('sec' + cardLinkIndx)" py-0>
@@ -156,62 +196,125 @@
               </v-layout>
             </v-container> -->
             <v-container fluid grid-list-lg py-2 px-1>
-              <v-layout column
+              <v-layout row wrap
                 v-if="unlockLoading && secao.cards && secao.cards.length > 0" >
-                <v-flex xs12 
-                  v-for="(card, cardIndex) in secao.cards"
-                  :key="card.id">
-                  <v-layout :id="'anchor_' + card.id" ma-0 pa-0
-                    :style="card.type != 'headline' && card.type != 'text' ? 'min-height:500px;': ''">
-                    <v-layout v-if="card.type && card.type == 'text'"
-                      :id="card.id" px-4 pb-4>
-                      <flpo-composite-text
-                        :structure="card.description"
+                <v-flex xs6>
+                  <v-layout column>
+                  <v-flex
+                    v-for="(card, cardIndex) in secao.cards"
+                    :key="card.id">
+                    <v-layout :id="'anchor_' + card.id" ma-0 pa-0
+                      :style="card.type != 'headline' && card.type != 'text' ? 'min-height:500px;': ''">
+                      <v-layout v-if="card.type && card.type == 'text'"
+                        :id="card.id" px-4 pb-4>
+                        <flpo-composite-text
+                          :structure="card.description"
+                          :custom-params = "customParams"
+                          :custom-functions = "custom_functions"
+                          :section-index="indexSecao">
+                        </flpo-composite-text>
+                      </v-layout>
+                      <v-layout v-else-if="card.type && card.type == 'headline'"
+                        pt-5 pb-3 ml-5 pl-2
+                        :class="'display-2-obs font-weight-bold ' + assessZebraTitle(indexSecao)"
+                        v-html="card.title.fixed">
+                      </v-layout>
+                      <flpo-story-card-autofill
+                        v-else-if="card.autoFill && topologyUfLoaded  && topology && ((indexSecao*100) + cardIndex <= visibleCardMaxIndex)"
+                        :structure="card"
                         :custom-params = "customParams"
                         :custom-functions = "custom_functions"
+                        :topology = "topology"
+                        :topology-uf = "topology_uf"
                         :section-index="indexSecao">
-                      </flpo-composite-text>
+                      </flpo-story-card-autofill>
+                      <flpo-story-card-multiple-charts
+                        v-else-if="card.type && card.type == 'multiple-charts' && topologyUfLoaded  && topology && ((indexSecao*100) + cardIndex  <= visibleCardMaxIndex)"
+                        :structure="card"
+                        :custom-params = "customParams"
+                        :custom-functions = "custom_functions"
+                        :topology = "topology"
+                        :topology-uf = "topology_uf"
+                        :section-index="indexSecao"
+                        @showBugDialog="openBugDialog">
+                      </flpo-story-card-multiple-charts>
+                      <flpo-story-card
+                        v-else-if="topologyUfLoaded  && topology && ((indexSecao*100) + cardIndex  <= visibleCardMaxIndex)"
+                        :structure="card"
+                        :custom-params = "customParams"
+                        :custom-functions = "custom_functions"
+                        :topology = "topology"
+                        :topology-uf = "topology_uf"
+                        :section-index="indexSecao"
+                        @showBugDialog="openBugDialog">
+                      </flpo-story-card>
                     </v-layout>
-                    <v-layout v-else-if="card.type && card.type == 'headline'"
-                      pt-5 pb-3 ml-5 pl-2
-                      :class="'display-2-obs font-weight-bold ' + assessZebraTitle(indexSecao)"
-                      v-html="card.title.fixed">
-                    </v-layout>
-                    <flpo-story-card-autofill
-                      v-else-if="card.autoFill && topologyUfLoaded  && topology && ((indexSecao*100) + cardIndex <= visibleCardMaxIndex)"
-                      :structure="card"
-                      :custom-params = "customParams"
-                      :custom-functions = "custom_functions"
-                      :topology = "topology"
-                      :topology-uf = "topology_uf"
-                      :section-index="indexSecao">
-                    </flpo-story-card-autofill>
-                    <flpo-story-card-multiple-charts
-                      v-else-if="card.type && card.type == 'multiple-charts' && topologyUfLoaded  && topology && ((indexSecao*100) + cardIndex  <= visibleCardMaxIndex)"
-                      :structure="card"
-                      :custom-params = "customParams"
-                      :custom-functions = "custom_functions"
-                      :topology = "topology"
-                      :topology-uf = "topology_uf"
-                      :section-index="indexSecao"
-                      @showBugDialog="openBugDialog">
-                    </flpo-story-card-multiple-charts>
-                    <flpo-story-card
-                      v-else-if="topologyUfLoaded  && topology && ((indexSecao*100) + cardIndex  <= visibleCardMaxIndex)"
-                      :structure="card"
-                      :custom-params = "customParams"
-                      :custom-functions = "custom_functions"
-                      :topology = "topology"
-                      :topology-uf = "topology_uf"
-                      :section-index="indexSecao"
-                      @showBugDialog="openBugDialog">
-                    </flpo-story-card>
+                  </v-flex>
                   </v-layout>
                 </v-flex>
+
+                <v-flex xs6>
+                  <v-layout column>
+                  <v-flex
+                    v-for="(card, cardIndex) in sections_compare[indexSecao].cards"
+                    :key="'compare_'+card.id">
+                    <v-layout :id="'anchor_' + card.id" ma-0 pa-0
+                      :style="card.type != 'headline' && card.type != 'text' ? 'min-height:500px;': ''">
+                      <v-layout v-if="card.type && card.type == 'text'"
+                        :id="'compare_'+card.id" px-4 pb-4>
+                        <flpo-composite-text
+                          :structure="card.description"
+                          :custom-params = "customParams"
+                          :custom-functions = "custom_functions"
+                          :section-index="indexSecao">
+                        </flpo-composite-text>
+                      </v-layout>
+                      <v-layout v-else-if="card.type && card.type == 'headline'"
+                        pt-5 pb-3 ml-5 pl-2
+                        :class="'display-2-obs font-weight-bold ' + assessZebraTitle(indexSecao)"
+                        v-html="card.title.fixed">
+                      </v-layout>
+                      <flpo-story-card-autofill
+                        v-else-if="card.autoFill && topologyUfLoaded_compare  && topology_compare && ((indexSecao*100) + cardIndex <= visibleCardMaxIndex)"
+                        :structure="card"
+                        :custom-params = "customParams"
+                        :custom-functions = "custom_functions"
+                        :topology = "topology_compare"
+                        :topology-uf = "topology_uf_compare"
+                        :section-index="indexSecao">
+                      </flpo-story-card-autofill>
+                      <flpo-story-card-multiple-charts
+                        v-else-if="card.type && card.type == 'multiple-charts' && topologyUfLoaded_compare  && topology_compare && ((indexSecao*100) + cardIndex  <= visibleCardMaxIndex)"
+                        :structure="card"
+                        :selected-place="customParams.idLocalidade_compare"
+                        :custom-params = "customParams"
+                        :custom-functions = "custom_functions"
+                        :topology = "topology_compare"
+                        :topology-uf = "topology_uf_compare"
+                        :section-index="indexSecao"
+                        @showBugDialog="openBugDialog">
+                      </flpo-story-card-multiple-charts>
+                      <flpo-story-card
+                        v-else-if="topologyUfLoaded_compare  && topology_compare && ((indexSecao*100) + cardIndex  <= visibleCardMaxIndex)"
+                        :structure="card"
+                        :selected-place="customParams.idLocalidade_compare"
+                        :custom-params = "customParams"
+                        :custom-functions = "custom_functions"
+                        :topology = "topology_compare"
+                        :topology-uf = "topology_uf_compare"
+                        :section-index="indexSecao"
+                        @showBugDialog="openBugDialog">
+                      </flpo-story-card>
+                    </v-layout>
+                  </v-flex>
+                  </v-layout>
+                </v-flex>
+                
               </v-layout>
             </v-container>
           </v-layout>
         </v-layout>
+        </v-flex>
       </v-layout>
     </v-container>
     <!-- Navegação lateral em dots pelos dimensoes e seções -->
@@ -262,55 +365,6 @@
         Carregando dados
       </v-progress-circular>
     </v-layout>
-    <v-dialog width="500px" v-model="compareDialog">
-        <v-card>
-          <v-card-title class="headline-obs">Comparar com:</v-card-title>
-          <v-card-text>
-          <v-layout align-right row wrap>
-            <v-flex xs12>
-              <v-autocomplete
-                v-if="$store && $store.state && $store.state.searchDataset &&
-                      $store.state.searchDataset.dataset && $store.state.searchDataset.dataset.length > 0"
-                :items="computedSearchItems"
-                persistent-hint
-                v-model="idLocalidade_compare"
-                item-text="label"
-                :placeholder="localidade ? localidade.scope: ''"
-                item-value="id"
-                :filter="customFilter"
-                @blur="idLocalidade_compare = null"
-                class="input-group--focused global-search"
-                return-object>
-                <template slot="item" slot-scope="data">
-                  <template v-if="$store.state.searchDataset.dataset.length < 2">
-                    <v-list-tile-content>
-                      <v-progress-circular :size="20" indeterminate color="primary">
-                      </v-progress-circular>
-                    </v-list-tile-content>
-                  </template>
-                  <template v-else>
-                    <!--<v-list-tile-avatar>
-                      <v-icon>{{ data.item.icon }}</v-icon>
-                    </v-list-tile-avatar>-->
-                    <v-list-tile-content>
-                      <v-list-tile-title v-html="data.item.label"></v-list-tile-title>
-                      <!--<v-list-tile-sub-title v-html="data.item.detail"></v-list-tile-sub-title>-->
-                    </v-list-tile-content>
-                  </template>
-                </template>  
-              </v-autocomplete>
-            </v-flex>
-            <v-flex xs12 text-xs-right>
-              <v-btn small class="theme--light" color="accent"
-                @click.native="compareDialog = false">
-                <v-icon left>close</v-icon>
-                Fechar
-              </v-btn>
-            </v-flex>
-          </v-layout>
-        </v-card-text>
-      </v-card>
-    </v-dialog>
   </v-layout>
 </template>
 
@@ -328,30 +382,42 @@
         dimensao_ativa: [],
         dimensao_ativa_id: null,
         sections: [],
+        sections_compare: [],
         show: false,
         idLocalidade: null,
+        idLocalidade_compare: null,
         idObservatorio: null,
-        localidade:null,
+        localidade: null,
+        localidade_compare: null,
         masterIndicator: null,
+        masterIndicator_compare: null,
         presentation: null,
+        presentation_compare: null,
         ind_master: null,
         ind_principais:[],
+        ind_principais_compare:[],
         ind_principais_per_row: 2,
         dimensoes: [],
         customParams: {},
         topology: null,
         topology_uf: null,
+        topology_compare: null,
+        topology_uf_compare: null,
         topologyUfLoaded: false,
+        topologyUfLoaded_compare: false,
         isPageBottom: true,
         cardLinks: [],
         totalLinksSections: 0,
         unlockLoading: false,
+        thematicDatasets: [],
         thematicDatasetQuantity: 0,
         thematicLoaded: 0,
         isFavorite: false,
         visibleCardMaxIndex: 1, //dois primeiros cards
-        compareDialog: false,
-        idLocalidade_compare: null,
+        datasetsLoaded: false,
+        datasetsCompareLoaded: false,
+        datasetsDimLoaded: false,
+        datasetsDimCompareLoaded: false,
         custom_functions: {
           concat_values(indicador, value1, value2, value3 = "", value4 = "", value5 = "") {return value1 + ' ' + value2 + ' ' + value3 + ' ' + value4 + ' ' + value5; },
           calc_subtraction: function(a, b, c = 0) {  return a - (b - c); },
@@ -529,23 +595,15 @@
 
       if (tmpIdObs) {
         this.loadYaml("br/observatorio/" + tmpIdObs, this.setObservatorio);
-      } else {
-        this.getGlobalDataset(
-          'centralindicadores',
-          scope,
-          msgErro,
-          auId,
-          this.keepLoading
-        );
-        this.$emit('alterToolbar', null);
-      }
-    },
-    watch: {
-      idLocalidade_compare(newVal, oldVal) {
-        if (newVal) {
-          let url = this.$route.fullPath.replace('/localidade/','/localidadecompare/') + '&compare=' + newVal.id;
-          this.pushRoute(url);
-        }
+      // } else {
+      //   this.getGlobalDataset(
+      //     'centralindicadores',
+      //     scope,
+      //     msgErro,
+      //     auId,
+      //     this.keepLoading
+      //   );
+      //   this.$emit('alterToolbar', null);
       }
     },
     computed: {
@@ -566,6 +624,9 @@
       currentParallax: function() {
         return 'background-image:url("/static/parallax/uf/' + this.customParams.cd_uf + '.jpg"); background-position: center center; background-size: cover;';
       },
+      currentCompareParallax: function() {
+        return 'background-image:url("/static/parallax/uf/' + this.customParams.cd_uf_compare + '.jpg"); background-position: center center; background-size: cover;';
+      },
       dimSplitColumns: function() {
         if (this.$vuetify.breakpoint.mdAndUp) {
           return 'dim-description';
@@ -582,23 +643,7 @@
           return this.dimensoes[this.dimensoes.length - 1].id === this.dimensao_ativa.id;
         }
         return true;
-      },
-      computedSearchItems: function() {
-        if (this.idLocalidade) {
-          if (this.idLocalidade.length == 7){ //município
-          let items = this.$store.state.searchDataset.dataset;
-          return items.filter(function(el) {
-            return el.scope == "mun";
-          })
-          } else if (this.idLocalidade.length == 2){ //UF
-            let items = this.$store.state.searchDataset.dataset;
-            return items.filter(function(el) {
-              return el.scope == "uf";
-            })
-          }
-        }
-      },
-      
+      }
     },
     mounted: function() {
 
@@ -624,6 +669,31 @@
       window.removeEventListener('scroll', this.setVisibleCardMaxIndex);
       window.removeEventListener('resize', this.resizeFirstSection);
     },
+    watch: {
+      datasetsLoaded: function() {
+        if (this.datasetsLoaded && this.datasetsCompareLoaded){
+          this.keepLoading();
+        }
+      },
+      datasetsCompareLoaded: function() {
+        if (this.datasetsLoaded && this.datasetsCompareLoaded){
+          this.keepLoading();
+        }
+      },
+      datasetsDimLoaded: function() {
+        if (this.datasetsDimLoaded && this.datasetsDimCompareLoaded){
+          this.keepLoadingDimension();
+        }
+      },
+      datasetsDimCompareLoaded: function() {
+        if (this.datasetsDimLoaded && this.datasetsDimCompareLoaded){
+          this.keepLoadingDimension();
+        }
+      },
+      localidade: function(){
+          this.$emit('alterMiddleToolbar', { "localidade": this.localidade });
+      }
+    },
     methods: {
       scrollDown(){
         window.scrollBy(0, window.innerHeight / 2);        
@@ -643,13 +713,20 @@
         let scope = this.getEscopo(this.$route.params.idLocalidade);
         let auId = this.getIdLocalidadeFromRoute(this.$route.params.idLocalidade);
         let msgErro = this.getMensagemErro(this.$route.params.idLocalidade);
+
+        let compareScope = this.getEscopo(this.$route.query.compare);
+        let compareAuId = this.getIdLocalidadeFromRoute(this.$route.query.compare);
+        let compareMsgErro = this.getMensagemErro(this.$route.query.compare);
       
+        this.datasetsLoaded = false;
+        this.datasetsCompareLoaded = false;
+        this.thematicDatasets = ['centralindicadores'];
         if (content.tematicos) {
-          let thematicDatasets = ['centralindicadores'];
           for (let indxTematico in content.tematicos){
-            thematicDatasets.push(content.tematicos[indxTematico].dataset);
+            this.thematicDatasets.push(content.tematicos[indxTematico].dataset);
             if (parseInt(indxTematico) + 1 == content.tematicos.length) { 
-              this.getMultipleGlobalDatasets(thematicDatasets, scope, auId, this.keepLoading);
+              this.getMultipleGlobalDatasets(this.thematicDatasets, scope, auId, () => { this.datasetsLoaded = true});
+              this.getMultipleGlobalDatasets(this.thematicDatasets, compareScope, compareAuId, () => { this.datasetsCompareLoaded = true}, "_compare");
             }
           }
         } else {
@@ -658,7 +735,15 @@
             scope,
             msgErro,
             auId,
-            this.keepLoading
+            () => { this.datasetsLoaded = true}
+          );
+          this.getGlobalDataset(
+            'centralindicadores',
+            compareScope,
+            compareMsgErro,
+            compareAuId,
+            () => { this.datasetsCompareLoaded = true},
+            "_compare"
           );
         }
         this.$emit('alterToolbar', content.theme.toolbar);
@@ -711,6 +796,29 @@
         } else {
           this.selectCoords("uf", "municipio", this.$route.params.idLocalidade.substring(0, 2));
         }
+
+        // Carrega a topologia do município de comparação
+        if (this.$route.query.compare == 0){ //Brasil
+          // this.selectCoords("/static/topojson/country.json");
+          this.selectCoords("br", "uf", 0, "_compare");
+        } else if (this.$route.query.compare.includes("mptreg") || this.$route.query.compare.includes("MPTREG")) {
+          this.selectCoords("uf", "municipio", this.getUFFromPlace(this.$route.query.compare), "_compare");
+        } else if (this.$route.query.compare.includes("prt") || this.$route.query.compare.includes("PRT") ||
+                   this.$route.query.compare.includes("ptm") || this.$route.query.compare.includes("PTM")) {
+          this.selectCoords("uf", "municipio", this.getUFFromPlace(this.$route.query.compare), "_compare");
+        } else if (this.$route.query.compare.length == 1){ //Região
+          this.selectCoords("br", "uf", 0, "_compare");
+          // this.selectCoords("/static/topojson/regiao.json");
+        } else if (this.$route.query.compare.length == 2){ //Estado
+          this.selectCoords("uf", "municipio", this.$route.query.compare.substring(0, 2), "_compare");
+        } else if (this.$route.query.compare.length == 4){ //Mesorregião
+          this.selectCoords("uf", "uf", this.$route.query.compare, "_compare");
+        } else if (this.$route.query.compare.length == 5){ //Microrregião
+          this.selectCoords("mesorregiao", "uf", this.$route.query.compare, "_compare");
+        } else {
+          this.selectCoords("uf", "municipio", this.$route.query.compare.substring(0, 2), "_compare");
+        }
+        
       },
       resizeFirstSection(){
         if (this.$vuetify.breakpoint.mdAndDown){
@@ -721,8 +829,8 @@
       },
       loadPlacePage(idLocalidade){
         if (this.dimensao_ativa) {
-          this.$router.push('/localidade/'+idLocalidade+'?dimensao='+this.dimensao_ativa.id);
-          this.$router.go('/localidade/'+idLocalidade+'?dimensao='+this.dimensao_ativa.id);
+          this.$router.push('/localidade/'+idLocalidade+'?dimensao='+this.dimensao_ativa.id+'&compare='+this.$route.query.compare);
+          this.$router.go('/localidade/'+idLocalidade+'?dimensao='+this.dimensao_ativa.id+'&compare='+this.$route.query.compare);
         }
       },
 
@@ -731,17 +839,27 @@
       },
 
       loadLayout(idLocalidade, idDimensao, idObservatorio = null) {
+
         this.idLocalidade = idLocalidade;
+        this.idLocalidade_compare = this.$route.query.compare;
+        let idLocalidade_compare = this.$route.query.compare;
+
         this.customParams.idLocalidade = idLocalidade;
+        this.customParams.idLocalidade_compare = this.$route.query.compare;
 
         // if (idLocalidade.length > 2) {
         this.customParams.cd_uf = idLocalidade.substring(0,2);
+        this.customParams.cd_uf_compare = idLocalidade_compare.substring(0,2);
         // }
         if (idLocalidade.length > 6) {
           this.customParams.idLocalidadeD6 = idLocalidade.substring(0,6);
+          this.customParams.idLocalidade_compareD6 = idLocalidade_compare.substring(0,6);
         }
 
-        this.fetchDataLocalidade(idLocalidade);
+        this.fetchDataLocalidade(idLocalidade, 'localidade');
+
+        this.fetchDataLocalidade(idLocalidade_compare, 'localidade_compare');
+        
 
         let escopo = this.getEscopo(idLocalidade);
         let observatorioDir = '';
@@ -762,29 +880,44 @@
       },
 
       setDimension(content) {
-        let escopo = this.getEscopo(this.$route.params.idLocalidade);
+        let escopo = this.getEscopo(this.idLocalidade);
         this.dimStruct = content;
         if (content.tematicos) {
+          this.datasetsDimLoaded = false;
+          this.datasetsDimCompareLoaded = false;
           let thematicDatasets = ['centralindicadores'];
           for (let tematico of content.tematicos){
             thematicDatasets.push(tematico.dataset);
           }
+          this.thematicDatasets = thematicDatasets;
           this.getMultipleGlobalDatasets(
             thematicDatasets,
             escopo,
-            this.getIdLocalidadeFromRoute(this.$route.params.idLocalidade),
-            this.keepLoadingDimension);
+            this.idLocalidade,
+            () => { this.datasetsDimLoaded = true});
+          this.getMultipleGlobalDatasets(
+            thematicDatasets,
+            escopo,
+            this.idLocalidade_compare,
+            () => { this.datasetsDimCompareLoaded = true},
+            "_compare");
         } else {
           this.keepLoadingDimension();
         }
       },
 
       keepLoadingDimension() {
+        
         this.sections = this.dimStruct.secoes;
+        this.sections_compare = this.changeToCompareStructure(this.sections);
 
         this.ind_principais_per_row = (this.dimStruct.principais_options && this.dimStruct.principais_options.per_row) ? this.dimStruct.principais_options.per_row : 3;
+
         this.ind_principais = this.dimStruct.principais;
+        this.ind_principais_compare = this.changeToCompareStructure(this.ind_principais);
+
         this.presentation = this.dimStruct.presentation;
+        this.presentation_compare = JSON.parse(JSON.stringify(this.dimStruct.presentation).replace(/centralindicadores/g,"centralindicadores_compare").replace(/idLocalidade/g,"idLocalidade_compare"));
             
         this.totalLinksSections = 0;
         for (let section of this.sections) {
@@ -800,10 +933,101 @@
 
         this.fillDataStructure(
           this.dimStruct.master, this.customParams,
-          this.customFunctions, this.setMasterIndicator
+          this.customFunctions, this.setIndicator, {indicator_var: 'masterIndicator'}
         );
+        let dimStructMasterCompare = JSON.parse(JSON.stringify(this.dimStruct.master).replace(/centralindicadores/g,"centralindicadores_compare").replace(/idLocalidade/g,"idLocalidade_compare"));
+        this.fillDataStructure(
+          dimStructMasterCompare, this.customParams,
+          this.customFunctions, this.setIndicator, {indicator_var: 'masterIndicator_compare'}
+        );
+
       },
 
+      changeToCompareStructure(struct){
+        let compareStruct = JSON.stringify(struct).replace(/idLocalidade/g,"idLocalidade_compare").replace(/\"base_object\":\"localidade\"/g,"\"base_object\":\"localidade_compare\"");
+        for(let dataset of this.thematicDatasets){
+          compareStruct = compareStruct.replace(new RegExp(dataset, "g"),dataset+"_compare");
+        }
+        compareStruct = JSON.parse(compareStruct);
+        for (let item of compareStruct){
+          if (item.cards){
+            for (let card of item.cards){
+              card.id = 'compare_'+card.id;
+              if (card.api){
+                if (!Array.isArray(card.api)){
+                  if (card.api.args){
+                    for (let arg of card.api.args){
+                      if (arg.named_prop == "cd_uf"){
+                        arg.named_prop = "cd_uf_compare";
+                      }
+                    }
+                  }
+                } else {
+                  for(let api of card.api){
+                    if (api.args){
+                      for (let arg of api.args){
+                        if (arg.named_prop == "cd_uf"){
+                          arg.named_prop = "cd_uf_compare";
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+              if (card.charts){
+                for (let chart of card.charts){
+                  chart.id = 'compare_'+chart.id;
+                  if (chart.api && chart.api.args){
+                    for (let arg of chart.api.args){
+                      if (arg.named_prop == "cd_uf"){
+                        arg.named_prop = "cd_uf_compare";
+                      }
+                    }
+                  }
+                }
+              }
+              if (card.description){
+                for (let itemDesc of card.description){
+                  if (itemDesc.type == "select" && itemDesc.selection){
+                    if (itemDesc.selection.rules.api && itemDesc.selection.rules.api.template){
+                      for (let argApiSelect of itemDesc.selection.rules.api.args){
+                        if (argApiSelect.named_prop == "cd_uf"){
+                          argApiSelect.named_prop = "cd_uf_compare";
+                        }
+                      }
+                    } 
+                    if (itemDesc.default && itemDesc.default.named_prop == "cd_uf"){
+                      itemDesc.default.named_prop = "cd_uf_compare";
+                    }
+                  } else if (itemDesc.cards){
+                    for(let itemDescCard of itemDesc.cards){
+                      if (itemDescCard.api && itemDescCard.api.args){
+                        for (let argApi of itemDescCard.api.args){
+                          if (argApi.named_prop == "cd_uf"){
+                            argApi.named_prop = "cd_uf_compare";
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+          if (item.chart){
+            item.chart.id = 'compare_'+item.chart.id;
+          }
+          if (item.api && item.api.args){
+            for (let argItem of item.api.args){
+              if (argItem.named_prop == "cd_uf"){
+                argItem.named_prop = "cd_uf_compare";
+              }
+            }
+          }
+        }
+        return compareStruct;        
+      },
+      
       getMensagemErro(idLocalidade) {
         if (idLocalidade == 0) return 'Falha ao buscar indicadores do país';
         if (idLocalidade.includes("mptreg") || idLocalidade.includes("MPTREG")) return 'Falha ao buscar indicadores da regional do MPT';
@@ -822,24 +1046,23 @@
         return "Falha ao buscar indicadores do município";
       },
 
-      fetchDataLocalidade(idLocalidade) {
+      fetchDataLocalidade(idLocalidade, nm_var = 'localidade') {
+        let localidade = {};
         var url = null;
         //axios(this.getAxiosOptions("/municipios?categorias=nm_municipio,cd_uf,nm_uf,sigla_uf,lat,long,ano_instalacao,ano_extincao,altitude&filtros=eq-cd_municipio_ibge-" + idLocalidade))
         if (idLocalidade == 0){ //Brasil
-          this.localidade = {
+          localidade = {
             id_localidade: 0,
             nm_localidade: 'Brasil',
             tipo: '',
             img: "/static/thumbs/municipios/" + idLocalidade + ".jpg"
           };
-          this.customParams.localidade = this.localidade;
-
-          this.$emit('alterMiddleToolbar', { title: 'Brasil', subTitle: this.dimensao_ativa.short_des, localidade: this.localidade });
+          this[nm_var] = localidade;
+          this.customParams[nm_var] = localidade;
         } else if (idLocalidade.includes("mptreg") || idLocalidade.includes("MPTREG")) {
-          let localidade = this.getPRTPTMInstance(idLocalidade.substring(0,6), idLocalidade.substring(6));
-          this.localidade = localidade;
-          this.customParams.localidade = localidade;
-          this.$emit('alterMiddleToolbar', { "localidade": localidade });
+          localidade = this.getPRTPTMInstance(idLocalidade.substring(0,6), idLocalidade.substring(6));
+          this[nm_var] = localidade;
+          this.customParams[nm_var] = localidade;
         } else if (idLocalidade.includes("prt") || idLocalidade.includes("PRT") ||
                    idLocalidade.includes("ptm") || idLocalidade.includes("PTM")) {
           url = "/municipios?categorias=cd_unidade,nm_unidade,cd_uf&agregacao=distinct&filtros=eq-cd_unidade-" + idLocalidade.substring(3);
@@ -847,40 +1070,37 @@
             .then(result => {
               var infoUnidade = JSON.parse(result.data).dataset;
               if (infoUnidade.length > 0) {
-                let localidade = {
+                localidade = {
                   id_localidade: infoUnidade[0].cd_unidade,
                   nm_localidade: infoUnidade[0].nm_unidade,
                   tipo: idLocalidade.substring(0,3)
                 };
-                this.localidade = localidade;
-                this.customParams.localidade = localidade;
-                this.$emit('alterMiddleToolbar', { "localidade": localidade });
-              }
+              this[nm_var] = localidade;
+              this.customParams[nm_var] = localidade;
+            }
             }, error => {
               console.error(error.toString());
               this.sendError("Falha ao buscar total das localidades");
               reject({ code: 500 });
             });
         } else if (idLocalidade.length == 1){ //Região
-          this.localidade.id_localidade = idLocalidade;
-          this.localidade.nm_localidade = this.getRegion(idLocalidade);
-          this.localidade.tipo = '';
-          this.localidade.img = "/static/thumbs/municipios/" + idLocalidade + ".jpg";
-          this.customParams.localidade = this.localidade;
-
-          this.$emit('alterMiddleToolbar', this.getRegion(idLocalidade));
+          localidade.id_localidade = idLocalidade;
+          localidade.nm_localidade = this.getRegion(idLocalidade);
+          localidade.tipo = '';
+          localidade.img = "/static/thumbs/municipios/" + idLocalidade + ".jpg";
+          this[nm_var] = localidade;
+          this.customParams[nm_var] = localidade;
         } else if (idLocalidade.length == 2){ //Estado
           url = "/municipios?categorias=cd_uf,nm_uf&filtros=eq-cd_uf-" + idLocalidade;
           axios(this.getAxiosOptions(url))
             .then(result => {
-              this.localidade = JSON.parse(result.data).dataset[0];
-              this.localidade.id_localidade = this.localidade.cd_uf;
-              this.localidade.nm_localidade = this.localidade.nm_uf;
-              this.localidade.tipo = 'UF';
-              this.localidade.img = "/static/thumbs/municipios/" + idLocalidade + ".jpg";
-              this.customParams.localidade = this.localidade;
-
-              this.$emit('alterMiddleToolbar', { localidade: this.localidade });
+              localidade = JSON.parse(result.data).dataset[0];
+              localidade.id_localidade = localidade.cd_uf;
+              localidade.nm_localidade = localidade.nm_uf;
+              localidade.tipo = 'UF';
+              localidade.img = "/static/thumbs/municipios/" + idLocalidade + ".jpg";
+              this[nm_var] = localidade;
+              this.customParams[nm_var] = localidade;
             }, error => {
               console.error(error.toString());
               this.sendError("Falha ao buscar dados do município");
@@ -889,14 +1109,13 @@
           url = "/municipios?categorias=cd_mesorregiao,nm_mesorregiao&filtros=eq-cd_mesorregiao-" + idLocalidade;
           axios(this.getAxiosOptions(url))
             .then(result => {
-              this.localidade = JSON.parse(result.data).dataset[0];
-              this.localidade.id_localidade = this.localidade.cd_mesorregiao;
-              this.localidade.nm_localidade = this.localidade.nm_mesorregiao;
-              this.localidade.tipo = 'Mesorregião';
-              this.localidade.img = "/static/thumbs/municipios/" + idLocalidade + ".jpg";
-              this.customParams.localidade = this.localidade;
-
-              this.$emit('alterMiddleToolbar', { localidade: this.localidade });
+              localidade = JSON.parse(result.data).dataset[0];
+              localidade.id_localidade = localidade.cd_mesorregiao;
+              localidade.nm_localidade = localidade.nm_mesorregiao;
+              localidade.tipo = 'Mesorregião';
+              localidade.img = "/static/thumbs/municipios/" + idLocalidade + ".jpg";
+              this[nm_var] = localidade;
+              this.customParams[nm_var] = localidade;
             }, error => {
               console.error(error.toString());
               this.sendError("Falha ao buscar dados da mesorregião");
@@ -905,14 +1124,13 @@
           url = "/municipios?categorias=cd_microrregiao,nm_microrregiao,latitude,longitude&filtros=eq-cd_microrregiao-" + idLocalidade;
           axios(this.getAxiosOptions(url))
             .then(result => {
-              this.localidade = JSON.parse(result.data).dataset[0];
-              this.localidade.id_localidade = this.localidade.cd_microrregiao;
-              this.localidade.nm_localidade = this.localidade.nm_microrregiao;
-              this.localidade.tipo = 'Microrregião';
-              this.localidade.img = "/static/thumbs/municipios/" + idLocalidade + ".jpg";
-              this.customParams.localidade = this.localidade;
-              
-              this.$emit('alterMiddleToolbar', { localidade: this.localidade });
+              localidade = JSON.parse(result.data).dataset[0];
+              localidade.id_localidade = localidade.cd_microrregiao;
+              localidade.nm_localidade = localidade.nm_microrregiao;
+              localidade.tipo = 'Microrregião';
+              localidade.img = "/static/thumbs/municipios/" + idLocalidade + ".jpg";
+              this[nm_var] = localidade;
+              this.customParams[nm_var] = localidade;
             }, error => {
               console.error(error.toString());
               this.sendError("Falha ao buscar dados da microrregião");
@@ -921,25 +1139,24 @@
           url = "/municipio/" + idLocalidade;
           axios(this.getAxiosOptions(url))
             .then(result => {
-              var localidade = JSON.parse(result.data)[0];
+              localidade = JSON.parse(result.data)[0];
               localidade.id_localidade = localidade.cd_municipio_ibge_dv;
               localidade.nm_localidade = localidade.nm_municipio_uf;
               localidade.tipo = 'Município';
               localidade.img = "/static/thumbs/municipios/" + idLocalidade + ".jpg";
-              this.localidade = localidade;
-              this.customParams.localidade = localidade;
-
-              this.$emit('alterMiddleToolbar', { "localidade": localidade });
+              this[nm_var] = localidade;
+              this.customParams[nm_var] = localidade;
             }, error => {
               console.error(error.toString());
               this.sendError("Falha ao buscar dados do município");
             });
         }
+
       },
 
-      setMasterIndicator(base_object_list, rules, structure, metadata) {
+      setIndicator(base_object_list, rules, structure, metadata) {
         if (typeof base_object_list == 'string') {
-          this.masterIndicator = base_object_list;
+          this[metadata.indicator_var] = base_object_list;
         } else {
           let finalText = this.replaceArgs(
             structure.template,
@@ -951,7 +1168,7 @@
             ),
             this.sendInvalidInterpol
           );
-          this.masterIndicator = finalText;
+          this[metadata.indicator_var] = finalText;
         }
       },
 
@@ -1001,7 +1218,8 @@
         if (idDimensao) {
           urlComplemento = '&dimensao=' + idDimensao;
         }
-        this.$router.push("/" + this.identifyObservatoryById(idObservatorio) + "/localidade/" + idLocalidade + "?" + urlComplemento);
+        urlComplemento +=  '&compare=' + this.idLocalidade_compare;
+        this.$router.push("/" + this.identifyObservatoryById(idObservatorio) + "/localidadecompare/" + idLocalidade + "?" + urlComplemento);
       },
 
       getLeadSlice(rowIndx) {
@@ -1084,6 +1302,10 @@
           this.$store.state.favLocation = this.$route.params.idLocalidade;
         }
         this.isFavorite = !this.isFavorite;
+      },
+      removeCompare() {
+          let url = this.$route.path.replace('/localidadecompare/','/localidade/') + '?dimensao=' + this.$route.query.dimensao;
+          this.pushRoute(url);
       }
     }
   }

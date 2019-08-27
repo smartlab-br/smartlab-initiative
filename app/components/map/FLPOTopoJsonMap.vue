@@ -4,6 +4,7 @@
   import FLPOBaseChart from '../FLPOBaseChart.vue';
 
   export default {
+    props: ['selectedPlace'],
     extends: FLPOBaseChart,
     data () {
       return { 
@@ -208,7 +209,7 @@
         var headers = this.headers;
         var removed_text_list = options.removed_text_list;
 
-        var idLocalidade = this.customParams.idLocalidade;
+        var idLocalidade = this.selectedPlace ? this.selectedPlace : this.customParams.idLocalidade;
         // var idField = options.id_field;
         // var longField = options.long ? options.long : 'longitude';
         // var latField = options.lat ? options.lat : 'latitude';

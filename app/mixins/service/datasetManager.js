@@ -309,30 +309,32 @@ const DatasetManager = {
           return this.$store.state.gDatasets;
         },
 
-        getGlobalDataset(dataset, scope, msg_erro, auId = null, cb = null) {
-          if (this.$store.state.gDatasets[dataset] == null || this.$store.state.gDatasets[dataset] == undefined ||
-              this.$store.state.gDatasets[dataset].analysisUnit == null || this.$store.state.gDatasets[dataset].analysisUnit == undefined ||
-              this.$store.state.gDatasets[dataset].analysisUnit.type != scope || this.$store.state.gDatasets[dataset].analysisUnit.id != auId
+        getGlobalDataset(dataset, scope, msg_erro, auId = null, cb = null, suffix = "") {
+          let datasetSuffix = dataset + suffix;
+          if (this.$store.state.gDatasets[datasetSuffix] == null || this.$store.state.gDatasets[datasetSuffix] == undefined ||
+              this.$store.state.gDatasets[datasetSuffix].analysisUnit == null || this.$store.state.gDatasets[datasetSuffix].analysisUnit == undefined ||
+              this.$store.state.gDatasets[datasetSuffix].analysisUnit.type != scope || this.$store.state.gDatasets[datasetSuffix].analysisUnit.id != auId
             ) {
-            this.$store.state.gDatasets[dataset] = { ds: null, valid: false, analysisUnit: { type: scope, id: auId } };
-            this.setGlobalDataset(dataset, scope, msg_erro, auId, cb);
+            this.$store.state.gDatasets[datasetSuffix] = { ds: null, valid: false, analysisUnit: { type: scope, id: auId } };
+            this.setGlobalDataset(dataset, scope, msg_erro, auId, cb, suffix);
           } else if (cb) {
             cb(null);
           }
         },
 
-        getMultipleGlobalDatasets(thematicDatasets, scope, auId, cb = null) {
+        getMultipleGlobalDatasets(thematicDatasets, scope, auId, cb = null, suffix = "") {
           let nLoadedDS = 0;
 
           for (let indxDS in thematicDatasets) {
-            let dataset = thematicDatasets[indxDS];
+            let dataset = thematicDatasets[indxDS] + suffix;
+            let endpointName = thematicDatasets[indxDS];
             if (this.$store.state.gDatasets[dataset] == null || this.$store.state.gDatasets[dataset] == undefined ||
               this.$store.state.gDatasets[dataset].analysisUnit == null || this.$store.state.gDatasets[dataset].analysisUnit == undefined ||
               this.$store.state.gDatasets[dataset].analysisUnit.type != scope || this.$store.state.gDatasets[dataset].analysisUnit.id != auId
               ) {
               this.$store.state.gDatasets[dataset] = { ds: null, valid: false, analysisUnit: { type: scope, id: auId } };
               
-              let url = this.replaceArgs(this.datasetEndpoints[dataset][scope], [auId]);
+              let url = this.replaceArgs(this.datasetEndpoints[endpointName][scope], [auId]);
 
               // Busca o dataset da localidade
               axios(this.getAxiosOptions(url))
@@ -351,12 +353,12 @@ const DatasetManager = {
           }
         },
 
-        setGlobalDataset(dataset, scope, msg_erro, auId = null, cb = null) {
+        setGlobalDataset(dataset, scope, msg_erro, auId = null, cb = null, suffix = "") {
           let url = this.replaceArgs(this.datasetEndpoints[dataset][scope], [auId]);
           //busca indicadores da localidade
           axios(this.getAxiosOptions(url))
             .then(result => {
-              this.$store.state.gDatasets[dataset] = {
+              this.$store.state.gDatasets[dataset + suffix] = {
                 ds: JSON.parse(result.data).dataset,
                 valid: true
               };

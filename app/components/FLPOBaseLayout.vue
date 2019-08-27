@@ -1,7 +1,7 @@
 <script>
   export default {
     props: ['structure', 'customParams', 'customFunctions', 'topology',
-            'topologyUf', 'sectionIndex'],
+            'topologyUf', 'sectionIndex','selectedPlace'],
     methods: {
       sendError(message) {
         this.$emit('showSnackbar', { color : 'error', text: message });
