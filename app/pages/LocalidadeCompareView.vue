@@ -50,6 +50,16 @@
                {{ dimensao.short_desc }}
             </v-tab>
           </v-tabs>
+          <v-flex xs12 py-0 v-show="!visibleTitle">
+            <v-layout row wrap primary white--text text-xs-center display-1-obs v-if="idLocalidade && idLocalidade_compare && $route.path.includes('localidadecompare')">
+              <v-flex xs6 py-0 v-if="localidade && localidade.nm_localidade">
+                {{ localidade.nm_localidade}}
+              </v-flex>
+              <v-flex xs6 py-0 v-if="localidade_compare && localidade_compare.nm_localidade">
+                {{ localidade_compare.nm_localidade}}
+              </v-flex>
+            </v-layout>
+          </v-flex>
         </v-flex>        
         <v-flex column pt-1 px-5 xs12 >
           <v-flex v-if="ind_principais && ind_principais.length == 0 && localidade != null" class="text-xs-center pa-0">
@@ -66,8 +76,8 @@
                 Remover comparação
               </v-btn>
             </v-layout>
-            <v-layout pa-0 row wrap justify-center>
-              <v-flex xs6 lg5 :class="{'pr-4': $vuetify.breakpoint.mdAndDown, 'pr-5': $vuetify.breakpoint.lgAndUp}">
+            <v-layout pa-0 pt-4 row wrap>
+              <v-flex xs6 md4 :class="{'pr-4': $vuetify.breakpoint.mdAndDown, 'pr-5': $vuetify.breakpoint.lgAndUp}">
                 <div class="display-2-obs">
                     {{ localidade != null ? localidade.nm_localidade : '' }}
                     <v-tooltip v-if="presentation" bottom class="icon-vertical-align-middle">
@@ -105,7 +115,7 @@
                   </flpo-minicard>
                 </v-layout>
               </v-flex>
-              <v-flex xs6 lg5 :class="{'pl-4': $vuetify.breakpoint.mdAndDown, 'pl-5': $vuetify.breakpoint.lgAndUp}">
+              <v-flex xs6 md4 :class="{'pl-4': $vuetify.breakpoint.mdAndDown, 'pl-5': $vuetify.breakpoint.lgAndUp}">
                 <div class="display-2-obs">
                     {{ localidade_compare != null ? localidade_compare.nm_localidade : '' }}
                     <v-tooltip v-if="presentation_compare" bottom class="icon-vertical-align-middle">
@@ -143,30 +153,23 @@
                   </flpo-minicard>
                 </v-layout>
               </v-flex>
-          </v-layout>
-        </v-flex>
-          <!-- <div :v-if="localidade !== null && localidade.tipo !== null" class="display-1-obs white--text text-xs-center pb-5">
-            {{ currentContext }}
-          </div> -->
-          <v-layout row wrap justify-center pt-4>
-            <v-flex white--text subheading xs4 :class="{'px-3': $vuetify.breakpoint.mdAndDown, 'px-4': $vuetify.breakpoint.lgAndUp}" v-html="dimensao_ativa.description">
-            </v-flex>
-            <v-flex xs4 :class="{'px-3': $vuetify.breakpoint.mdAndDown, 'px-4': $vuetify.breakpoint.lgAndUp}">
-              <v-flex pt-0 column wrap v-if="sections && sections.length > 0" > 
-                <v-flex v-for="(cardLink, cardLinkIndx) in cardLinks"
-                  :key="cardLink.id ? cardLink.id : ('sec' + cardLinkIndx)" py-0>
-                  <!--<v-icon color="accent">arrow_right</v-icon>-->
-                  <a v-if="cardLink.id" class="accent--text subheading"
-                    v-on:click="scrollTo('anchor_' + cardLink.id)">
-                    <span class='card-title-bullet accent--text'>&#9679;</span> {{ cardLink.title }}
-                  </a>
-                  <div v-else :class="cardLinkIndx != 0 ? 'pt-2 title-obs white--text':'title-obs white--text'">
-                    {{ cardLink.title }}
-                  </div>
+              <v-flex xs12 md4 :class="{'pl-4': $vuetify.breakpoint.mdAndDown, 'pl-5': $vuetify.breakpoint.lgAndUp}">
+                <v-flex pt-0 column wrap v-if="sections && sections.length > 0" > 
+                  <v-flex v-for="(cardLink, cardLinkIndx) in cardLinks"
+                    :key="cardLink.id ? cardLink.id : ('sec' + cardLinkIndx)" py-1 text-xs-left>
+                    <!--<v-icon color="accent">arrow_right</v-icon>-->
+                    <a v-if="cardLink.id" class="accent--text subheading"
+                      v-on:click="scrollTo('anchor_' + cardLink.id)">
+                      <span class='card-title-bullet accent--text'>&#9679;</span> {{ cardLink.title }}
+                    </a>
+                    <div v-else :class="cardLinkIndx != 0 ? 'pt-2 title-obs white--text':'title-obs white--text'">
+                      {{ cardLink.title }}
+                    </div>
+                  </v-flex>
                 </v-flex>
               </v-flex>
-            </v-flex>
           </v-layout>
+        </v-flex>
         </v-flex>
       </v-layout>
     </v-container>
@@ -198,11 +201,10 @@
             <v-container fluid grid-list-lg py-2 px-1>
               <v-layout row wrap
                 v-if="unlockLoading && secao.cards && secao.cards.length > 0" >
-                <v-flex xs6>
-                  <v-layout column>
-                  <v-flex
-                    v-for="(card, cardIndex) in secao.cards"
+                <v-flex xs12>
+                  <v-layout row wrap v-for="(card, cardIndex) in secao.cards"
                     :key="card.id">
+                  <v-flex xs6>
                     <v-layout :id="'anchor_' + card.id" ma-0 pa-0
                       :style="card.type != 'headline' && card.type != 'text' ? 'min-height:500px;': ''">
                       <v-layout v-if="card.type && card.type == 'text'"
@@ -250,33 +252,27 @@
                       </flpo-story-card>
                     </v-layout>
                   </v-flex>
-                  </v-layout>
-                </v-flex>
 
-                <v-flex xs6>
-                  <v-layout column>
-                  <v-flex
-                    v-for="(card, cardIndex) in sections_compare[indexSecao].cards"
-                    :key="'compare_'+card.id">
-                    <v-layout :id="'anchor_' + card.id" ma-0 pa-0
-                      :style="card.type != 'headline' && card.type != 'text' ? 'min-height:500px;': ''">
-                      <v-layout v-if="card.type && card.type == 'text'"
-                        :id="'compare_'+card.id" px-4 pb-4>
+                  <v-flex xs6>
+                    <v-layout ma-0 pa-0
+                      :style="sections_compare[indexSecao].cards[cardIndex].type != 'headline' && sections_compare[indexSecao].cards[cardIndex].type != 'text' ? 'min-height:500px;': ''">
+                      <v-layout v-if="sections_compare[indexSecao].cards[cardIndex].type && sections_compare[indexSecao].cards[cardIndex].type == 'text'"
+                        :id="sections_compare[indexSecao].cards[cardIndex].id" px-4 pb-4>
                         <flpo-composite-text
-                          :structure="card.description"
+                          :structure="sections_compare[indexSecao].cards[cardIndex].description"
                           :custom-params = "customParams"
                           :custom-functions = "custom_functions"
                           :section-index="indexSecao">
                         </flpo-composite-text>
                       </v-layout>
-                      <v-layout v-else-if="card.type && card.type == 'headline'"
+                      <v-layout v-else-if="sections_compare[indexSecao].cards[cardIndex].type && sections_compare[indexSecao].cards[cardIndex].type == 'headline'"
                         pt-5 pb-3 ml-5 pl-2
                         :class="'display-2-obs font-weight-bold ' + assessZebraTitle(indexSecao)"
-                        v-html="card.title.fixed">
+                        v-html="sections_compare[indexSecao].cards[cardIndex].title.fixed">
                       </v-layout>
                       <flpo-story-card-autofill
-                        v-else-if="card.autoFill && topologyUfLoaded_compare  && topology_compare && ((indexSecao*100) + cardIndex <= visibleCardMaxIndex)"
-                        :structure="card"
+                        v-else-if="sections_compare[indexSecao].cards[cardIndex].autoFill && topologyUfLoaded_compare  && topology_compare && ((indexSecao*100) + cardIndex <= visibleCardMaxIndex)"
+                        :structure="sections_compare[indexSecao].cards[cardIndex]"
                         :custom-params = "customParams"
                         :custom-functions = "custom_functions"
                         :topology = "topology_compare"
@@ -284,8 +280,8 @@
                         :section-index="indexSecao">
                       </flpo-story-card-autofill>
                       <flpo-story-card-multiple-charts
-                        v-else-if="card.type && card.type == 'multiple-charts' && topologyUfLoaded_compare  && topology_compare && ((indexSecao*100) + cardIndex  <= visibleCardMaxIndex)"
-                        :structure="card"
+                        v-else-if="sections_compare[indexSecao].cards[cardIndex].type && sections_compare[indexSecao].cards[cardIndex].type == 'multiple-charts' && topologyUfLoaded_compare  && topology_compare && ((indexSecao*100) + cardIndex  <= visibleCardMaxIndex)"
+                        :structure="sections_compare[indexSecao].cards[cardIndex]"
                         :selected-place="customParams.idLocalidade_compare"
                         :custom-params = "customParams"
                         :custom-functions = "custom_functions"
@@ -296,7 +292,7 @@
                       </flpo-story-card-multiple-charts>
                       <flpo-story-card
                         v-else-if="topologyUfLoaded_compare  && topology_compare && ((indexSecao*100) + cardIndex  <= visibleCardMaxIndex)"
-                        :structure="card"
+                        :structure="sections_compare[indexSecao].cards[cardIndex]"
                         :selected-place="customParams.idLocalidade_compare"
                         :custom-params = "customParams"
                         :custom-functions = "custom_functions"
@@ -309,7 +305,6 @@
                   </v-flex>
                   </v-layout>
                 </v-flex>
-                
               </v-layout>
             </v-container>
           </v-layout>
@@ -1306,7 +1301,10 @@
         this.isFavorite = !this.isFavorite;
       },
       removeCompare() {
-          let url = this.$route.path.replace('/localidadecompare/','/localidade/') + '?dimensao=' + this.$route.query.dimensao;
+          let url = this.$route.path.replace('/localidadecompare/','/localidade/');
+          if (this.$route.query.dimensao) {
+            url += '?dimensao=' + this.$route.query.dimensao;
+          }
           this.pushRoute(url);
       }
     }

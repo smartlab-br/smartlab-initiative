@@ -3,6 +3,7 @@
     data () {
       return {
         itemBusca: null,
+        visibleTitle: true,
         dialog: null
       }
     },
@@ -19,7 +20,28 @@
         return minStatus;
       }
     },
+    mounted () {
+      window.addEventListener('scroll', this.assessVisibleTitle);
+    },
+    beforeDestroy () {
+      window.removeEventListener('scroll', this.assessVisibleTitle);
+    },
     methods: {
+
+      assessVisibleTitle() {
+        // const vHeight = (window.innerHeight || document.documentElement.clientHeight);
+        if (document.getElementById("screenTitle")) {
+          var { top, bottom } = document.getElementById("screenTitle").getBoundingClientRect();
+          if (top < 0 && bottom < 0) {
+            this.visibleTitle = false;
+          } else {
+            this.visibleTitle = true;
+          }
+        } else {
+          this.visibleTitle = false;
+        }
+      },
+      
       showDialogContext() {
         this.dialog = true;
       },

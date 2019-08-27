@@ -88,7 +88,7 @@
               <v-btn small class="accent--text" color="transparent"
                 @click.native="compareDialog = true">
                 <v-icon left>add</v-icon>
-                Adicionar comparação
+                Comparar
               </v-btn>
             </v-layout>
             <div class="display-2-obs pt-3" v-html="dimensao_ativa != null ? (dimensao_ativa.title != null ? dimensao_ativa.title : dimensao_ativa.label) : ''">
@@ -543,7 +543,12 @@
     watch: {
       idLocalidade_compare(newVal, oldVal) {
         if (newVal) {
-          let url = this.$route.fullPath.replace('/localidade/','/localidadecompare/') + '&compare=' + newVal.id;
+          let url = "";
+          if (this.$route.path == this.$route.fullPath) { //não tem dimensão informada na url
+            url = this.$route.fullPath.replace('/localidade/','/localidadecompare/') + '?compare=' + newVal.id;
+          } else {
+            url = this.$route.fullPath.replace('/localidade/','/localidadecompare/') + '&compare=' + newVal.id;
+          }
           this.pushRoute(url);
         }
       }
