@@ -354,20 +354,6 @@ class AnalysisUnitModel {
         });
     }
   }
-
-  checkFavoriteAnalysisUnit(context) {
-    if (context.idObservatorio && context.idObservatorio == 'td' && 
-      VueCookies.isKey("currentAnalysisUnit") && VueCookies.get("currentAnalysisUnit").length != 7){
-      context.$emit('showLocationDialog');
-    } else if (!VueCookies.isKey("currentAnalysisUnit") || VueCookies.get("currentAnalysisUnit") == null ) {
-      // Se não houver cookie, invoca o cliente geo_ip
-      context.getClientGeo(context.getClientGeoCallback);
-      // context.$emit('showLocationDialog');
-    } else {
-      this.currentAnalysisUnit = VueCookies.get("currentAnalysisUnit");
-      // context.getGlobalDatasetsIdLocalidade(VueCookies.get("currentAnalysisUnit"));
-    }
-  }
 }
 
 export default AnalysisUnitModel;

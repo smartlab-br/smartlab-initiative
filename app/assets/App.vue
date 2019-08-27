@@ -731,7 +731,7 @@
       }
     },
     mounted: function() {
-      // this.checkFavoriteAnalysisUnit();
+      // this.checkCurrentAnalysisUnit();
 
       if (!this.$cookies.isKey("cookieAccept")){
         this.snackbarCookies = true;

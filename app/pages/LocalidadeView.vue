@@ -523,7 +523,7 @@
         this.$analysisUnitModel.setCurrentAnalysisUnit(this.$route.params.idLocalidade);
       }
       
-      this.$analysisUnitModel.checkFavoriteAnalysisUnit(this);
+      this.checkCurrentAnalysisUnit();
       window.addEventListener('scroll', this.assessPageBottom);
       window.addEventListener('scroll', this.setVisibleCardMaxIndex);
       this.assessPageBottom();

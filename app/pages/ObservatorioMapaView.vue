@@ -171,7 +171,7 @@
     },
     mounted: function() {
       this.idLocalidade = this.$analysisUnitModel.getCurrentAnalysisUnit();
-      this.$analysisUnitModel.checkFavoriteAnalysisUnit(this);
+      this.checkCurrentAnalysisUnit();
     },
     methods: {
       setGroupingAndFiltering(observatorio) {

@@ -98,7 +98,7 @@
       } 
     },
     mounted: function() {
-      this.$analysisUnitModel.checkFavoriteAnalysisUnit(this);
+      this.checkCurrentAnalysisUnit();
 
       // window.addEventListener('scroll', this.assessPageBottom);
       // this.assessPageBottom();

@@ -41,7 +41,7 @@
       this.resizeFirstSection();
       window.addEventListener('resize', this.resizeFirstSection);
       this.idLocalidade = this.$analysisUnitModel.getCurrentAnalysisUnit();
-      this.$analysisUnitModel.checkFavoriteAnalysisUnit(this);
+      this.checkCurrentAnalysisUnit();
       
     },
     computed: {
