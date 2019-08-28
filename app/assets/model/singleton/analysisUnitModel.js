@@ -41,16 +41,7 @@ class AnalysisUnitModel {
     if (this.isLoaded()) return this.options; // If loaded, returns the dataset
     if (!this.hasStartedLoading()) return this.buildAllSearchOptions(); // If loading hasn't been triggered, start loading an return a promise
     // If it's loading, create a promise that waits until loading is finished to continue the execution
-    var context = this;
-    return new Promise(
-      function(resolve, reject) {
-        while (!context.isLoaded()) {
-          setTimeout(
-            (isLoaded) => { if (isLoaded) resolve()},
-          20, context.isLoaded());
-        }
-      }
-    )
+    return null;
   }
 
   hasStartedLoading() {

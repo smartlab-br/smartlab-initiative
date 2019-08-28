@@ -86,7 +86,7 @@
             </v-layout>
             <v-layout justify-center v-if='idLocalidade != 0'>
               <v-btn small class="accent--text" color="transparent"
-                @click.native="compareDialog = true">
+                @click.native="openCompareDialog()">
                 <v-icon left>add</v-icon>
                 Comparar
               </v-btn>
@@ -618,25 +618,6 @@
       this.resizeFirstSection();
 
       this.$analysisUnitModel.isCurrent(this.$route.params.idLocalidade);
-
-      let auOptions = this.$analysisUnitModel.getSearchDataset();
-      if ((auOptions instanceof Promise) || auOptions.then) {
-        auOptions.then((result) => { this.auOptions = result });
-      } else if (Array.isArray(auOptions) && auOptions.length > 0) {
-        let first = auOptions[0];
-        if ((first instanceof Promise) || first.then) {
-          Promise.all(auOptions)
-            .then((results) => { this.auOptions = this.$analysisUnitModel.getOptions(); })
-            .catch((error) => {
-              this.auOptions = this.$analysisUnitModel.getOptions();
-              this.sendError("Falha ao buscar lista das localidades");
-            });
-        } else {
-          this.auOptions = auOptions;  
-        }
-      } else {
-        this.auOptions = auOptions;
-      }
     },
     beforeDestroy () {
       window.removeEventListener('scroll', this.assessPageBottom);
@@ -1093,6 +1074,36 @@
           }
         }
       },
+
+      openCompareDialog() {
+        let auOptions = null;
+        while (auOptions == null) {
+          auOptions = this.$analysisUnitModel.getSearchDataset();
+          setTimeout(() => {}, 10);
+        }
+        if ((auOptions instanceof Promise) || auOptions.then) {
+          auOptions.then((result) => { this.auOptions = result });
+        } else if (Array.isArray(auOptions) && auOptions.length > 0) {
+          let first = auOptions[0];
+          if ((first instanceof Promise) || first.then) {
+            Promise.all(auOptions)
+              .then((results) => {
+                this.auOptions = this.$analysisUnitModel.getOptions();
+                this.compareDialog = true;
+              })
+              .catch((error) => {
+                this.auOptions = this.$analysisUnitModel.getOptions();
+                this.sendError("Falha ao buscar lista das localidades");
+              });
+          } else {
+            this.auOptions = auOptions;  
+            this.compareDialog = true;
+          }
+        } else {
+          this.auOptions = auOptions;
+          this.compareDialog = true;
+        }
+      }
 
       // TODO Revisar isso aqui, jogando para algum controle de preferências (App-wide) do usuário logado
       // toggleFavorite() {
