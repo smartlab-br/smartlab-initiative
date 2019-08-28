@@ -32,7 +32,7 @@
         // const vHeight = (window.innerHeight || document.documentElement.clientHeight);
         if (document.getElementById("screenTitle")) {
           var { top, bottom } = document.getElementById("screenTitle").getBoundingClientRect();
-          if (top < 0 && bottom < 0) {
+          if (top < 0 && bottom - 88 < 0) {
             this.visibleTitle = false;
           } else {
             this.visibleTitle = true;

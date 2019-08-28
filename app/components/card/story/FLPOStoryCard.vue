@@ -51,7 +51,7 @@
             </v-flex>
             <v-flex pt-0>    
               <v-layout row wrap :style="structure.type != 'headline' && structure.type != 'text' ? 'min-height:500px;' : ''">
-                <v-flex xs12 md3 class="position-relative" column >
+                <v-flex xs12 :class="unstackedBreakpoint ? unstackedBreakpoint + '3 position-relative' : 'md3 position-relative'" column>
                   <v-flex column pt-0 slot="description">
                     <flpo-composite-text
                       v-if="!invalidInterpol"
@@ -83,10 +83,10 @@
                     <a class="accent--text" v-on:click="openLinkAnalysis">{{ analysisDesc }}</a>
                   </div>
                 </v-flex>
-                <v-flex xs12 md9 py-3>
+                <v-flex xs12 :class="unstackedBreakpoint ? unstackedBreakpoint + '9' : 'md9'" py-3>
                   <v-layout fill-height row wrap>
                     <v-flex xs12 fill-height :style="cmpStyle"
-                      :class="{'mx-0': $vuetify.breakpoint.smAndDown, 'mx-0': $vuetify.breakpoint.mdAndUp, 'px-3': $vuetify.breakpoint.smAndDown, 'pt-2 pr-4 pb-0': $vuetify.breakpoint.mdAndUp}">
+                      :class="{'mx-0': $vuetify.breakpoint[stackedBkp], 'mx-0': $vuetify.breakpoint[unstackedBkp], 'px-3': $vuetify.breakpoint[stackedBkp], 'pt-2 pr-4 pb-0': $vuetify.breakpoint[unstackedBkp]}">
                       <!-- Definition of all possible charts -->
                       <flpo-bar-chart
                         v-if="dataset !== null && structure && structure.chart_type == 'BAR' && structure.chart_options !== null"
@@ -274,7 +274,7 @@
     },
     computed: {
       cmpStyle: function() {
-        if (this.$vuetify.breakpoint.smAndDown) {
+        if (this.$vuetify.breakpoint[this.stackedBkp]) {
           return "height:313px;"
         }
       },

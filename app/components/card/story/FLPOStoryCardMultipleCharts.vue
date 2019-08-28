@@ -49,7 +49,7 @@
             </v-flex>
             <v-flex>
               <v-layout row wrap style="min-height:500px;">
-                <v-flex xs12 md3 class="position-relative" column>
+                <v-flex xs12 :class="unstackedBreakpoint ? unstackedBreakpoint + '3 position-relative' : 'md3 position-relative'"  column>
                   <v-flex column pt-0 slot="description">
                     <flpo-composite-text
                       v-if="!invalidInterpol"
@@ -95,16 +95,16 @@
                     </template>
                   </v-flex>
                 </v-flex>
-                <v-flex xs12 md9 py-2>
+                <v-flex xs12 :class="unstackedBreakpoint ? unstackedBreakpoint + '9' : 'md9'"  py-2>
                   <v-layout row wrap
                     v-if="datasetsComplete == structure.charts.length"
-                    :class="$vuetify.breakpoint.mdAndUp ? ' fill-height' : ''">
+                    :class="$vuetify.breakpoint[unstackedBkp] ? ' fill-height' : ''">
                     <v-flex
                       v-for="chart in structure.charts"
                       :key="chart.id"
-                      :class="(chart.cls ? chart.cls : '') + ($vuetify.breakpoint.mdAndUp ? ' fill-height' : '')">
-                      <v-layout column :style="cmpStyle" :class="{'px-3': $vuetify.breakpoint.smAndDown, 'px-0 mx-0 fill-height': $vuetify.breakpoint.mdAndUp}">
-                        <v-flex fill-height :class="{'mx-0': $vuetify.breakpoint.smAndDown, 'mx-3 pb-0': $vuetify.breakpoint.mdAndUp}">
+                      :class="(chart.cls ? chart.cls : '') + ($vuetify.breakpoint[unstackedBkp] ? ' fill-height' : '')">
+                      <v-layout column :style="cmpStyle" :class="{'px-3': $vuetify.breakpoint[stackedBkp], 'px-0 mx-0 fill-height': $vuetify.breakpoint[unstackedBkp]}">
+                        <v-flex fill-height :class="{'mx-0': $vuetify.breakpoint[stackedBkp], 'mx-3 pb-0': $vuetify.breakpoint[unstackedBkp]}">
                           <!-- Definition of all possible charts -->
                           <flpo-bar-chart
                             v-if="dataset && dataset[chart.id] !== null && chart.type == 'BAR' && chart.options !== null"
@@ -286,7 +286,7 @@
     },
     computed: {
       cmpStyle: function() {
-        if (this.$vuetify.breakpoint.smAndDown) {
+        if (this.$vuetify.breakpoint[this.stackedBkp]) {
           return "height:313px;"
         }
       },
