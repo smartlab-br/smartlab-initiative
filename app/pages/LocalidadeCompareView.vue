@@ -51,7 +51,7 @@
             </v-tab>
           </v-tabs>
           <v-flex xs12 py-0 v-show="!visibleTitle">
-            <v-layout row wrap primary white--text text-xs-center display-1-obs v-if="idLocalidade && idLocalidade_compare && $route.path.includes('localidadecompare')">
+            <v-layout row wrap secondary text-xs-center display-1-obs v-if="idLocalidade && idLocalidade_compare && $route.path.includes('localidadecompare')">
               <v-flex xs6 py-0 v-if="localidade && localidade.nm_localidade">
                 {{ localidade.nm_localidade}}
               </v-flex>
@@ -66,7 +66,7 @@
             <v-progress-circular indeterminate color="primary"></v-progress-circular>        
           </v-flex>
           <v-flex pt-5></v-flex>
-          <v-flex id="screenTitle" class="white--text text-xs-center pa-5 line-height-1">
+          <v-flex id="screenTitle" white--text text-xs-center line-height-1 :class="{'py-5 px-0': $vuetify.breakpoint.xsOnly, 'pa-5': $vuetify.breakpoint.smAndUp}">
             <div class="display-3-obs py-3" v-html="dimensao_ativa != null ? (dimensao_ativa.title != null ? dimensao_ativa.title : dimensao_ativa.label) : ''">
             </div>
             <v-layout justify-center>
@@ -77,7 +77,7 @@
               </v-btn>
             </v-layout>
             <v-layout pa-0 pt-4 row wrap>
-              <v-flex xs6 md4 :class="{'pr-4': $vuetify.breakpoint.mdAndDown, 'pr-5': $vuetify.breakpoint.lgAndUp}">
+              <v-flex xs12 sm6 md4 px-4>
                 <div class="display-2-obs">
                     {{ localidade != null ? localidade.nm_localidade : '' }}
                     <v-tooltip v-if="presentation" bottom class="icon-vertical-align-middle">
@@ -115,7 +115,7 @@
                   </flpo-minicard>
                 </v-layout>
               </v-flex>
-              <v-flex xs6 md4 :class="{'pl-4': $vuetify.breakpoint.mdAndDown, 'pl-5': $vuetify.breakpoint.lgAndUp}">
+              <v-flex xs12 sm6 md4 px-4>
                 <div class="display-2-obs">
                     {{ localidade_compare != null ? localidade_compare.nm_localidade : '' }}
                     <v-tooltip v-if="presentation_compare" bottom class="icon-vertical-align-middle">
@@ -173,7 +173,6 @@
         </v-flex>
       </v-layout>
     </v-container>
-    <!-- Indicadores principais: Empregadores, Vínculos Formais, Municípios, Estabelecimentos, % MEI e EPPs -->
     <v-container fluid  xs12  class="pa-0 ma-0">
       <v-layout class="bg-page grey lighten-2" column pa-0 ma-0>
         <v-layout  v-if="sections && sections.length > 0" 
@@ -204,7 +203,7 @@
                 <v-flex xs12>
                   <v-layout row wrap v-for="(card, cardIndex) in secao.cards"
                     :key="card.id">
-                  <v-flex xs6>
+                  <v-flex xs12 sm6>
                     <v-layout :id="'anchor_' + card.id" ma-0 pa-0
                       :style="card.type != 'headline' && card.type != 'text' ? 'min-height:500px;': ''">
                       <v-layout v-if="card.type && card.type == 'text'"
@@ -233,6 +232,7 @@
                       <flpo-story-card-multiple-charts
                         v-else-if="card.type && card.type == 'multiple-charts' && topologyUfLoaded  && topology && ((indexSecao*100) + cardIndex  <= visibleCardMaxIndex)"
                         :structure="card"
+                        unstacked-breakpoint= "xl"
                         :custom-params = "customParams"
                         :custom-functions = "custom_functions"
                         :topology = "topology"
@@ -243,6 +243,7 @@
                       <flpo-story-card
                         v-else-if="topologyUfLoaded  && topology && ((indexSecao*100) + cardIndex  <= visibleCardMaxIndex)"
                         :structure="card"
+                        unstacked-breakpoint= "xl"
                         :custom-params = "customParams"
                         :custom-functions = "custom_functions"
                         :topology = "topology"
@@ -253,7 +254,7 @@
                     </v-layout>
                   </v-flex>
 
-                  <v-flex xs6>
+                  <v-flex xs12 sm6>
                     <v-layout ma-0 pa-0
                       :style="sections_compare[indexSecao].cards[cardIndex].type != 'headline' && sections_compare[indexSecao].cards[cardIndex].type != 'text' ? 'min-height:500px;': ''">
                       <v-layout v-if="sections_compare[indexSecao].cards[cardIndex].type && sections_compare[indexSecao].cards[cardIndex].type == 'text'"
@@ -282,6 +283,7 @@
                       <flpo-story-card-multiple-charts
                         v-else-if="sections_compare[indexSecao].cards[cardIndex].type && sections_compare[indexSecao].cards[cardIndex].type == 'multiple-charts' && topologyUfLoaded_compare  && topology_compare && ((indexSecao*100) + cardIndex  <= visibleCardMaxIndex)"
                         :structure="sections_compare[indexSecao].cards[cardIndex]"
+                        unstacked-breakpoint= "xl"
                         :selected-place="customParams.idLocalidade_compare"
                         :custom-params = "customParams"
                         :custom-functions = "custom_functions"
@@ -293,6 +295,7 @@
                       <flpo-story-card
                         v-else-if="topologyUfLoaded_compare  && topology_compare && ((indexSecao*100) + cardIndex  <= visibleCardMaxIndex)"
                         :structure="sections_compare[indexSecao].cards[cardIndex]"
+                        unstacked-breakpoint= "xl"
                         :selected-place="customParams.idLocalidade_compare"
                         :custom-params = "customParams"
                         :custom-functions = "custom_functions"

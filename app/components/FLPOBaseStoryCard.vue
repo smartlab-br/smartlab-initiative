@@ -5,12 +5,37 @@
 
   export default {
     extends: FLPOBaseLayout,
+    props: ['selectedPlace', 'unstackedBreakpoint'],
     data () {
       return {
-        customFilters: {}
+        customFilters: {},
+        stackedBkp: 'smAndDown',
+        unstackedBkp: 'mdAndUp'
       }
     },
     created () {
+
+      if (this.unstackedBreakpoint){
+        switch (this.unstackedBreakpoint) {
+          case 'xl':
+            this.stackedBkp = 'lgAndDown';
+            this.unstackedBkp = 'xlOnly';
+            break;
+          case 'lg':
+            this.stackedBkp = 'mdAndDown';
+            this.unstackedBkp = 'lgAndUp';
+            break;
+          case 'md':
+            this.stackedBkp = 'smAndDown';
+            this.unstackedBkp = 'mdAndUp';
+            break;
+          case 'sm':
+            this.stackedBkp = 'xsOnly';
+            this.unstackedBkp = 'smAndUp';
+            break;
+        }
+      }
+      
       let structure = this.structure;
       if (structure.card_template) { // API Card
         let url = this.replaceArgs(
