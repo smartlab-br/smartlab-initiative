@@ -21,7 +21,7 @@ const ThemeManager = {
             },
             td: {
               primary: colors.blueGrey.darken4,
-              secondary: colors.blueGrey.lighten5,
+              secondary: colors.blueGrey.lighten4,
               accent: colors.cyan.accent4,
               error: colors.red.base,
               warning: colors.amber.base,
@@ -47,7 +47,7 @@ const ThemeManager = {
             },
             sst: {
               primary: colors.teal.darken4,
-              secondary: colors.teal.lighten5,
+              secondary: colors.teal.lighten4,
               accent: colors.orange.accent2,
               error: colors.red.base,
               warning: colors.amber.base,
@@ -73,7 +73,7 @@ const ThemeManager = {
             },
             des: {
               primary: colors.deepPurple.darken4,
-              secondary: colors.deepPurple.lighten5,
+              secondary: colors.deepPurple.lighten4,
               accent: colors.yellow.accent4,
               error: colors.red.base,
               warning: colors.amber.base,
@@ -86,7 +86,7 @@ const ThemeManager = {
             },
             est: {
               primary: colors.blueGrey.darken4,
-              secondary: colors.blueGrey.lighten5,
+              secondary: colors.blueGrey.lighten4,
               accent: colors.cyan.accent4,
               error: colors.red.base,
               warning: colors.amber.base,

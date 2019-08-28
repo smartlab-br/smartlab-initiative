@@ -43,7 +43,7 @@
                 <v-flex xs2 sm1 md2 lg1 d-flex >
                 <v-btn small flat :color="assessZebraTitleColor(this.sectionIndex)"
                   @click.native="dialog = true" style="margin: 0px; min-width: auto;">
-                  <span class="hidden-sm-and-down body">Dados</span>
+                  <span :class="'hidden-'+stackedBkp.substring(0,2)+'-and-down body'">Dados</span>
                   <v-icon right>view_list</v-icon> <!-- list -->
                 </v-btn>
                 </v-flex>
