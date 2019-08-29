@@ -228,12 +228,29 @@ export default {
     };
   },
   created() {
-    this.$indicatorsModel.buildIndicatorsOptions(
-      this,
-      this.pushIndicatorOption,
-      this.setIndicatorStatusOption,
-      this.identifyObservatory(this.$route.path.split('/')[1])
-    );
+    this.$indicatorsModel.buildIndicatorsOptions(this.identifyObservatory(this.$route.path.split('/')[1]))
+      .then((result) => {
+        for (let option of result) {
+          this.indicators.push(option);
+          if (this.indicator == null && option.id == this.$route.params.nmIndicador) {
+            this.indicator = option;
+            option.color = this.colorArray[0];
+            option.visible = true;
+            this.selectedIndicators[0] = option;
+          }
+          if (this.additionalIndicators) {
+            for (let indxAdditionalInd in this.additionalIndicators) {
+              if (this.additionalIndicators[indxAdditionalInd].id == option.id
+                && this.selectedIndicators[indxAdditionalInd + 1] == null) {
+                option.color = this.colorArray[indxAdditionalInd + 1];
+                option.visible = true;
+                this.selectedIndicators[indxAdditionalInd + 1] = option;
+              }
+            }
+          }
+        }
+      })
+      .catch((error) => { this.sendError("Falha ao carregar as opções de indicadores"); });
 
     this.$analysisUnitModel.buildPlacesOptions()
       .then((response) => { this.setPlaceStatusOption(this.$analysisUnitModel.getOptions()); });
@@ -293,34 +310,6 @@ export default {
     }
   },
   methods: {
-    pushIndicatorOption(option) {
-      //if (option.type == "map") {
-        this.indicators.push(option);
-        if (this.indicator == null && option.id == this.$route.params.nmIndicador) {
-          this.indicator = option;
-          option.color = this.colorArray[0];
-          option.visible = true;
-          this.selectedIndicators[0] = option;
-        }
-        if (this.additionalIndicators) {
-          for (let indxAdditionalInd in this.additionalIndicators) {
-            if (this.additionalIndicators[indxAdditionalInd].id == option.id
-              && this.selectedIndicators[indxAdditionalInd + 1] == null) {
-              option.color = this.colorArray[indxAdditionalInd + 1];
-              option.visible = true;
-              this.selectedIndicators[indxAdditionalInd + 1] = option;
-            }
-          }
-        }
-      //}
-    },
-
-    setIndicatorStatusOption(obj) {
-      if (obj.id == "indicators") {
-        this.indicatorsStatus = obj.value;
-      }
-    },
-
     pushPlaceOption(option) {
       if (option.type == "place") {
         this.places.push(option);

@@ -6,6 +6,11 @@ import NumberFormatService from '../../service/singleton/numberFormatService'
 import ObjectTransformService from '../../service/singleton/objectTransformService'
 
 class IndicatorsModel {
+  options = []
+  loadStatus = {
+    places: null
+  }
+
   constructor() {
     this.textTransformService = new TextTransformService();
     this.numberFormatService = new NumberFormatService();
@@ -17,15 +22,21 @@ class IndicatorsModel {
     this.axiosSetup = new AxiosCallSetupService(store);
   }
 
-  buildIndicatorsOptions(context, pusher, flare, observatory = null) {
+  getOptions() {
+    return this.options;
+  }
+
+  buildIndicatorsOptions(observatory = null) {
+    this.loadStatus = 'LOADING';
+
     // O default é o TD
     var url = "/indicadoresmunicipais?categorias=ds_indicador,ds_indicador_radical,cd_indicador,ds_fonte&agregacao=distinct";
     if (observatory && observatory != 'td') {
       url = "/" + observatory + "te/indicadoresmunicipais?categorias=ds_indicador,ds_indicador_radical,cd_indicador,ds_fonte&agregacao=distinct";
     }
 
-    axios(this.axiosSetup.getAxiosOptions(url))
-      .then(result => {
+    return axios(this.axiosSetup.getAxiosOptions(url))
+      .then((result) => {
         var todosIndicadores = JSON.parse(result.data).dataset;
 
         for (var i = 0; i < todosIndicadores.length; i++) {
@@ -39,7 +50,7 @@ class IndicatorsModel {
             icon: 'map', type: 'map'
           });
           */
-          pusher({
+          this.options.push({
             id: todosIndicadores[i].cd_indicador,
             label: todosIndicadores[i].ds_indicador_radical,
             detail: "Indicador, " + dim.label,
@@ -48,21 +59,13 @@ class IndicatorsModel {
             type: 'indicator',
             context: 'sim'
           });
-
-          if (i == todosIndicadores.length - 1) {
-            flare({
-              id: 'indicators',
-              value: 'SUCCESS'
-            });
-          }
         }
-      }, error => {
-        flare({
-          id: 'indicators',
-          value: 'ERROR'
-        });
-        context.sendError("Falha ao buscar dados de indicadores");
-        return null;
+
+        this.loadStatus = 'SUCCESS';
+        return this.options;
+      }, (error) => {
+        this.loadStatus = 'ERROR';
+        reject(error);
       });
   }
 
