@@ -57,15 +57,17 @@ Vue.prototype.$indicatorsModel = new IndicatorsModel();
 
 // 2. Services
 // 2.1. Singletons
+import AxiosCallSetupService from './service/singleton/axiosCallSetupService.js'
+Vue.prototype.$axiosCallSetupService = new AxiosCallSetupService();
 import DateFormatService from './service/singleton/dateFormatService.js'
 Vue.prototype.$dateFormatService = new DateFormatService();
 import NumberFormatService from './service/singleton/numberFormatService.js'
 Vue.prototype.$numberFormatService = new NumberFormatService();
+import ObjectTransformService from './service/singleton/objectTransformService.js'
+Vue.prototype.$objectTransformService = new ObjectTransformService();
 import TextTransformService from './service/singleton/textTransformService.js'
 Vue.prototype.$textTransformService = new TextTransformService();
 // 2.2. Global Mixins
-import AxiosCallSetup from '../mixins/service/axiosCallSetup.js'
-Vue.use(AxiosCallSetup)
 import ColorManager from '../mixins/service/colorManager.js'
 Vue.use(ColorManager)
 import DatasetManager from '../mixins/service/datasetManager.js'

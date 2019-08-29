@@ -3,11 +3,13 @@ import axios from 'axios'
 import AxiosCallSetupService from '../../service/singleton/axiosCallSetupService'
 import TextTransformService from '../../service/singleton/textTransformService'
 import NumberFormatService from '../../service/singleton/numberFormatService'
+import ObjectTransformService from '../../service/singleton/objectTransformService'
 
 class IndicatorsModel {
   constructor() {
     this.textTransformService = new TextTransformService();
-    this.numberFormatService = new TextTransformService();
+    this.numberFormatService = new NumberFormatService();
+    this.objectTransformService = new ObjectTransformService();
   }
 
   setStore(store) {
@@ -64,21 +66,21 @@ class IndicatorsModel {
       });
   }
 
-  indicatorsToValueArray(context, args, functions, indicators, cbInvalidate = null) {
+  indicatorsToValueArray(args, functions, indicators, cbInvalidate = null) {
     var values = [];
     for (var indx in args) {
       if (args[indx].id) {
-        values = values.concat(this.getIndicatorValueFromStructure(context, args[indx], functions, indicators, cbInvalidate));
+        values = values.concat(this.getIndicatorValueFromStructure(args[indx], functions, indicators, cbInvalidate));
       } else if (args[indx].link) {
         values.push("<a href='" + args[indx].link + "'>" + args[indx].text + "</a>");
       } else {
-        values.push(this.getAttributeFromIndicatorInstance(context, args[indx], functions, indicators[0], cbInvalidate));
+        values.push(this.getAttributeFromIndicatorInstance(args[indx], functions, indicators[0], cbInvalidate));
       }
     }
     return values;
   }
 
-  getIndicatorValueFromStructure(context, structure, functions, indicators, cbInvalidate = null) {
+  getIndicatorValueFromStructure(structure, functions, indicators, cbInvalidate = null) {
     for (var indxInd in indicators) {
       if (structure.id && structure.id !== indicators[indxInd].cd_indicador) {
         continue;
@@ -86,7 +88,7 @@ class IndicatorsModel {
       if (structure.year && structure.year !== indicators[indxInd].nu_competencia) {
         continue;
       }
-      return this.getAttributeFromIndicatorInstance(context, structure, functions, indicators[indxInd], cbInvalidate);
+      return this.getAttributeFromIndicatorInstance(structure, functions, indicators[indxInd], cbInvalidate);
     }
     if(structure.required && cbInvalidate !== null){
       cbInvalidate.apply(null);
@@ -290,11 +292,11 @@ class IndicatorsModel {
     return result;
   }
 
-  getAttributeFromIndicatorInstance(context, structure, functions, indicator, cbInvalidate = null) {
+  getAttributeFromIndicatorInstance(structure, functions, indicator, cbInvalidate = null) {
     let value = null;
     // Pega ou calcula o valor
     if (structure && structure.function) {
-      value = context.runNamedFunction(structure, indicator, functions);
+      value = this.objectTransformService.runNamedFunction(structure, indicator, functions);
     } else if (indicator && structure && structure.named_prop) {
       value = indicator[structure.named_prop];
     }

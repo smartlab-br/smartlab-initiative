@@ -212,7 +212,7 @@ describe('IndicatorsModel', () => {
     ]
     let invalidate = jest.fn();
     
-    let result = wrapper.vm.$indicatorsModel.indicatorsToValueArray(wrapper.vm, args, {}, ds, invalidate);
+    let result = wrapper.vm.$indicatorsModel.indicatorsToValueArray(args, {}, ds, invalidate);
     expect(result).toEqual([
       1.8,
       1.8,

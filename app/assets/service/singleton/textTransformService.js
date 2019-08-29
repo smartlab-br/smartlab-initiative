@@ -1,8 +1,11 @@
 import NumberFormatService from './numberFormatService.js'
+import ObjectTransformService from './objectTransformService.js'
+import IndicatorsModel from '../../model/singleton/indicatorsModel.js';
 
 class TextTransformService {
   constructor() {
     this.numberFormatService = new NumberFormatService();
+    this.objectTransformService = new ObjectTransformService();
   }
 
   applyInterpol(struct, customParams = {}, customFunctions = [], base_object = null, cbInvalidate = null) {
@@ -15,15 +18,13 @@ class TextTransformService {
       for (var indx in struct.args) {
         var iterArg = null;
         if (struct.args[indx].function) {
-          console.log("to review");
-          iterArg = this.runNamedFunction(struct.args[indx], base_object, customFunctions);
+          iterArg = this.objectTransformService.runNamedFunction(struct.args[indx], base_object, customFunctions);
         } else if (struct.args[indx].value) {
           iterArg = struct.args[indx].value;
         } else if (struct.args[indx].fixed) {
           iterArg = struct.args[indx].fixed;
         } else if (Array.isArray(base_object) && struct.args[indx].id){
-          console.log("to review 2");
-          iterArg = this.$indicatorsModel.getIndicatorValueFromStructure(this, struct.args[indx], null, base_object);
+          iterArg = (new IndicatorsModel()).getIndicatorValueFromStructure(struct.args[indx], null, base_object);
           args.push(iterArg);
           continue;
         } else if (struct.args[indx].named_prop) {
@@ -141,4 +142,4 @@ class TextTransformService {
   }
 }
 
-export default TextManager;
+export default TextTransformService;

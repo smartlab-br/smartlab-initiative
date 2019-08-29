@@ -434,7 +434,7 @@
             base_object = base_object_list;
           }
 
-          let finalLbl = this.applyInterpol(
+          let finalLbl = this.$textTransformService.applyInterpol(
             structure,
             this.customParams,
             this.customFunctions,
@@ -466,9 +466,9 @@
           if (payload.rules.filter){
             let apiUrl = ""
             if (eachChart.apiBase){
-              apiUrl = this.applyInterpol(eachChart.apiBase, this.customParams, this.customFunctions);//eachChart.apiBase;
+              apiUrl = this.$textTransformService.applyInterpol(eachChart.apiBase, this.customParams, this.customFunctions);//eachChart.apiBase;
             } else {
-              apiUrl = this.applyInterpol(eachChart.api, this.customParams, this.customFunctions);
+              apiUrl = this.$textTransformService.applyInterpol(eachChart.api, this.customParams, this.customFunctions);
             }
             // if (this.customFilters.radioApi){
             //   apiUrl = this.customFilters.radioApi;
@@ -476,7 +476,7 @@
             endpoint = apiUrl + this.getFilters();
             eachChart.options.filterText = this.customFilters.filterText;
           } else {
-            endpoint = this.applyInterpol(payload.rules.api, this.customParams, this.customFunctions, this.customFilters);
+            endpoint = this.$textTransformService.applyInterpol(payload.rules.api, this.customParams, this.customFunctions, this.customFilters);
           }
 
           if (payload.type && payload.type === 'slider' || payload.type && payload.type === 'check') {
@@ -534,7 +534,7 @@
       //     this.customParams.enabled = payload.enabled;
       //     this.$refs.chart.reloadMap();
       //   } else {
-      //     //var endpoint = this.applyInterpol(payload.rules.api, this.customParams, this.customFunctions, payload.item);
+      //     //var endpoint = this.$textTransformService.applyInterpol(payload.rules.api, this.customParams, this.customFunctions, payload.item);
       //     this.fetchData(endpoint);
       //   }
       // },

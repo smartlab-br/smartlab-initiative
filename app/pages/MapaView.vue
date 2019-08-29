@@ -743,7 +743,7 @@ export default {
 
       url += appendUrl;
 
-      axios(this.getAxiosOptions(url)).then(
+      axios(this.$axiosCallSetupService.getAxiosOptions(url)).then(
         result => {
           let dataset = JSON.parse(result.data).dataset;
           // Percorre o dataset, calculando o log do valor normalizado para cálculo do tamanho da bolhas e escala de cores.

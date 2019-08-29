@@ -57,7 +57,7 @@
             let marker = {
               id: rules[markerIndx].id,
               value: dataset[eachRow][rules[markerIndx].id],
-              formattedValue: this.formatNumber(
+              formattedValue: this.$numberFormatService.formatNumber(
                 iterArg, formatRules.format, formatRules.precision,
                 formatRules.multiplier, formatRules.collapse, formatRules.signed,
                 formatRules.uiTags

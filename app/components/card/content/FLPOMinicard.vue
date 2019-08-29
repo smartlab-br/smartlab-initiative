@@ -158,7 +158,7 @@
           return "";  //igual
         }
         
-        result = this.formatNumber(result, "real", 1);
+        result = this.$numberFormatService.formatNumber(result, "real", 1);
         return result + fieldText;
       },
       minicard_value_check(value, baseValue = 0, returnTextInCaseOfHigherThanBaseValue = '', returnTextInCaseOfLowerThanBaseValue = '') {
@@ -180,7 +180,7 @@
           //caso o campo tenha um texto fixo, o valor é ajustado e o loop segue para a próxima iteração
           if (rule.fixed !== undefined) {
             if (rule.format) {
-              this[rule.prop] = this.formatNumber(rule.fixed, rule.format, rule.precision, rule.multiplier, rule.collapse, rule.signed, rule.uiTags);
+              this[rule.prop] = this.$numberFormatService.formatNumber(rule.fixed, rule.format, rule.precision, rule.multiplier, rule.collapse, rule.signed, rule.uiTags);
             } else {
               this[rule.prop] = rule.fixed;
             }
@@ -189,7 +189,7 @@
           } else if (rule.id === undefined) { //caso um id de um indicador não tenha sido especificado, é porque somente um foi passado no preloaded
             //nesse caso, o valor é buscado na primeira posição da lista de indicadores e formatado caso a propriedade format tenha sido informada
             if (base_object_list && base_object_list.length > 0) {
-              this[rule.prop] = this.$indicatorsModel.getAttributeFromIndicatorInstance(this, rule, null, base_object_list[0]);
+              this[rule.prop] = this.$indicatorsModel.getAttributeFromIndicatorInstance(rule, null, base_object_list[0]);
             } else if (rule.default !== null && rule.default !== undefined) {
               this[rule.prop] = rule.default;
             } else {
@@ -198,7 +198,7 @@
           } else {
             //se o campo não é fixed ou tenha mais de um indicador informado no preloaded, 
             //é necessário iterar a lista de indicadores para procurar qual está sendo especificado para o campo objeto da iteração
-            this[rule.prop] = this.$indicatorsModel.getIndicatorValueFromStructure(this, rule, null, base_object_list);
+            this[rule.prop] = this.$indicatorsModel.getIndicatorValueFromStructure(rule, null, base_object_list);
           }
 
           // caso comment tenha a opção color_changing
@@ -261,9 +261,9 @@
       },
 
       updateReactiveDataStructure(filterUrl){
-        let apiUrl = this.applyInterpol(this.structure.api, this.customParams, this.customFunctions);
+        let apiUrl = this.$textTransformService.applyInterpol(this.structure.api, this.customParams, this.customFunctions);
         apiUrl = apiUrl + filterUrl;
-        axios(this.getAxiosOptions(apiUrl))
+        axios(this.$axiosCallSetupService.getAxiosOptions(apiUrl))
         .then(result => {
           this.fillMinicard(
             this.reformDataset(

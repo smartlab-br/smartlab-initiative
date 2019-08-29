@@ -797,8 +797,8 @@
         }
       },
       customFilter (item, queryText, itemText) {
-        queryText = this.replaceSpecialCharacters(queryText).toLowerCase();
-        itemText = this.replaceSpecialCharacters(itemText).toLowerCase();
+        queryText = this.$textTransformService.replaceArgs(queryText).toLowerCase();
+        itemText = this.$textTransformService.replaceArgs(itemText).toLowerCase();
         return itemText.indexOf(queryText) > -1 
       },      
       snackAlert(params) {

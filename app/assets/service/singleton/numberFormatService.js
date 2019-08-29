@@ -1,5 +1,3 @@
-import NumberFormatService from './numberFormatService.js'
-
 class NumberFormatService {
   constructor() {}
   

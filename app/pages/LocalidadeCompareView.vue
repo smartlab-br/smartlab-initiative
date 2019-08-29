@@ -1047,7 +1047,7 @@
       fetchDataLocalidade(idLocalidade, nm_var = 'localidade') {
         let localidade = {};
         var url = null;
-        //axios(this.getAxiosOptions("/municipios?categorias=nm_municipio,cd_uf,nm_uf,sigla_uf,lat,long,ano_instalacao,ano_extincao,altitude&filtros=eq-cd_municipio_ibge-" + idLocalidade))
+        //axios(this.$axiosCallSetupService.getAxiosOptions("/municipios?categorias=nm_municipio,cd_uf,nm_uf,sigla_uf,lat,long,ano_instalacao,ano_extincao,altitude&filtros=eq-cd_municipio_ibge-" + idLocalidade))
         if (idLocalidade == 0){ //Brasil
           localidade = {
             id_localidade: 0,
@@ -1064,7 +1064,7 @@
         } else if (idLocalidade.includes("prt") || idLocalidade.includes("PRT") ||
                    idLocalidade.includes("ptm") || idLocalidade.includes("PTM")) {
           url = "/municipios?categorias=cd_unidade,nm_unidade,cd_uf&agregacao=distinct&filtros=eq-cd_unidade-" + idLocalidade.substring(3);
-          axios(this.getAxiosOptions(url))
+          axios(this.$axiosCallSetupService.getAxiosOptions(url))
             .then(result => {
               var infoUnidade = JSON.parse(result.data).dataset;
               if (infoUnidade.length > 0) {
@@ -1090,7 +1090,7 @@
           this.customParams[nm_var] = localidade;
         } else if (idLocalidade.length == 2){ //Estado
           url = "/municipios?categorias=cd_uf,nm_uf&filtros=eq-cd_uf-" + idLocalidade;
-          axios(this.getAxiosOptions(url))
+          axios(this.$axiosCallSetupService.getAxiosOptions(url))
             .then(result => {
               localidade = JSON.parse(result.data).dataset[0];
               localidade.id_localidade = localidade.cd_uf;
@@ -1105,7 +1105,7 @@
             });
         } else if (idLocalidade.length == 4){ //Mesorregião
           url = "/municipios?categorias=cd_mesorregiao,nm_mesorregiao&filtros=eq-cd_mesorregiao-" + idLocalidade;
-          axios(this.getAxiosOptions(url))
+          axios(this.$axiosCallSetupService.getAxiosOptions(url))
             .then(result => {
               localidade = JSON.parse(result.data).dataset[0];
               localidade.id_localidade = localidade.cd_mesorregiao;
@@ -1120,7 +1120,7 @@
             });
         } else if (idLocalidade.length == 5){ //Microrregião
           url = "/municipios?categorias=cd_microrregiao,nm_microrregiao,latitude,longitude&filtros=eq-cd_microrregiao-" + idLocalidade;
-          axios(this.getAxiosOptions(url))
+          axios(this.$axiosCallSetupService.getAxiosOptions(url))
             .then(result => {
               localidade = JSON.parse(result.data).dataset[0];
               localidade.id_localidade = localidade.cd_microrregiao;
@@ -1135,7 +1135,7 @@
             });
         } else {
           url = "/municipio/" + idLocalidade;
-          axios(this.getAxiosOptions(url))
+          axios(this.$axiosCallSetupService.getAxiosOptions(url))
             .then(result => {
               localidade = JSON.parse(result.data)[0];
               localidade.id_localidade = localidade.cd_municipio_ibge_dv;
@@ -1156,10 +1156,9 @@
         if (typeof base_object_list == 'string') {
           this[metadata.indicator_var] = base_object_list;
         } else {
-          let finalText = this.replaceArgs(
+          let finalText = this.$textTransformService.replaceArgs(
             structure.template,
             this.$indicatorsModel.indicatorsToValueArray(
-              this,
               rules, 
               this.customFunctions, 
               base_object_list,
@@ -1245,17 +1244,16 @@
           }
           this.cardLinks[addedParams.pos] = {
             id: addedParams.id,
-            title: this.applyInterpol(
+            title: this.$textTransformService.applyInterpol(
                 structure,
                 this.customParams,
                 this.customFunctions,
                 base_object,
                 this.sendInvalidInterpol
                 )}
-            // title: this.replaceArgs(
+            // title: this.$textTransformService.replaceArgs(
             //   structure.template,
             //   this.indicatorsToValueArray(
-            //     this,
             //     structure.args, 
             //     this.customFunctions, 
             //     base_object_list,
