@@ -56,24 +56,26 @@ import IndicatorsModel from './model/singleton/indicatorsModel'
 Vue.prototype.$indicatorsModel = new IndicatorsModel();
 
 // 2. Services
+// 2.1. Singletons
+import DateFormatService from './service/singleton/dateFormatService.js'
+Vue.prototype.$dateFormatService = new DateFormatService();
+import NumberFormatService from './service/singleton/numberFormatService.js'
+Vue.prototype.$numberFormatService = new NumberFormatService();
+import TextTransformService from './service/singleton/textTransformService.js'
+Vue.prototype.$textTransformService = new TextTransformService();
+// 2.2. Global Mixins
 import AxiosCallSetup from '../mixins/service/axiosCallSetup.js'
 Vue.use(AxiosCallSetup)
 import ColorManager from '../mixins/service/colorManager.js'
 Vue.use(ColorManager)
 import DatasetManager from '../mixins/service/datasetManager.js'
 Vue.use(DatasetManager)
-import DateFormatter from '../mixins/service/dateFormatter.js'
-Vue.use(DateFormatter)
 import GeoIpClient from '../mixins/service/geoIpClient.js'
 Vue.use(GeoIpClient)
 import NavigationManager from '../mixins/service/navigationManager.js'
 Vue.use(NavigationManager)
-import NumberFormatter from '../mixins/service/numberFormatter.js'
-Vue.use(NumberFormatter)
 import SnackbarManager from '../mixins/service/snackbarManager.js'
 Vue.use(SnackbarManager)
-import TextManager from '../mixins/service/textManager.js'
-Vue.use(TextManager)
 import ThemeManager from '../mixins/service/themeManager.js'
 Vue.use(ThemeManager)
 import TooltipManager from '../mixins/service/tooltipManager.js'

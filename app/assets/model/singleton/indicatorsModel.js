@@ -1,9 +1,14 @@
 import axios from 'axios'
 
 import AxiosCallSetupService from '../../service/singleton/axiosCallSetupService'
+import TextTransformService from '../../service/singleton/textTransformService'
+import NumberFormatService from '../../service/singleton/numberFormatService'
 
 class IndicatorsModel {
-  constructor() { }
+  constructor() {
+    this.textTransformService = new TextTransformService();
+    this.numberFormatService = new TextTransformService();
+  }
 
   setStore(store) {
     this.store = store;
@@ -298,9 +303,9 @@ class IndicatorsModel {
     if(value !== null && value !== undefined && structure.format) {
       let formatRules = structure;
       if (structure.format == 'auto') {
-        formatRules = context.getFormatRules(structure, indicator);
+        formatRules = this.textTransformService.getFormatRules(structure, indicator);
       }
-      value = context.formatNumber(
+      value = this.numberFormatService.formatNumber(
         value, formatRules.format, formatRules.precision, formatRules.multiplier, formatRules.collapse, formatRules.signed, formatRules.uiTags
       );
     } else if(structure && structure.required && value === null && cbInvalidate !== null){

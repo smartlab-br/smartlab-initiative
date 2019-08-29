@@ -51,7 +51,7 @@
           for (var markerIndx in rules) {
             let formatRules = rules[markerIndx];
             if (rules[markerIndx].format == 'auto') {
-              formatRules = this.getFormatRules(rules[markerIndx], base_object_list[eachRow]);
+              formatRules = this.$textTransformService.getFormatRules(rules[markerIndx], base_object_list[eachRow]);
             }
             
             let marker = {

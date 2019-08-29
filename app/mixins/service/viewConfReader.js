@@ -292,50 +292,6 @@ const ViewConfReader = {
 					}
 				},
 
-				getFormatRules(structure, indicator = null) {
-					let formatRules = structure;
-					let autoType = indicator.ds_indicador_prefixo;
-
-					// Verifica a precisão
-					if (structure.precision == null || structure.precision == undefined) {
-						if (autoType == '(Índice)') {
-							formatRules.precision = 3;
-						}
-					}
-
-					// Verifica o multiplicador
-					if (structure.multiplier == null || structure.multiplier == undefined) {
-						if (autoType == '(em R$ x 1.000)') {
-							formatRules.multiplier = 1000;
-						}
-					}
-
-					// Verifica o collapse
-					// Todo collapse seguirá o default do format, exceto quando expressamente definido
-
-					// Verifica o default
-					if (structure.default == null || structure.default == undefined) {
-						// Todo default será Sem Registros, salvo expresso no yaml
-						formatRules.default = "Sem Registros";
-					}
-
-					// Verifica o tipo da formatação
-					if (autoType == '(em R$ x 1.000)' || autoType == '(R$)') {
-						formatRules.format = 'monetario';
-					} else if (autoType == '(Índice)') {
-						formatRules.format = 'real';
-					} else if (autoType == '(Percentual)') {
-						formatRules.format = 'porcentagem';
-					}
-
-					//verifica se as tags de UI devem ser geradas na formatação
-					if (structure.uiTags == null || structure.uiTags == undefined) {
-						formatRules.uiTags = true;
-					}
-
-					return formatRules;
-				},
-
 				reformDataset(dataset, options, customFunctions) {
 					if (options) {
 						// Adiciona o mínimo e o máximo ao dataset
@@ -396,7 +352,7 @@ const ViewConfReader = {
 							let formatRules = options.formatters[indxFmts];
 							for (let eachRow in dataset) {
 								if (formatRules.format == 'auto') {
-									formatRules = this.getFormatRules(formatRules, dataset[eachRow]);
+									formatRules = this.$textTransformService.getFormatRules(formatRules, dataset[eachRow]);
 								}
 								dataset[eachRow][nuField] = this.formatNumber(
 									dataset[eachRow][options.formatters[indxFmts].id], 
@@ -451,7 +407,7 @@ const ViewConfReader = {
 							} else if (rules[ruleIndx].format !== null && rules[ruleIndx].format !== undefined) {
 								let formatRules = rules[ruleIndx];
 								if (rules[ruleIndx].format == 'auto') {
-									formatRules = this.getFormatRules(rules[ruleIndx], base_object);
+									formatRules = this.$textTransformService.getFormatRules(rules[ruleIndx], base_object);
 								}
 								prop = this.formatNumber(
 									prop, formatRules.format, formatRules.precision,
@@ -501,6 +457,9 @@ const ViewConfReader = {
 					if (this[struct.function]) {
 						// Runs function on context (this) otherwise
 						return this[struct.function].apply(null, args);
+					}
+					if (struct.function == 'formatDate') {
+						return this.$dateFormatService[struct.function].apply(null, args);
 					}
 					
 					// Returns null otherwise
