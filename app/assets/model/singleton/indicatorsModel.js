@@ -17,7 +17,7 @@ class IndicatorsModel {
       url = "/" + observatory + "te/indicadoresmunicipais?categorias=ds_indicador,ds_indicador_radical,cd_indicador,ds_fonte&agregacao=distinct";
     }
 
-    axios(context.getAxiosOptions(url))
+    axios(this.axiosSetup.getAxiosOptions(url))
       .then(result => {
         var todosIndicadores = JSON.parse(result.data).dataset;
 

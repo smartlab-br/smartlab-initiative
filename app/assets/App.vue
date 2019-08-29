@@ -737,7 +737,18 @@
         this.snackbarCookies = true;
       }
 
-      this.$analysisUnitModel.findCurrentPlace(this, null, this.changeMiddleToolbar);
+      let findLoc = this.$analysisUnitModel.findCurrentPlace();
+      if (findLoc instanceof Promise || findLoc.then) {
+        findLoc.then(response => {
+          console.log(response);
+          this.changeMiddleToolbar(response);
+          if (response.id_localidade && response.id_localidade.length > 5) this.localidade = response;
+        })
+        .catch(error => { this.sendError(error); });
+      } else {
+        this.changeMiddleToolbar(findLoc);
+        if (response.id_localidade && response.id_localidade.length > 5) this.localidade = findLoc;
+      }
     
       this.langs = this.$translationModel.findAllLocales();
       this.lang = this.$translationModel.findBrowserLocale(this);
@@ -758,7 +769,19 @@
         if (newVal) {
           this.$analysisUnitModel.setCurrentAnalysisUnit(newVal.id);
           this.locationDialog = false;
-          this.$analysisUnitModel.findPlaceByID(this, newVal.id,null,this.changeMiddleToolbar);
+          
+          let findLoc = this.$analysisUnitModel.findPlaceByID(newVal.id);
+          if (findLoc instanceof Promise || findLoc.then) {
+            findLoc.then(response => {
+              this.changeMiddleToolbar(response);
+              if (newVal.id && newVal.id.length > 5) this.localidade = response;
+            })
+            .catch(error => { this.sendError(error); });
+          } else {
+            this.changeMiddleToolbar(findLoc);
+            if (newVal.id && newVal.id.length > 5) this.localidade = findLoc;
+          }
+
           if(this.$route.path.indexOf("localidade") != -1){ //página de localidade
             this.searchAnalysisUnit(newVal);
           } else if (this.$refs.currentRoute.setIdLocalidade) { //página de observatorio

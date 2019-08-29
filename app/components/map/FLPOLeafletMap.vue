@@ -80,10 +80,20 @@
       leaflet_map.fitBounds(bounds, { padding: [10, 10] });
 
       // Adiciona o marker do município apenas se houver idLocalidade
-      if (this.selectedPlace && this.selectedPlace.length == 7){
-        this.$analysisUnitModel.findPlaceByID(this, this.selectedPlace, leaflet_map, this.addDeafultMarker);
-      } else if (this.customParams && this.customParams.idLocalidade  && this.customParams.idLocalidade.length == 7) { // Município
-        this.$analysisUnitModel.findPlaceByID(this, this.customParams.idLocalidade, leaflet_map, this.addDeafultMarker);
+      // if (this.selectedPlace && this.selectedPlace.length == 7){
+      //   this.$analysisUnitModel.findPlaceByID(this, this.selectedPlace, leaflet_map, this.addDeafultMarker);
+      // } else if (this.customParams && this.customParams.idLocalidade  && this.customParams.idLocalidade.length == 7) { // Município
+      //   this.$analysisUnitModel.findPlaceByID(this, this.customParams.idLocalidade, leaflet_map, this.addDeafultMarker);
+      // }
+      let placeId = (this.selectedPlace && this.selectedPlace.length == 7) ? this.selectedPlace : this.customParams.idLocalidade;
+      let findLoc = this.$analysisUnitModel.findPlaceByID(placeId);
+      if (findLoc instanceof Promise || findLoc.then) {
+        findLoc.then(response => {
+          this.addDeafultMarker(response, leaflet_map);
+        })
+        .catch(error => { this.sendError(error); });
+      } else {
+        this.addDeafultMarker(findLoc, leaflet_map);
       }
           
       // let tileLayer = L.tileLayer(
