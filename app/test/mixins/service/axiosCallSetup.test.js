@@ -7,13 +7,12 @@ Vue.use(Vuetify)
 
 require('../../setup.js');
 
-import AxiosCallSetup from '../../../mixins/service/axiosCallSetup.js'
-
 // Imports a component to serve as a bridge to the mixin
 import FLPOSobreLayout from '../../../components/FLPOSobreLayout'
+import AxiosCallSetupService from '../../../assets/service/singleton/axiosCallSetupService';
 
 // Sets the mixin in the Vue instance
-Vue.use(AxiosCallSetup)
+Vue.prototype.$axiosCallSetupService = new AxiosCallSetupService();
 
 // Tests
 describe('AxiosCallSetup', () => {
@@ -23,7 +22,7 @@ describe('AxiosCallSetup', () => {
   //     state: {}
   //   };
 
-  //   let result = wrapper.vm.getAxiosOptions('/hcalive');
+  //   let result = wrapper.vm.$axiosCallSetupService.getAxiosOptions('/hcalive');
   //   let expected = {
   //     method: "GET",
   //     "url": 'undefined/hcalive',
@@ -41,7 +40,7 @@ describe('AxiosCallSetup', () => {
   //     }
   //   };
     
-  //   let result = wrapper.vm.getAxiosOptions('/hcalive');
+  //   let result = wrapper.vm.$axiosCallSetupService.getAxiosOptions('/hcalive');
   //   let expected = {
   //     method: "GET",
   //     "url": 'http://test.mpt.mp.br/hcalive',
@@ -62,7 +61,7 @@ describe('AxiosCallSetup', () => {
       }
     };
     
-    let result = wrapper.vm.getAxiosOptions('/hcalive');
+    let result = wrapper.vm.$axiosCallSetupService.getAxiosOptions('/hcalive');
     let expected = {
       method: "GET",
       "url": 'http://test.mpt.mp.br/hcalive',

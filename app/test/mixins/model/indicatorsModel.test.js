@@ -8,14 +8,14 @@ Vue.use(Vuetify)
 require('../../setup.js');
 
 import IndicatorsModel from '../../../assets/model/singleton/indicatorsModel'
-import NumberFormatter from '../../../mixins/service/numberFormatter'
+import NumberFormatService from '../../../assets/service/singleton/numberFormatService'
 import ViewConfReader from '../../../mixins/service/viewConfReader.js'
 
 // Imports a component to serve as a bridge to the mixin
 import FLPOSobreLayout from '../../../components/FLPOSobreLayout'
 
 // Sets the mixin in the Vue instance
-Vue.use(NumberFormatter)
+Vue.prototype.$numberFormatService = new NumberFormatService()
 Vue.use(ViewConfReader)
 Vue.prototype.$indicatorsModel = new IndicatorsModel();
 

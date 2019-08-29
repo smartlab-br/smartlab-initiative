@@ -7,16 +7,16 @@ Vue.use(Vuetify)
 
 require('../../setup.js');
 
-import TextManager from '../../../mixins/service/textManager.js'
-import NumberFormatter from '../../../mixins/service/numberFormatter.js'
+import TextTransformService from '../../../assets/service/singleton/textTransformService'
+import NumberFormatService from '../../../assets/service/singleton/numberFormatService'
 import ViewConfReader from '../../../mixins/service/viewConfReader.js'
 
 // Imports a component to serve as a bridge to the mixin
 import FLPOSobreLayout from '../../../components/FLPOSobreLayout'
 
 // Sets the mixin in the Vue instance
-Vue.use(TextManager)
-Vue.use(NumberFormatter)
+Vue.prototype.$textTransformService = new TextTransformService();
+Vue.prototype.$numberFormatService = new NumberFormatService();
 Vue.use(ViewConfReader)
 
 // Tests
@@ -41,7 +41,7 @@ describe('TextManager', () => {
   test('Testa avaliação de interpolação sem estrutura de yaml informada', () => {
     const wrapper = mount(FLPOSobreLayout, { sync: false })
 
-    let result = wrapper.vm.applyInterpol(null, {}, null);
+    let result = wrapper.vm.$textTransformService.applyInterpol(null, {}, null);
     expect(result).toEqual("");
   })
 
@@ -50,7 +50,7 @@ describe('TextManager', () => {
 
     let struct = { fixed: "Teste" };
 
-    let result = wrapper.vm.applyInterpol(struct, {}, null);
+    let result = wrapper.vm.$textTransformService.applyInterpol(struct, {}, null);
     expect(result).toEqual("Teste");
   })
 
@@ -67,7 +67,7 @@ describe('TextManager', () => {
       ]
     };
 
-    let result = wrapper.vm.applyInterpol(struct, {}, interpolFunctions);
+    let result = wrapper.vm.$textTransformService.applyInterpol(struct, {}, interpolFunctions);
     expect(result).toEqual("Teste xpto");
   })
 
@@ -82,7 +82,7 @@ describe('TextManager', () => {
       ]
     };
 
-    let result = wrapper.vm.applyInterpol(struct, {}, null);
+    let result = wrapper.vm.$textTransformService.applyInterpol(struct, {}, null);
     expect(result).toEqual("Teste xpto");
   })
 
@@ -105,7 +105,7 @@ describe('TextManager', () => {
       ]
     };
 
-    let result = wrapper.vm.applyInterpol(struct, {}, interpolFunctions, base_object);
+    let result = wrapper.vm.$textTransformService.applyInterpol(struct, {}, interpolFunctions, base_object);
     expect(result).toEqual("Teste 1234");
   })
 
@@ -126,7 +126,7 @@ describe('TextManager', () => {
       ]
     };
 
-    let result = wrapper.vm.applyInterpol(struct, {}, null, base_object);
+    let result = wrapper.vm.$textTransformService.applyInterpol(struct, {}, null, base_object);
     expect(result).toEqual("Teste 1234");
   })
 
@@ -147,7 +147,7 @@ describe('TextManager', () => {
       ]
     };
 
-    let result = wrapper.vm.applyInterpol(struct, {}, null);
+    let result = wrapper.vm.$textTransformService.applyInterpol(struct, {}, null);
     expect(result).toEqual("Teste 1undefined");
   })
 
@@ -163,7 +163,7 @@ describe('TextManager', () => {
       ]
     };
 
-    let result = wrapper.vm.applyInterpol(struct, {}, null, base_object);
+    let result = wrapper.vm.$textTransformService.applyInterpol(struct, {}, null, base_object);
     expect(result).toEqual("Teste 1: 234");
   })
 
@@ -178,7 +178,7 @@ describe('TextManager', () => {
       ]
     };
 
-    let result = wrapper.vm.applyInterpol(struct, {}, null, base_object);
+    let result = wrapper.vm.$textTransformService.applyInterpol(struct, {}, null, base_object);
     expect(result).toEqual("Teste link: <a href='teste.mpt.mp.br'>test site</a>");
   })
 
@@ -193,7 +193,7 @@ describe('TextManager', () => {
       ]
     };
 
-    let result = wrapper.vm.applyInterpol(struct, {}, null, base_object);
+    let result = wrapper.vm.$textTransformService.applyInterpol(struct, {}, null, base_object);
     expect(result).toEqual("Teste Sem Registros");
   })
 
@@ -208,7 +208,7 @@ describe('TextManager', () => {
       ]
     };
 
-    let result = wrapper.vm.applyInterpol(struct, {}, null, base_object);
+    let result = wrapper.vm.$textTransformService.applyInterpol(struct, {}, null, base_object);
     expect(result).toEqual("Teste 23.40<span>%</span>");
   })
 
@@ -223,7 +223,7 @@ describe('TextManager', () => {
       ]
     };
     let cbInvalidate = () => { wrapper.vm.msg = 'requerido'; }
-    let result = wrapper.vm.applyInterpol(struct, {}, null, base_object, cbInvalidate);
+    let result = wrapper.vm.$textTransformService.applyInterpol(struct, {}, null, base_object, cbInvalidate);
     expect(wrapper.vm.msg).toEqual("requerido");
   })
 })

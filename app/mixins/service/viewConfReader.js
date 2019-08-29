@@ -390,6 +390,7 @@ const ViewConfReader = {
 				},
 
 				autoFillLayout(base_object_list, rules, preloaded, addedParams = null, metadata = null) {
+					let localFunctions = this.customFunctions;
 					if (base_object_list && base_object_list.length > 0) {
 						let base_object = base_object_list[0];
 						for (var ruleIndx in rules) {
@@ -399,7 +400,7 @@ const ViewConfReader = {
 							} else if (rules[ruleIndx].named_prop) {
 									prop = base_object[rules[ruleIndx].named_prop];
 							} else if (rules[ruleIndx].function) {
-								prop = this.$objectTransformService.runNamedFunction(rules[ruleIndx], base_object);
+								prop = this.$objectTransformService.runNamedFunction(rules[ruleIndx], base_object, localFunctions);
 							}
 
 							if ((prop === null || prop === undefined) && rules[ruleIndx].default) {
