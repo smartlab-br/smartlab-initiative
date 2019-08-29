@@ -203,7 +203,21 @@
                 <v-flex xs12>
                   <v-layout row wrap v-for="(card, cardIndex) in secao.cards"
                     :key="card.id">
-                  <v-flex xs12 sm6>
+
+                  <v-flex xs12 v-if="card.type == 'presentation'">
+                    <v-layout :id="'anchor_' + card.id" ma-0 pa-0>
+                      <v-layout :id="card.id" px-4 pb-4>
+                        <flpo-composite-text
+                          :structure="card.description"
+                          :custom-params = "customParams"
+                          :custom-functions = "custom_functions"
+                          :section-index="indexSecao">
+                        </flpo-composite-text>
+                      </v-layout>
+                    </v-layout>
+                  </v-flex>
+
+                  <v-flex xs12 sm6 v-if="card.type != 'presentation'">
                     <v-layout :id="'anchor_' + card.id" ma-0 pa-0
                       :style="card.type != 'headline' && card.type != 'text' ? 'min-height:500px;': ''">
                       <v-layout v-if="card.type && card.type == 'text'"
@@ -254,7 +268,7 @@
                     </v-layout>
                   </v-flex>
 
-                  <v-flex xs12 sm6>
+                  <v-flex xs12 sm6 v-if="card.type != 'presentation'">
                     <v-layout ma-0 pa-0
                       :style="sections_compare[indexSecao].cards[cardIndex].type != 'headline' && sections_compare[indexSecao].cards[cardIndex].type != 'text' ? 'min-height:500px;': ''">
                       <v-layout v-if="sections_compare[indexSecao].cards[cardIndex].type && sections_compare[indexSecao].cards[cardIndex].type == 'text'"

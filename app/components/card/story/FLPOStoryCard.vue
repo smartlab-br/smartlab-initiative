@@ -275,7 +275,7 @@
     computed: {
       cmpStyle: function() {
         if (this.$vuetify.breakpoint[this.stackedBkp]) {
-          return "height:313px;"
+          return "min-height:313px;"
         }
       },
       chartId: function() {
