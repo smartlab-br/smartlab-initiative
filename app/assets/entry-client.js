@@ -19,6 +19,13 @@ nuLnkPreConn.rel = "preconnect";
 nuLnkPreConn.href = store.state.DATAHUB_API_BASE_URL;
 document.head.appendChild(nuLnkPreConn);
 
+// Distribute store state
+app.$about.setStore(app.$store.state);
+app.$analysisUnitModel.setStore(app.$store.state);
+app.$dimensions.setStore(app.$store.state);
+app.$indicatorsModel.setStore(app.$store.state);
+app.$observatories.setStore(app.$store.state);
+
 // wait until router has resolved all async before hooks
 // and async components...
 router.onReady(() => {

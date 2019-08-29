@@ -1,7 +1,14 @@
 import axios from 'axios'
 
+import AxiosCallSetupService from '../../service/singleton/axiosCallSetupService'
+
 class IndicatorsModel {
   constructor() { }
+
+  setStore(store) {
+    this.store = store;
+    this.axiosSetup = new AxiosCallSetupService(store);
+  }
 
   buildIndicatorsOptions(context, pusher, flare, observatory = null) {
     // O default é o TD

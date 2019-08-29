@@ -27,6 +27,11 @@ class ObservatoriesModel {
 
     constructor() {}
 
+    setStore(store) {
+        this.store = store;
+        this.yamlFetcher = new YamlFetcherService(store);
+    }
+
     setObservatories(content) {
         this.observatories = content.observatorios;
         return this.observatories;
@@ -34,7 +39,7 @@ class ObservatoriesModel {
 
     getObservatories() {
         if (this.observatories == null && this.observatories == undefined) { // Start loading only once
-            return YamlFetcherService.loadYaml("br/observatorios")
+            return this.yamlFetcher.loadYaml("br/observatorios")
                 .then((result) => { 
                     return this.setObservatories(result);
                 });
