@@ -215,7 +215,7 @@ describe('ViewConfReader', () => {
   test('Verifica aplicação de calcs com funções de contexto', () => {
     const wrapper = mount(FLPOSobreLayout, { sync: false });
     
-    wrapper.vm.cstmMultiply = (d, a, b) => { return a * b; };
+    wrapper.vm.customFunctions = { cstmMultiply: (d, a, b) => { return a * b; } };
     let ds = [
       { cd_indicador: '1', nu_competencia: 2099, vl_indicador: 123.45 },
       { cd_indicador: '1', nu_competencia: 2047, vl_indicador: 678.9 }
@@ -231,7 +231,7 @@ describe('ViewConfReader', () => {
       ]
     }
     
-    let result = wrapper.vm.reformDataset(ds, options, null);
+    let result = wrapper.vm.reformDataset(ds, options, wrapper.vm.customFunctions);
 
     expect(result).toEqual([
       { cd_indicador: '1', nu_competencia: 2099, vl_indicador: 123.45, calc_custom: '246.9' }, 
