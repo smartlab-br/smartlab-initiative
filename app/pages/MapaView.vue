@@ -234,7 +234,9 @@ export default {
       this.setIndicatorStatusOption,
       this.identifyObservatory(this.$route.path.split('/')[1])
     );
-    this.$analysisUnitModel.buildPlacesOptions(this, this.pushPlaceOption, this.setPlaceStatusOption);
+
+    this.$analysisUnitModel.buildPlacesOptions()
+      .then((response) => { this.setPlaceStatusOption(this.$analysisUnitModel.getOptions()); });
 
     var tp = this.$route.query.type;
     if (tp === undefined) {

@@ -100,8 +100,7 @@ class AnalysisUnitModel {
         }
       }, error => {
         // console.error(error.toString());
-        context.sendError("Falha ao buscar total das localidades");
-        reject({ code: 500 });
+        reject("Falha ao buscar total das localidades");
       });
   }
 
@@ -114,14 +113,14 @@ class AnalysisUnitModel {
     return null;
   }
 
-  buildAllSearchOptions(context, scope = null) {
+  buildAllSearchOptions(scope = null) {
     //this.buildMPTOptions(scope);
     return [ // Promises
-      this.buildPlacesOptions(context, scope)
+      this.buildPlacesOptions(scope)
     ];
   }
   
-  buildMPTOptions(context, scope = null) {
+  buildMPTOptions(scope = null) {
     if (scope == null || scope.includes('MPT')) {
       let url = "/municipios?categorias=cd_unidade,nm_unidade,cd_uf&agregacao=distinct";
       return axios(this.axiosSetup.getAxiosOptions(url))
@@ -146,7 +145,7 @@ class AnalysisUnitModel {
     }
   }
 
-  buildPlacesOptions(context, scope = null) {
+  buildPlacesOptions(scope = null) {
     this.loadStatus.places = 'LOADING';
 
     if (scope == null || scope.includes('Brasil')) {
@@ -296,7 +295,7 @@ class AnalysisUnitModel {
       );
   }
 
-  findAllUF(context) {
+  findAllUF() {
     var url = "/municipios?categorias=cd_uf,sg_uf,nm_uf&valor=cd_uf&agregacao=distinct";
     return axios(this.axiosSetup.getAxiosOptions(url))
       .then(

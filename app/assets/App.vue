@@ -609,7 +609,7 @@
         this.observatorios = tmpObs;
       }
 
-      Promise.all(this.$analysisUnitModel.buildAllSearchOptions(this))
+      Promise.all(this.$analysisUnitModel.buildAllSearchOptions())
         .then((results) => {
           let hasLoading = false;
           for (let eachResult in results) {
