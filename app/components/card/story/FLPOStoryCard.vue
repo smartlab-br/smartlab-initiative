@@ -16,7 +16,7 @@
           <v-layout column>
             <v-flex pb-0>
               <v-layout row fill-height wrap pl-3 pt-3 pb-0 pr-0 class="display-1-obs mb-0">
-                <v-flex xs10 sm11 md10 lg11 class="card-title">
+                <v-flex xs10 class="card-title">
                   {{ cmpTitle ? cmpTitle : '' }}
                   <v-tooltip :v-if="structure && structure.info" bottom max-width="700px">
                     <v-icon color="accent"
@@ -40,10 +40,10 @@
                   <span class="hidden-sm-and-down body">Baixar gráfico</span>
                   <v-icon right>file_download</v-icon>
                 </v-btn> -->
-                <v-flex xs2 sm1 md2 lg1 d-flex >
+                <v-flex xs2 text-xs-right pr-4>
                 <v-btn small flat :color="assessZebraTitleColor(this.sectionIndex)"
-                  @click.native="dialog = true" style="margin: 0px; min-width: auto;">
-                  <span :class="'hidden-'+stackedBkp.substring(0,2)+'-and-down body'">Dados</span>
+                  @click.native="dialog = true" style="margin: 0px;">
+                  <span :class="chartPosition == 'bottom'?'hidden-md-and-down body': 'hidden-sm-and-down body'">Dados</span>
                   <v-icon right>view_list</v-icon> <!-- list -->
                 </v-btn>
                 </v-flex>
@@ -51,7 +51,7 @@
             </v-flex>
             <v-flex pt-0>    
               <v-layout row wrap :style="structure.type != 'headline' && structure.type != 'text' ? 'min-height:500px;' : ''">
-                <v-flex xs12 :class="unstackedBreakpoint ? unstackedBreakpoint + '3 position-relative' : 'md3 position-relative'" column>
+                <v-flex xs12 :class="chartPosition != 'bottom' ? 'md3 position-relative': 'position-relative'" column>
                   <v-flex column pt-0 slot="description">
                     <flpo-composite-text
                       v-if="!invalidInterpol"
@@ -83,10 +83,10 @@
                     <a class="accent--text" v-on:click="openLinkAnalysis">{{ analysisDesc }}</a>
                   </div>
                 </v-flex>
-                <v-flex xs12 :class="unstackedBreakpoint ? unstackedBreakpoint + '9' : 'md9'" py-3>
+                <v-flex xs12 :class="chartPosition != 'bottom' ? 'md9': ''" py-3>
                   <v-layout fill-height row wrap>
                     <v-flex xs12 fill-height :style="cmpStyle"
-                      :class="{'mx-0': $vuetify.breakpoint[stackedBkp], 'mx-0': $vuetify.breakpoint[unstackedBkp], 'px-3': $vuetify.breakpoint[stackedBkp], 'pt-2 pr-4 pb-0': $vuetify.breakpoint[unstackedBkp]}">
+                      :class="{'mx-0 px-3': ($vuetify.breakpoint.smAndDown || chartPosition == 'bottom'), 'mx-0 pt-2 pr-4 pb-0': ($vuetify.breakpoint.mdAndUp && chartPosition != 'bottom')}">
                       <!-- Definition of all possible charts -->
                       <flpo-bar-chart
                         v-if="dataset !== null && structure && structure.chart_type == 'BAR' && structure.chart_options !== null"
@@ -274,8 +274,8 @@
     },
     computed: {
       cmpStyle: function() {
-        if (this.$vuetify.breakpoint[this.stackedBkp]) {
-          return "height:313px;"
+        if (this.$vuetify.breakpoint.smAndDown || this.chartPosition == "bottom") {
+          return "min-height:313px;"
         }
       },
       chartId: function() {
