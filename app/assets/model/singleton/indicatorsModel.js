@@ -1,17 +1,42 @@
 import axios from 'axios'
 
-class IndicatorsModel {
-  constructor() { }
+import AxiosCallSetupService from '../../service/singleton/axiosCallSetupService'
+import TextTransformService from '../../service/singleton/textTransformService'
+import NumberFormatService from '../../service/singleton/numberFormatService'
+import ObjectTransformService from '../../service/singleton/objectTransformService'
 
-  buildIndicatorsOptions(context, pusher, flare, observatory = null) {
+class IndicatorsModel {
+  options = []
+  loadStatus = {
+    places: null
+  }
+
+  constructor() {
+    this.textTransformService = new TextTransformService();
+    this.numberFormatService = new NumberFormatService();
+    this.objectTransformService = new ObjectTransformService();
+  }
+
+  setStore(store) {
+    this.store = store;
+    this.axiosSetup = new AxiosCallSetupService(store);
+  }
+
+  getOptions() {
+    return this.options;
+  }
+
+  buildIndicatorsOptions(observatory = null) {
+    this.loadStatus = 'LOADING';
+
     // O default é o TD
     var url = "/indicadoresmunicipais?categorias=ds_indicador,ds_indicador_radical,cd_indicador,ds_fonte&agregacao=distinct";
     if (observatory && observatory != 'td') {
       url = "/" + observatory + "te/indicadoresmunicipais?categorias=ds_indicador,ds_indicador_radical,cd_indicador,ds_fonte&agregacao=distinct";
     }
 
-    axios(context.getAxiosOptions(url))
-      .then(result => {
+    return axios(this.axiosSetup.getAxiosOptions(url))
+      .then((result) => {
         var todosIndicadores = JSON.parse(result.data).dataset;
 
         for (var i = 0; i < todosIndicadores.length; i++) {
@@ -25,7 +50,7 @@ class IndicatorsModel {
             icon: 'map', type: 'map'
           });
           */
-          pusher({
+          this.options.push({
             id: todosIndicadores[i].cd_indicador,
             label: todosIndicadores[i].ds_indicador_radical,
             detail: "Indicador, " + dim.label,
@@ -34,39 +59,31 @@ class IndicatorsModel {
             type: 'indicator',
             context: 'sim'
           });
-
-          if (i == todosIndicadores.length - 1) {
-            flare({
-              id: 'indicators',
-              value: 'SUCCESS'
-            });
-          }
         }
-      }, error => {
-        flare({
-          id: 'indicators',
-          value: 'ERROR'
-        });
-        context.sendError("Falha ao buscar dados de indicadores");
-        return null;
+
+        this.loadStatus = 'SUCCESS';
+        return this.options;
+      }, (error) => {
+        this.loadStatus = 'ERROR';
+        reject(error);
       });
   }
 
-  indicatorsToValueArray(context, args, functions, indicators, cbInvalidate = null) {
+  indicatorsToValueArray(args, functions, indicators, cbInvalidate = null) {
     var values = [];
     for (var indx in args) {
       if (args[indx].id) {
-        values = values.concat(this.getIndicatorValueFromStructure(context, args[indx], functions, indicators, cbInvalidate));
+        values = values.concat(this.getIndicatorValueFromStructure(args[indx], functions, indicators, cbInvalidate));
       } else if (args[indx].link) {
         values.push("<a href='" + args[indx].link + "'>" + args[indx].text + "</a>");
       } else {
-        values.push(this.getAttributeFromIndicatorInstance(context, args[indx], functions, indicators[0], cbInvalidate));
+        values.push(this.getAttributeFromIndicatorInstance(args[indx], functions, indicators[0], cbInvalidate));
       }
     }
     return values;
   }
 
-  getIndicatorValueFromStructure(context, structure, functions, indicators, cbInvalidate = null) {
+  getIndicatorValueFromStructure(structure, functions, indicators, cbInvalidate = null) {
     for (var indxInd in indicators) {
       if (structure.id && structure.id !== indicators[indxInd].cd_indicador) {
         continue;
@@ -74,7 +91,7 @@ class IndicatorsModel {
       if (structure.year && structure.year !== indicators[indxInd].nu_competencia) {
         continue;
       }
-      return this.getAttributeFromIndicatorInstance(context, structure, functions, indicators[indxInd], cbInvalidate);
+      return this.getAttributeFromIndicatorInstance(structure, functions, indicators[indxInd], cbInvalidate);
     }
     if(structure.required && cbInvalidate !== null){
       cbInvalidate.apply(null);
@@ -278,11 +295,11 @@ class IndicatorsModel {
     return result;
   }
 
-  getAttributeFromIndicatorInstance(context, structure, functions, indicator, cbInvalidate = null) {
+  getAttributeFromIndicatorInstance(structure, functions, indicator, cbInvalidate = null) {
     let value = null;
     // Pega ou calcula o valor
     if (structure && structure.function) {
-      value = context.runNamedFunction(structure, indicator, functions);
+      value = this.objectTransformService.runNamedFunction(structure, indicator, functions);
     } else if (indicator && structure && structure.named_prop) {
       value = indicator[structure.named_prop];
     }
@@ -291,9 +308,9 @@ class IndicatorsModel {
     if(value !== null && value !== undefined && structure.format) {
       let formatRules = structure;
       if (structure.format == 'auto') {
-        formatRules = context.getFormatRules(structure, indicator);
+        formatRules = this.textTransformService.getFormatRules(structure, indicator);
       }
-      value = context.formatNumber(
+      value = this.numberFormatService.formatNumber(
         value, formatRules.format, formatRules.precision, formatRules.multiplier, formatRules.collapse, formatRules.signed, formatRules.uiTags
       );
     } else if(structure && structure.required && value === null && cbInvalidate !== null){

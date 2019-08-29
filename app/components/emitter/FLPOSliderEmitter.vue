@@ -50,7 +50,6 @@
       }
     },
     methods: {
-
       toItems(dataset, rules, structure, addedParams, metadata) {
         for (let rule of rules) {
           if (rule.fixed !== null && rule.fixed !== undefined) {
@@ -58,7 +57,7 @@
           } else if (rule.named_prop !== null && rule.named_prop !== undefined) {
             this[rule.prop] = dataset[0][rule.named_prop];
           } else if (rule.function) {
-            this[rule.prop] = this.runNamedFunction(rule, dataset[0], this.customFunctions);
+            this[rule.prop] = this.$objectTransformService.runNamedFunction(rule, dataset[0], this.customFunctions);
           }
         }
 

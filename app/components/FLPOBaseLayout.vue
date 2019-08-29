@@ -18,17 +18,16 @@
           } else if (base_object_list !== null && base_object_list !== undefined) {
             base_object = base_object_list;
           }
-          this[addedParams.attribute] = this.applyInterpol(
+          this[addedParams.attribute] = this.$textTransformService.applyInterpol(
             structure,
             this.customParams,
             this.customFunctions,
             base_object,
             this.sendInvalidInterpol
           );
-          // this[addedParams.attribute] = this.replaceArgs(
+          // this[addedParams.attribute] = this.$textTransformService.replaceArgs(
           //   structure.template,
           //   this.$indicatorsModel.indicatorsToValueArray(
-          //     this,
           //     structure.args, 
           //     this.customFunctions, 
           //     base_object_list,

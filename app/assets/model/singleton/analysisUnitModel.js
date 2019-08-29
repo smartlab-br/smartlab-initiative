@@ -1,6 +1,8 @@
 import axios from 'axios'
 import VueCookies from 'vue-cookies'
 
+import AxiosCallSetupService from '../../service/singleton/axiosCallSetupService'
+
 class AnalysisUnitModel {
   placePRTPTM = [
     { id: 'PRT120500000', uf: 29, label: "PRT 5a Região - Sede" }
@@ -11,7 +13,13 @@ class AnalysisUnitModel {
     places: null
   }
   
-  constructor() {}
+  constructor() {
+  }
+
+  setStore(store) {
+    this.store = store;
+    this.axiosSetup = new AxiosCallSetupService(store);
+  }
 
   getCurrentAnalysisUnit() {
     if (this.currentAnalysisUnit) {
@@ -58,9 +66,9 @@ class AnalysisUnitModel {
     return true;
   }
 
-  getIdLocalidade(context, estado, municipio) {
+  getIdLocalidade(estado, municipio) {
     let url = "/municipios?categorias=cd_municipio_ibge_dv,nm_municipio_uf-nm_localidade&filtros=eq-nm_uf-\"" + estado + "\",and,eq-nm_municipio-\"" + municipio + "\"";
-    return axios(context.getAxiosOptions(url))
+    return axios(this.axiosSetup.getAxiosOptions(url))
       .then(
         (result) => {
           var infoMunicipio = JSON.parse(result.data).dataset;
@@ -76,13 +84,13 @@ class AnalysisUnitModel {
       );
   }
 
-  getPRTPTMInstance(context, scope, id, callback) {
+  getPRTPTMInstance(scope, id) {
     let url = "/municipios?categorias=cd_unidade,nm_unidade,cd_uf&agregacao=distinct&filtros=eq-cd_unidade-" + id;
-    axios(context.getAxiosOptions(url))
+    return axios(this.axiosSetup.getAxiosOptions(url))
       .then(result => {
         var infoUnidade = JSON.parse(result.data).dataset;
         if (infoUnidade.length > 0) {
-          callback({
+          resolve({
             id_localidade: infoUnidade[0].cd_unidade,
             nm_localidade: infoUnidade[0].nm_unidade,
             tipo: scope
@@ -92,8 +100,7 @@ class AnalysisUnitModel {
         }
       }, error => {
         // console.error(error.toString());
-        context.sendError("Falha ao buscar total das localidades");
-        reject({ code: 500 });
+        reject("Falha ao buscar total das localidades");
       });
   }
 
@@ -106,17 +113,17 @@ class AnalysisUnitModel {
     return null;
   }
 
-  buildAllSearchOptions(context, scope = null) {
+  buildAllSearchOptions(scope = null) {
     //this.buildMPTOptions(scope);
     return [ // Promises
-      this.buildPlacesOptions(context, scope)
+      this.buildPlacesOptions(scope)
     ];
   }
   
-  buildMPTOptions(context, scope = null) {
+  buildMPTOptions(scope = null) {
     if (scope == null || scope.includes('MPT')) {
       let url = "/municipios?categorias=cd_unidade,nm_unidade,cd_uf&agregacao=distinct";
-      return axios(context.getAxiosOptions(url))
+      return axios(this.axiosSetup.getAxiosOptions(url))
         .then((result) => {
           let unidadesMPT = JSON.parse(result.data).dataset;
           
@@ -138,7 +145,7 @@ class AnalysisUnitModel {
     }
   }
 
-  buildPlacesOptions(context, scope = null) {
+  buildPlacesOptions(scope = null) {
     this.loadStatus.places = 'LOADING';
 
     if (scope == null || scope.includes('Brasil')) {
@@ -155,7 +162,7 @@ class AnalysisUnitModel {
     }
 
     let url = "/municipios?categorias=cd_municipio_ibge_dv,nm_municipio_uf,cd_uf,nm_uf,cd_mesorregiao,nm_mesorregiao,cd_microrregiao,nm_microrregiao&ordenacao=cd_municipio_ibge_dv";
-    return axios(context.getAxiosOptions(url))
+    return axios(this.axiosSetup.getAxiosOptions(url))
       .then((result) => {
         let municipios = JSON.parse(result.data).dataset;
         //let cd_regiao = 0;
@@ -270,27 +277,27 @@ class AnalysisUnitModel {
     return regiao;
   }
 
-  getTotalMunicipios(context) {
+  getTotalMunicipios() {
     var url = "/municipios?categorias=cd_municipio_ibge_dv";
-    return axios(context.getAxiosOptions(url))
+    return axios(this.axiosSetup.getAxiosOptions(url))
       .then(
         (result) => { return JSON.parse(result.data).dataset.length; },
         (error) => { reject("Falha ao buscar total das localidades"); }
       );
   }
 
-  getTotalMunicipiosPorUF(context, uf) {
+  getTotalMunicipiosPorUF(uf) {
     var url = "/municipios?categorias=cd_municipio_ibge_dv,cd_uf&filtros=eq-cd_uf-"+uf;
-    return axios(context.getAxiosOptions(url))
+    return axios(this.axiosSetup.getAxiosOptions(url))
       .then(
         (result) => { return JSON.parse(result.data).dataset.length; },
         (error) => { reject("Falha ao buscar total das localidades"); }
       );
   }
 
-  findAllUF(context) {
+  findAllUF() {
     var url = "/municipios?categorias=cd_uf,sg_uf,nm_uf&valor=cd_uf&agregacao=distinct";
-    return axios(context.getAxiosOptions(url))
+    return axios(this.axiosSetup.getAxiosOptions(url))
       .then(
         (result) => { return JSON.parse(result.data).dataset; },
         (error) => { reject("Falha ao buscar Unidades Federativas"); }
@@ -301,11 +308,11 @@ class AnalysisUnitModel {
     return idLoc.substring(0,2);
   }
 
-  findCurrentPlace(context, map, cb) {
-    this.findPlaceByID(context, this.getCurrentAnalysisUnit(), map, cb);
+  findCurrentPlace() { // TODO Adjust to promise
+    return this.findPlaceByID(this.getCurrentAnalysisUnit());
   }
 
-  findPlaceByID(context, id, map, cb) {
+  findPlaceByID(id) {
     var url = null;
     var localidade = {};
 
@@ -317,17 +324,17 @@ class AnalysisUnitModel {
       localidade.tipo = '';
       localidade.img = "/static/thumbs/municipios/" + id + ".jpg";
 
-      cb(localidade, map);
+      return localidade;
     } else if (id.length == 1){ //Região
       localidade.id_localidade = id;
       localidade.nm_localidade = this.getRegion(id);
       localidade.tipo = '';
       localidade.img = "/static/thumbs/municipios/" + id + ".jpg";
 
-      // cb(localidade, map);
+      // return localidade;
     } else if (id.length == 2){ //Estado
       url = "/municipios?categorias=cd_uf,nm_uf&filtros=eq-cd_uf-" + id;
-      axios(context.getAxiosOptions(url))
+      return axios(this.axiosSetup.getAxiosOptions(url))
         .then(result => {
           localidade = JSON.parse(result.data).dataset[0];
           localidade.id_localidade = localidade.cd_uf;
@@ -335,15 +342,13 @@ class AnalysisUnitModel {
           localidade.tipo = 'UF';
           localidade.img = "/static/thumbs/municipios/" + id + ".jpg";
 
-          if (cb){
-            cb(localidade, map);
-          }
+          resolve(localidade);
         }, error => {
-          context.sendError("Falha ao buscar dados do estado");
+          reject("Falha ao buscar dados do estado");
         });
     } else if (id.length == 4){ //Mesorregião
       url = "/municipios?categorias=cd_mesorregiao,nm_mesorregiao&filtros=eq-cd_mesorregiao-" + id;
-      axios(context.getAxiosOptions(url))
+      return axios(this.axiosSetup.getAxiosOptions(url))
         .then(result => {
           localidade = JSON.parse(result.data).dataset[0];
           localidade.id_localidade = localidade.cd_mesorregiao;
@@ -351,13 +356,13 @@ class AnalysisUnitModel {
           localidade.tipo = 'Mesorregião';
           localidade.img = "/static/thumbs/municipios/" + id + ".jpg";
 
-          // cb(localidade, map);
+          // resolve(localidade);
         }, error => {
-          context.sendError("Falha ao buscar dados da mesorregião");
+          reject("Falha ao buscar dados da mesorregião");
         });
     } else if (id.length == 5){ //Microrregião
       url = "/municipios?categorias=cd_microrregiao,nm_microrregiao,latitude,longitude&filtros=eq-cd_microrregiao-" + id;
-      axios(context.getAxiosOptions(url))
+      return axios(this.axiosSetup.getAxiosOptions(url))
         .then(result => {
           localidade = JSON.parse(result.data).dataset[0];
           localidade.id_localidade = localidade.cd_microrregiao;
@@ -365,25 +370,22 @@ class AnalysisUnitModel {
           localidade.tipo = 'Microrregião';
           localidade.img = "/static/thumbs/municipios/" + id + ".jpg";
           
-          // cb(localidade, map);
+          // resolve(localidade);
         }, error => {
-          context.sendError("Falha ao buscar dados da microrregião");
+          reject("Falha ao buscar dados da microrregião");
         });
     } else {
       url = "/municipio/" + id;
-      axios(context.getAxiosOptions(url))
+      return axios(this.axiosSetup.getAxiosOptions(url))
         .then(result => {
           localidade = JSON.parse(result.data)[0];
           localidade.id_localidade = localidade.cd_municipio_ibge_dv;
           localidade.nm_localidade = localidade.nm_municipio_uf;
           localidade.tipo = 'Município';
           localidade.img = "/static/thumbs/municipios/" + id + ".jpg";
-          context.localidade = localidade;
-          if (cb){
-            cb(localidade, map);
-          }
+          resolve(localidade);
         }, error => {
-          context.sendError("Falha ao buscar dados do município");
+          reject("Falha ao buscar dados do município");
         });
     }
   }

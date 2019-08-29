@@ -338,9 +338,9 @@
           }
         } else if (payload.type && payload.type === 'slider' || payload.type && payload.type === 'check') {
           if (payload.rules.filter){
-            let apiUrl = this.applyInterpol(this.structure.api, this.customParams, this.customFunctions);
+            let apiUrl = this.$textTransformService.applyInterpol(this.structure.api, this.customParams, this.customFunctions);
             if (this.structure.apiBase){
-              apiUrl = this.applyInterpol(this.structure.apiBase, this.customParams, this.customFunctions);// this.structure.apiBase;
+              apiUrl = this.$textTransformService.applyInterpol(this.structure.apiBase, this.customParams, this.customFunctions);// this.structure.apiBase;
             }
             // if (this.customFilters.radioApi){
             //   apiUrl = this.customFilters.radioApi;
@@ -348,7 +348,7 @@
             endpoint = apiUrl + this.getFilters();
             this.structure.chart_options.filterText = this.customFilters.filterText;
           } else {
-            endpoint = this.applyInterpol(payload.rules.api, this.customParams, this.customFunctions, this.customFilters);
+            endpoint = this.$textTransformService.applyInterpol(payload.rules.api, this.customParams, this.customFunctions, this.customFilters);
           }
           this.fetchData(endpoint);
         } else {
@@ -383,9 +383,9 @@
         let apiUrl = ""
         let endpoint = ""
         if (this.structure.apiBase){
-          apiUrl = this.applyInterpol(this.structure.apiBase, this.customParams, this.customFunctions); //this.structure.apiBase;
+          apiUrl = this.$textTransformService.applyInterpol(this.structure.apiBase, this.customParams, this.customFunctions); //this.structure.apiBase;
         } else {
-          apiUrl = this.applyInterpol(this.structure.api, this.customParams, this.customFunctions);
+          apiUrl = this.$textTransformService.applyInterpol(this.structure.api, this.customParams, this.customFunctions);
         }
         // if (this.customFilters.radioApi){
         //   apiUrl = this.customFilters.radioApi;
@@ -395,7 +395,7 @@
           this.structure.chart_options.filterText = this.customFilters.filterText;
           this.fetchData(endpoint);
         } else if (payload.item){
-          endpoint = this.applyInterpol(payload.rules.api, this.customParams, this.customFunctions, this.customFilters);
+          endpoint = this.$textTransformService.applyInterpol(payload.rules.api, this.customParams, this.customFunctions, this.customFilters);
           this.fetchData(endpoint);
         } else {
           this.fetchData();

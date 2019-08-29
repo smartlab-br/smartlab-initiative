@@ -50,9 +50,9 @@
             }
             eachItem[rules[ruleIndx].prop] = value;
           } else if (rules[ruleIndx].function) {
-            eachItem[rules[ruleIndx].prop] = this.runNamedFunction(rules[ruleIndx], eachRow, this.customFunctions);
+            eachItem[rules[ruleIndx].prop] = this.$objectTrandformService.runNamedFunction(rules[ruleIndx], eachRow, this.customFunctions);
           } else if (rules[ruleIndx].template){
-            eachItem[rules[ruleIndx].prop] = this.applyInterpol(
+            eachItem[rules[ruleIndx].prop] = this.$textTransformService.applyInterpol(
                                                 rules[ruleIndx],
                                                 this.customParams,
                                                 this.customFunctions,

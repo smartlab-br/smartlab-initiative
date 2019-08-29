@@ -334,10 +334,10 @@ const DatasetManager = {
               ) {
               this.$store.state.gDatasets[dataset] = { ds: null, valid: false, analysisUnit: { type: scope, id: auId } };
               
-              let url = this.replaceArgs(this.datasetEndpoints[endpointName][scope], [auId]);
+              let url = this.$textTransformService.replaceArgs(this.datasetEndpoints[endpointName][scope], [auId]);
 
               // Busca o dataset da localidade
-              axios(this.getAxiosOptions(url))
+              axios(this.$axiosCallSetupService.getAxiosOptions(url))
                 .then(result => {
                   this.$store.state.gDatasets[dataset] = {
                     ds: JSON.parse(result.data).dataset,
@@ -354,9 +354,9 @@ const DatasetManager = {
         },
 
         setGlobalDataset(dataset, scope, msg_erro, auId = null, cb = null, suffix = "") {
-          let url = this.replaceArgs(this.datasetEndpoints[dataset][scope], [auId]);
+          let url = this.$textTransformService.replaceArgs(this.datasetEndpoints[dataset][scope], [auId]);
           //busca indicadores da localidade
-          axios(this.getAxiosOptions(url))
+          axios(this.$axiosCallSetupService.getAxiosOptions(url))
             .then(result => {
               this.$store.state.gDatasets[dataset + suffix] = {
                 ds: JSON.parse(result.data).dataset,

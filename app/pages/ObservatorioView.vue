@@ -452,7 +452,7 @@
             this.fetchMapData(payload.item.api);
           }
         } else {
-          var endpoint = this.applyInterpol(payload.rules.api, this.customParams, this.customFunctions, payload.item);
+          var endpoint = this.$textTransformService.applyInterpol(payload.rules.api, this.customParams, this.customFunctions, payload.item);
           this.fetchData(endpoint);
         }
       },
