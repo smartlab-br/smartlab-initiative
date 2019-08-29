@@ -102,7 +102,7 @@ describe('ViewConfReader', () => {
     wrapper.vm.customFunctions = {
       customize: (a, b, c, d) => { return a + b + c + d; },
       fnNoArgs: () => { return '4'; },
-      fnArgs = (a, b) => { return a.toString() + b.toString(); }
+      fnArgs: (a, b) => { return a.toString() + b.toString(); }
     }
 
     let base_object_list = [{ vl_indicador: 23 }];

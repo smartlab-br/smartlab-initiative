@@ -24,14 +24,14 @@ describe('TextManager', () => {
   test('Retorna vazio quando o template é nulo', () => {
     const wrapper = mount(FLPOSobreLayout, { sync: false });
     
-    let result = wrapper.vm.replaceArgs(null, null);
+    let result = wrapper.vm.$textTransformService.replaceArgs(null, null);
     expect(result).toEqual('');
   })
 
   test('Retorna string válida', () => {
     const wrapper = mount(FLPOSobreLayout, { sync: false });
     
-    let result = wrapper.vm.replaceArgs(
+    let result = wrapper.vm.$textTransformService.replaceArgs(
       'Teste {0}: {1}',
       [1, "param"]
     );
@@ -74,7 +74,7 @@ describe('TextManager', () => {
   test('Testa avaliação de interpolação com função geral sem parâmetros', () => {
     const wrapper = mount(FLPOSobreLayout, { sync: false })
 
-    wrapper.vm.customize = () => { return 'xpto'};
+    wrapper.vm.customFunctions = { customize: () => { return 'xpto'} };
     let struct = {
       template: "Teste {0}",
       args: [
@@ -82,7 +82,7 @@ describe('TextManager', () => {
       ]
     };
 
-    let result = wrapper.vm.$textTransformService.applyInterpol(struct, {}, null);
+    let result = wrapper.vm.$textTransformService.applyInterpol(struct, {}, wrapper.vm.customFunctions);
     expect(result).toEqual("Teste xpto");
   })
 
@@ -112,7 +112,7 @@ describe('TextManager', () => {
   test('Testa avaliação de interpolação com função geral com parâmetros', () => {
     const wrapper = mount(FLPOSobreLayout, { sync: false })
 
-    wrapper.vm.customize = (a, b) => { return a.toString() + b.toString(); };
+    wrapper.vm.customFunctions = { customize: (a, b) => { return a.toString() + b.toString(); } };
     let base_object = { vl_indicador: '234' };
     let struct = {
       template: "Teste {0}",
@@ -126,14 +126,14 @@ describe('TextManager', () => {
       ]
     };
 
-    let result = wrapper.vm.$textTransformService.applyInterpol(struct, {}, null, base_object);
+    let result = wrapper.vm.$textTransformService.applyInterpol(struct, {}, wrapper.vm.customFunctions, base_object);
     expect(result).toEqual("Teste 1234");
   })
 
   test('Testa falha na passagem de named_prop sem envio de base_object', () => {
     const wrapper = mount(FLPOSobreLayout, { sync: false })
 
-    wrapper.vm.customize = (a, b) => { return (a ? a.toString() : a) + (b ? b.toString() : b); };
+    wrapper.vm.customFunctions = { customize: (a, b) => { return (a ? a.toString() : a) + (b ? b.toString() : b); } };
     let base_object = { vl_indicador: '234' }
     let struct = {
       template: "Teste {0}",
@@ -147,7 +147,7 @@ describe('TextManager', () => {
       ]
     };
 
-    let result = wrapper.vm.$textTransformService.applyInterpol(struct, {}, null);
+    let result = wrapper.vm.$textTransformService.applyInterpol(struct, {}, wrapper.vm.customFunctions);
     expect(result).toEqual("Teste 1undefined");
   })
 
