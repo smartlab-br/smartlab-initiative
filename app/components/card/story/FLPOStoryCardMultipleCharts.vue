@@ -17,39 +17,42 @@
           <v-layout column>
             <v-flex pb-0>
               <v-layout row align-end fill-height wrap pl-3 pt-3 pb-0 pr-0 class="display-1-obs mb-0">
-                <v-flex class="card-title">
+                <v-flex xs10 class="card-title">
                   {{ cmpTitle ? cmpTitle : '' }}
-                  <v-tooltip :v-if="structure.info" bottom max-width="700px">
+                  <v-tooltip :v-if="structure && structure.info" bottom max-width="700px">
                     <v-icon color="accent"
                       class="pb-1"
                       slot="activator">
                       info
                     </v-icon>
                     <flpo-composite-text
+                      ref = "description"
                       :id = "'info_' + structure.id"
                       :structure="structure.info"
                       :custom-params="customParams"
                       :custom-functions="customFunctions">
                     </flpo-composite-text>
                   </v-tooltip>
-                  <div v-if="cmpTitleComment != null" class="title-comment pb-2">{{ cmpTitleComment }}</div>
+                  <div v-if="cmpTitleComment != null" class="title-comment" v-html="cmpTitleComment"></div>
                 </v-flex>
-                <v-spacer></v-spacer>
-                <!-- <v-btn small  fill-height class="mb-0" flat :color="assessZebraTitleColor(this.sectionIndex)"
+                <!-- <v-spacer></v-spacer> -->
+                <!-- <v-btn small fill-height class="mb-0" flat :color="assessZebraTitleColor(this.sectionIndex)"
                   @click.native="downloadChart">
-                  <span class="hidden-sm-and-down body">Baixar gráficos</span>
+                  <span class="hidden-sm-and-down body">Baixar gráfico</span>
                   <v-icon right>file_download</v-icon>
                 </v-btn> -->
-                <v-btn small flat class="mb-0 mr-4" :color="assessZebraTitleColor(this.sectionIndex)"
-                  @click.native="dialog = true">
-                  <span class="hidden-sm-and-down body">Dados</span>
+                <v-flex xs2 text-xs-right pr-4>
+                <v-btn small flat :color="assessZebraTitleColor(this.sectionIndex)"
+                  @click.native="dialog = true" style="margin: 0px;">
+                  <span :class="chartPosition == 'bottom'?'hidden-md-and-down body': 'hidden-sm-and-down body'">Dados</span>
                   <v-icon right>view_list</v-icon> <!-- list -->
                 </v-btn>
+                </v-flex>
               </v-layout>
             </v-flex>
             <v-flex>
               <v-layout row wrap style="min-height:500px;">
-                <v-flex xs12 :class="unstackedBreakpoint ? unstackedBreakpoint + '3 position-relative' : 'md3 position-relative'"  column>
+                <v-flex xs12 :class="chartPosition != 'bottom' ? 'md3 position-relative': 'position-relative'" column>
                   <v-flex column pt-0 slot="description">
                     <flpo-composite-text
                       v-if="!invalidInterpol"
@@ -95,16 +98,16 @@
                     </template>
                   </v-flex>
                 </v-flex>
-                <v-flex xs12 :class="unstackedBreakpoint ? unstackedBreakpoint + '9' : 'md9'"  py-2>
+                <v-flex xs12 :class="chartPosition != 'bottom' ? 'md9': ''" py-2>
                   <v-layout row wrap
                     v-if="datasetsComplete == structure.charts.length"
-                    :class="$vuetify.breakpoint[unstackedBkp] ? ' fill-height' : ''">
+                    :class="$vuetify.breakpoint.mdAndUp ? ' fill-height' : ''">
                     <v-flex
                       v-for="chart in structure.charts"
                       :key="chart.id"
-                      :class="(chart.cls ? chart.cls : '') + ($vuetify.breakpoint[unstackedBkp] ? ' fill-height' : '')">
-                      <v-layout column :style="cmpStyle" :class="{'px-3': $vuetify.breakpoint[stackedBkp], 'px-0 mx-0 fill-height': $vuetify.breakpoint[unstackedBkp]}">
-                        <v-flex fill-height :class="{'mx-0': $vuetify.breakpoint[stackedBkp], 'mx-3 pb-0': $vuetify.breakpoint[unstackedBkp]}">
+                      :class="(chart.cls ? chart.cls : '') + ($vuetify.breakpoint.mdAndUp ? ' fill-height' : '')">
+                      <v-layout column :style="cmpStyle" :class="{'px-3': $vuetify.breakpoint.smAndDown, 'px-0 mx-0 fill-height': $vuetify.breakpoint.mdAndUp}">
+                        <v-flex fill-height :class="{'mx-0': $vuetify.breakpoint.smAndDown, 'mx-3 pb-0': $vuetify.breakpoint.mdAndUp}">
                           <!-- Definition of all possible charts -->
                           <flpo-bar-chart
                             v-if="dataset && dataset[chart.id] !== null && chart.type == 'BAR' && chart.options !== null"
@@ -286,7 +289,7 @@
     },
     computed: {
       cmpStyle: function() {
-        if (this.$vuetify.breakpoint[this.stackedBkp]) {
+        if (this.$vuetify.breakpoint.smAndDown || this.chartPosition == "bottom") {
           return "height:313px;"
         }
       },

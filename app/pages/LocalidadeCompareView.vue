@@ -246,7 +246,7 @@
                       <flpo-story-card-multiple-charts
                         v-else-if="card.type && card.type == 'multiple-charts' && topologyUfLoaded  && topology && ((indexSecao*100) + cardIndex  <= visibleCardMaxIndex)"
                         :structure="card"
-                        unstacked-breakpoint= "xl"
+                        chart-position= "bottom"
                         :custom-params = "customParams"
                         :custom-functions = "custom_functions"
                         :topology = "topology"
@@ -257,7 +257,7 @@
                       <flpo-story-card
                         v-else-if="topologyUfLoaded  && topology && ((indexSecao*100) + cardIndex  <= visibleCardMaxIndex)"
                         :structure="card"
-                        unstacked-breakpoint= "xl"
+                        chart-position= "bottom"
                         :custom-params = "customParams"
                         :custom-functions = "custom_functions"
                         :topology = "topology"
@@ -297,7 +297,7 @@
                       <flpo-story-card-multiple-charts
                         v-else-if="sections_compare[indexSecao].cards[cardIndex].type && sections_compare[indexSecao].cards[cardIndex].type == 'multiple-charts' && topologyUfLoaded_compare  && topology_compare && ((indexSecao*100) + cardIndex  <= visibleCardMaxIndex)"
                         :structure="sections_compare[indexSecao].cards[cardIndex]"
-                        unstacked-breakpoint= "xl"
+                        chart-position= "bottom"
                         :selected-place="customParams.idLocalidade_compare"
                         :custom-params = "customParams"
                         :custom-functions = "custom_functions"
@@ -309,7 +309,7 @@
                       <flpo-story-card
                         v-else-if="topologyUfLoaded_compare  && topology_compare && ((indexSecao*100) + cardIndex  <= visibleCardMaxIndex)"
                         :structure="sections_compare[indexSecao].cards[cardIndex]"
-                        unstacked-breakpoint= "xl"
+                        chart-position= "bottom"
                         :selected-place="customParams.idLocalidade_compare"
                         :custom-params = "customParams"
                         :custom-functions = "custom_functions"
