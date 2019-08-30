@@ -1,4 +1,5 @@
 import DateFormatService from './dateFormatService.js'
+import IndicatorsModel from '../../model/singleton/indicatorsModel.js'
 
 class ObjectTransformService {
   constructor() {
@@ -33,6 +34,10 @@ class ObjectTransformService {
     if (struct.function == 'formatDate') {
       return this.dateFormatService[struct.function].apply(null, args);
     }
+    if (struct.function == 'calc_class_idh') {
+      return (new IndicatorsModel())[struct.function].apply(null, args);
+    }
+    
     
     // Returns null otherwise
     return null;
