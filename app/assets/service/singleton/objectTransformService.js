@@ -1,6 +1,6 @@
 import DateFormatService from './dateFormatService.js'
 import NumberTransformService from './numberTransformService'
-import IndicatorsModel from '../../model/singleton/indicatorsModel.js'
+import IndicatorsModel from '../../model/singleton/indicatorsModel'
 
 class ObjectTransformService {
   constructor() {
@@ -37,8 +37,8 @@ class ObjectTransformService {
       return this.dateFormatService[struct.function].apply(null, args);
     }
     if (['calcClassIdh', 'getClassIdh', 'calcProportionSalary'].includes(struct.function)) {
-      let indicatorsModelInstance = new IndicatorsModel();
-      return indicatorsModelInstance[struct.function].apply(null, args);
+      let model = new IndicatorsModel();
+      return model[struct.function].apply(model, args);
     }
     if (['calcIndexPercentage', 'calcDeltaPercentage', 'getAbsoluteValue'].includes(struct.function)) {
       return this.numberTransformService[struct.function].apply(null, args);

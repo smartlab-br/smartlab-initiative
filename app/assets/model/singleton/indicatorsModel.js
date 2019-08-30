@@ -342,7 +342,7 @@ class IndicatorsModel {
   calcClassIdh(idh, showIdh = false, showParentheses = false, letterCaption = true) { 
     let returText = "";
     
-    for (level of this.idhLevels) {
+    for (let level of this.idhLevels) {
       if (level.cap == null || (level.cap && idh < level.cap)) {
         returText = letterCaption ? level.name : level.name.toLowerCase();
         break;
@@ -356,7 +356,7 @@ class IndicatorsModel {
   }
 
   getClassIdh(idh) { 
-    for (level of this.idhLevels) {
+    for (let level of this.idhLevels) {
       if (level.cap == null || (level.cap && idh < level.cap)) {
         return level.description;
       }
