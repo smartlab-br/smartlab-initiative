@@ -61,8 +61,8 @@ import AxiosCallSetupService from './service/singleton/axiosCallSetupService.js'
 Vue.prototype.$axiosCallSetupService = new AxiosCallSetupService();
 import DateFormatService from './service/singleton/dateFormatService.js'
 Vue.prototype.$dateFormatService = new DateFormatService();
-import NumberFormatService from './service/singleton/numberFormatService.js'
-Vue.prototype.$numberFormatService = new NumberFormatService();
+import NumberTransformService from './service/singleton/numberTransformService.js'
+Vue.prototype.$numberTransformService = new NumberTransformService();
 import ObjectTransformService from './service/singleton/objectTransformService.js'
 Vue.prototype.$objectTransformService = new ObjectTransformService();
 import TextTransformService from './service/singleton/textTransformService.js'

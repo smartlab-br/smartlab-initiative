@@ -161,7 +161,7 @@
         this.commentData = "";
         if (comment.fixed !== undefined) {
           if (comment.format) {
-            this.commentData = this.$numberFormatService.formatNumber(comment.fixed, comment.format, comment.precision, comment.multiplier, comment.collapse, comment.signed, comment.uiTags);
+            this.commentData = this.$numberTransformService.formatNumber(comment.fixed, comment.format, comment.precision, comment.multiplier, comment.collapse, comment.signed, comment.uiTags);
           } else {
             this.commentData = comment.fixed;
           }

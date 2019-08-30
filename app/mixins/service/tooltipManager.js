@@ -36,7 +36,7 @@ const TooltipManager = {
             value = this.removeFromLabel(d[tooltip_list[item].value],removed_text_list);
             if (tooltip_list[item].format){
               let formatRules = tooltip_list[item];
-              value = this.$numberFormatService.formatNumber(
+              value = this.$numberTransformService.formatNumber(
                 value, formatRules.format, formatRules.precision, formatRules.multiplier, formatRules.collapse, formatRules.signed, formatRules.uiTags
               );
             }

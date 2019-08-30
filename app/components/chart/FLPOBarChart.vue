@@ -76,7 +76,7 @@
           d.id = 1
           var vl_indicador = dataset[i].vl_indicador
           d.vl_indicador = accum;
-          d.fmt_vl_indicador = this.$numberFormatService.formatNumber(accum, accumDataType, accumDataPrecision, 1, accumDataCollapse, true, false)
+          d.fmt_vl_indicador = this.$numberTransformService.formatNumber(accum, accumDataType, accumDataPrecision, 1, accumDataCollapse, true, false)
           accum = accum + vl_indicador;
 
           dataset.push(d);

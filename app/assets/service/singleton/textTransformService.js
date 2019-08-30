@@ -1,10 +1,10 @@
-import NumberFormatService from './numberFormatService.js'
+import NumberTransformService from './numberTransformService.js'
 import ObjectTransformService from './objectTransformService.js'
 import IndicatorsModel from '../../model/singleton/indicatorsModel.js';
 
 class TextTransformService {
   constructor() {
-    this.numberFormatService = new NumberFormatService();
+    this.numberTransformService = new NumberTransformService();
     this.objectTransformService = new ObjectTransformService();
   }
 
@@ -48,7 +48,7 @@ class TextTransformService {
             if (struct.args[indx].format == 'auto') {
               formatRules = this.getFormatRules(struct.args[indx], iterArg);
             }
-            iterArg = this.numberFormatService.formatNumber(
+            iterArg = this.numberTransformService.formatNumber(
               iterArg, formatRules.format, formatRules.precision,
               formatRules.multiplier, formatRules.collapse, formatRules.signed, 
               formatRules.uiTags

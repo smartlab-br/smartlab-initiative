@@ -2,7 +2,7 @@ import axios from 'axios'
 
 import AxiosCallSetupService from '../../service/singleton/axiosCallSetupService'
 import TextTransformService from '../../service/singleton/textTransformService'
-import NumberFormatService from '../../service/singleton/numberFormatService'
+import NumberTransformService from '../../service/singleton/numberTransformService'
 import ObjectTransformService from '../../service/singleton/objectTransformService'
 
 class IndicatorsModel {
@@ -10,10 +10,17 @@ class IndicatorsModel {
   loadStatus = {
     places: null
   }
+  idhLevels = [
+    { cap: 0.5, name: "Muito baixo", description: "(Abaixo de 0,500)" },
+    { cap: 0.6, name: "Baixo", description: "(0.500 a 0.599)" },
+    { cap: 0.7, name: "Médio", description: "(0.600 a 0.699)" },
+    { cap: 0.8, name: "Alto", description: "(0.700 a 0.799)" },
+    { cap: null, name: "Muito alto", description: "(0.800 ou superior)" }
+  ]
 
   constructor() {
     this.textTransformService = new TextTransformService();
-    this.numberFormatService = new NumberFormatService();
+    this.numberTransformService = new NumberTransformService();
     this.objectTransformService = new ObjectTransformService();
   }
 
@@ -310,7 +317,7 @@ class IndicatorsModel {
       if (structure.format == 'auto') {
         formatRules = this.textTransformService.getFormatRules(structure, indicator);
       }
-      value = this.numberFormatService.formatNumber(
+      value = this.numberTransformService.formatNumber(
         value, formatRules.format, formatRules.precision, formatRules.multiplier, formatRules.collapse, formatRules.signed, formatRules.uiTags
       );
     } else if(structure && structure.required && value === null && cbInvalidate !== null){
@@ -330,6 +337,41 @@ class IndicatorsModel {
 
     return value;
   }
+
+  // Funções migradas de contextos de componentes (customFunctions e methods)
+  calcClassIdh(idh, showIdh = false, showParentheses = false, letterCaption = true) { 
+    let returText = "";
+    
+    for (let level of this.idhLevels) {
+      if (level.cap == null || (level.cap && idh < level.cap)) {
+        returText = letterCaption ? level.name : level.name.toLowerCase();
+        break;
+      }
+    }
+    
+    returText = showParentheses ? " (" + returText + ")": returText;
+    returText = showIdh ? idh + " " + returText : returText;
+
+    return returText;
+  }
+
+  getClassIdh(idh) { 
+    for (let level of this.idhLevels) {
+      if (level.cap == null || (level.cap && idh < level.cap)) {
+        return level.description;
+      }
+    }
+    return "";
+  }
+
+  calcProportionSalary(value, salary) {
+    let fieldText = " salários mínimos, à época";
+    let proportion = value/salary;
+    
+    proportion = proportion.toLocaleString('pt-br', {maximumFractionDigits: 2});
+    return proportion + fieldText;
+  }
+
 }
 
 export default IndicatorsModel;
