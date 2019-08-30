@@ -53,7 +53,7 @@
             value = base_object_list[item][rules[idxRule].named_prop];
             if(value !== null && value !== undefined && rules[idxRule].format) {
               let formatRules = rules[idxRule];
-              value = this.$numberFormatService.formatNumber(
+              value = this.$numberTransformService.formatNumber(
                 value, formatRules.format, formatRules.precision, formatRules.multiplier, formatRules.collapse, formatRules.signed, formatRules.uiTags
               );
             } 

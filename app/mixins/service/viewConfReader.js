@@ -332,7 +332,7 @@ const ViewConfReader = {
 								}
 								
 								if(options.calcs[indx].format){
-									dataset[eachRow][nuField] = this.$numberFormatService.formatNumber(
+									dataset[eachRow][nuField] = this.$numberTransformService.formatNumber(
 										dataset[eachRow][nuField], options.calcs[indx].format,
 										options.calcs[indx].precision, options.calcs[indx].multiplier,
 										options.calcs[indx].collapse, options.calcs[indx].signed,
@@ -354,7 +354,7 @@ const ViewConfReader = {
 								if (formatRules.format == 'auto') {
 									formatRules = this.$textTransformService.getFormatRules(formatRules, dataset[eachRow]);
 								}
-								dataset[eachRow][nuField] = this.$numberFormatService.formatNumber(
+								dataset[eachRow][nuField] = this.$numberTransformService.formatNumber(
 									dataset[eachRow][options.formatters[indxFmts].id], 
 									formatRules.format, 
 									formatRules.precision, 
@@ -410,7 +410,7 @@ const ViewConfReader = {
 								if (rules[ruleIndx].format == 'auto') {
 									formatRules = this.$textTransformService.getFormatRules(rules[ruleIndx], base_object);
 								}
-								prop = this.$numberFormatService.formatNumber(
+								prop = this.$numberTransformService.formatNumber(
 									prop, formatRules.format, formatRules.precision,
 									formatRules.multiplier, formatRules.collapse, formatRules.signed,
 									formatRules.uiTags

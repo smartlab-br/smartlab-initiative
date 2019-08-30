@@ -8,7 +8,7 @@ Vue.use(Vuetify)
 require('../../setup.js');
 
 import TextTransformService from '../../../assets/service/singleton/textTransformService'
-import NumberFormatService from '../../../assets/service/singleton/numberFormatService'
+import NumberTransformService from '../../../assets/service/singleton/numberTransformService'
 import ViewConfReader from '../../../mixins/service/viewConfReader.js'
 
 // Imports a component to serve as a bridge to the mixin
@@ -16,7 +16,7 @@ import FLPOSobreLayout from '../../../components/FLPOSobreLayout'
 
 // Sets the mixin in the Vue instance
 Vue.prototype.$textTransformService = new TextTransformService();
-Vue.prototype.$numberFormatService = new NumberFormatService();
+Vue.prototype.$numberTransformService = new NumberTransformService();
 Vue.use(ViewConfReader)
 
 // Tests

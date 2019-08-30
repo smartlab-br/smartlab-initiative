@@ -1,9 +1,11 @@
 import DateFormatService from './dateFormatService.js'
+import NumberTransformService from './numberTransformService'
 import IndicatorsModel from '../../model/singleton/indicatorsModel.js'
 
 class ObjectTransformService {
   constructor() {
     this.dateFormatService = new DateFormatService();
+    this.numberTransformService = new NumberTransformService();
   }
 
   runNamedFunction(struct, base_object, localFunctions = null, initialArgs = []) {
@@ -31,16 +33,26 @@ class ObjectTransformService {
       // Checks if the function exist in the localFunctions argument
       return localFunctions[struct.function].apply(null, args);
     }
-    if (struct.function == 'formatDate') {
+    if (['formatDate', 'getWeekDay'].includes(struct.function)) {
       return this.dateFormatService[struct.function].apply(null, args);
     }
-    if (struct.function == 'calc_class_idh') {
-      return (new IndicatorsModel())[struct.function].apply(null, args);
+    if (['calcClassIdh', 'getClassIdh', 'calcProportionSalary'].includes(struct.function)) {
+      let indicatorsModelInstance = new IndicatorsModel();
+      return indicatorsModelInstance[struct.function].apply(null, args);
     }
-    
+    if (['calcIndexPercentage', 'calcDeltaPercentage', 'getAbsoluteValue'].includes(struct.function)) {
+      return this.numberTransformService[struct.function].apply(null, args);
+    }
+    if (this[struct.function]) {
+      return this[struct.function].apply(null, args);
+    }
     
     // Returns null otherwise
     return null;
+  }
+  
+  valueCheck(value, baseValue = 0, returnTextInCaseOfHigherThanBaseValue = '', returnTextInCaseOfLowerThanBaseValue = '') {
+    return value > baseValue ? returnTextInCaseOfHigherThanBaseValue : returnTextInCaseOfLowerThanBaseValue ;
   }
 }
 

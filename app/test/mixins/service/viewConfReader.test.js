@@ -8,7 +8,7 @@ Vue.use(Vuetify)
 require('../../setup.js');
 
 import ViewConfReader from '../../../mixins/service/viewConfReader'
-import NumberFormatService from '../../../assets/service/singleton/numberFormatService'
+import NumberTransformService from '../../../assets/service/singleton/numberTransformService'
 import DatasetManager from '../../../mixins/service/datasetManager'
 import IndicatorsModel from '../../../assets/model/singleton/indicatorsModel'
 import ObjectTransformService from '../../../assets/service/singleton/objectTransformService'
@@ -18,7 +18,7 @@ import FLPOSobreLayout from '../../../components/FLPOSobreLayout'
 
 // Sets the mixin in the Vue instance
 Vue.use(ViewConfReader)
-Vue.prototype.$numberFormatService = new NumberFormatService();
+Vue.prototype.$numberTransformService = new NumberTransformService();
 Vue.use(DatasetManager)
 Vue.prototype.$indicatorsModel = new IndicatorsModel();
 Vue.prototype.$objectTransformService = new ObjectTransformService();

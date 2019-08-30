@@ -1,4 +1,13 @@
 class DateFormatService {
+  weekDays = {
+    seg: "SEGUNDA",
+    ter: "TERÇA",
+    qua: "QUARTA",
+    qui: "QUINTA",
+    sex: "SEXTA",
+    'sáb': "SÁBADO",
+    dom: "DOMINGO"
+  }
   constructor() {}
 
   formatDate(base_object, prop, formato = null, formatoFinal = null, stringAppend = '') {
@@ -11,6 +20,8 @@ class DateFormatService {
     if (stringAppend) utfString += stringAppend;
     return utfString;
   }
+
+  getWeekDay(abbrev) { return this.weekDay[abbrev]; }
 }
 
 export default DateFormatService;

@@ -95,92 +95,14 @@
       sendError(message) {
         this.$emit('showSnackbar', { color : 'error', text: message });
       },
-      minicard_get_class_idh: function(idh) { 
-        if (idh < 0.5){
-          return "(Abaixo de 0,500)";
-        } else if (idh < 0.6){
-          return "(0.500 a 0.599)";
-        } else if (idh < 0.7){
-          return "(0.600 a 0.699)";
-        } else if (idh < 0.8){
-          return "(0.700 a 0.799)";
-        } else {
-          return "(0.800 ou superior)";
-        }
-      },
-      minicard_calc_percentage(part, total) {
-        var fieldText = "";
-        var perc = 0;
-        if (part > total) {
-          fieldText = " MAIOR"
-          perc = (part/total) * 100;
-        } else {
-          fieldText = " MENOR"
-          perc = (1 - (part/total)) * 100;
-        }
-        
-        perc = perc.toLocaleString('pt-br', {maximumFractionDigits: 1}) + "%";
-        return perc + fieldText;
-      },
-      minicard_get_week_day(abbrev) {
-        switch (abbrev){
-          case 'seg': 
-            return "SEGUNDA";
-            break;
-          case 'ter': 
-            return "TERÇA";
-            break;
-          case 'qua': 
-            return "QUARTA";
-            break;
-          case 'qui': 
-            return "QUINTA";
-            break;
-          case 'sex': 
-            return "SEXTA";
-            break;
-          case 'sáb': 
-            return "SÁBADO";
-            break;
-          case 'dom': 
-            return "DOMINGO";
-            break;
-        }
-      },
-      minicard_calc_perc_subtraction(val1, val2) {
-        var fieldText = "";
-        var result = Math.abs(val1 - val2);
-        if (val1 > val2) {
-          fieldText = " PONTOS PERCENTUAIS A MAIS"
-        } else if (val1 < val2) {
-          fieldText = " PONTOS PERCENTUAIS A MENOS"
-        } else {
-          return "";  //igual
-        }
-        
-        result = this.$numberFormatService.formatNumber(result, "real", 1);
-        return result + fieldText;
-      },
-      minicard_value_check(value, baseValue = 0, returnTextInCaseOfHigherThanBaseValue = '', returnTextInCaseOfLowerThanBaseValue = '') {
-        return value > baseValue ? returnTextInCaseOfHigherThanBaseValue : returnTextInCaseOfLowerThanBaseValue ;
-      },
-      minicard_get_absolute_value(value){return Math.abs(value);},
       
-      minicard_calc_proportion_salary(value, salary) {
-        var fieldText = " salários mínimos, à época";
-        var proportion = value/salary;
-        
-        proportion = proportion.toLocaleString('pt-br', {maximumFractionDigits: 2});
-        return proportion + fieldText;
-      },
-
       fillProp(base_object_list, args, preloaded, addedParams = null, metadata = null) {
           let rule = addedParams.rule;
 
           //caso o campo tenha um texto fixo, o valor é ajustado e o loop segue para a próxima iteração
           if (rule.fixed !== undefined) {
             if (rule.format) {
-              this[rule.prop] = this.$numberFormatService.formatNumber(rule.fixed, rule.format, rule.precision, rule.multiplier, rule.collapse, rule.signed, rule.uiTags);
+              this[rule.prop] = this.$numberTransformService.formatNumber(rule.fixed, rule.format, rule.precision, rule.multiplier, rule.collapse, rule.signed, rule.uiTags);
             } else {
               this[rule.prop] = rule.fixed;
             }

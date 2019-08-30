@@ -1,4 +1,4 @@
-class NumberFormatService {
+class NumberTransformService {
   constructor() {}
   
   formatNumber(valor, formato, casasDecimais, multiplier = 1, collapse = null, signed = false, uiTags = true){
@@ -158,6 +158,38 @@ class NumberFormatService {
 
     return strInterval;
   }
+
+  calcIndexPercentage(part, total) {
+    let fieldText = "";
+    let perc = 0;
+    if (part > total) {
+      fieldText = " MAIOR"
+      perc = (part/total) * 100;
+    } else {
+      fieldText = " MENOR"
+      perc = (1 - (part/total)) * 100;
+    }
+    
+    perc = perc.toLocaleString('pt-br', {maximumFractionDigits: 1}) + "%";
+    return perc + fieldText;
+  }
+
+  minicardDeltaPercentage(val1, val2) {
+    var fieldText = "";
+    var result = Math.abs(val1 - val2);
+    if (val1 > val2) {
+      fieldText = " PONTOS PERCENTUAIS A MAIS"
+    } else if (val1 < val2) {
+      fieldText = " PONTOS PERCENTUAIS A MENOS"
+    } else {
+      return "";  //igual
+    }
+    
+    result = this.$numberTransformService.formatNumber(result, "real", 1);
+    return result + fieldText;
+  }
+
+  getAbsoluteValue(value) { return Math.abs(value); }
 }
 
-export default NumberFormatService;
+export default NumberTransformService;
