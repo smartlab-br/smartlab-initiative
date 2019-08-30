@@ -330,6 +330,30 @@ class IndicatorsModel {
 
     return value;
   }
+
+  calc_class_idh(idh, showIdh = false, showParentheses = false, letterCaption = true) { 
+    let returText = "";
+    // showIdh = (String(showIdh) == 'true');
+    // showParentheses = (String(showParentheses) == 'true');
+    // letterCaption = (String(letterCaption) == 'true');
+
+    if (idh < 0.5){
+      returText = letterCaption ? "Muito baixo" : "muito baixo";
+    } else if (idh < 0.6){
+      returText = letterCaption ? "Baixo" : "baixo";
+    } else if (idh < 0.7){
+      returText = letterCaption ? "Médio" : "médio";
+    } else if (idh < 0.8){
+      returText = letterCaption ? "Alto" : "alto";
+    } else {
+      returText = letterCaption ? "Muito alto" : "muito alto";
+    }
+    returText = showParentheses ? " (" + returText + ")": returText;
+    returText = showIdh ? idh + " " + returText : returText;
+
+    return returText;
+  }
+
 }
 
 export default IndicatorsModel;
