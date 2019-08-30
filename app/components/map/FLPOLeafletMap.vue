@@ -80,10 +80,23 @@
       leaflet_map.fitBounds(bounds, { padding: [10, 10] });
 
       // Adiciona o marker do município apenas se houver idLocalidade
-      if (this.selectedPlace && this.selectedPlace.length == 7){
-        this.$analysisUnitModel.findPlaceByID(this, this.selectedPlace, leaflet_map, this.addDeafultMarker);
-      } else if (this.customParams && this.customParams.idLocalidade  && this.customParams.idLocalidade.length == 7) { // Município
-        this.$analysisUnitModel.findPlaceByID(this, this.customParams.idLocalidade, leaflet_map, this.addDeafultMarker);
+      let placeId;
+      if (this.selectedPlace) {
+        placeId = this.selectedPlace;
+      } else if (this.customParams && this.customParams.idLocalidade) { // Município
+        placeId = this.customParams.idLocalidade;
+      }
+      
+      if (placeId && placeId.length == 7) {
+        let findLoc = this.$analysisUnitModel.findPlaceByID(placeId);
+        if (findLoc && (findLoc instanceof Promise || findLoc.then)) {
+          findLoc.then(response => {
+            this.addDeafultMarker(response, leaflet_map);
+          })
+          .catch(error => { this.sendError(error); });
+        } else {
+          this.addDeafultMarker(findLoc, leaflet_map);
+        }
       }
           
       // let tileLayer = L.tileLayer(
@@ -443,8 +456,8 @@
           text += "Considerados os seguintes filtros: " + this.customParams.filterText;
         }
         this.changeCursor('wait');
-        axios.all([axios(this.getAxiosOptions(url)),
-                   axios(this.getAxiosOptions(urlIndicadores))])
+        axios.all([axios(this.$axiosCallSetupService.getAxiosOptions(url)),
+                   axios(this.$axiosCallSetupService.getAxiosOptions(urlIndicadores))])
           .then(axios.spread((result, resultIndicadores) => {
             let dt = JSON.parse(result.data).dataset;
             let dtIndicadores = JSON.parse(resultIndicadores.data).dataset;
@@ -485,49 +498,49 @@
                 break;
                 case "te_rgt": // Resgates
                   vl_rgt = item.agr_sum_vl_indicador ? item.agr_sum_vl_indicador : 0;
-                  vl_rgt_rank_uf = item.rerank_rank_uf ? this.formatNumber(item.rerank_rank_uf,"inteiro") : 0;
-                  vl_rgt_rank_br = item.rerank_rank_br ? this.formatNumber(item.rerank_rank_br,"inteiro") : 0;
-                  vl_rgt_pct_uf = item.rerank_rank_uf ? this.formatNumber(item.rerank_perc_uf,"porcentagem",2,100) : 0;
-                  vl_rgt_pct_br = item.rerank_rank_br ? this.formatNumber(item.rerank_perc_br,"porcentagem",3,100) : 0;
+                  vl_rgt_rank_uf = item.rerank_rank_uf ? this.$numberFormatService.formatNumber(item.rerank_rank_uf,"inteiro") : 0;
+                  vl_rgt_rank_br = item.rerank_rank_br ? this.$numberFormatService.formatNumber(item.rerank_rank_br,"inteiro") : 0;
+                  vl_rgt_pct_uf = item.rerank_rank_uf ? this.$numberFormatService.formatNumber(item.rerank_perc_uf,"porcentagem",2,100) : 0;
+                  vl_rgt_pct_br = item.rerank_rank_br ? this.$numberFormatService.formatNumber(item.rerank_perc_br,"porcentagem",3,100) : 0;
                 break;
                 case "te_nat": // Resgatados Naturais
                   vl_nat = item.agr_sum_vl_indicador ? item.agr_sum_vl_indicador : 0;
-                  vl_nat_rank_uf = item.rerank_rank_uf ? this.formatNumber(item.rerank_rank_uf,"inteiro") : 0;
-                  vl_nat_rank_br = item.rerank_rank_br ? this.formatNumber(item.rerank_rank_br,"inteiro") : 0;
-                  vl_nat_pct_uf = item.rerank_rank_uf ? this.formatNumber(item.rerank_perc_uf,"porcentagem",2,100) : 0;
-                  vl_nat_pct_br = item.rerank_rank_br ? this.formatNumber(item.rerank_perc_br,"porcentagem",3,100) : 0;
+                  vl_nat_rank_uf = item.rerank_rank_uf ? this.$numberFormatService.formatNumber(item.rerank_rank_uf,"inteiro") : 0;
+                  vl_nat_rank_br = item.rerank_rank_br ? this.$numberFormatService.formatNumber(item.rerank_rank_br,"inteiro") : 0;
+                  vl_nat_pct_uf = item.rerank_rank_uf ? this.$numberFormatService.formatNumber(item.rerank_perc_uf,"porcentagem",2,100) : 0;
+                  vl_nat_pct_br = item.rerank_rank_br ? this.$numberFormatService.formatNumber(item.rerank_perc_br,"porcentagem",3,100) : 0;
                 break;
                 case "te_res": // Resgatados Residentes
                   vl_res = item.agr_sum_vl_indicador ? item.agr_sum_vl_indicador : 0;
-                  vl_res_rank_uf = item.rerank_rank_uf ? this.formatNumber(item.rerank_rank_uf,"inteiro") : 0;
-                  vl_res_rank_br = item.rerank_rank_br ? this.formatNumber(item.rerank_rank_br,"inteiro") : 0;
-                  vl_res_pct_uf = item.rerank_rank_uf ? this.formatNumber(item.rerank_perc_uf,"porcentagem",2,100) : 0;
-                  vl_res_pct_br = item.rerank_rank_br ? this.formatNumber(item.rerank_perc_br,"porcentagem",3,100) : 0;
+                  vl_res_rank_uf = item.rerank_rank_uf ? this.$numberFormatService.formatNumber(item.rerank_rank_uf,"inteiro") : 0;
+                  vl_res_rank_br = item.rerank_rank_br ? this.$numberFormatService.formatNumber(item.rerank_rank_br,"inteiro") : 0;
+                  vl_res_pct_uf = item.rerank_rank_uf ? this.$numberFormatService.formatNumber(item.rerank_perc_uf,"porcentagem",2,100) : 0;
+                  vl_res_pct_br = item.rerank_rank_br ? this.$numberFormatService.formatNumber(item.rerank_perc_br,"porcentagem",3,100) : 0;
                 break;
               }
             }
 
             text += "<tr><td class='font-weight-bold green--text accent-4'>OPERAÇÕES E RESGATES</td></tr>";
-            text += "<tr><td>" + this.formatNumber(vl_ope,"inteiro") + " operações</td></tr>";
-            text += "<tr><td>" + this.formatNumber(vl_rgt,"inteiro") + " resgates</td></tr>";
+            text += "<tr><td>" + this.$numberFormatService.formatNumber(vl_ope,"inteiro") + " operações</td></tr>";
+            text += "<tr><td>" + this.$numberFormatService.formatNumber(vl_rgt,"inteiro") + " resgates</td></tr>";
             if (vl_rgt != 0){
               text += "<tr><td>" + vl_rgt_rank_uf + "ª posição no Estado com " + vl_rgt_pct_uf + " do total</td></tr>";
               text += "<tr><td>" + vl_rgt_rank_br + "ª posição no Brasil com " + vl_rgt_pct_br + " do total</td></tr>";
             }
             if (vl_ope != 0){
-              text += "<tr><td>" + this.formatNumber(vl_rgt/vl_ope,"real",2) + " resgates por operação (envolvendo " + vl_inspecoes + " inspeções/fiscalizações)</td></tr>";
+              text += "<tr><td>" + this.$numberFormatService.formatNumber(vl_rgt/vl_ope,"real",2) + " resgates por operação (envolvendo " + vl_inspecoes + " inspeções/fiscalizações)</td></tr>";
             }
             if (vl_inspecoes != 0){
-              text += "<tr><td>" + this.formatNumber(vl_insp_rgt/vl_inspecoes,"real",2,100) + "% de inspeções/fiscalizações com resgates</td></tr>";
+              text += "<tr><td>" + this.$numberFormatService.formatNumber(vl_insp_rgt/vl_inspecoes,"real",2,100) + "% de inspeções/fiscalizações com resgates</td></tr>";
             }
             text += "<tr><td class='font-weight-bold red--text'>RESGATADOS NATURAIS</td></tr>";
-            text += "<tr><td>" + this.formatNumber(vl_nat,"inteiro") + " trabalhadores regatados nascidos no município em destaque</td></tr>";
+            text += "<tr><td>" + this.$numberFormatService.formatNumber(vl_nat,"inteiro") + " trabalhadores regatados nascidos no município em destaque</td></tr>";
             if (vl_nat != 0){
               text += "<tr><td>" + vl_nat_rank_uf + "ª posição no Estado com " + vl_nat_pct_uf + " do total</td></tr>";
               text += "<tr><td>" + vl_nat_rank_br + "ª posição no Brasil com " + vl_nat_pct_br + " do total</td></tr>";
             }
             text += "<tr><td class='font-weight-bold light-blue--text'>RESGATADOS RESIDENTES</td></tr>";
-            text += "<tr><td>" + this.formatNumber(vl_res,"inteiro") + " trabalhadores resgatados que declararam residir, no momento do resgate, no município em destaque</td></tr>";
+            text += "<tr><td>" + this.$numberFormatService.formatNumber(vl_res,"inteiro") + " trabalhadores resgatados que declararam residir, no momento do resgate, no município em destaque</td></tr>";
             if (vl_res != 0){
               text += "<tr><td>" + vl_res_rank_uf + "ª posição no Estado com " + vl_res_pct_uf + " do total</td></tr>";
               text += "<tr><td>" + vl_res_rank_br + "ª posição no Brasil com " + vl_res_pct_br + " do total</td></tr>";
@@ -540,16 +553,16 @@
             for (let item of dtIndicadores){
               switch(item.cd_indicador){
                 case "01_15_01_00": // População
-                  text += "<tr><td>" + item.ds_indicador_radical + ": " + this.formatNumber(item.vl_indicador,"inteiro") + " ("+ item.nu_competencia +")</td></tr>";
+                  text += "<tr><td>" + item.ds_indicador_radical + ": " + this.$numberFormatService.formatNumber(item.vl_indicador,"inteiro") + " ("+ item.nu_competencia +")</td></tr>";
                   break;
                 case "06_01_09_01": // IDHM
-                  text += "<tr><td>" + item.ds_indicador_radical + ": " + this.formatNumber(item.vl_indicador,"real",3) + " ("+ item.nu_competencia +")</td></tr>";
+                  text += "<tr><td>" + item.ds_indicador_radical + ": " + this.$numberFormatService.formatNumber(item.vl_indicador,"real",3) + " ("+ item.nu_competencia +")</td></tr>";
                   break;
                 case "01_14_13_00": // Proporção Pobreza
-                  text += "<tr><td>" + item.ds_indicador_radical + ": " + this.formatNumber(item.vl_indicador,"porcentagem") + " ("+ item.nu_competencia +")</td></tr>";
+                  text += "<tr><td>" + item.ds_indicador_radical + ": " + this.$numberFormatService.formatNumber(item.vl_indicador,"porcentagem") + " ("+ item.nu_competencia +")</td></tr>";
                   break;
                 case "01_16_02_00": // PIB per capita
-                  text += "<tr><td>" + item.ds_indicador_radical + ": " + this.formatNumber(item.vl_indicador,"monetario",2) + " ("+ item.nu_competencia +")</td></tr>";
+                  text += "<tr><td>" + item.ds_indicador_radical + ": " + this.$numberFormatService.formatNumber(item.vl_indicador,"monetario",2) + " ("+ item.nu_competencia +")</td></tr>";
                   break;
               }
             }
@@ -590,15 +603,15 @@
           text += "Considerados os seguintes filtros: " + this.customParams.filterText;
         }
         axios.all([
-                  //  axios(this.getAxiosOptions(urlSinan)),
-                   axios(this.getAxiosOptions(urlCatMenores)),
-                   axios(this.getAxiosOptions(urlProvaBrasil)),
-                   axios(this.getAxiosOptions(urlPotAprendizes)),
-                   axios(this.getAxiosOptions(urlTENascimento)),
-                  //  axios(this.getAxiosOptions(urlTEResidencia)),
-                   axios(this.getAxiosOptions(urlMapear)),
-                   axios(this.getAxiosOptions(urlCenso)),
-                   axios(this.getAxiosOptions(urlCensoAgro))])
+                  //  axios(this.$axiosCallSetupService.getAxiosOptions(urlSinan)),
+                   axios(this.$axiosCallSetupService.getAxiosOptions(urlCatMenores)),
+                   axios(this.$axiosCallSetupService.getAxiosOptions(urlProvaBrasil)),
+                   axios(this.$axiosCallSetupService.getAxiosOptions(urlPotAprendizes)),
+                   axios(this.$axiosCallSetupService.getAxiosOptions(urlTENascimento)),
+                  //  axios(this.$axiosCallSetupService.getAxiosOptions(urlTEResidencia)),
+                   axios(this.$axiosCallSetupService.getAxiosOptions(urlMapear)),
+                   axios(this.$axiosCallSetupService.getAxiosOptions(urlCenso)),
+                   axios(this.$axiosCallSetupService.getAxiosOptions(urlCensoAgro))])
           .then(axios.spread((
                               // resultSinan, 
                               resultCatMenores, 
@@ -623,33 +636,33 @@
             text += "<p class='headline-obs ma-0'>Município: <b>" + municipio + "</b></p>";
             text += "<table width='100%'>";
             text += "<tr><td class='font-weight-bold indigo--text darken-2'>CRIANÇAS E ADOLESCENTES OCUPADOS</td></tr>";
-            text += "<tr><td>" + (dtCenso && dtCenso.agr_sum_vl_indicador ? this.formatNumber(dtCenso.agr_sum_vl_indicador,"inteiro") + " crianças e adolescentes ocupados entre 10 e 17 anos" : "Nenhum registro de crianças e adolescentes ocupados entre 10 e 17 anos") + "</td></tr>";
+            text += "<tr><td>" + (dtCenso && dtCenso.agr_sum_vl_indicador ? this.$numberFormatService.formatNumber(dtCenso.agr_sum_vl_indicador,"inteiro") + " crianças e adolescentes ocupados entre 10 e 17 anos" : "Nenhum registro de crianças e adolescentes ocupados entre 10 e 17 anos") + "</td></tr>";
             text += "<tr><td>Fonte: IBGE - Censo Demográfico 2010</td></tr>";
             text += "<tr><td class='font-weight-bold purple--text'>TRABALHANDO FORA DE CASA</td></tr>";
-            text += "<tr><td>" + (dtProvaBrasil && dtProvaBrasil.agr_sum_vl_indicador ? this.formatNumber(dtProvaBrasil.agr_sum_vl_indicador,"inteiro") + " declararam trabalhar fora de casa" : "Nenhum estudante declarou trabalhar fora de casa") + "</td></tr>";
+            text += "<tr><td>" + (dtProvaBrasil && dtProvaBrasil.agr_sum_vl_indicador ? this.$numberFormatService.formatNumber(dtProvaBrasil.agr_sum_vl_indicador,"inteiro") + " declararam trabalhar fora de casa" : "Nenhum estudante declarou trabalhar fora de casa") + "</td></tr>";
             text += "<tr><td>Fonte: Prova Brasil 2017 (5º e 9º ano)</td></tr>";
             text += "<tr><td class='font-weight-bold cyan--text darken-2'>CRIANÇAS E ADOLESCENTES OCUPADOS EM ESTABELECIMENOS AGROPECUÁRIOS</td></tr>";
-            text += "<tr><td>" + (dtCensoAgro && dtCensoAgro.qt_ocupados_menores14 ? this.formatNumber(dtCensoAgro.qt_ocupados_menores14,"inteiro") + " menores de 14 anos ocupados em estabelecimentos agropecuários" : "Nenhum registro de menores de 14 anos ocupados em estabelecimentos agropecuários") + "</td></tr>";
+            text += "<tr><td>" + (dtCensoAgro && dtCensoAgro.qt_ocupados_menores14 ? this.$numberFormatService.formatNumber(dtCensoAgro.qt_ocupados_menores14,"inteiro") + " menores de 14 anos ocupados em estabelecimentos agropecuários" : "Nenhum registro de menores de 14 anos ocupados em estabelecimentos agropecuários") + "</td></tr>";
             text += "<tr><td>Fonte: IBGE - Censo Agropecuário 2017</td></tr>";
             text += "<tr><td class='font-weight-bold'>SOFRENDO ACIDENTES</td></tr>";
             text += "<tr><td class='font-weight-bold brown--text'>COM VÍNCULOS DE EMPREGO</td></tr>";
-            text += "<tr><td>" + (dtCatMenores && dtCatMenores.agr_count_cd_municipio_ibge ? this.formatNumber(dtCatMenores.agr_count_cd_municipio_ibge,"inteiro") + " notificações de acidentes de menores de 18 anos" : "Não houve notificações de acidentes de menores de 18 anos")+ "</td></tr>";
+            text += "<tr><td>" + (dtCatMenores && dtCatMenores.agr_count_cd_municipio_ibge ? this.$numberFormatService.formatNumber(dtCatMenores.agr_count_cd_municipio_ibge,"inteiro") + " notificações de acidentes de menores de 18 anos" : "Não houve notificações de acidentes de menores de 18 anos")+ "</td></tr>";
             text += "<tr><td>Fonte: CATWEB 2012 a 2018</td></tr>";
             // text += "<tr><td class='font-weight-bold orange--text'>SEGUNDO AS NOTIFICAÇÕES SINAN</td></tr>";
-            // text += "<tr><td>" + (dtSinan && dtSinan.agr_sum_vl_indicador ? this.formatNumber(dtSinan.agr_sum_vl_indicador,"inteiro") + " notificações relacionadas ao trabalho de "+ dtSinan.ds_agreg_primaria : "Não houve notificações relacionadas ao trabalho de Crianças e Adolescentes ( 0 a 17 anos)") +"</td></tr>";
+            // text += "<tr><td>" + (dtSinan && dtSinan.agr_sum_vl_indicador ? this.$numberFormatService.formatNumber(dtSinan.agr_sum_vl_indicador,"inteiro") + " notificações relacionadas ao trabalho de "+ dtSinan.ds_agreg_primaria : "Não houve notificações relacionadas ao trabalho de Crianças e Adolescentes ( 0 a 17 anos)") +"</td></tr>";
             // text += "<tr><td>Fonte: MS - SINAN 2007 a 2018</td></tr>";
             text += "<tr><td class='font-weight-bold'>EXPLORADOS PELO TRABALHO ESCRAVO</td></tr>";
             text += "<tr><td class='font-weight-bold red--text'>LOCAL DE NASCIMENTO</td></tr>";
-            text += "<tr><td>" + (dtTENascimento && dtTENascimento.agr_sum_vl_indicador ? this.formatNumber(dtTENascimento.agr_sum_vl_indicador,"inteiro") + " menores resgatados do trabalho escravo são naturais do município" : "Não houve menores resgatados do trabalho escravo naturais desse município")+ "</td></tr>";
+            text += "<tr><td>" + (dtTENascimento && dtTENascimento.agr_sum_vl_indicador ? this.$numberFormatService.formatNumber(dtTENascimento.agr_sum_vl_indicador,"inteiro") + " menores resgatados do trabalho escravo são naturais do município" : "Não houve menores resgatados do trabalho escravo naturais desse município")+ "</td></tr>";
             text += "<tr><td>Fonte: Seguro Desemprego, 2003-2018</td></tr>";
             // text += "<tr><td class='font-weight-bold light-blue--text'>LOCAL DE RESIDÊNCIA</td></tr>";
-            // text += "<tr><td>" + (dtTEResidencia && dtTEResidencia.agr_sum_vl_indicador ? this.formatNumber(dtTEResidencia.agr_sum_vl_indicador,"inteiro") + " menores resgatados do trabalho escravo são residentes do município" : "Não houve menores resgatados do trabalho escravo residentes nesse município")+ "</td></tr>";
+            // text += "<tr><td>" + (dtTEResidencia && dtTEResidencia.agr_sum_vl_indicador ? this.$numberFormatService.formatNumber(dtTEResidencia.agr_sum_vl_indicador,"inteiro") + " menores resgatados do trabalho escravo são residentes do município" : "Não houve menores resgatados do trabalho escravo residentes nesse município")+ "</td></tr>";
             // text += "<tr><td>Fonte: Seguro Desemprego, 2003-2018</td></tr>";
             text += "<tr><td class='font-weight-bold'>RISCOS DE EXPLORAÇÃO SEXUAL COMERCIAL</td></tr>";
-            text += "<tr><td>" + (dtMapear && dtMapear.agr_count ? this.formatNumber(dtMapear.agr_count,"inteiro") + " pontos de riscos de exploração sexual de menores em rodovias federais do município" : "Não foram registrados locais de riscos de exploração sexual de menores em rodovias federais do município")+ "</td></tr>";
+            text += "<tr><td>" + (dtMapear && dtMapear.agr_count ? this.$numberFormatService.formatNumber(dtMapear.agr_count,"inteiro") + " pontos de riscos de exploração sexual de menores em rodovias federais do município" : "Não foram registrados locais de riscos de exploração sexual de menores em rodovias federais do município")+ "</td></tr>";
             text += "<tr><td>Fonte: Mapear/PRF</td></tr>";
             text += "<tr><td class='font-weight-bold green--text accent-4'>POTENCIAL DE COTAS DE APRENDIZAGEM</td></tr>";
-            text += "<tr><td>" + (dtPotAprendizes && dtPotAprendizes.agr_sum_vl_indicador ? this.formatNumber(dtPotAprendizes.agr_sum_vl_indicador,"inteiro") + " vagas de cotas de aprendizagem" : "Nenhuma vaga de cotas de aprendizagem") + "</td></tr>";
+            text += "<tr><td>" + (dtPotAprendizes && dtPotAprendizes.agr_sum_vl_indicador ? this.$numberFormatService.formatNumber(dtPotAprendizes.agr_sum_vl_indicador,"inteiro") + " vagas de cotas de aprendizagem" : "Nenhuma vaga de cotas de aprendizagem") + "</td></tr>";
             text += "<tr><td>Fonte: RAIS/Ministério da Economia, 2019</td></tr>";
             text += "</table>";
             target.bindPopup(text).openPopup();
@@ -667,7 +680,7 @@
 //            url = url + this.customParams.filterUrl;
 //            text = "Considerados os seguintes filtros: " + this.customParams.filterText;
 //          }
-          axios.all([axios(this.getAxiosOptions(urlIndicadores))])
+          axios.all([axios(this.$axiosCallSetupService.getAxiosOptions(urlIndicadores))])
             .then(axios.spread((resultIndicadores) => {
               let dtIndicadores = JSON.parse(resultIndicadores.data).dataset;
 
@@ -675,7 +688,7 @@
               text += "<table width='100%'>";
               text += "<tr><td colspan='2' class='font-weight-bold'>As Notificações no Sistema de Informação de Agravos de Notificação (Sinan) para a localidade apresentaram os seguintes números:</td></tr>";
               for (let item of dtIndicadores){
-                text += "<tr><td class='font-weight-bold purple--text accent-4'>" + item.ds_agreg_primaria + ":</td><td class='text-xs-right'>" + this.formatNumber(item.agr_sum_vl_indicador,"inteiro") + "</td></tr>";
+                text += "<tr><td class='font-weight-bold purple--text accent-4'>" + item.ds_agreg_primaria + ":</td><td class='text-xs-right'>" + this.$numberFormatService.formatNumber(item.agr_sum_vl_indicador,"inteiro") + "</td></tr>";
               }
               text += "<tr><td>Fonte: "+ dtIndicadores[0].ds_fonte +"</td></tr>";
               text += "<tr><td>Período: 2012 a 2018</td></tr>";              
@@ -704,7 +717,7 @@
           urlPeriodo = "/sst/cats?categorias=1&valor=ano_cat&agregacao=min,max";
           urlTipo = "/sst/cats?categorias=ds_natureza_lesao-nm_tipo&agregacao=COUNT&filtros=eq-cd_municipio_ibge-" + target.options.rowData.cd_mun_ibge + filtro + "&ordenacao=-agr_count&limit=5";
           txtTipoTitulo = "ACIDENTES DE TRABALHO"
-          txtTipoQtde = this.formatNumber(target.options.rowData.agr_count_cd_municipio_ibge,"inteiro") + " registros de acidentes de trabalho";
+          txtTipoQtde = this.$numberFormatService.formatNumber(target.options.rowData.agr_count_cd_municipio_ibge,"inteiro") + " registros de acidentes de trabalho";
           txtColor = "red--text darken-4"
           urlAtividade = "/sst/cats?categorias=ds_cnae_classe_cat-nm_atividade&agregacao=COUNT&filtros=ne-ds_cnae_classe_cat-'null',and,eq-cd_municipio_ibge-" + target.options.rowData.cd_mun_ibge + filtro + "&ordenacao=-agr_count&limit=5";
           urlObs1 = "/sst/cats?categorias=cd_municipio_ibge&agregacao=COUNT&filtros=lt-idade_cat-18,and,eq-cd_municipio_ibge-" + target.options.rowData.cd_mun_ibge + filtro;
@@ -713,7 +726,7 @@
           urlPeriodo = "/sst/cats?categorias=1&valor=ano_cat&agregacao=min,max";
           urlTipo = "/sst/cats?categorias=ds_natureza_lesao-nm_tipo&agregacao=COUNT&filtros=eq-cd_indica_obito-'S',and,eq-cd_municipio_ibge-" + target.options.rowData.cd_mun_ibge + filtro + "&ordenacao=-agr_count&limit=5";
           txtTipoTitulo = "ACIDENTES DE TRABALHO COM MORTES"
-          txtTipoQtde = this.formatNumber(target.options.rowData.agr_count_cd_municipio_ibge,"inteiro") + " registros de acidentes de trabalho com mortes.";
+          txtTipoQtde = this.$numberFormatService.formatNumber(target.options.rowData.agr_count_cd_municipio_ibge,"inteiro") + " registros de acidentes de trabalho com mortes.";
           txtColor = "black--text"
           urlAtividade = "/sst/cats?categorias=ds_cnae_classe_cat-nm_atividade&agregacao=COUNT&filtros=eq-cd_indica_obito-'S',and,ne-ds_cnae_classe_cat-'null',and,eq-cd_municipio_ibge-" + target.options.rowData.cd_mun_ibge + filtro + "&ordenacao=-agr_count&limit=5";
           urlObs1 = "/sst/cats?categorias=cd_municipio_ibge&agregacao=COUNT&filtros=eq-cd_indica_obito-'S',and,lt-idade_cat-18,and,eq-cd_municipio_ibge-" + target.options.rowData.cd_mun_ibge + filtro;
@@ -722,17 +735,17 @@
           urlPeriodo = "/sst/beneficios?categorias=1&valor=ano_beneficio&agregacao=min,max";
           urlTipo = "/sst/beneficios?categorias=cd_agrupamento_categoria_cid-nm_tipo&agregacao=COUNT&filtros=eq-cd_municipio_ibge-" + target.options.rowData.cd_mun_ibge + ",and,eq-cd_especie_beneficio-91"+ filtro + "&ordenacao=-agr_count&limit=5";
           txtTipoTitulo = "AFASTAMENTOS INSS (B91)"
-          txtTipoQtde = this.formatNumber(target.options.rowData.agr_count_cd_municipio_ibge,"inteiro") + " afastamentos acidentários superiores a 15 dias(auxílio-doença por acidente de trabalho).";
+          txtTipoQtde = this.$numberFormatService.formatNumber(target.options.rowData.agr_count_cd_municipio_ibge,"inteiro") + " afastamentos acidentários superiores a 15 dias(auxílio-doença por acidente de trabalho).";
           txtColor = "light-blue--text"
           urlAtividade = "/sst/beneficios?categorias=ds_cnae_classe-nm_atividade&agregacao=COUNT&filtros=ne-ds_cnae_classe-'null',and,eq-cd_especie_beneficio-91,and,eq-cd_municipio_ibge-" + target.options.rowData.cd_mun_ibge + filtro +  "&ordenacao=-agr_count&limit=5";
           urlObs1 = "/sst/beneficios?categorias=cd_municipio_ibge&valor=qt_despesa_total&agregacao=SUM&filtros=eq-cd_municipio_ibge-" + target.options.rowData.cd_mun_ibge + ",and,eq-cd_especie_beneficio-91"+ filtro ;
           urlObs2 = "/sst/beneficios?categorias=cd_municipio_ibge&valor=qt_dias_perdidos&agregacao=SUM&filtros=eq-cd_municipio_ibge-" + target.options.rowData.cd_mun_ibge + ",and,eq-cd_especie_beneficio-91"+ filtro ;
         }
-        axios.all([axios(this.getAxiosOptions(urlPeriodo)),
-                   axios(this.getAxiosOptions(urlTipo)),
-                   axios(this.getAxiosOptions(urlAtividade)),
-                   axios(this.getAxiosOptions(urlObs1)),
-                   axios(this.getAxiosOptions(urlObs2))])
+        axios.all([axios(this.$axiosCallSetupService.getAxiosOptions(urlPeriodo)),
+                   axios(this.$axiosCallSetupService.getAxiosOptions(urlTipo)),
+                   axios(this.$axiosCallSetupService.getAxiosOptions(urlAtividade)),
+                   axios(this.$axiosCallSetupService.getAxiosOptions(urlObs1)),
+                   axios(this.$axiosCallSetupService.getAxiosOptions(urlObs2))])
           .then(axios.spread((resultPeriodo, resultTipo, resultAtividade, resultObs1, resultObs2) => {
 
             let dtPeriodo = JSON.parse(resultPeriodo.data);
@@ -748,11 +761,11 @@
             text += "<tr><td colspan='2'>" + txtTipoQtde + "</td></tr>";
             text += "<tr><td colspan='2' class='font-weight-bold "+ txtColor +"'>Destacaram-se as seguintes ocorrências:</td></tr>";
             for (let item of dtTipo){
-              text += "<tr><td><b>" + item.nm_tipo + "</b> :</td><td class='text-xs-right'>" + this.formatNumber(item.agr_count,"inteiro") + "</td></tr>";
+              text += "<tr><td><b>" + item.nm_tipo + "</b> :</td><td class='text-xs-right'>" + this.$numberFormatService.formatNumber(item.agr_count,"inteiro") + "</td></tr>";
             }
             text += "<tr><td colspan='2' class='font-weight-bold "+ txtColor +"'>Atividade Econômicas mais frequentes envolvidas:</td></tr>";
             for (let item of dtAtividade){
-              text += "<tr><td><b>" + item.nm_atividade + "</b> :</td><td class='text-xs-right'>" + this.formatNumber(item.agr_count,"inteiro") + "</td></tr>";
+              text += "<tr><td><b>" + item.nm_atividade + "</b> :</td><td class='text-xs-right'>" + this.$numberFormatService.formatNumber(item.agr_count,"inteiro") + "</td></tr>";
             }
             text += "<tr><td colspan='2'><br/></td></tr>";
             let ano_min = "";
@@ -761,17 +774,17 @@
               ano_min = this.customParams.value_min_ano_cat ? this.customParams.value_min_ano_cat : dtPeriodo.dataset[0].agr_min_ano_cat;
               ano_max = this.customParams.value_max_ano_cat ? this.customParams.value_max_ano_cat : dtPeriodo.dataset[0].agr_max_ano_cat;
               if(dtObs1.length > 0){
-                text += "<tr><td colspan='2'>" + this.formatNumber(dtObs1[0].agr_count,"inteiro") +" ocorrências envolveram menores de 18 anos.</td></tr>";
+                text += "<tr><td colspan='2'>" + this.$numberFormatService.formatNumber(dtObs1[0].agr_count,"inteiro") +" ocorrências envolveram menores de 18 anos.</td></tr>";
               }
               if(dtObs2.length > 0 && target.options.rowData.codigo == "cat"){
-                text += "<tr><td colspan='2'>Foram reportadas, ainda, "+ this.formatNumber(dtObs2[0].agr_count,"inteiro") +" mortes.</td></tr>";
+                text += "<tr><td colspan='2'>Foram reportadas, ainda, "+ this.$numberFormatService.formatNumber(dtObs2[0].agr_count,"inteiro") +" mortes.</td></tr>";
               }
               text += "<tr><td colspan='2'><br/>Fonte: "+ dtPeriodo.metadata.fonte +"</td></tr>";
               text += "<tr><td colspan='2'>Período: " + ano_min + (ano_min != ano_max ? " a " + ano_max : "") +"</td></tr>";
             } else {
               ano_min = this.customParams.value_min_ano_beneficio ? this.customParams.value_min_ano_beneficio : dtPeriodo.dataset[0].agr_min_ano_beneficio;
               ano_max = this.customParams.value_max_ano_beneficio ? this.customParams.value_max_ano_beneficio : dtPeriodo.dataset[0].agr_max_ano_beneficio;
-              text += "<tr><td colspan='2'>O impacto previdenciário dos afastamentos acidentários no município foi de " + this.formatNumber(dtObs1[0].agr_sum_qt_despesa_total,"monetario",2) +" , com a perda de "+ this.formatNumber(dtObs2[0].agr_sum_qt_dias_perdidos,"inteiro") +" dias de trabalho.</td></tr>";
+              text += "<tr><td colspan='2'>O impacto previdenciário dos afastamentos acidentários no município foi de " + this.$numberFormatService.formatNumber(dtObs1[0].agr_sum_qt_despesa_total,"monetario",2) +" , com a perda de "+ this.$numberFormatService.formatNumber(dtObs2[0].agr_sum_qt_dias_perdidos,"inteiro") +" dias de trabalho.</td></tr>";
               text += "<tr><td colspan='2'><br/>Fonte: "+ dtPeriodo.metadata.fonte +"</td></tr>";
               text += "<tr><td colspan='2'>Período: " + ano_min + (ano_min != ano_max ? " a " + ano_max : "") +"</td></tr>";
             }

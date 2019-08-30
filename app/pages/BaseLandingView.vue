@@ -47,8 +47,8 @@
       },
 
       customFilter (item, queryText, itemText) {
-        queryText = this.replaceSpecialCharacters(queryText).toLowerCase();
-        itemText = this.replaceSpecialCharacters(itemText).toLowerCase();
+        queryText = this.$textTransformService.replaceSpecialCharacters(queryText).toLowerCase();
+        itemText = this.$textTransformService.replaceSpecialCharacters(itemText).toLowerCase();
         return itemText.indexOf(queryText) > -1 
       },
 

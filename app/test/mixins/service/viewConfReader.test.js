@@ -8,18 +8,20 @@ Vue.use(Vuetify)
 require('../../setup.js');
 
 import ViewConfReader from '../../../mixins/service/viewConfReader'
-import NumberFormatter from '../../../mixins/service/numberFormatter'
+import NumberFormatService from '../../../assets/service/singleton/numberFormatService'
 import DatasetManager from '../../../mixins/service/datasetManager'
 import IndicatorsModel from '../../../assets/model/singleton/indicatorsModel'
+import ObjectTransformService from '../../../assets/service/singleton/objectTransformService'
 
 // Imports a component to serve as a bridge to the mixin
 import FLPOSobreLayout from '../../../components/FLPOSobreLayout'
 
 // Sets the mixin in the Vue instance
 Vue.use(ViewConfReader)
-Vue.use(NumberFormatter)
+Vue.prototype.$numberFormatService = new NumberFormatService();
 Vue.use(DatasetManager)
 Vue.prototype.$indicatorsModel = new IndicatorsModel();
+Vue.prototype.$objectTransformService = new ObjectTransformService();
 
 // Tests
 describe('ViewConfReader', () => {
@@ -97,9 +99,11 @@ describe('ViewConfReader', () => {
     const wrapper = mount(FLPOSobreLayout, { sync: false });
     
     wrapper.vm.value = 'untouched';
-    wrapper.vm.customize = (a, b, c, d) => { return a + b + c + d; };
-    wrapper.vm.fnNoArgs = () => { return '4'; };
-    wrapper.vm.fnArgs = (a, b) => { return a.toString() + b.toString(); };
+    wrapper.vm.customFunctions = {
+      customize: (a, b, c, d) => { return a + b + c + d; },
+      fnNoArgs: () => { return '4'; },
+      fnArgs: (a, b) => { return a.toString() + b.toString(); }
+    }
 
     let base_object_list = [{ vl_indicador: 23 }];
     let rules = [
@@ -211,7 +215,7 @@ describe('ViewConfReader', () => {
   test('Verifica aplicação de calcs com funções de contexto', () => {
     const wrapper = mount(FLPOSobreLayout, { sync: false });
     
-    wrapper.vm.cstmMultiply = (d, a, b) => { return a * b; };
+    wrapper.vm.customFunctions = { cstmMultiply: (d, a, b) => { return a * b; } };
     let ds = [
       { cd_indicador: '1', nu_competencia: 2099, vl_indicador: 123.45 },
       { cd_indicador: '1', nu_competencia: 2047, vl_indicador: 678.9 }
@@ -227,7 +231,7 @@ describe('ViewConfReader', () => {
       ]
     }
     
-    let result = wrapper.vm.reformDataset(ds, options, null);
+    let result = wrapper.vm.reformDataset(ds, options, wrapper.vm.customFunctions);
 
     expect(result).toEqual([
       { cd_indicador: '1', nu_competencia: 2099, vl_indicador: 123.45, calc_custom: '246.9' }, 

@@ -231,7 +231,7 @@
               let grp = {}
               grp[payload.rules.group] = true;
               this.customParams.enabled = grp;
-              this.customParams['baseApi'] = this.applyInterpol(payload.rules.api, item, this.customFunctions, this.customFilters);
+              this.customParams['baseApi'] = this.$textTransformService.applyInterpol(payload.rules.api, item, this.customFunctions, this.customFilters);
             }
           }
         } else if (payload.type && payload.type === 'radio') {
@@ -247,7 +247,7 @@
         }
 //        let endpoint = "";
 //        if (payload.rules && payload.rules.api.template){
-//          endpoint = this.applyInterpol(payload.rules.api, this.customParams, this.customFunctions, this.customFilters);          
+//          endpoint = this.$textTransformService.applyInterpol(payload.rules.api, this.customParams, this.customFunctions, this.customFilters);          
 //        } else {
 //          endpoint = this.applyFilters();
 //        }
@@ -275,7 +275,7 @@
             if (filter.type == "slider" || filter.type == "select"){
               if (this.customParams[filter.selection.rules.api.args[0].named_prop] && filter.selection.rules.filter){
                 filter.selection.rules.api.template = apiUrl + filter.selection.rules.filter
-                apiUrl = this.applyInterpol(filter.selection.rules.api, {}, this.customFunctions, this.customParams);
+                apiUrl = this.$textTransformService.applyInterpol(filter.selection.rules.api, {}, this.customFunctions, this.customParams);
                 filterText += "<br/>" + (filter.title ? filter.title : filter.label) + ": ";
                 if (filter.type == "slider"){
                   if (filter.selection.rules.api.args.length > 1){

@@ -227,7 +227,7 @@
 //          this.customParams.enabled = payload.enabled;
 //          this.$refs.chart.adjustVisibleLayers();
 //        } else {
-//          var endpoint = this.applyInterpol(payload.rules.api, this.customParams, this.customFunctions, payload.item);
+//          var endpoint = this.$textTransformService.applyInterpol(payload.rules.api, this.customParams, this.customFunctions, payload.item);
 //          this.fetchData(endpoint);
 //        }
 //      },
@@ -236,17 +236,16 @@
         if (typeof base_object_list == 'string') {
           this[addedParams.attribute] = base_object_list;
         } else {
-          this[addedParams.attribute] = this.applyInterpol(
+          this[addedParams.attribute] = this.$textTransformService.applyInterpol(
             structure,
             this.customParams,
             this.customFunctions,
             base_object_list[0],
             this.sendInvalidInterpol
           );
-          // this[addedParams.attribute] = this.replaceArgs(
+          // this[addedParams.attribute] = this.$textTransformService.replaceArgs(
           //   structure.template,
           //   this.$indicatorsModel.indicatorsToValueArray(
-          //     this,
           //     structure.args, 
           //     this.customFunctions, 
           //     base_object_list,
@@ -266,10 +265,9 @@
         } else {
           this.cardLinks[addedParams.pos] = {
             id: addedParams.id,
-            title: this.replaceArgs(
+            title: this.$textTransformService.replaceArgs(
               this.structure.title.template,
               this.$indicatorsModel.indicatorsToValueArray(
-                this,
                 this.structure.title.preloaded, 
                 this.customFunctions, 
                 base_object_list,

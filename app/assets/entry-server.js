@@ -19,6 +19,14 @@ export default context => {
       store
     } = createApp(context)
     
+    // Distribute store state
+    app.$about.setStore(app.$store.state);
+    app.$analysisUnitModel.setStore(app.$store.state);
+    app.$dimensions.setStore(app.$store.state);
+    app.$indicatorsModel.setStore(app.$store.state);
+    app.$observatories.setStore(app.$store.state);
+    app.$axiosCallSetupService.setStore(app.$store.state);
+    
     // set router's location
     router.push(context.url)
 

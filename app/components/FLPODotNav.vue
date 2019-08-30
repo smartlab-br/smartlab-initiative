@@ -120,10 +120,9 @@
         if (typeof base_object_list == 'string') {
           this.tooltip[addedParams.id] = base_object_list;
         } else {
-          this.tooltip[addedParams.id] = this.replaceArgs(
+          this.tooltip[addedParams.id] = this.$textTransformService.replaceArgs(
             structure.template,
             this.$indicatorsModel.indicatorsToValueArray(
-              this,
               structure.args, 
               this.customFunctions, 
               base_object_list,

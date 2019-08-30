@@ -49,7 +49,18 @@ const NavigationManager = {
           }
 
           this.$analysisUnitModel.setCurrentAnalysisUnit(searchItem.id);
-          this.$analysisUnitModel.findPlaceByID(this, searchItem.id,null,this.changeMiddleToolbar);
+          
+          let findLoc = this.$analysisUnitModel.findPlaceByID(searchItem.id);
+          if (findLoc instanceof Promise || findLoc.then) {
+            findLoc.then(response => {
+              this.changeMiddleToolbar(response);
+              if (searchItem.id && searchItem.id.length > 5) this.localidade = response;
+            })
+            .catch(error => { this.sendError(error); });
+          } else {
+            this.changeMiddleToolbar(findLoc);
+            if (searchItem.id && searchItem.id.length > 5) this.localidade = findLoc;
+          }
 
           this.pushRoute(url);   
         },

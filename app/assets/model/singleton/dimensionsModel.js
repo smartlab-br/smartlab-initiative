@@ -3,6 +3,10 @@ import YamlFetcherService from '../../service/singleton/yamlFetcherService'
 class DimensionsModel {
     constructor() { }
 
+    setStore(store) {
+        this.store = store;
+        this.yamlFetcher = new YamlFetcherService(store);
+    }
     setDimensions(content) {
         this.dimensions = content;
         return this.dimensions;
@@ -11,7 +15,7 @@ class DimensionsModel {
     getDimensions(idObservatorio = null, cbFunction = null) {
         if (idObservatorio === null || idObservatorio === undefined) {
             if (this.dimensions == null && this.dimensions == undefined) { // Start loading only once
-                return YamlFetcherService.loadYaml("br/dimensao/base")
+                return this.yamlFetcher.loadYaml("br/dimensao/base")
                     .then((result) => {
                         if (cbFunction) {
                             cbFunction(result);
@@ -25,7 +29,7 @@ class DimensionsModel {
                 return this.dimensions;
             }
         } else {
-            YamlFetcherService.loadYaml("br/dimensao/" + idObservatorio)
+            this.yamlFetcher.loadYaml("br/dimensao/" + idObservatorio)
                 .then((result) => { cbFunction(result); });
         }
     }
@@ -40,7 +44,7 @@ class DimensionsModel {
     }
 
     getDimensionByObservatoryAndId(obs, id = null) {
-        return YamlFetcherService.loadYaml("br/dimensao/" + obs)
+        return this.yamlFetcher.loadYaml("br/dimensao/" + obs)
             .then((result) => {
                 let dims = result.dimensoes;
                 for (let indx in dims) {

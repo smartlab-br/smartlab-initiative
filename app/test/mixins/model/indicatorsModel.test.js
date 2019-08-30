@@ -8,14 +8,14 @@ Vue.use(Vuetify)
 require('../../setup.js');
 
 import IndicatorsModel from '../../../assets/model/singleton/indicatorsModel'
-import NumberFormatter from '../../../mixins/service/numberFormatter'
+import NumberFormatService from '../../../assets/service/singleton/numberFormatService'
 import ViewConfReader from '../../../mixins/service/viewConfReader.js'
 
 // Imports a component to serve as a bridge to the mixin
 import FLPOSobreLayout from '../../../components/FLPOSobreLayout'
 
 // Sets the mixin in the Vue instance
-Vue.use(NumberFormatter)
+Vue.prototype.$numberFormatService = new NumberFormatService()
 Vue.use(ViewConfReader)
 Vue.prototype.$indicatorsModel = new IndicatorsModel();
 
@@ -29,13 +29,13 @@ describe('IndicatorsModel', () => {
 
   test('Retorna vazio quando nenhum indicador é passado para pegar um atributo', () => {
     const wrapper = mount(FLPOSobreLayout, { sync: false })
-    let result = wrapper.vm.$indicatorsModel.getAttributeFromIndicatorInstance(wrapper.vm, {}, {}, null);
+    let result = wrapper.vm.$indicatorsModel.getAttributeFromIndicatorInstance({}, {}, null);
     expect(result).toEqual(null);
   })
 
   test('Retorna o valor padrão de um atributo', () => {
     const wrapper = mount(FLPOSobreLayout, { sync: false })
-    let result = wrapper.vm.$indicatorsModel.getAttributeFromIndicatorInstance(wrapper.vm, { default: 'default' }, {}, null);
+    let result = wrapper.vm.$indicatorsModel.getAttributeFromIndicatorInstance({ default: 'default' }, {}, null);
     expect(result).toEqual('default');
   })
 
@@ -43,7 +43,7 @@ describe('IndicatorsModel', () => {
     const wrapper = mount(FLPOSobreLayout, { sync: false })
     let indicador = { vl_indicador: 123.45 };
     let structure = { named_prop: 'vl_indicador'};
-    let result = wrapper.vm.$indicatorsModel.getAttributeFromIndicatorInstance(wrapper.vm, structure, {}, indicador);
+    let result = wrapper.vm.$indicatorsModel.getAttributeFromIndicatorInstance(structure, {}, indicador);
     expect(result).toEqual(123.45);
   })
 
@@ -58,7 +58,7 @@ describe('IndicatorsModel', () => {
         { named_prop: 'vl_indicador' }
       ]
     };
-    let result = wrapper.vm.$indicatorsModel.getAttributeFromIndicatorInstance(wrapper.vm, structure, customFunctions, indicador);
+    let result = wrapper.vm.$indicatorsModel.getAttributeFromIndicatorInstance(structure, customFunctions, indicador);
     expect(result).toEqual(246.9);
   })
 
@@ -66,7 +66,7 @@ describe('IndicatorsModel', () => {
     const wrapper = mount(FLPOSobreLayout, { sync: false })
     let indicador = { vl_indicador: 123.45 };
     let structure = { named_prop: 'vl_indicador', format: 'inteiro'};
-    let result = wrapper.vm.$indicatorsModel.getAttributeFromIndicatorInstance(wrapper.vm, structure, {}, indicador);
+    let result = wrapper.vm.$indicatorsModel.getAttributeFromIndicatorInstance(structure, {}, indicador);
     expect(result).toEqual('123');
   })
 
@@ -76,7 +76,7 @@ describe('IndicatorsModel', () => {
     let cbInvalid = jest.fn();
     let structure = { default: 'default', required: true };
 
-    let result = wrapper.vm.$indicatorsModel.getAttributeFromIndicatorInstance(wrapper.vm, structure, {}, null, cbInvalid);
+    let result = wrapper.vm.$indicatorsModel.getAttributeFromIndicatorInstance(structure, {}, null, cbInvalid);
     expect(result).toEqual('default');
     expect(cbInvalid).toHaveBeenCalled();
   })
@@ -87,7 +87,7 @@ describe('IndicatorsModel', () => {
     let cbInvalid = jest.fn();
     let structure = { required: true };
 
-    let result = wrapper.vm.$indicatorsModel.getAttributeFromIndicatorInstance(wrapper.vm, structure, {}, null, cbInvalid);
+    let result = wrapper.vm.$indicatorsModel.getAttributeFromIndicatorInstance(structure, {}, null, cbInvalid);
     expect(result).toEqual('Sem Registros');
     expect(cbInvalid).toHaveBeenCalled();
   })
@@ -212,7 +212,7 @@ describe('IndicatorsModel', () => {
     ]
     let invalidate = jest.fn();
     
-    let result = wrapper.vm.$indicatorsModel.indicatorsToValueArray(wrapper.vm, args, {}, ds, invalidate);
+    let result = wrapper.vm.$indicatorsModel.indicatorsToValueArray(args, {}, ds, invalidate);
     expect(result).toEqual([
       1.8,
       1.8,
