@@ -123,7 +123,7 @@
           this.hasOdometers = true;
           if (this.idObservatorio == "sst"){
             let url="/sst";
-            axios(this.$axiosCallSetupService.getAxiosOdometrosOptions(url))
+            axios(this.$axiosCallSetupService.getAxiosOdometrosOptions(url, 'ACIDENTOMETROS'))
               .then(result => {
                 let odometros = JSON.parse(result.data);
                 this.customParams.odometros = odometros;
