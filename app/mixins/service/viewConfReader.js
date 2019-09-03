@@ -428,7 +428,7 @@ const ViewConfReader = {
 
 				getApiUrl(scope, thematic = false, added_filters = null, agregacao = null) {
 					let url =  '/';
-					let obsAtual = this.identifyObservatory(this.$route.path.split('/')[1]);
+					let obsAtual = this.$observatories.identifyObservatory(this.$route.path.split('/')[1]);
 					if (thematic && obsAtual && obsAtual != 'td') {
 					  url += obsAtual + '/';
 					}

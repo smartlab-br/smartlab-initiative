@@ -519,7 +519,7 @@
     },
    
     created () {
-      let tmpIdObs = this.identifyObservatory(this.$route.path.split('/')[1]);
+      let tmpIdObs = this.$observatories.identifyObservatory(this.$route.path.split('/')[1]);
       this.$dimensions.getDimensions(tmpIdObs, this.setSiblingDimensions);
       this.idObservatorio = tmpIdObs;
       
@@ -684,7 +684,7 @@
       },
       
       keepLoading() {
-        let tmpIdObs = this.identifyObservatory(this.$route.path.split('/')[1]);
+        let tmpIdObs = this.$observatories.identifyObservatory(this.$route.path.split('/')[1]);
         
         this.setActiveDim(this.$route.params.idLocalidade, tmpIdObs, this.$route.query.dimensao);
 
@@ -1001,7 +1001,7 @@
         if (idDimensao) {
           urlComplemento = '&dimensao=' + idDimensao;
         }
-        this.$router.push("/" + this.identifyObservatoryById(idObservatorio) + "/localidade/" + idLocalidade + "?" + urlComplemento);
+        this.$router.push("/" + this.$observatories.identifyObservatoryById(idObservatorio) + "/localidade/" + idLocalidade + "?" + urlComplemento);
       },
 
       getLeadSlice(rowIndx) {

@@ -1,8 +1,10 @@
 import NumberTransformService from "./numberTransformService";
+import NavigationService from "./navigationService";
 
 class TooltipBuilingService {
   constructor() {
     this.numberTransformService = new NumberTransformService();
+    this.navigationService = new NavigationService();
   }
 
   removeFromLabel(label,removed_text_list){
@@ -77,10 +79,10 @@ class TooltipBuilingService {
   }
 
   getUrlByPlace(idLocalidade, route){
-    let obsAtual = this.identifyObservatory(route.path.split('/')[1]);
+    let obsAtual = this.navigationService.identifyObservatory(route.path.split('/')[1]);
     
     let url = '';
-    url = "/" + this.identifyObservatoryById(obsAtual) + '/localidade/' + idLocalidade + '?';  
+    url = "/" + this.navigationService.identifyObservatoryById(obsAtual) + '/localidade/' + idLocalidade + '?';  
 
     if (route.query && route.query.dimensao) {
       url = url + '&dimensao=' + route.query.dimensao;

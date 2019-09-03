@@ -332,27 +332,27 @@
             min-height="50%"
             style="border-left: 1px solid white; padding-left: 10px;"
           />
-          <img v-if="this.identifyObservatory(this.$route.path.split('/')[1]) == 'ti'"
+          <img v-if="this.$observatories.identifyObservatory(this.$route.path.split('/')[1]) == 'ti'"
             v-on:click="pushRoute('https://fnpeti.org.br', true)" 
             src="/static/smartlab/fnpeti.svg"
             class="cursor-pointer mb-1 ml-0" alt="Fórum Nacional de Prevenção e Erradicação do Trabalho Infantil"
             max-height="80%"
             min-height="50%"
           />
-          <img v-if="this.identifyObservatory(this.$route.path.split('/')[1]) == 'ti' || this.identifyObservatory(this.$route.path.split('/')[1]) == 'td'"
+          <img v-if="this.$observatories.identifyObservatory(this.$route.path.split('/')[1]) == 'ti' || this.$observatories.identifyObservatory(this.$route.path.split('/')[1]) == 'td'"
             v-on:click="pushRoute('http:///ibge.gov.br', true)" 
             src="/static/smartlab/ibge.png"
             class="cursor-pointer mb-1 ml-0" alt="Instituto Brasileiro de Geografia e Estatística"
             height="50px"
           />
-          <img v-if="this.identifyObservatory(this.$route.path.split('/')[1]) == 'des'"
+          <img v-if="this.$observatories.identifyObservatory(this.$route.path.split('/')[1]) == 'des'"
             v-on:click="pushRoute('https://www.pactoglobal.org.br', true)" 
             src="/static/smartlab/pacto.svg"
             class="cursor-pointer mb-1 ml-0" alt="Pacto Global - Rede Brasil"
             max-height="80%"
             min-height="50%"
           />
-          <img v-if="this.identifyObservatory(this.$route.path.split('/')[1]) == 'des'"
+          <img v-if="this.$observatories.identifyObservatory(this.$route.path.split('/')[1]) == 'des'"
             v-on:click="pushRoute('http://www.onumulheres.org.br/', true)" 
             src="/static/smartlab/onumulheres.svg"
             class="cursor-pointer ml-2" alt="ONU Mulheres"
@@ -649,7 +649,7 @@
         };
 
         if (this.observatorios) {
-          let tmpObs = this.$observatories.getObservatoryById(this.identifyObservatory(this.$route.path.split('/')[1]));
+          let tmpObs = this.$observatories.getObservatoryById(this.$observatories.identifyObservatory(this.$route.path.split('/')[1]));
           if (tmpObs) {
             observ = tmpObs;
           } else if (this.$route.path.indexOf("saibamais") != -1){ //Sobre
@@ -673,7 +673,7 @@
         return '';
       },
       computedSubtitle: function() {
-        let observ = this.identifyObservatory(this.$route.path.split('/')[1]);
+        let observ = this.$observatories.identifyObservatory(this.$route.path.split('/')[1]);
 
         if (!this.visibleTitle && this.dim && this.dim.short_desc){
           return this.dim.short_desc;
@@ -759,7 +759,7 @@
     watch: {
       '$route.fullPath': function(newVal, oldVal) {
         this.dim = { label: null }
-        let observ = this.identifyObservatory(this.$route.path.split('/')[1]);
+        let observ = this.$observatories.identifyObservatory(this.$route.path.split('/')[1]);
         if (observ != null && (this.$route.query.dimensao || this.$route.params.idLocalidade)) {
           this.$dimensions.getDimensionByObservatoryAndId(observ, this.$route.query.dimensao)
             .then((result) => { this.dim = result; });
@@ -815,7 +815,7 @@
         }
       },
       themeEval: function() {
-        let id = this.identifyObservatory(this.$route.path.split('/')[1]);
+        let id = this.$observatories.identifyObservatory(this.$route.path.split('/')[1]);
         if (id != null) {
           this.changeTheme(id);  
         } else {

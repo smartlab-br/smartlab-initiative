@@ -57,6 +57,31 @@ class ObservatoriesModel {
         return null;
     }
 
+    identifyObservatory(route) {
+        if (route.includes('trabalhodecente')) return 'td';
+        if (route.includes('diversidade')) return 'des';
+        if (route.includes('trabalhoescravo')) return 'te';
+        if (route.includes('trabalhoinfantil')) return 'ti';
+        if (route.includes('sst')) return 'sst';
+        return;
+    }
+
+    // Mapeamento dos IDs para os observatorios
+    identifyObservatoryById(idObservatorio) {
+        switch (idObservatorio){
+            case 'td':
+            return 'trabalhodecente';
+            case 'des':
+            return 'diversidade';
+            case 'te':
+            return 'trabalhoescravo';
+            case 'ti':
+            return 'trabalhoinfantil';
+            case 'sst':
+            return 'sst';
+        }
+    } 
+
     getObservatoriesSearchOptions() {
         return this.observatoriesSearchOptions;
     }

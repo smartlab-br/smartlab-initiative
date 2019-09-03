@@ -15,11 +15,11 @@ const NavigationManager = {
             return;
           }
 
-          let obsAtual = this.identifyObservatory(this.$route.path.split('/')[1]);
+          let obsAtual = this.$observatories.identifyObservatory(this.$route.path.split('/')[1]);
           
           let url = '';
           if (idObservatorio != null) {
-            url = "/" + this.identifyObservatoryById(idObservatorio) + searchItem.to;  
+            url = "/" + this.$observatories.identifyObservatoryById(idObservatorio) + searchItem.to;  
             if(obsAtual && idObservatorio == obsAtual){
               if (this.$route.query && this.$route.query.dimensao) {
                 url = url + '&dimensao=' + this.$route.query.dimensao;
@@ -35,7 +35,7 @@ const NavigationManager = {
               return;
             }
 
-            url = "/" + this.identifyObservatoryById(obsAtual) + searchItem.to;  
+            url = "/" + this.$observatories.identifyObservatoryById(obsAtual) + searchItem.to;  
 
             if (this.$route.query && this.$route.query.dimensao) {
               url = url + '&dimensao=' + this.$route.query.dimensao;
@@ -45,7 +45,7 @@ const NavigationManager = {
           //   if(searchItem.exclude_from && searchItem.exclude_from.includes(obsDefault)){
           //     obsDefault = "te";
           //   }
-          //   url = "/" + this.identifyObservatoryById(obsDefault) + searchItem.to;  
+          //   url = "/" + this.$observatories.identifyObservatoryById(obsDefault) + searchItem.to;  
           }
 
           this.$analysisUnitModel.setCurrentAnalysisUnit(searchItem.id);
@@ -79,31 +79,7 @@ const NavigationManager = {
         },
         openBugDialog(cardTitle){
           this.$emit('showBugDialog', cardTitle);
-        },
-        // Mapeamento dos observatórios para os IDs  
-        identifyObservatory(route) {
-          if (route.includes('trabalhodecente')) return 'td';
-          if (route.includes('diversidade')) return 'des';
-          if (route.includes('trabalhoescravo')) return 'te';
-          if (route.includes('trabalhoinfantil')) return 'ti';
-          if (route.includes('sst')) return 'sst';
-          return;
-        } ,
-        // Mapeamento dos IDs para os observatorios
-        identifyObservatoryById(idObservatorio) {
-          switch (idObservatorio){
-            case 'td':
-              return 'trabalhodecente';
-            case 'des':
-              return 'diversidade';
-            case 'te':
-              return 'trabalhoescravo';
-            case 'ti':
-              return 'trabalhoinfantil';
-            case 'sst':
-              return 'sst';
-          }
-        } 
+        }
       }
     })
   }

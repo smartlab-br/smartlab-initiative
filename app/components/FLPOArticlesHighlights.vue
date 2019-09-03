@@ -109,7 +109,7 @@
     },
     props: ['showTitle'],
     created () {
-      let idObservatorio = this.identifyObservatory(this.$route.path.split('/')[1]);
+      let idObservatorio = this.$observatories.identifyObservatory(this.$route.path.split('/')[1]);
       for (let destaque of this.destaques){
         if (destaque.obs.indexOf(idObservatorio) !== -1){
           this.destaquesObs.push(destaque);
