@@ -13,7 +13,7 @@
     </v-flex>
     -->
     <v-container v-if="observatorio && observatorio.prevalencia" fluid ma-0 pa-0
-      :style="'background-color:' + $colorsService.assessZebraBG(0) + ';'">
+      :style="'background-color:' + $colorsService.assessZebraBG(0, vuetify.theme) + ';'">
       <v-layout row wrap>
         <v-layout pa-3 row wrap justify-center v-show="mapTextLoading || !thematicLoaded">
           <v-progress-circular

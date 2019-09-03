@@ -27,7 +27,7 @@
             viz = viz.colorScaleConfig({
               color: aColorScale,
               axisConfig: this.getTransparentXYConfig(),
-              rectConfig: { stroke: this.$colorsService.assessZebraTitleColor(this.sectionIndex) }
+              rectConfig: { stroke: this.$colorsService.assessZebraTitleColor(this.sectionIndex, null, this.$vuetify.theme) }
             });
             viz = viz.colorScalePosition(options.show_scale ? "right" : false);
           } else {
@@ -61,7 +61,7 @@
                   viz = viz.colorScaleConfig({
                     color: aColorScale,
                     axisConfig: this.getTransparentXYConfig(),
-                    rectConfig: { stroke: this.$colorsService.assessZebraTitleColor(this.sectionIndex) }
+                    rectConfig: { stroke: this.$colorsService.assessZebraTitleColor(this.sectionIndex, null, this.$vuetify.theme) }
                   });
                 } 
                 viz = viz.colorScalePosition(options.show_scale ? "right" : false);
@@ -131,7 +131,7 @@
               .legendConfig({ 
                 shapeConfig:{
                   labelConfig: {
-                    fontColor: this.$colorsService.assessZebraTitleColor(this.sectionIndex)
+                    fontColor: this.$colorsService.assessZebraTitleColor(this.sectionIndex, null, this.$vuetify.theme)
                   }
                 }
               })

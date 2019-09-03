@@ -35,13 +35,13 @@
                   <div v-if="cmpTitleComment != null" class="title-comment" v-html="cmpTitleComment"></div>
                 </v-flex>
                 <!-- <v-spacer></v-spacer> -->
-                <!-- <v-btn small fill-height class="mb-0" flat :color="$colorsService.assessZebraTitleColor(this.sectionIndex)"
+                <!-- <v-btn small fill-height class="mb-0" flat :color="$colorsService.assessZebraTitleColor(this.sectionIndex, $vuetify.theme)"
                   @click.native="downloadChart">
                   <span class="hidden-sm-and-down body">Baixar gráfico</span>
                   <v-icon right>file_download</v-icon>
                 </v-btn> -->
                 <v-flex xs2 text-xs-right pr-4>
-                <v-btn small flat :color="$colorsService.assessZebraTitleColor(this.sectionIndex)"
+                <v-btn small flat :color="$colorsService.assessZebraTitleColor(this.sectionIndex, $vuetify.theme)"
                   @click.native="dialog = true" style="margin: 0px;">
                   <span :class="chartPosition == 'bottom'?'hidden-md-and-down body': 'hidden-sm-and-down body'">Dados</span>
                   <v-icon right>view_list</v-icon> <!-- list -->

@@ -147,16 +147,16 @@ class ColorsService {
       ("0" + parseInt(rgb[3],10).toString(16)).slice(-2) : '';
   }
 
-  assessZebraBG(index) {
-    var alternativa = index % 2;
-    if (alternativa == 1) return this.$vuetify.theme.background2;
-    return this.$vuetify.theme.background;
+  assessZebraBG(index, theme) {
+    let alternativa = index % 2;
+    if (alternativa == 1) return theme.background2;
+    return theme.background;
   }
 
-  getClassIfIsDark(hex, index){
+  getClassIfIsDark(hex, index, theme){
     if (hex == null) {
       if (index != null) {
-        hex = this.assessZebraBG(index);
+        hex = this.assessZebraBG(index, theme);
       } else {
         return "";
       }
@@ -172,13 +172,13 @@ class ColorsService {
     return "";          
   }
 
-  assessZebraTitle(index = 0) {
-    if (this.getClassIfIsDark(this.assessZebraBG(index)) == "theme--dark") return 'white--text';
+  assessZebraTitle(index = 0, theme = null) {
+    if (this.getClassIfIsDark(this.assessZebraBG(index, theme)) == "theme--dark") return 'white--text';
     return '';
   }
 
-  assessZebraTitleColor(index = 0, opacity = null) {
-    if (this.getClassIfIsDark(this.assessZebraBG(index)) == "theme--dark"){
+  assessZebraTitleColor(index = 0, opacity = null, theme = null) {
+    if (this.getClassIfIsDark(this.assessZebraBG(index, theme)) == "theme--dark"){
       if (opacity == null) return 'white';
       return "rgba(255, 255, 255, " + opacity + ")";
     }
@@ -186,8 +186,8 @@ class ColorsService {
     return "rgba(0, 0, 0, " + opacity + ")";
   }
 
-  assessZebraAxesColor(index = 0) {
-    if (this.getClassIfIsDark(this.assessZebraBG(index)) == "theme--dark") return 'white';
+  assessZebraAxesColor(index = 0, theme = null) {
+    if (this.getClassIfIsDark(this.assessZebraBG(index, theme)) == "theme--dark") return 'white';
     return colors.grey.base;
   }
 }

@@ -118,13 +118,13 @@ describe('ColorManager', () => {
   test('Verifica se pega corretamente o valor da classe primária de BG zebrado', () => {
     const wrapper = mount(FLPOSobreLayout, { sync: false })
     wrapper.vm.$vuetify.theme = wrapper.vm.$observatories.getTheme('default'); // Sets initial theme
-    let result = wrapper.vm.$colorsService.assessZebraBG(0);
+    let result = wrapper.vm.$colorsService.assessZebraBG(0, wrapper.vm.$vuetify.theme);
     expect(result).toEqual("#EFEFEF");
   })
 
   test('Verifica se pega corretamente o valor da classe secundária de BG zebrado', () => {
     const wrapper = mount(FLPOSobreLayout, { sync: false })
-    let result = wrapper.vm.$colorsService.assessZebraBG(1);
+    let result = wrapper.vm.$colorsService.assessZebraBG(1, wrapper.vm.$vuetify.theme);
     expect(result).toEqual("#e0e0e0");
   })
 
@@ -143,7 +143,7 @@ describe('ColorManager', () => {
   test('Quando o tema for escuro, o título do zebrado deve vir branco', () => {
     const wrapper = mount(FLPOSobreLayout, { sync: false })
     wrapper.vm.$vuetify.theme.background = '#000000';
-    let result = wrapper.vm.$colorsService.assessZebraTitle(0);
+    let result = wrapper.vm.$colorsService.assessZebraTitle(0, wrapper.vm.$vuetify.theme);
     expect(result).toEqual("white--text");
   })
 
@@ -151,37 +151,37 @@ describe('ColorManager', () => {
     const wrapper = mount(FLPOSobreLayout, { sync: false })
     wrapper.vm.$vuetify.theme.background1 = colors.grey.darken4;
     wrapper.vm.$vuetify.theme.background2 = colors.grey.lighten2;
-    let result = wrapper.vm.$colorsService.assessZebraTitleColor(0);
+    let result = wrapper.vm.$colorsService.assessZebraTitleColor(0, null, wrapper.vm.$vuetify.theme);
     expect(result).toEqual("white");
   })
 
   test('Quando o tema for claro, a propriedade de cor do zebrado deve vir preta', () => {
     const wrapper = mount(FLPOSobreLayout, { sync: false })
-    let result = wrapper.vm.$colorsService.assessZebraTitleColor(1);
+    let result = wrapper.vm.$colorsService.assessZebraTitleColor(1, null, wrapper.vm.$vuetify.theme);
     expect(result).toEqual("black");
   })
 
   test('Quando o tema for escuro, a propriedade de cor translúcida do zebrado deve vir branca com opacidade 0.7', () => {
     const wrapper = mount(FLPOSobreLayout, { sync: false })
-    let result = wrapper.vm.$colorsService.assessZebraTitleColor(0, 0.7);
+    let result = wrapper.vm.$colorsService.assessZebraTitleColor(0, 0.7, wrapper.vm.$vuetify.theme);
     expect(result).toEqual("rgba(255, 255, 255, 0.7)");
   })
 
   test('Quando o tema for claro, a propriedade de cor translúcida do zebrado deve vir preta com opacidade 0.7', () => {
     const wrapper = mount(FLPOSobreLayout, { sync: false })
-    let result = wrapper.vm.$colorsService.assessZebraTitleColor(1, 0.7);
+    let result = wrapper.vm.$colorsService.assessZebraTitleColor(1, 0.7, wrapper.vm.$vuetify.theme);
     expect(result).toEqual("rgba(0, 0, 0, 0.7)");
   })
 
   test('Quando o tema for escuro, a propriedade de cor do eixo deve vir branca', () => {
     const wrapper = mount(FLPOSobreLayout, { sync: false })
-    let result = wrapper.vm.$colorsService.assessZebraAxesColor(0);
+    let result = wrapper.vm.$colorsService.assessZebraAxesColor(0, wrapper.vm.$vuetify.theme);
     expect(result).toEqual("white");
   })
 
   test('Quando o tema for claro, a propriedade de cor do eixo deve vir cinza', () => {
     const wrapper = mount(FLPOSobreLayout, { sync: false })
-    let result = wrapper.vm.$colorsService.assessZebraAxesColor(1);
+    let result = wrapper.vm.$colorsService.assessZebraAxesColor(1, wrapper.vm.$vuetify.theme);
     expect(result).toEqual(colors.grey.base);
   })
 
@@ -222,7 +222,7 @@ describe('ColorManager', () => {
     const wrapper = mount(FLPOSobreLayout, { sync: false })
     wrapper.vm.$vuetify.theme = wrapper.vm.$observatories.getTheme('default'); // Sets initial theme
     wrapper.vm.$vuetify.theme.primary = '#FFF';
-    let result = wrapper.vm.$colorsService.assessZebraTitle(1);
+    let result = wrapper.vm.$colorsService.assessZebraTitle(1, wrapper.vm.$vuetify.theme);
     expect(result).toEqual("");
   })
 
@@ -230,7 +230,7 @@ describe('ColorManager', () => {
     const wrapper = mount(FLPOSobreLayout, { sync: false })
     wrapper.vm.$vuetify.theme = wrapper.vm.$observatories.getTheme('default'); // Sets initial theme
     wrapper.vm.$vuetify.theme.primary = '#FFF';
-    let result = wrapper.vm.$colorsService.assessZebraTitleColor(1);
+    let result = wrapper.vm.$colorsService.assessZebraTitleColor(1, null, wrapper.vm.$vuetify.theme);
     expect(result).toEqual("black");
   })
 

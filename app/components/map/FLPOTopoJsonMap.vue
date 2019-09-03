@@ -110,7 +110,7 @@
             viz = viz.colorScaleConfig({
               color: aColorScale,
               axisConfig: objAxisConfig,            
-              rectConfig: { stroke: this.$colorsService.assessZebraTitleColor(this.sectionIndex) }
+              rectConfig: { stroke: this.$colorsService.assessZebraTitleColor(this.sectionIndex, null, this.$vuetify.theme) }
             });
             viz = viz.colorScale(options.value_field);
           } else {

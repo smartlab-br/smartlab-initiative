@@ -152,7 +152,7 @@
                 shapeConfig:{
                   labelConfig: {
                     fontSize: 14,
-                    fontColor: this.$colorsService.assessZebraTitleColor(this.sectionIndex)
+                    fontColor: this.$colorsService.assessZebraTitleColor(this.sectionIndex, this.$vuetify.theme)
                   }
                 }
               })
