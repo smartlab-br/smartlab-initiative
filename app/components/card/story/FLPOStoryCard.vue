@@ -1,7 +1,7 @@
 <template>
   <v-layout row wrap>
     <v-flex xs12>
-      <v-card :id="structure.id" :class= "'mx-4 mb-5 bg-card ' + $colorsService.getClassIfIsDark(null, sectionIndex, $vuetify.theme)">
+      <v-card :id="structure.id" :class= "'mx-4 mb-5 bg-card ' + $colorsService.getClassIfIsDark(null, sectionIndex, this.$vuetify.theme)">
         <v-progress-linear
           height="5"
           :indeterminate="loadingStatusDataset == 'LOADING'"
@@ -35,13 +35,13 @@
                   <div v-if="cmpTitleComment != null" class="title-comment" v-html="cmpTitleComment"></div>
                 </v-flex>
                 <!-- <v-spacer></v-spacer> -->
-                <!-- <v-btn small fill-height class="mb-0" flat :color="$colorsService.assessZebraTitleColor(this.sectionIndex, $vuetify.theme)"
+                <!-- <v-btn small fill-height class="mb-0" flat :color="$colorsService.assessZebraTitleColor(this.sectionIndex, this.$vuetify.theme)"
                   @click.native="downloadChart">
                   <span class="hidden-sm-and-down body">Baixar gráfico</span>
                   <v-icon right>file_download</v-icon>
                 </v-btn> -->
                 <v-flex xs2 text-xs-right pr-4>
-                <v-btn small flat :color="$colorsService.assessZebraTitleColor(this.sectionIndex, $vuetify.theme)"
+                <v-btn small flat :color="$colorsService.assessZebraTitleColor(this.sectionIndex, this.$vuetify.theme)"
                   @click.native="dialog = true" style="margin: 0px;">
                   <span :class="chartPosition == 'bottom'?'hidden-md-and-down body': 'hidden-sm-and-down body'">Dados</span>
                   <v-icon right>view_list</v-icon> <!-- list -->
@@ -86,7 +86,7 @@
                 <v-flex xs12 :class="chartPosition != 'bottom' ? 'md9': ''" py-3>
                   <v-layout fill-height row wrap>
                     <v-flex xs12 fill-height :style="cmpStyle"
-                      :class="{'mx-0 px-3': ($vuetify.breakpoint.smAndDown || chartPosition == 'bottom'), 'mx-0 pt-2 pr-4 pb-0': ($vuetify.breakpoint.mdAndUp && chartPosition != 'bottom')}">
+                      :class="{'mx-0 px-3': (this.$vuetify.breakpoint.smAndDown || chartPosition == 'bottom'), 'mx-0 pt-2 pr-4 pb-0': (this.$vuetify.breakpoint.mdAndUp && chartPosition != 'bottom')}">
                       <!-- Definition of all possible charts -->
                       <flpo-bar-chart
                         v-if="dataset !== null && structure && structure.chart_type == 'BAR' && structure.chart_options !== null"
