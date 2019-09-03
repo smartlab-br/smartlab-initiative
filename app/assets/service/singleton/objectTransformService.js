@@ -1,5 +1,6 @@
 import DateFormatService from './dateFormatService.js'
 import NumberTransformService from './numberTransformService'
+import TextTransformService from './textTransformService'
 import IndicatorsModel from '../../model/singleton/indicatorsModel'
 
 class ObjectTransformService {
@@ -42,6 +43,10 @@ class ObjectTransformService {
     }
     if (['calcIndexPercentage', 'calcDeltaPercentage', 'getAbsoluteValue'].includes(struct.function)) {
       return this.numberTransformService[struct.function].apply(null, args);
+    }
+    if (['applyInterpolReplaceDatasetParam'].includes(struct.function)) {
+      let textTransformService = new TextTransformService();
+      return textTransformService[struct.function].apply(textTransformService, args);
     }
     if (this[struct.function]) {
       return this[struct.function].apply(null, args);

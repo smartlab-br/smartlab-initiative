@@ -162,8 +162,8 @@
                   v-for="(card, cardIndex) in secao.cards"
                   :key="card.id">
                   <v-layout :id="'anchor_' + card.id" ma-0 pa-0
-                    :style="card.type != 'headline' && card.type != 'text' ? 'min-height:500px;': ''">
-                    <v-layout v-if="card.type && card.type == 'text'"
+                    :style="card.type != 'headline' && card.type != 'text' && card.type != 'presentation' ? 'min-height:500px;': ''">
+                    <v-layout v-if="card.type && (card.type == 'text' || card.type == 'presentation')"
                       :id="card.id" px-4 pb-4>
                       <flpo-composite-text
                         :structure="card.description"
