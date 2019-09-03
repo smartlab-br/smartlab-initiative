@@ -81,8 +81,6 @@ import NavigationManager from '../mixins/service/navigationManager.js'
 Vue.use(NavigationManager)
 import SnackbarManager from '../mixins/service/snackbarManager.js'
 Vue.use(SnackbarManager)
-import ThemeManager from '../mixins/service/themeManager.js'
-Vue.use(ThemeManager)
 import ViewConfReader from '../mixins/service/viewConfReader.js'
 Vue.use(ViewConfReader)
 ///////////////////////////////

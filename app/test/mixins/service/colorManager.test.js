@@ -11,8 +11,10 @@ import ColorsService from '../../../assets/service/singleton/colorsService'
 
 // Imports a component to serve as a bridge to the mixin
 import FLPOSobreLayout from '../../../components/FLPOSobreLayout'
+import ObservatoriesModel from '../../../assets/model/singleton/observatoriesModel';
 
 // Sets the mixin in the Vue instance
+Vue.prototype.$observatories = new ObservatoriesModel();
 Vue.prototype.$colorsService = new ColorsService();
 
 // Tests
@@ -115,7 +117,7 @@ describe('ColorManager', () => {
 
   test('Verifica se pega corretamente o valor da classe primária de BG zebrado', () => {
     const wrapper = mount(FLPOSobreLayout, { sync: false })
-    wrapper.vm.changeTheme('default'); // Sets initial theme
+    wrapper.vm.$vuetify.theme = wrapper.vm.$observatories.getTheme('default'); // Sets initial theme
     let result = wrapper.vm.$colorsService.assessZebraBG(0);
     expect(result).toEqual("#EFEFEF");
   })
@@ -181,5 +183,62 @@ describe('ColorManager', () => {
     const wrapper = mount(FLPOSobreLayout, { sync: false })
     let result = wrapper.vm.$colorsService.assessZebraAxesColor(1);
     expect(result).toEqual(colors.grey.base);
+  })
+
+  // Testes que mexem com o tema - toda mudança de tema afeta a instância inteira.
+  test('Verifica se a mudança para um tema válido funciona corretamente', () => {
+    const wrapper = mount(FLPOSobreLayout, { sync: false })
+    wrapper.vm.$vuetify.theme = wrapper.vm.$observatories.getTheme('te'); // Sets initial theme
+
+    expect(wrapper.vm.$vuetify.theme.primary).toEqual(colors.brown.darken4);
+    expect(wrapper.vm.$vuetify.theme.secondary).toEqual(colors.brown.lighten4);
+    expect(wrapper.vm.$vuetify.theme.accent).toEqual(colors.cyan.accent4);
+    expect(wrapper.vm.$vuetify.theme.error).toEqual(colors.red.base);
+    expect(wrapper.vm.$vuetify.theme.warning).toEqual(colors.amber.base);
+    expect(wrapper.vm.$vuetify.theme.info).toEqual(colors.blue.base);
+    expect(wrapper.vm.$vuetify.theme.success).toEqual(colors.green.base);
+    expect(wrapper.vm.$vuetify.theme.toolbar).toEqual(colors.brown.darken4);
+    expect(wrapper.vm.$vuetify.theme.background).toEqual('#EFEFEF');
+    expect(wrapper.vm.$vuetify.theme.background2).toEqual(colors.grey.lighten2);
+  })
+
+  test('Verifica se o tema permanece o mesmo se o observatório não existir na coleção de temas', () => {
+    const wrapper = mount(FLPOSobreLayout, { sync: false })
+    wrapper.vm.$vuetify.theme = wrapper.vm.$observatories.getTheme('xpto'); // Sets initial theme
+
+    expect(wrapper.vm.$vuetify.theme.primary).toEqual(colors.grey.darken4);
+    expect(wrapper.vm.$vuetify.theme.secondary).toEqual(colors.grey.darken3);
+    expect(wrapper.vm.$vuetify.theme.accent).toEqual(colors.cyan.accent1);
+    expect(wrapper.vm.$vuetify.theme.error).toEqual(colors.red.base);
+    expect(wrapper.vm.$vuetify.theme.warning).toEqual(colors.amber.base);
+    expect(wrapper.vm.$vuetify.theme.info).toEqual(colors.blue.base);
+    expect(wrapper.vm.$vuetify.theme.success).toEqual(colors.green.base);
+    expect(wrapper.vm.$vuetify.theme.toolbar).toEqual(colors.grey.darken4);
+    expect(wrapper.vm.$vuetify.theme.background).toEqual('#EFEFEF');
+    expect(wrapper.vm.$vuetify.theme.background2).toEqual(colors.grey.lighten2);
+  })
+
+  test('Quando o tema for claro, o título do zebrado fica sem classe de cor definida', () => {
+    const wrapper = mount(FLPOSobreLayout, { sync: false })
+    wrapper.vm.$vuetify.theme = wrapper.vm.$observatories.getTheme('default'); // Sets initial theme
+    wrapper.vm.$vuetify.theme.primary = '#FFF';
+    let result = wrapper.vm.$colorsService.assessZebraTitle(1);
+    expect(result).toEqual("");
+  })
+
+  test('Quando o tema for claro, a propriedade de cor do zebrado deve vir preta', () => {
+    const wrapper = mount(FLPOSobreLayout, { sync: false })
+    wrapper.vm.$vuetify.theme = wrapper.vm.$observatories.getTheme('default'); // Sets initial theme
+    wrapper.vm.$vuetify.theme.primary = '#FFF';
+    let result = wrapper.vm.$colorsService.assessZebraTitleColor(1);
+    expect(result).toEqual("black");
+  })
+
+  test('Quando o tema for claro, deve retornar a classe vazia', () => {
+    const wrapper = mount(FLPOSobreLayout, { sync: false })
+    wrapper.vm.$vuetify.theme = wrapper.vm.$observatories.getTheme('default'); // Sets initial theme
+    wrapper.vm.$vuetify.theme.primary = '#FFF';
+    let result = wrapper.vm.$colorsService.getClassIfIsDark(null, 0);
+    expect(result).toEqual("");
   })
 })

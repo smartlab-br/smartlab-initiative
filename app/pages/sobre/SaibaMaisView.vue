@@ -36,7 +36,7 @@
       // }
     },
     mounted: function() {
-      this.changeTheme('default');
+      this.$vuetify.theme = this.$observatories.getTheme('default');
     },
     methods: {
       sendError(message) {

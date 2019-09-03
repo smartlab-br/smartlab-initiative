@@ -90,7 +90,8 @@ class ObservatoriesModel {
     }
 
     getTheme(observatorio) {
-        return this.colorsService.themeLibrary[observatorio];
+        if (observatorio) return this.colorsService.themeLibrary[observatorio];
+        return this.colorsService.themeLibrary['default'];
     }
 }
 

@@ -815,12 +815,8 @@
         }
       },
       themeEval: function() {
-        let id = this.$observatories.identifyObservatory(this.$route.path.split('/')[1]);
-        if (id != null) {
-          this.changeTheme(id);  
-        } else {
-          this.changeTheme('default');
-        }
+        let theme = this.$observatories.getTheme(this.$observatories.identifyObservatory(this.$route.path.split('/')[1]));
+        this.$vuetify.theme = theme;
       },
       changeMiddleToolbar: function(params) {
         if (params && params.localidade) {

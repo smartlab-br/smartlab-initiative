@@ -1,3 +1,4 @@
+import colors from 'vuetify/es5/util/colors'
 import * as d3chrom from 'd3-scale-chromatic'
 
 class ColorsService {
