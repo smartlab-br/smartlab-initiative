@@ -1,10 +1,9 @@
 import NumberTransformService from "./numberTransformService";
-import NavigationService from "./navigationService";
+import ObservatoriesModel from "../../model/singleton/observatoriesModel";
 
-class TooltipBuilingService {
+class TooltipBuildingService {
   constructor() {
     this.numberTransformService = new NumberTransformService();
-    this.navigationService = new NavigationService();
   }
 
   removeFromLabel(label,removed_text_list){
@@ -79,10 +78,11 @@ class TooltipBuilingService {
   }
 
   getUrlByPlace(idLocalidade, route){
-    let obsAtual = this.navigationService.identifyObservatory(route.path.split('/')[1]);
+    let observatoriesModel = new ObservatoriesModel();
+    let obsAtual = observatoriesModel.identifyObservatory(route.path.split('/')[1]);
     
     let url = '';
-    url = "/" + this.navigationService.identifyObservatoryById(obsAtual) + '/localidade/' + idLocalidade + '?';  
+    url = "/" + observatoriesModel.identifyObservatoryById(obsAtual) + '/localidade/' + idLocalidade + '?';  
 
     if (route.query && route.query.dimensao) {
       url = url + '&dimensao=' + route.query.dimensao;
@@ -91,4 +91,4 @@ class TooltipBuilingService {
   }
 }
 
-export default TooltipBuilingService;
+export default TooltipBuildingService;

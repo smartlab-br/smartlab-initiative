@@ -205,6 +205,7 @@
 
       generateViz(options) {
         var tooltip_function = options.tooltip_function ? options.tooltip_function : this.$tooltipBuildingService.defaultTooltip;
+        let tooltip_context = options.tooltip_function ? this : this.$tooltipBuildingService;
         options.clickable = options.clickable == true || options.clickable == undefined  ? true : false;
         var headers = this.headers;
         var route = this.$route;
@@ -234,7 +235,7 @@
           .topojson(this.options.topology && this.options.topology == 'uf' ? this.topologyUf : this.topology) 
           .tooltipConfig({
             body: function(d) {
-              return tooltip_function(d, route, headers, removed_text_list, options)
+              return tooltip_function.apply(tooltip_context, [d, route, headers, removed_text_list, options]);
             },
             title: function(d) {
               return "";

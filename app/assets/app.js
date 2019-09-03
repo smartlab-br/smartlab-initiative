@@ -67,9 +67,9 @@ import ObjectTransformService from './service/singleton/objectTransformService.j
 Vue.prototype.$objectTransformService = new ObjectTransformService();
 import TextTransformService from './service/singleton/textTransformService.js'
 Vue.prototype.$textTransformService = new TextTransformService();
-import ColorsService from '../service/singleton/colorsService'
+import ColorsService from './service/singleton/colorsService'
 Vue.prototype.$colorsService = new ColorsService();
-import TooltipBuildingService from '../service/singleton/tooltipBuildingService'
+import TooltipBuildingService from './service/singleton/tooltipBuildingService'
 Vue.prototype.$tooltipBuildingService = new TooltipBuildingService();
 
 // 2.2. Global Mixins

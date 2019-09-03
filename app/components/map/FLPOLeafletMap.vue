@@ -436,7 +436,8 @@
 
       circleClick(e) {
         let tooltip_function = this.options.tooltip_function ? this[this.options.tooltip_function] : this.defaultLeafletTooltip;
-        tooltip_function(e.target, this.$route, this.headers, this.options.removed_text_list, this.options);
+        let tooltip_context = this.options.tooltip_function ? this : this.$tooltipBuildingService;
+        tooltip_function.apply(tooltip_context, [e.target, this.$route, this.headers, this.options.removed_text_list, this.options]);
       },
 
       changeCursor(image){

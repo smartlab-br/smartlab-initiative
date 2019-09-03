@@ -99,7 +99,7 @@
             .select(containerId)  // container DIV to hold the visualization
             .data(slicedDS)  // data to use with the visualization
             .label((d) => { //retira label se x < 0 - utilizado na pirâmide
-              return (d[options.x] < 0)? "" :  this.removeFromLabel(
+              return (d[options.x] < 0)? "" :  this.$tooltipBuildingService.removeFromLabel(
                 d[options.text],
                 options.removed_text_list
               );
@@ -114,6 +114,7 @@
 
       generateViz(options){
         let tooltip_function = options.tooltip_function ? options.tooltip_function : this.$tooltipBuildingService.defaultTooltip;
+        let tooltip_context = options.tooltip_function ? this : this.$tooltipBuildingService;
         let headers = this.headers;
         let route = this.$route;
         let removed_text_list = options.removed_text_list;
@@ -158,7 +159,7 @@
               .legendPosition("top")
               .tooltipConfig({
                               body: function(d) {
-                                return tooltip_function(d, route, headers, removed_text_list, options)
+                                return tooltip_function.apply(tooltip_context, [d, route, headers, removed_text_list, options]);
                               },
                               title: function(d) {
                                 return "";
