@@ -148,7 +148,7 @@ class ColorsService {
   }
 
   getThemeFromId(id) {
-    return this.themeLibrary[id];
+    return this.themeLibrary[id] ? Object.assign({}, this.themeLibrary[id]) : null;
   }
 
   assessZebraBG(index, theme) {

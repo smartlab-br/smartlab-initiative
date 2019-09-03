@@ -816,7 +816,7 @@
       },
       themeEval: function() {
         let theme = this.$observatories.getTheme(this.$observatories.identifyObservatory(this.$route.path.split('/')[1]));
-        this.$vuetify.theme = theme;
+        if (theme) this.$vuetify.theme = theme; // Changes only if 
       },
       changeMiddleToolbar: function(params) {
         if (params && params.localidade) {

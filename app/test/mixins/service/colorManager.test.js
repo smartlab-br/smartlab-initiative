@@ -129,6 +129,13 @@ describe('ColorManager', () => {
     expect(result).toEqual("#e0e0e0");
   })
 
+  test('Quando o tema for escuro, o título do zebrado deve vir branco', () => {
+    const wrapper = mount(FLPOSobreLayout, { sync: false })
+    wrapper.vm.$vuetify.theme.background = '#000000';
+    let result = wrapper.vm.$colorsService.assessZebraTitle(0, wrapper.vm.$vuetify.theme);
+    expect(result).toEqual("white--text");
+  })
+
   test('Quando o tema for escuro, deve retornar a classe correspondente', () => {
     const wrapper = mount(FLPOSobreLayout, { sync: false })
     let result = wrapper.vm.$colorsService.getClassIfIsDark(null, 0, wrapper.vm.$vuetify.theme);
@@ -141,13 +148,7 @@ describe('ColorManager', () => {
     expect(result).toEqual("");
   })
 
-  test('Quando o tema for escuro, o título do zebrado deve vir branco', () => {
-    const wrapper = mount(FLPOSobreLayout, { sync: false })
-    wrapper.vm.$vuetify.theme.background = '#000000';
-    let result = wrapper.vm.$colorsService.assessZebraTitle(0, wrapper.vm.$vuetify.theme);
-    expect(result).toEqual("white--text");
-  })
-
+  
   test('Quando o tema for escuro, a propriedade de cor do zebrado deve vir branca', () => {
     const wrapper = mount(FLPOSobreLayout, { sync: false })
     wrapper.vm.$vuetify.theme.background1 = colors.grey.darken4;
@@ -205,8 +206,11 @@ describe('ColorManager', () => {
 
   test('Verifica se o tema permanece o mesmo se o observatório não existir na coleção de temas', () => {
     const wrapper = mount(FLPOSobreLayout, { sync: false })
-    wrapper.vm.$vuetify.theme = wrapper.vm.$observatories.getTheme('xpto'); // Sets initial theme
-
+    wrapper.vm.$vuetify.theme = wrapper.vm.$observatories.getTheme('default');
+    
+    let theme = wrapper.vm.$observatories.getTheme('xpto');
+    if (theme) wrapper.vm.$vuetify.theme = theme; // Sets initial theme
+    
     expect(wrapper.vm.$vuetify.theme.primary).toEqual(colors.grey.darken4);
     expect(wrapper.vm.$vuetify.theme.secondary).toEqual(colors.grey.darken3);
     expect(wrapper.vm.$vuetify.theme.accent).toEqual(colors.cyan.accent1);
@@ -238,8 +242,7 @@ describe('ColorManager', () => {
   test('Quando o tema for claro, deve retornar a classe vazia', () => {
     const wrapper = mount(FLPOSobreLayout, { sync: false })
     wrapper.vm.$vuetify.theme = wrapper.vm.$observatories.getTheme('default'); // Sets initial theme
-    wrapper.vm.$vuetify.theme.primary = '#FFF';
-    console.log(wrapper.vm.$vuetify.theme);
+    wrapper.vm.$vuetify.theme.background = '#FFF';
     let result = wrapper.vm.$colorsService.getClassIfIsDark(null, 0, wrapper.vm.$vuetify.theme);
     expect(result).toEqual("");
   })
