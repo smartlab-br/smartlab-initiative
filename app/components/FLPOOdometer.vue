@@ -10,7 +10,7 @@
             </div>
             </v-flex>
             <v-flex xs12 pa-0 class="odometer-title caption text-xs-center" v-html="odometer.title ? odometer.title : ''"></v-flex>
-            <v-flex xs12 pa-0 class="odometer-title caption text-xs-center" v-if="odometer.show_pace && dtOdometros">{{ odometer.pace_description ? odometer.pace_description : ""}} {{ getPaceString(dtOdometros[odometer.id_odometer].delta_por_ms, true) }}</v-flex>
+            <v-flex xs12 pa-0 class="odometer-title caption text-xs-center" v-if="odometer.show_pace && dtOdometros">{{ odometer.pace_description ? odometer.pace_description : ""}} {{ $numberTransformService.getPaceString(dtOdometros[odometer.id_odometer].delta_por_ms, true) }}</v-flex>
           </v-layout>
         </v-flex>
       </v-layout>

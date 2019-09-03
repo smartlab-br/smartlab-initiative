@@ -41,7 +41,7 @@ class ObjectTransformService {
       let model = new IndicatorsModel();
       return model[struct.function].apply(model, args);
     }
-    if (['calcIndexPercentage', 'calcDeltaPercentage', 'getAbsoluteValue'].includes(struct.function)) {
+    if (['calcIndexPercentage', 'calcDeltaPercentage', 'getAbsoluteValue', 'getPaceString'].includes(struct.function)) {
       return this.numberTransformService[struct.function].apply(null, args);
     }
     if (['applyInterpolReplaceDatasetParam'].includes(struct.function)) {
