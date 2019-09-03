@@ -147,6 +147,10 @@ class ColorsService {
       ("0" + parseInt(rgb[3],10).toString(16)).slice(-2) : '';
   }
 
+  getThemeFromId(id) {
+    return this.themeLibrary[id];
+  }
+
   assessZebraBG(index, theme) {
     let alternativa = index % 2;
     if (alternativa == 1) return theme.background2;
@@ -173,12 +177,12 @@ class ColorsService {
   }
 
   assessZebraTitle(index = 0, theme = null) {
-    if (this.getClassIfIsDark(this.assessZebraBG(index, theme)) == "theme--dark") return 'white--text';
+    if (this.getClassIfIsDark(this.assessZebraBG(index, theme), theme) == "theme--dark") return 'white--text';
     return '';
   }
 
   assessZebraTitleColor(index = 0, opacity = null, theme = null) {
-    if (this.getClassIfIsDark(this.assessZebraBG(index, theme)) == "theme--dark"){
+    if (this.getClassIfIsDark(this.assessZebraBG(index, theme), theme) == "theme--dark"){
       if (opacity == null) return 'white';
       return "rgba(255, 255, 255, " + opacity + ")";
     }
@@ -187,7 +191,7 @@ class ColorsService {
   }
 
   assessZebraAxesColor(index = 0, theme = null) {
-    if (this.getClassIfIsDark(this.assessZebraBG(index, theme)) == "theme--dark") return 'white';
+    if (this.getClassIfIsDark(this.assessZebraBG(index, theme), theme) == "theme--dark") return 'white';
     return colors.grey.base;
   }
 }

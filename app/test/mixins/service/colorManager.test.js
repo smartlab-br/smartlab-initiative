@@ -1,4 +1,5 @@
 import { mount } from '@vue/test-utils'
+import colors from 'vuetify/es5/util/colors'
 
 import Vue from 'vue'
 import Vuetify from 'vuetify'
@@ -130,13 +131,13 @@ describe('ColorManager', () => {
 
   test('Quando o tema for escuro, deve retornar a classe correspondente', () => {
     const wrapper = mount(FLPOSobreLayout, { sync: false })
-    let result = wrapper.vm.$colorsService.getClassIfIsDark(null, 0);
+    let result = wrapper.vm.$colorsService.getClassIfIsDark(null, 0, wrapper.vm.$vuetify.theme);
     expect(result).toEqual("theme--dark");
   })
 
   test('Quando não houver o dado da cor do bg e nenhum índice for informado, volta classe em branco.', () => {
     const wrapper = mount(FLPOSobreLayout, { sync: false })
-    let result = wrapper.vm.$colorsService.getClassIfIsDark(null, null);
+    let result = wrapper.vm.$colorsService.getClassIfIsDark(null, null, wrapper.vm.$vuetify.theme);
     expect(result).toEqual("");
   })
 
@@ -238,7 +239,8 @@ describe('ColorManager', () => {
     const wrapper = mount(FLPOSobreLayout, { sync: false })
     wrapper.vm.$vuetify.theme = wrapper.vm.$observatories.getTheme('default'); // Sets initial theme
     wrapper.vm.$vuetify.theme.primary = '#FFF';
-    let result = wrapper.vm.$colorsService.getClassIfIsDark(null, 0);
+    console.log(wrapper.vm.$vuetify.theme);
+    let result = wrapper.vm.$colorsService.getClassIfIsDark(null, 0, wrapper.vm.$vuetify.theme);
     expect(result).toEqual("");
   })
 })

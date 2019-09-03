@@ -1,7 +1,7 @@
 <template>
   <v-layout row wrap>
     <v-flex xs12>
-      <v-card :id="structure.id" :class= "'mx-4 mb-5 bg-card ' + $colorsService.getClassIfIsDark(null, sectionIndex)">
+      <v-card :id="structure.id" :class= "'mx-4 mb-5 bg-card ' + $colorsService.getClassIfIsDark(null, sectionIndex, $vuetify.theme)">
         <v-progress-linear
           height="5"
           :indeterminate="loadingStatusDataset == 'LOADING'"
