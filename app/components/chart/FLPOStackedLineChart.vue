@@ -30,8 +30,9 @@
       },
 
       generateViz(options){
-        let tooltip_function = options.tooltip_function ? options.tooltip_function : this.defaultTooltip;
+        let tooltip_function = options.tooltip_function ? options.tooltip_function : this.$tooltipBuildingService.defaultTooltip;
         let headers = this.headers;
+        let route = this.$route;
         let removed_text_list = options.removed_text_list;
 
         let areaConfig = {
@@ -42,7 +43,7 @@
         };
         
         if (options.colorScale) {
-          areaConfig.stroke = this.getColorScale(options.colorScale.name);
+          areaConfig.stroke = this.$colorsService.getColorScale(options.colorScale.name);
         } else if (options.color !== null && options.color !== undefined) {
           areaConfig.stroke = options.color;
         } 
@@ -75,7 +76,7 @@
           .yConfig(yConfig)
           .tooltipConfig({
             body: function(d) {
-              return tooltip_function(d, headers, removed_text_list,options)
+              return tooltip_function(d, route, headers, removed_text_list,options)
             },
             title: function(d) {
               return "";

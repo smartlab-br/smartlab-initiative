@@ -68,7 +68,7 @@
             if (rules[markerIndx].color) {
               marker.color = rules[markerIndx].color;
             } else {
-              marker.color = this.getColorFromCategoricalScale('Set3', markerIndx);
+              marker.color = this.$colorsService.getColorFromCategoricalScale('Set3', markerIndx);
             }
             markers.push(marker);
 

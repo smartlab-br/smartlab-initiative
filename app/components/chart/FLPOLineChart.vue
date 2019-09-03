@@ -14,7 +14,7 @@
     created() {
       let colorArray = null;
       if (this.options.colorScale) {
-        colorArray = this.getColorScale(this.options.colorScale.name);
+        colorArray = this.$colorsService.getColorScale(this.options.colorScale.name);
       } else if (this.options.colorArray) {
         colorArray = this.options.colorArray;
       }
@@ -50,8 +50,9 @@
       },
 
       generateViz(options){
-        let tooltip_function = options.tooltip_function ? options.tooltip_function : this.defaultTooltip;
+        let tooltip_function = options.tooltip_function ? options.tooltip_function : this.$tooltipBuildingService.defaultTooltip;
         let headers = this.headers;
+        let route = this.$route;
         let removed_text_list = options.removed_text_list;
 
         let lineConfig = { strokeWidth: options.stroke ? options.stroke : 4 };
@@ -59,7 +60,7 @@
 
         if (options.colorScale || options.colorArray) {
           lineConfig.stroke = (d) => { return colorCat[d[options.id]]; };
-          //lineConfig.stroke = this.getColorScale(options.colorScale.name);
+          //lineConfig.stroke = this.$colorsService.getColorScale(options.colorScale.name);
         } else if (options.color !== null && options.color !== undefined) {
           lineConfig.stroke = options.color;
         } 
@@ -102,7 +103,7 @@
               .yConfig(yConfig)
               .tooltipConfig({
                               body: function(d) {
-                                return tooltip_function(d, headers, removed_text_list,options)
+                                return tooltip_function(d, route, headers, removed_text_list,options)
                               },
                               title: function(d) {
                                 return "";

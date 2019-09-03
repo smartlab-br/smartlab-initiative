@@ -15,7 +15,7 @@
       }
 
       if (this.options.colorScale && this.options.colorScale.name) {
-        colorArray = this.getColorScale(this.options.colorScale.name, this.options.colorScale.type, this.options.colorScale.order, this.options.colorScale.levels);
+        colorArray = this.$colorsService.getColorScale(this.options.colorScale.name, this.options.colorScale.type, this.options.colorScale.order, this.options.colorScale.levels);
       } else if (this.options.colorArray) {
         colorArray = this.options.colorArray;
       }
@@ -113,8 +113,9 @@
       },
 
       generateViz(options){
-        let tooltip_function = options.tooltip_function ? options.tooltip_function : this.defaultTooltip;
+        let tooltip_function = options.tooltip_function ? options.tooltip_function : this.$tooltipBuildingService.defaultTooltip;
         let headers = this.headers;
+        let route = this.$route;
         let removed_text_list = options.removed_text_list;
 
         let barConfig = {
@@ -157,7 +158,7 @@
               .legendPosition("top")
               .tooltipConfig({
                               body: function(d) {
-                                return tooltip_function(d, headers, removed_text_list,options)
+                                return tooltip_function(d, route, headers, removed_text_list, options)
                               },
                               title: function(d) {
                                 return "";
@@ -175,7 +176,7 @@
           viz = viz.color(function(d) { return (d.color !== null && d.color !== undefined) ? d.color : '#2196F3'; });
         } else {
           viz = viz.colorScaleConfig({
-              color: this.getColorScale(options.colorScale.name)
+              color: this.$colorsService.getColorScale(options.colorScale.name)
           });           
           viz = viz.color("color");
         } 

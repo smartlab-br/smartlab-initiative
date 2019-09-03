@@ -562,7 +562,7 @@ export default {
         })
         .colorScalePosition("right")
         .colorScaleConfig({
-          color: this.getColorScale("Blues", "singleHue", "asc", 9),
+          color: this.$colorsService.getColorScale("Blues", "singleHue", "asc", 9),
           axisConfig: {
             labels: [],
             gridConfig: {stroke: "transparent"},

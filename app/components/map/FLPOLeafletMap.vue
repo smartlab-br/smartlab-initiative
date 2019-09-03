@@ -436,20 +436,20 @@
 
       circleClick(e) {
         let tooltip_function = this.options.tooltip_function ? this[this.options.tooltip_function] : this.defaultLeafletTooltip;
-        tooltip_function(e.target, this.headers, this.options.removed_text_list, this.options);
+        tooltip_function(e.target, this.$route, this.headers, this.options.removed_text_list, this.options);
       },
 
       changeCursor(image){
         this.$refs[this.id].style.cursor = image;
       },
 
-      obsTETooltip(target, tooltip_list = [], removed_text_list = [], options = null){
+      obsTETooltip(target, route, tooltip_list = [], removed_text_list = [], options = null){
         let url = "/te/indicadoresmunicipais/rerank?categorias=cd_mun_ibge,cd_uf,cd_indicador,nm_municipio_uf,nu_competencia_max,nu_competencia_min&valor=vl_indicador&agregacao=sum&filtros=nn-vl_indicador,and,in-cd_indicador-'te_ope'-'te_rgt'-'te_nat'-'te_res'-'te_inspecoes'-'te_insp_rgt',and,post-eq-cd_mun_ibge-"+ target.options.rowData.cd_mun_ibge;
         // let url = "/te/indicadoresmunicipais?categorias=cd_mun_ibge,nm_municipio_uf,nu_competencia_max,nu_competencia_min&valor=vl_indicador&agregacao=sum&pivot=cd_indicador&filtros=nn-vl_indicador,and,in-cd_indicador-'te_ope'-'te_rgt'-'te_nat'-'te_res'-'te_inspecoes',and,eq-cd_mun_ibge-"+ target.options.rowData.cd_mun_ibge;
         let urlIndicadores = "/indicadoresmunicipais?categorias=cd_indicador,ds_indicador_radical,nu_competencia,nu_competencia_max,nu_competencia_min,vl_indicador&filtros=nn-vl_indicador,and,in-cd_indicador-'06_01_09_01'-'01_16_02_00'-'01_15_01_00'-'01_14_13_00',and,eq-cd_mun_ibge-"+ target.options.rowData.cd_mun_ibge+",and,eq-nu_competencia-nu_competencia_max&ordenacao=ds_indicador_radical";
         let text = "";
         if (options && options.clickable){
-          text += "<p class='text-xs-right ma-0'><a href='" + this.getUrlByPlace(target.options.rowData.cd_mun_ibge) + "' class='primary--text font-weight-black'>IR PARA</a></p>";
+          text += "<p class='text-xs-right ma-0'><a href='" + this.$tooltipBuildingService.getUrlByPlace(target.options.rowData.cd_mun_ibge, route) + "' class='primary--text font-weight-black'>IR PARA</a></p>";
         }
         if (this.customParams.filterUrl && this.customParams.filterUrl != ""){
           url = url + this.customParams.filterUrl;
@@ -576,7 +576,7 @@
           }));
       },
 
-      obsTITooltip(target, tooltip_list = [], removed_text_list = [], options = null){
+      obsTITooltip(target, route, tooltip_list = [], removed_text_list = [], options = null){
         // let urlSinan = "/indicadoresmunicipais?categorias=nm_municipio_uf,ds_agreg_primaria,ds_fonte,nu_competencia_min,nu_competencia_max&valor=vl_indicador&agregacao=sum&filtros=eq-cd_indicador-'06_05_13_00',and,eq-cd_mun_ibge-"+ target.options.rowData.cd_mun_ibge;
         let urlCatMenores = "/sst/cats?categorias=1&valor=nm_municipio_uf,cd_municipio_ibge&agregacao=COUNT&filtros=lt-idade_cat-18,and,eq-cd_municipio_ibge_dv-"+ target.options.rowData.cd_mun_ibge;
         let urlProvaBrasil = "/ti/provabrasil?categorias=nm_municipio_uf,nu_ano_prova_brasil-nu_competencia&valor=vl_indicador&agregacao=sum&filtros=nn-vl_indicador,and,ne-vl_indicador-0,and,eq-nu_ano_prova_brasil-2017,and,eq-cd_tr_fora-1,and,eq-cd_municipio_ibge_dv-"+ target.options.rowData.cd_mun_ibge;
@@ -588,7 +588,7 @@
         let urlCensoAgro = "/ti/censoagromunicipal?categorias=nm_municipio_uf,qt_ocupados_menores14&filtros=eq-cod_mun-"+ target.options.rowData.cd_mun_ibge;
         let text = "";
         if (options && options.clickable){
-          text += "<p class='text-xs-right ma-0'><a href='" + this.getUrlByPlace(target.options.rowData.cd_mun_ibge) + "' class='primary--text font-weight-black'>IR PARA</a></p>";
+          text += "<p class='text-xs-right ma-0'><a href='" + this.$tooltipBuildingService.getUrlByPlace(target.options.rowData.cd_mun_ibge, route) + "' class='primary--text font-weight-black'>IR PARA</a></p>";
         }
         if (this.customParams.filterUrl && this.customParams.filterUrl != ""){
           // urlSinan = urlSinan + this.customParams.filterUrl;
@@ -669,10 +669,10 @@
           }))
       },
 
-      obsSSTTooltip(target, tooltip_list = [], removed_text_list = [], options = null) {
+      obsSSTTooltip(target, route, tooltip_list = [], removed_text_list = [], options = null) {
         let text = "";
         if (options && options.clickable){
-          text += "<p class='text-xs-right ma-0'><a href='" + this.getUrlByPlace(target.options.rowData.cd_municipio_ibge_dv) + "' class='primary--text font-weight-black'>IR PARA</a></p>";
+          text += "<p class='text-xs-right ma-0'><a href='" + this.$tooltipBuildingService.getUrlByPlace(target.options.rowData.cd_municipio_ibge_dv, route) + "' class='primary--text font-weight-black'>IR PARA</a></p>";
         }
         if (target.options.rowData.codigo == "sinan"){
           let urlIndicadores = "/indicadoresmunicipais?categorias=nm_municipio_uf,ds_agreg_primaria,ds_fonte&valor=vl_indicador&agregacao=sum&ordenacao=ds_agreg_primaria&filtros=nn-vl_indicador,and,ne-vl_indicador-0,and,in-cd_indicador-'06_05_01_00'-'06_05_02_00'-'06_05_03_00'-'06_05_04_00'-'06_05_05_00'-'06_05_06_00'-'06_05_07_00'-'06_05_08_00'-'06_05_09_00'-'06_05_11_00'-'06_05_12_00',and,ge-nu_competencia-'2012',and,eq-cd_mun_ibge-"+ target.options.rowData.cd_mun_ibge;
@@ -798,9 +798,9 @@
         }
       },
 
-      defaultLeafletTooltip(target, tooltip_list = [], removed_text_list = [], options = null) { 
+      defaultLeafletTooltip(target, route, tooltip_list = [], removed_text_list = [], options = null) { 
         let d = target.options.rowData;
-        target.bindPopup(this.defaultTooltip(d, tooltip_list, removed_text_list, options)).openPopup();
+        target.bindPopup(this.$tooltipBuildingService.defaultTooltip(d, route, tooltip_list, removed_text_list, options)).openPopup();
       },
 
       addDeafultMarker(localidade, map) {

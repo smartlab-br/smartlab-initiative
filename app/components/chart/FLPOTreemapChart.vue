@@ -34,7 +34,7 @@
             if (options.colorScale.color_array){
               viz = viz.color((d) => { return options.colorScale.color_array[d[options.id]]; });
             } else {
-              aColorScale = this.getColorScale(options.colorScale.name, options.colorScale.type, options.colorScale.order, levels);
+              aColorScale = this.$colorsService.getColorScale(options.colorScale.name, options.colorScale.type, options.colorScale.order, levels);
               let distValues = [];
               for (let reg of slicedDS) {  
                 if (!distValues.includes(reg[options.size])){
@@ -100,8 +100,9 @@
       },
 
       generateViz(options){
-        let tooltip_function = options.tooltip_function ? options.tooltip_function : this.defaultTooltip;
+        let tooltip_function = options.tooltip_function ? options.tooltip_function : this.$tooltipBuildingService.defaultTooltip;
         let headers = this.headers;
+        let route = this.$route;
         let removed_text_list = options.removed_text_list;
         
         let viz = new d3plus.Treemap()
@@ -135,7 +136,7 @@
               })
               .tooltipConfig({
                   body: function(d) {
-                    return tooltip_function(d, headers, removed_text_list, options)
+                    return tooltip_function(d, route, headers, removed_text_list, options)
                   },
                   title: function(d) {
                     return "";
