@@ -19,7 +19,7 @@
               :icon = "observatorio.icon"
               :app-icon = "observatorio.appIcon"
               :media = "observatorio.media"
-              :bg-color = "getObsTheme(observatorio.id).primary"
+              :bg-color = "$observatories.getTheme(observatorio.id).primary"
             -->
             <flpo-linked-view-card
               :index-tab = "30 + indxObs"
@@ -28,7 +28,7 @@
               :to = "observatorio.to"
               :external = "observatorio.external"
               :title = "observatorio.short_desc"
-              :ripple-color = "getObsTheme(observatorio.id).primary"
+              :ripple-color = "$observatories.getTheme(observatorio.id).primary"
               :title-color = "'white'"
               :blocked = "observatorio.status == 'EM BREVE'">
             </flpo-linked-view-card>

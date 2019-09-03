@@ -110,7 +110,7 @@
             viz = viz.colorScaleConfig({
               color: aColorScale,
               axisConfig: objAxisConfig,            
-              rectConfig: { stroke: this.assessZebraTitleColor(this.sectionIndex) }
+              rectConfig: { stroke: this.$colorsService.assessZebraTitleColor(this.sectionIndex) }
             });
             viz = viz.colorScale(options.value_field);
           } else {

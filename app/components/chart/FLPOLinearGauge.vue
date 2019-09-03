@@ -171,7 +171,7 @@
           //   .attr("x", (markerPos - 5))
           //   .attr("y", text_margins.top)
           //   .attr("style", "font-size: 12;")
-          //   .style("fill", this.assessZebraTitleColor(this.sectionIndex))
+          //   .style("fill", this.$colorsService.assessZebraTitleColor(this.sectionIndex))
           //   .text(Math.floor(markerPos));
         }
 

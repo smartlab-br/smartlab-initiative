@@ -126,12 +126,12 @@
       getDefaultXYConfig(sectionIndex) {
         return { 
           gridConfig: { stroke: "transparent" },
-          barConfig:   { stroke: this.assessZebraAxesColor(sectionIndex)},
+          barConfig:   { stroke: this.$colorsService.assessZebraAxesColor(sectionIndex)},
           shapeConfig: {
             labelConfig: {
-              fontColor: this.assessZebraAxesColor(sectionIndex)
+              fontColor: this.$colorsService.assessZebraAxesColor(sectionIndex)
             },
-            stroke: this.assessZebraAxesColor(sectionIndex)
+            stroke: this.$colorsService.assessZebraAxesColor(sectionIndex)
           }
         }
       },

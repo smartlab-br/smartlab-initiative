@@ -1,5 +1,6 @@
 import colors from 'vuetify/es5/util/colors'
 import YamlFetcherService from '../../service/singleton/yamlFetcherService'
+import ColorsService from '../../service/singleton/colorsService';
 
 class ObservatoriesModel {
     observatoriesSearchOptions = [
@@ -25,7 +26,9 @@ class ObservatoriesModel {
             color: colors.deepPurple.darken4, textColor: "deep-purple--text darken-4" }
     ];
 
-    constructor() {}
+    constructor() {
+        this.colorsService = new ColorsService();
+    }
 
     setStore(store) {
         this.store = store;
@@ -84,6 +87,10 @@ class ObservatoriesModel {
 
     getObservatoriesSearchOptions() {
         return this.observatoriesSearchOptions;
+    }
+
+    getTheme(observatorio) {
+        return this.colorsService.themeLibrary[observatorio];
     }
 }
 

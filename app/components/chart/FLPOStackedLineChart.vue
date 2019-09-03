@@ -69,7 +69,7 @@
           .legendConfig({ 
             shapeConfig:{
               labelConfig: {
-                fontColor: this.assessZebraTitleColor(this.sectionIndex)
+                fontColor: this.$colorsService.assessZebraTitleColor(this.sectionIndex)
               }
             }
           })

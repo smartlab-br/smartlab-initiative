@@ -179,10 +179,10 @@
           v-for="(secao, indexSecao) in sections"  
           :key="secao.id"
           row wrap>
-          <v-layout column :id="secao.id" :style="'background-color:' + assessZebraBG(indexSecao) + ';'">
+          <v-layout column :id="secao.id" :style="'background-color:' + $colorsService.assessZebraBG(indexSecao) + ';'">
             <v-flex xs12>
               <div
-                :class="'display-2-obs pt-5 pb-3  ml-5 pl-3 font-weight-bold ' + assessZebraTitle(indexSecao)">
+                :class="'display-2-obs pt-5 pb-3  ml-5 pl-3 font-weight-bold ' + $colorsService.assessZebraTitle(indexSecao)">
                 {{ secao.name }}
               </div>
             </v-flex>
@@ -231,7 +231,7 @@
                       </v-layout>
                       <v-layout v-else-if="card.type && card.type == 'headline'"
                         pt-5 pb-3 ml-5 pl-2
-                        :class="'display-2-obs font-weight-bold ' + assessZebraTitle(indexSecao)"
+                        :class="'display-2-obs font-weight-bold ' + $colorsService.assessZebraTitle(indexSecao)"
                         v-html="card.title.fixed">
                       </v-layout>
                       <flpo-story-card-autofill
@@ -282,7 +282,7 @@
                       </v-layout>
                       <v-layout v-else-if="sections_compare[indexSecao].cards[cardIndex].type && sections_compare[indexSecao].cards[cardIndex].type == 'headline'"
                         pt-5 pb-3 ml-5 pl-2
-                        :class="'display-2-obs font-weight-bold ' + assessZebraTitle(indexSecao)"
+                        :class="'display-2-obs font-weight-bold ' + $colorsService.assessZebraTitle(indexSecao)"
                         v-html="sections_compare[indexSecao].cards[cardIndex].title.fixed">
                       </v-layout>
                       <flpo-story-card-autofill
