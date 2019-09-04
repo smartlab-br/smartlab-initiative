@@ -342,7 +342,7 @@ class AnalysisUnitModel {
           localidade.tipo = 'UF';
           localidade.img = "/static/thumbs/municipios/" + id + ".jpg";
 
-          resolve(localidade);
+          return localidade;
         }, error => {
           reject("Falha ao buscar dados do estado");
         });
@@ -356,7 +356,7 @@ class AnalysisUnitModel {
           localidade.tipo = 'Mesorregião';
           localidade.img = "/static/thumbs/municipios/" + id + ".jpg";
 
-          // resolve(localidade);
+          // return localidade;
         }, error => {
           reject("Falha ao buscar dados da mesorregião");
         });
@@ -370,7 +370,7 @@ class AnalysisUnitModel {
           localidade.tipo = 'Microrregião';
           localidade.img = "/static/thumbs/municipios/" + id + ".jpg";
           
-          // resolve(localidade);
+          // return localidade;
         }, error => {
           reject("Falha ao buscar dados da microrregião");
         });
@@ -383,7 +383,7 @@ class AnalysisUnitModel {
           localidade.nm_localidade = localidade.nm_municipio_uf;
           localidade.tipo = 'Município';
           localidade.img = "/static/thumbs/municipios/" + id + ".jpg";
-          resolve(localidade);
+          return localidade;
         }, error => {
           reject("Falha ao buscar dados do município");
         });
