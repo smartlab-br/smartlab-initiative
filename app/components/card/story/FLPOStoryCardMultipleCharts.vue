@@ -559,7 +559,9 @@
       downloadData() {
         for (let indexDS in this.dataset) {
           // Dataset to binary data
-          const csvBin = new Blob([new Parser({delimiter: ';', withBOM: true}).parse(this.dataset[indexDS])]);
+          let datasetCsv = new Parser({delimiter: ';',withBOM: true}).parse(this.dataset[indexDS]);
+          datasetCsv = datasetCsv.replace(/<span>/g,"").replace(/<\/span>/g,"")
+          const csvBin = new Blob([datasetCsv]);
           
           // Generates transient link
           let dynaLink = document.createElement("a");
@@ -568,7 +570,9 @@
           dynaLink.href = URL.createObjectURL(csvBin);
           dynaLink.style.display = 'none';
           // Activates the transient link
+          document.body.appendChild(dynaLink);
           dynaLink.click();
+          document.body.removeChild(dynaLink);
         }
       },
 

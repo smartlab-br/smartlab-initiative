@@ -440,7 +440,9 @@
 
       downloadData() {
         // Dataset to binary data
-        const csvBin = new Blob([new Parser({delimiter: ';',withBOM: true }).parse(this.dataset)]);
+        let datasetCsv = new Parser({delimiter: ';',withBOM: true}).parse(this.dataset);
+        datasetCsv = datasetCsv.replace(/<span>/g,"").replace(/<\/span>/g,"")
+        const csvBin = new Blob([datasetCsv]);
         
         // Generates transient link
         let dynaLink = document.createElement("a");
@@ -448,8 +450,11 @@
         dynaLink.setAttribute("href", "data:text/plain;charset=utf-8," + encodeURIComponent(csvBin));
         dynaLink.href = URL.createObjectURL(csvBin);
         dynaLink.style.display = 'none';
+
         // Activates the transient link
+        document.body.appendChild(dynaLink);
         dynaLink.click();
+        document.body.removeChild(dynaLink);
       },
 
       downloadChart() {
