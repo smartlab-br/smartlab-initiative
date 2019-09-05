@@ -67,9 +67,12 @@ import ObjectTransformService from './service/singleton/objectTransformService.j
 Vue.prototype.$objectTransformService = new ObjectTransformService();
 import TextTransformService from './service/singleton/textTransformService.js'
 Vue.prototype.$textTransformService = new TextTransformService();
+import ColorsService from './service/singleton/colorsService'
+Vue.prototype.$colorsService = new ColorsService();
+import TooltipBuildingService from './service/singleton/tooltipBuildingService'
+Vue.prototype.$tooltipBuildingService = new TooltipBuildingService();
+
 // 2.2. Global Mixins
-import ColorManager from '../mixins/service/colorManager.js'
-Vue.use(ColorManager)
 import DatasetManager from '../mixins/service/datasetManager.js'
 Vue.use(DatasetManager)
 import GeoIpClient from '../mixins/service/geoIpClient.js'
@@ -78,10 +81,6 @@ import NavigationManager from '../mixins/service/navigationManager.js'
 Vue.use(NavigationManager)
 import SnackbarManager from '../mixins/service/snackbarManager.js'
 Vue.use(SnackbarManager)
-import ThemeManager from '../mixins/service/themeManager.js'
-Vue.use(ThemeManager)
-import TooltipManager from '../mixins/service/tooltipManager.js'
-Vue.use(TooltipManager)
 import ViewConfReader from '../mixins/service/viewConfReader.js'
 Vue.use(ViewConfReader)
 ///////////////////////////////

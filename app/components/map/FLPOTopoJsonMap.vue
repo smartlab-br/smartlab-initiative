@@ -60,7 +60,7 @@
           .legend(false);
         } else {
 
-          let aColorScale = this.getColorScale(options.colorScale.name, options.colorScale.type, options.colorScale.order, 9);
+          let aColorScale = this.$colorsService.getColorScale(options.colorScale.name, options.colorScale.type, options.colorScale.order, 9);
 
           let distValues = [];
           for (let reg of slicedDS) {  
@@ -110,7 +110,7 @@
             viz = viz.colorScaleConfig({
               color: aColorScale,
               axisConfig: objAxisConfig,            
-              rectConfig: { stroke: this.assessZebraTitleColor(this.sectionIndex) }
+              rectConfig: { stroke: this.$colorsService.assessZebraTitleColor(this.sectionIndex, null, this.$vuetify.theme) }
             });
             viz = viz.colorScale(options.value_field);
           } else {
@@ -204,9 +204,11 @@
       // },
 
       generateViz(options) {
-        var tooltip_function = options.tooltip_function ? options.tooltip_function : this.defaultTooltip;
+        var tooltip_function = options.tooltip_function ? options.tooltip_function : this.$tooltipBuildingService.defaultTooltip;
+        let tooltip_context = options.tooltip_function ? this : this.$tooltipBuildingService;
         options.clickable = options.clickable == true || options.clickable == undefined  ? true : false;
         var headers = this.headers;
+        var route = this.$route;
         var removed_text_list = options.removed_text_list;
 
         var idLocalidade = this.selectedPlace ? this.selectedPlace : this.customParams.idLocalidade;
@@ -233,7 +235,7 @@
           .topojson(this.options.topology && this.options.topology == 'uf' ? this.topologyUf : this.topology) 
           .tooltipConfig({
             body: function(d) {
-              return tooltip_function(d, headers, removed_text_list, options)
+              return tooltip_function.apply(tooltip_context, [d, route, headers, removed_text_list, options]);
             },
             title: function(d) {
               return "";

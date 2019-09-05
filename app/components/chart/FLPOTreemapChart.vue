@@ -27,14 +27,14 @@
             viz = viz.colorScaleConfig({
               color: aColorScale,
               axisConfig: this.getTransparentXYConfig(),
-              rectConfig: { stroke: this.assessZebraTitleColor(this.sectionIndex) }
+              rectConfig: { stroke: this.$colorsService.assessZebraTitleColor(this.sectionIndex, null, this.$vuetify.theme) }
             });
             viz = viz.colorScalePosition(options.show_scale ? "right" : false);
           } else {
             if (options.colorScale.color_array){
               viz = viz.color((d) => { return options.colorScale.color_array[d[options.id]]; });
             } else {
-              aColorScale = this.getColorScale(options.colorScale.name, options.colorScale.type, options.colorScale.order, levels);
+              aColorScale = this.$colorsService.getColorScale(options.colorScale.name, options.colorScale.type, options.colorScale.order, levels);
               let distValues = [];
               for (let reg of slicedDS) {  
                 if (!distValues.includes(reg[options.size])){
@@ -61,7 +61,7 @@
                   viz = viz.colorScaleConfig({
                     color: aColorScale,
                     axisConfig: this.getTransparentXYConfig(),
-                    rectConfig: { stroke: this.assessZebraTitleColor(this.sectionIndex) }
+                    rectConfig: { stroke: this.$colorsService.assessZebraTitleColor(this.sectionIndex, null, this.$vuetify.theme) }
                   });
                 } 
                 viz = viz.colorScalePosition(options.show_scale ? "right" : false);
@@ -86,7 +86,7 @@
             .select(containerId)  // container DIV to hold the visualization
             .data(slicedDS)  // data to use with the visualization
             .label((d) => {
-              var label = this.removeFromLabel(
+              var label = this.$tooltipBuildingService.removeFromLabel(
                 d[options.text],
                 options.removed_text_list
               );
@@ -100,8 +100,10 @@
       },
 
       generateViz(options){
-        let tooltip_function = options.tooltip_function ? options.tooltip_function : this.defaultTooltip;
+        let tooltip_function = options.tooltip_function ? options.tooltip_function : this.$tooltipBuildingService.defaultTooltip;
+        let tooltip_context = options.tooltip_function ? this : this.$tooltipBuildingService;
         let headers = this.headers;
+        let route = this.$route;
         let removed_text_list = options.removed_text_list;
         
         let viz = new d3plus.Treemap()
@@ -129,13 +131,13 @@
               .legendConfig({ 
                 shapeConfig:{
                   labelConfig: {
-                    fontColor: this.assessZebraTitleColor(this.sectionIndex)
+                    fontColor: this.$colorsService.assessZebraTitleColor(this.sectionIndex, null, this.$vuetify.theme)
                   }
                 }
               })
               .tooltipConfig({
                   body: function(d) {
-                    return tooltip_function(d, headers, removed_text_list, options)
+                    return tooltip_function.apply(tooltip_context, [d, route, headers, removed_text_list, options]);
                   },
                   title: function(d) {
                     return "";

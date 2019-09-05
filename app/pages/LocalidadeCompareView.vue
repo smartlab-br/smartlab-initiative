@@ -179,10 +179,10 @@
           v-for="(secao, indexSecao) in sections"  
           :key="secao.id"
           row wrap>
-          <v-layout column :id="secao.id" :style="'background-color:' + assessZebraBG(indexSecao) + ';'">
+          <v-layout column :id="secao.id" :style="'background-color:' + $colorsService.assessZebraBG(indexSecao, $vuetify.theme) + ';'">
             <v-flex xs12>
               <div
-                :class="'display-2-obs pt-5 pb-3  ml-5 pl-3 font-weight-bold ' + assessZebraTitle(indexSecao)">
+                :class="'display-2-obs pt-5 pb-3  ml-5 pl-3 font-weight-bold ' + $colorsService.assessZebraTitle(indexSecao, $vuetify.theme)">
                 {{ secao.name }}
               </div>
             </v-flex>
@@ -231,7 +231,7 @@
                       </v-layout>
                       <v-layout v-else-if="card.type && card.type == 'headline'"
                         pt-5 pb-3 ml-5 pl-2
-                        :class="'display-2-obs font-weight-bold ' + assessZebraTitle(indexSecao)"
+                        :class="'display-2-obs font-weight-bold ' + $colorsService.assessZebraTitle(indexSecao, $vuetify.theme)"
                         v-html="card.title.fixed">
                       </v-layout>
                       <flpo-story-card-autofill
@@ -282,7 +282,7 @@
                       </v-layout>
                       <v-layout v-else-if="sections_compare[indexSecao].cards[cardIndex].type && sections_compare[indexSecao].cards[cardIndex].type == 'headline'"
                         pt-5 pb-3 ml-5 pl-2
-                        :class="'display-2-obs font-weight-bold ' + assessZebraTitle(indexSecao)"
+                        :class="'display-2-obs font-weight-bold ' + $colorsService.assessZebraTitle(indexSecao, $vuetify.theme)"
                         v-html="sections_compare[indexSecao].cards[cardIndex].title.fixed">
                       </v-layout>
                       <flpo-story-card-autofill
@@ -597,7 +597,7 @@
     },
    
     created () {
-      let tmpIdObs = this.identifyObservatory(this.$route.path.split('/')[1]);
+      let tmpIdObs = this.$observatories.identifyObservatory(this.$route.path.split('/')[1]);
       this.$dimensions.getDimensions(tmpIdObs, this.setSiblingDimensions);
       this.idObservatorio = tmpIdObs;
       
@@ -781,7 +781,7 @@
       },
       
       keepLoading() {
-        let tmpIdObs = this.identifyObservatory(this.$route.path.split('/')[1]);
+        let tmpIdObs = this.$observatories.identifyObservatory(this.$route.path.split('/')[1]);
         
         this.setActiveDim(this.$route.params.idLocalidade, tmpIdObs, this.$route.query.dimensao);
 
@@ -1231,7 +1231,7 @@
           urlComplemento = '&dimensao=' + idDimensao;
         }
         urlComplemento +=  '&compare=' + this.idLocalidade_compare;
-        this.$router.push("/" + this.identifyObservatoryById(idObservatorio) + "/localidadecompare/" + idLocalidade + "?" + urlComplemento);
+        this.$router.push("/" + this.$observatories.identifyObservatoryById(idObservatorio) + "/localidadecompare/" + idLocalidade + "?" + urlComplemento);
       },
 
       getLeadSlice(rowIndx) {
