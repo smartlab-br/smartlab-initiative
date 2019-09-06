@@ -95,92 +95,14 @@
       sendError(message) {
         this.$emit('showSnackbar', { color : 'error', text: message });
       },
-      minicard_get_class_idh: function(idh) { 
-        if (idh < 0.5){
-          return "(Abaixo de 0,500)";
-        } else if (idh < 0.6){
-          return "(0.500 a 0.599)";
-        } else if (idh < 0.7){
-          return "(0.600 a 0.699)";
-        } else if (idh < 0.8){
-          return "(0.700 a 0.799)";
-        } else {
-          return "(0.800 ou superior)";
-        }
-      },
-      minicard_calc_percentage(part, total) {
-        var fieldText = "";
-        var perc = 0;
-        if (part > total) {
-          fieldText = " MAIOR"
-          perc = (part/total) * 100;
-        } else {
-          fieldText = " MENOR"
-          perc = (1 - (part/total)) * 100;
-        }
-        
-        perc = perc.toLocaleString('pt-br', {maximumFractionDigits: 1}) + "%";
-        return perc + fieldText;
-      },
-      minicard_get_week_day(abbrev) {
-        switch (abbrev){
-          case 'seg': 
-            return "SEGUNDA";
-            break;
-          case 'ter': 
-            return "TERÇA";
-            break;
-          case 'qua': 
-            return "QUARTA";
-            break;
-          case 'qui': 
-            return "QUINTA";
-            break;
-          case 'sex': 
-            return "SEXTA";
-            break;
-          case 'sáb': 
-            return "SÁBADO";
-            break;
-          case 'dom': 
-            return "DOMINGO";
-            break;
-        }
-      },
-      minicard_calc_perc_subtraction(val1, val2) {
-        var fieldText = "";
-        var result = Math.abs(val1 - val2);
-        if (val1 > val2) {
-          fieldText = " PONTOS PERCENTUAIS A MAIS"
-        } else if (val1 < val2) {
-          fieldText = " PONTOS PERCENTUAIS A MENOS"
-        } else {
-          return "";  //igual
-        }
-        
-        result = this.formatNumber(result, "real", 1);
-        return result + fieldText;
-      },
-      minicard_value_check(value, baseValue = 0, returnTextInCaseOfHigherThanBaseValue = '', returnTextInCaseOfLowerThanBaseValue = '') {
-        return value > baseValue ? returnTextInCaseOfHigherThanBaseValue : returnTextInCaseOfLowerThanBaseValue ;
-      },
-      minicard_get_absolute_value(value){return Math.abs(value);},
       
-      minicard_calc_proportion_salary(value, salary) {
-        var fieldText = " salários mínimos, à época";
-        var proportion = value/salary;
-        
-        proportion = proportion.toLocaleString('pt-br', {maximumFractionDigits: 2});
-        return proportion + fieldText;
-      },
-
       fillProp(base_object_list, args, preloaded, addedParams = null, metadata = null) {
           let rule = addedParams.rule;
 
           //caso o campo tenha um texto fixo, o valor é ajustado e o loop segue para a próxima iteração
           if (rule.fixed !== undefined) {
             if (rule.format) {
-              this[rule.prop] = this.formatNumber(rule.fixed, rule.format, rule.precision, rule.multiplier, rule.collapse, rule.signed, rule.uiTags);
+              this[rule.prop] = this.$numberTransformService.formatNumber(rule.fixed, rule.format, rule.precision, rule.multiplier, rule.collapse, rule.signed, rule.uiTags);
             } else {
               this[rule.prop] = rule.fixed;
             }
@@ -189,7 +111,7 @@
           } else if (rule.id === undefined) { //caso um id de um indicador não tenha sido especificado, é porque somente um foi passado no preloaded
             //nesse caso, o valor é buscado na primeira posição da lista de indicadores e formatado caso a propriedade format tenha sido informada
             if (base_object_list && base_object_list.length > 0) {
-              this[rule.prop] = this.getAttributeFromIndicatorInstance(rule, null, base_object_list[0]);
+              this[rule.prop] = this.$indicatorsModel.getAttributeFromIndicatorInstance(rule, this.customFunctions, base_object_list[0]);
             } else if (rule.default !== null && rule.default !== undefined) {
               this[rule.prop] = rule.default;
             } else {
@@ -198,7 +120,7 @@
           } else {
             //se o campo não é fixed ou tenha mais de um indicador informado no preloaded, 
             //é necessário iterar a lista de indicadores para procurar qual está sendo especificado para o campo objeto da iteração
-            this[rule.prop] = this.getIndicatorValueFromStructure(rule, null, base_object_list);
+            this[rule.prop] = this.$indicatorsModel.getIndicatorValueFromStructure(rule, this.customFunctions, base_object_list);
           }
 
           // caso comment tenha a opção color_changing
@@ -261,9 +183,9 @@
       },
 
       updateReactiveDataStructure(filterUrl){
-        let apiUrl = this.applyInterpol(this.structure.api, this.customParams, this.customFunctions);
+        let apiUrl = this.$textTransformService.applyInterpol(this.structure.api, this.customParams, this.customFunctions);
         apiUrl = apiUrl + filterUrl;
-        axios(this.getAxiosOptions(apiUrl))
+        axios(this.$axiosCallSetupService.getAxiosOptions(apiUrl))
         .then(result => {
           this.fillMinicard(
             this.reformDataset(

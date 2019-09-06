@@ -14,14 +14,14 @@ const DatasetManager = {
               prtptm: '/indicadoresmptunidades?categorias=cd_dimensao,ds_indicador,ds_indicador_curto,ds_indicador_prefixo,ds_agreg_primaria,ds_agreg_secundaria,ds_indicador_radical,cd_indicador,nu_competencia,nu_competencia_max,nu_competencia_min,cd_unidade,cd_prt,nm_unidade,sg_unidade,ds_fonte,vl_indicador,vl_indicador_br,rank_br,rank_br_total,rank_prt_total,pct_br,media_br&filtros=eq-cd_unidade-{0}&agregacao=DISTINCT',
             },
             trabalho_escravo: {
-              municipio: '/te/indicadoresmunicipais?categorias=nm_municipio_uf,cd_uf,cd_indicador,nu_competencia,nu_competencia_min,nu_competencia_max,cd_mun_ibge_dv,vl_indicador,rank_uf,rank_br,rank_uf_total,rank_br_total,pct_uf,pct_br,media_uf,media_br,vl_indicador_br,vl_indicador_uf&filtros=eq-cd_mun_ibge_dv-{0}&agregacao=DISTINCT',
-              estado: '/te/indicadoresestaduais?categorias=nm_uf,cd_uf,cd_indicador,nu_competencia,nu_competencia_min,nu_competencia_max,vl_indicador,rank_br,rank_br_total,pct_br,media_br,vl_indicador_br&filtros=eq-cd_uf-{0}&agregacao=DISTINCT',
-              brasil: '/te/indicadoresnacionais?categorias=cd_indicador,nu_competencia,nu_competencia_min,nu_competencia_max,vl_indicador&agregacao=DISTINCT'
+              municipio: '/te/indicadoresmunicipais?categorias=nm_municipio_uf,cd_uf,cd_indicador,nu_competencia,nu_competencia_min,nu_competencia_max,cd_mun_ibge_dv,vl_indicador,rank_uf,rank_br,rank_uf_total,rank_br_total,pct_uf,pct_br,media_uf,media_br,vl_indicador_br,vl_indicador_uf&filtros=eq-cd_mun_ibge_dv-{0},and,nn-vl_indicador&agregacao=DISTINCT',
+              estado: '/te/indicadoresestaduais?categorias=nm_uf,cd_uf,cd_indicador,nu_competencia,nu_competencia_min,nu_competencia_max,vl_indicador,rank_br,rank_br_total,pct_br,media_br,vl_indicador_br&filtros=eq-cd_uf-{0},and,nn-vl_indicador&agregacao=DISTINCT',
+              brasil: '/te/indicadoresnacionais?categorias=cd_indicador,nu_competencia,nu_competencia_min,nu_competencia_max,vl_indicador&agregacao=DISTINCT&filtros=nn-vl_indicador'
             },
             trabalho_escravo_agr: {
-              municipio: '/te/indicadoresmunicipais?categorias=nm_municipio_uf,cd_uf,cd_indicador,nu_competencia_min,nu_competencia_max,cd_mun_ibge_dv&valor=vl_indicador&agregacao=SUM&filtros=eq-cd_mun_ibge_dv-{0}',
-              estado: '/te/indicadoresestaduais?categorias=nm_uf,cd_uf,cd_indicador,nu_competencia_min,nu_competencia_max&valor=vl_indicador&agregacao=SUM&filtros=eq-cd_uf-{0}',
-              brasil: '/te/indicadoresnacionais?categorias=cd_indicador,nu_competencia_min,nu_competencia_max&valor=vl_indicador&agregacao=SUM'
+              municipio: '/te/indicadoresmunicipais?categorias=nm_municipio_uf,cd_uf,cd_indicador,nu_competencia_min,nu_competencia_max,cd_mun_ibge_dv&valor=vl_indicador&agregacao=SUM&filtros=eq-cd_mun_ibge_dv-{0},and,nn-vl_indicador',
+              estado: '/te/indicadoresestaduais?categorias=nm_uf,cd_uf,cd_indicador,nu_competencia_min,nu_competencia_max&valor=vl_indicador&agregacao=SUM&filtros=eq-cd_uf-{0},and,nn-vl_indicador',
+              brasil: '/te/indicadoresnacionais?categorias=cd_indicador,nu_competencia_min,nu_competencia_max&valor=vl_indicador&agregacao=SUM&filtros=nn-vl_indicador'
             },
             censo_agro_2017: {
               municipio: "/ti/censoagromunicipal?categorias='agro_menores'-cd_indicador,'2017'-nu_competencia,cod_mun,qt_ocupados,qt_ocupados_menores14,percent_ocupados_men_14&filtros=eq-cod_mun-{0}",
@@ -268,10 +268,10 @@ const DatasetManager = {
           let min = [];
           let max = [];
           for (let indxDS in dataset) {
-            if (this.isMinInYear({}, dataset, dataset[indxDS], value_field)) {
+            if (this.$indicatorsModel.isMinInYear({}, dataset, dataset[indxDS], value_field)) {
               min.push(dataset[indxDS]);
             }
-            if (this.isMaxInYear({}, dataset, dataset[indxDS], value_field)) {
+            if (this.$indicatorsModel.isMaxInYear({}, dataset, dataset[indxDS], value_field)) {
               max.push(dataset[indxDS]);
             }
           }
@@ -309,33 +309,35 @@ const DatasetManager = {
           return this.$store.state.gDatasets;
         },
 
-        getGlobalDataset(dataset, scope, msg_erro, auId = null, cb = null) {
-          if (this.$store.state.gDatasets[dataset] == null || this.$store.state.gDatasets[dataset] == undefined ||
-              this.$store.state.gDatasets[dataset].analysisUnit == null || this.$store.state.gDatasets[dataset].analysisUnit == undefined ||
-              this.$store.state.gDatasets[dataset].analysisUnit.type != scope || this.$store.state.gDatasets[dataset].analysisUnit.id != auId
+        getGlobalDataset(dataset, scope, msg_erro, auId = null, cb = null, suffix = "") {
+          let datasetSuffix = dataset + suffix;
+          if (this.$store.state.gDatasets[datasetSuffix] == null || this.$store.state.gDatasets[datasetSuffix] == undefined ||
+              this.$store.state.gDatasets[datasetSuffix].analysisUnit == null || this.$store.state.gDatasets[datasetSuffix].analysisUnit == undefined ||
+              this.$store.state.gDatasets[datasetSuffix].analysisUnit.type != scope || this.$store.state.gDatasets[datasetSuffix].analysisUnit.id != auId
             ) {
-            this.$store.state.gDatasets[dataset] = { ds: null, valid: false, analysisUnit: { type: scope, id: auId } };
-            this.setGlobalDataset(dataset, scope, msg_erro, auId, cb);
+            this.$store.state.gDatasets[datasetSuffix] = { ds: null, valid: false, analysisUnit: { type: scope, id: auId } };
+            this.setGlobalDataset(dataset, scope, msg_erro, auId, cb, suffix);
           } else if (cb) {
             cb(null);
           }
         },
 
-        getMultipleGlobalDatasets(thematicDatasets, scope, auId, cb = null) {
+        getMultipleGlobalDatasets(thematicDatasets, scope, auId, cb = null, suffix = "") {
           let nLoadedDS = 0;
 
           for (let indxDS in thematicDatasets) {
-            let dataset = thematicDatasets[indxDS];
+            let dataset = thematicDatasets[indxDS] + suffix;
+            let endpointName = thematicDatasets[indxDS];
             if (this.$store.state.gDatasets[dataset] == null || this.$store.state.gDatasets[dataset] == undefined ||
               this.$store.state.gDatasets[dataset].analysisUnit == null || this.$store.state.gDatasets[dataset].analysisUnit == undefined ||
               this.$store.state.gDatasets[dataset].analysisUnit.type != scope || this.$store.state.gDatasets[dataset].analysisUnit.id != auId
               ) {
               this.$store.state.gDatasets[dataset] = { ds: null, valid: false, analysisUnit: { type: scope, id: auId } };
               
-              let url = this.replaceArgs(this.datasetEndpoints[dataset][scope], [auId]);
+              let url = this.$textTransformService.replaceArgs(this.datasetEndpoints[endpointName][scope], [auId]);
 
               // Busca o dataset da localidade
-              axios(this.getAxiosOptions(url))
+              axios(this.$axiosCallSetupService.getAxiosOptions(url))
                 .then(result => {
                   this.$store.state.gDatasets[dataset] = {
                     ds: JSON.parse(result.data).dataset,
@@ -351,12 +353,12 @@ const DatasetManager = {
           }
         },
 
-        setGlobalDataset(dataset, scope, msg_erro, auId = null, cb = null) {
-          let url = this.replaceArgs(this.datasetEndpoints[dataset][scope], [auId]);
+        setGlobalDataset(dataset, scope, msg_erro, auId = null, cb = null, suffix = "") {
+          let url = this.$textTransformService.replaceArgs(this.datasetEndpoints[dataset][scope], [auId]);
           //busca indicadores da localidade
-          axios(this.getAxiosOptions(url))
+          axios(this.$axiosCallSetupService.getAxiosOptions(url))
             .then(result => {
-              this.$store.state.gDatasets[dataset] = {
+              this.$store.state.gDatasets[dataset + suffix] = {
                 ds: JSON.parse(result.data).dataset,
                 valid: true
               };

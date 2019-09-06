@@ -1,6 +1,6 @@
 import colors from 'vuetify/es5/util/colors'
-import YamlFetcherService from '../../service/singleton/yamlFetcher'
-import Vue from 'vue';
+import YamlFetcherService from '../../service/singleton/yamlFetcherService'
+import ColorsService from '../../service/singleton/colorsService';
 
 class ObservatoriesModel {
     observatoriesSearchOptions = [
@@ -26,7 +26,14 @@ class ObservatoriesModel {
             color: colors.deepPurple.darken4, textColor: "deep-purple--text darken-4" }
     ];
 
-    constructor() {}
+    constructor() {
+        this.colorsService = new ColorsService();
+    }
+
+    setStore(store) {
+        this.store = store;
+        this.yamlFetcher = new YamlFetcherService(store);
+    }
 
     setObservatories(content) {
         this.observatories = content.observatorios;
@@ -35,7 +42,7 @@ class ObservatoriesModel {
 
     getObservatories() {
         if (this.observatories == null && this.observatories == undefined) { // Start loading only once
-            return YamlFetcherService.loadYaml("br/observatorios")
+            return this.yamlFetcher.loadYaml("br/observatorios")
                 .then((result) => { 
                     return this.setObservatories(result);
                 });
@@ -45,7 +52,7 @@ class ObservatoriesModel {
     }
     
     getObservatoryById(id) {
-        if (this.observatories && !this.isLoading) {
+        if (this.observatories) {
             for (let item of this.observatories) {
                 if (item.id == id) return item;
             }
@@ -53,8 +60,37 @@ class ObservatoriesModel {
         return null;
     }
 
+    identifyObservatory(route) {
+        if (route.includes('trabalhodecente')) return 'td';
+        if (route.includes('diversidade')) return 'des';
+        if (route.includes('trabalhoescravo')) return 'te';
+        if (route.includes('trabalhoinfantil')) return 'ti';
+        if (route.includes('sst')) return 'sst';
+        return;
+    }
+
+    // Mapeamento dos IDs para os observatorios
+    identifyObservatoryById(idObservatorio) {
+        switch (idObservatorio){
+            case 'td':
+            return 'trabalhodecente';
+            case 'des':
+            return 'diversidade';
+            case 'te':
+            return 'trabalhoescravo';
+            case 'ti':
+            return 'trabalhoinfantil';
+            case 'sst':
+            return 'sst';
+        }
+    } 
+
     getObservatoriesSearchOptions() {
         return this.observatoriesSearchOptions;
+    }
+
+    getTheme(observatorio) {
+        return this.colorsService.getThemeFromId(observatorio);
     }
 }
 

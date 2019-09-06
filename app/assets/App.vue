@@ -137,9 +137,8 @@
         <v-autocomplete
           tabindex = "21"
           ref = "autocompleteChangePlace"
-          v-if="$store && $store.state && $store.state.searchDataset &&
-                $store.state.searchDataset.dataset && $store.state.searchDataset.dataset.length > 0"
-          :items="$store.state.searchDataset.dataset"
+          v-if="auOptions.length > 0"
+          :items="auOptions"
           v-show="seen"
           persistent-hint
           v-model="gsItemBusca"
@@ -154,7 +153,7 @@
           class="input-group--focused global-search"
           return-object>
           <template slot="item" slot-scope="data">
-            <template v-if="$store.state.searchDataset.dataset.length < 2">
+            <template v-if="auOptions.length < 2">
               <v-list-tile-content>
                 <v-progress-circular :size="20" indeterminate color="primary">
                 </v-progress-circular>
@@ -333,27 +332,27 @@
             min-height="50%"
             style="border-left: 1px solid white; padding-left: 10px;"
           />
-          <img v-if="this.identifyObservatory(this.$route.path.split('/')[1]) == 'ti'"
+          <img v-if="this.$observatories.identifyObservatory(this.$route.path.split('/')[1]) == 'ti'"
             v-on:click="pushRoute('https://fnpeti.org.br', true)" 
             src="/static/smartlab/fnpeti.svg"
             class="cursor-pointer mb-1 ml-0" alt="Fórum Nacional de Prevenção e Erradicação do Trabalho Infantil"
             max-height="80%"
             min-height="50%"
           />
-          <img v-if="this.identifyObservatory(this.$route.path.split('/')[1]) == 'ti' || this.identifyObservatory(this.$route.path.split('/')[1]) == 'td'"
+          <img v-if="this.$observatories.identifyObservatory(this.$route.path.split('/')[1]) == 'ti' || this.$observatories.identifyObservatory(this.$route.path.split('/')[1]) == 'td'"
             v-on:click="pushRoute('http:///ibge.gov.br', true)" 
             src="/static/smartlab/ibge.png"
             class="cursor-pointer mb-1 ml-0" alt="Instituto Brasileiro de Geografia e Estatística"
             height="50px"
           />
-          <img v-if="this.identifyObservatory(this.$route.path.split('/')[1]) == 'des'"
+          <img v-if="this.$observatories.identifyObservatory(this.$route.path.split('/')[1]) == 'des'"
             v-on:click="pushRoute('https://www.pactoglobal.org.br', true)" 
             src="/static/smartlab/pacto.svg"
             class="cursor-pointer mb-1 ml-0" alt="Pacto Global - Rede Brasil"
             max-height="80%"
             min-height="50%"
           />
-          <img v-if="this.identifyObservatory(this.$route.path.split('/')[1]) == 'des'"
+          <img v-if="this.$observatories.identifyObservatory(this.$route.path.split('/')[1]) == 'des'"
             v-on:click="pushRoute('http://www.onumulheres.org.br/', true)" 
             src="/static/smartlab/onumulheres.svg"
             class="cursor-pointer ml-2" alt="ONU Mulheres"
@@ -479,8 +478,7 @@
           <v-card-title class="headline-obs">Informe o município a ser visualizado ou sua localidade:</v-card-title>
           <v-card-text>
           <v-autocomplete
-            v-if="$store && $store.state && $store.state.searchDataset &&
-                  $store.state.searchDataset.dataset && $store.state.searchDataset.dataset.length > 0"
+            v-if="auOptions.length > 0"
             :items="computedSearchItemsMunicipio"
             persistent-hint
             v-model="gsFavLocation"
@@ -495,7 +493,7 @@
             class="input-group--focused global-search"
             return-object>
             <template slot="item" slot-scope="data">
-              <template v-if="$store.state.searchDataset.dataset.length < 2">
+              <template v-if="auOptions.length < 2">
                 <v-list-tile-content>
                   <v-progress-circular :size="20" indeterminate color="primary">
                   </v-progress-circular>
@@ -573,6 +571,8 @@
         snackText: 'Hello, I\'m a snackbar',
         gsItemBusca: null,
         gsFavLocation: null, 
+        gsLoadingStatusSearchOptions: 'LOADING',
+        auOptions: [],
         locationDialog: false,
         //Formulário Relate um problema
         valid: true,
@@ -601,21 +601,33 @@
     },
     created () {    
       this.$store.state.gDatasets = {};
-      this.$store.state.searchDataset = {
-        dataset: [],
-        loadStatus: { 
-          dimensions: 'SUCCESS', indicators: 'SUCCESS',
-          places: 'LOADING'//, mpt_units: 'LOADING'
-        }
+
+      let tmpObs = this.$observatories.getObservatories();
+      if (tmpObs instanceof Promise) {
+        tmpObs.then((result) => { this.observatorios = result });
+      } else {
+        this.observatorios = tmpObs;
       }
 
-      let observ = this.identifyObservatory(this.$route.path.split('/')[1]);
-      if (observ != null && (this.$route.query.dimensao || this.$route.params.idLocalidade)) {
-        this.$dimensions.getDimensionByObservatoryAndId(observ, this.$route.query.dimensao)
-          .then((result) => { this.dim = result; });
-      }
-      
-      this.buildAllSearchOptions();
+      Promise.all(this.$analysisUnitModel.buildAllSearchOptions())
+        .then((results) => {
+          let hasLoading = false;
+          for (let eachResult in results) {
+              if (eachResult == 'ERROR') {
+                this.gsLoadingStatusSearchOptions = eachResult;
+                return;
+              }
+              if (eachResult == 'LOADING') hasLoading = true;
+          }
+          this.gsLoadingStatusSearchOptions = hasLoading ? 'LOADING' : 'SUCCESS';
+          this.auOptions = this.$analysisUnitModel.getOptions();
+        })
+        .catch((error) => {
+          this.gsLoadingStatusSearchOptions = 'ERROR';
+          this.auOptions = this.$analysisUnitModel.getOptions();
+          this.sendError("Falha ao buscar lista das localidades");
+        });
+
       this.themeEval();
     },
     computed: {
@@ -629,17 +641,6 @@
         }
         return fullPath;
       },
-      gsLoadingStatusSearchOptions: function() {
-        var minStatus = 'SUCCESS';
-        for (var indx in this.$store.state.searchDataset.loadStatus) {
-          if (this.$store.state.searchDataset.loadStatus[indx] == 'ERROR') {
-            return 'ERROR';
-          } else if (this.$store.state.searchDataset.loadStatus[indx] == 'LOADING') {
-            minStatus = 'LOADING';
-          }
-        }
-        return minStatus;
-      },
       computedTitle: function() {
         // Assess the current observatory
         let observ = {
@@ -648,7 +649,7 @@
         };
 
         if (this.observatorios) {
-          let tmpObs = this.$observatories.getObservatoryById(this.identifyObservatory(this.$route.path.split('/')[1]));
+          let tmpObs = this.$observatories.getObservatoryById(this.$observatories.identifyObservatory(this.$route.path.split('/')[1]));
           if (tmpObs) {
             observ = tmpObs;
           } else if (this.$route.path.indexOf("saibamais") != -1){ //Sobre
@@ -672,7 +673,7 @@
         return '';
       },
       computedSubtitle: function() {
-        let observ = this.identifyObservatory(this.$route.path.split('/')[1]);
+        let observ = this.$observatories.identifyObservatory(this.$route.path.split('/')[1]);
 
         if (!this.visibleTitle && this.dim && this.dim.short_desc){
           return this.dim.short_desc;
@@ -723,36 +724,64 @@
       //   return '';
       // },
       computedSearchItemsMunicipio: function() {
-        let items = this.$store.state.searchDataset.dataset;
+        let items = this.auOptions;
         return items.filter(function(el) {
           return el.scope == "mun";
         })
       }
     },
     mounted: function() {
-      // this.checkFavoriteAnalysisUnit();
+      // this.checkCurrentAnalysisUnit();
 
       if (!this.$cookies.isKey("cookieAccept")){
         this.snackbarCookies = true;
       }
 
-      if (this.$cookies.isKey("currentAnalysisUnit")){
-        this.findPlaceByID(this.$cookies.get("currentAnalysisUnit"),null,this.changeMiddleToolbar);
-      } 
-
-      this.langs = this.findAllLocales();
-      this.lang = this.findBrowserLocale();
+      let findLoc = this.$analysisUnitModel.findCurrentPlace();
+      if (findLoc instanceof Promise || findLoc.then) {
+        findLoc.then(response => {
+          console.log(response);
+          this.changeMiddleToolbar(response);
+          if (response.id_localidade && response.id_localidade.length > 5) this.localidade = response;
+        })
+        .catch(error => { this.sendError(error); });
+      } else {
+        this.changeMiddleToolbar(findLoc);
+        if (response.id_localidade && response.id_localidade.length > 5) this.localidade = findLoc;
+      }
+    
+      this.langs = this.$translationModel.findAllLocales();
+      this.lang = this.$translationModel.findBrowserLocale(this);
 
       window.addEventListener('scroll', this.assessVisibleTitle);
       window.addEventListener('scroll', this.assessVisibleLeftDrawerTitle);
     },
     watch: {
+      '$route.fullPath': function(newVal, oldVal) {
+        this.dim = { label: null }
+        let observ = this.$observatories.identifyObservatory(this.$route.path.split('/')[1]);
+        if (observ != null && (this.$route.query.dimensao || this.$route.params.idLocalidade)) {
+          this.$dimensions.getDimensionByObservatoryAndId(observ, this.$route.query.dimensao)
+            .then((result) => { this.dim = result; });
+        }
+      },
       gsFavLocation(newVal, oldVal) {
         if (newVal) {
-          this.$cookies.set("currentAnalysisUnit", newVal.id, -1); // Never expires
-          this.$store.state.favLocation = newVal.id;
+          this.$analysisUnitModel.setCurrentAnalysisUnit(newVal.id);
           this.locationDialog = false;
-          this.findPlaceByID(newVal.id,null,this.changeMiddleToolbar);
+          
+          let findLoc = this.$analysisUnitModel.findPlaceByID(newVal.id);
+          if (findLoc instanceof Promise || findLoc.then) {
+            findLoc.then(response => {
+              this.changeMiddleToolbar(response);
+              if (newVal.id && newVal.id.length > 5) this.localidade = response;
+            })
+            .catch(error => { this.sendError(error); });
+          } else {
+            this.changeMiddleToolbar(findLoc);
+            if (newVal.id && newVal.id.length > 5) this.localidade = findLoc;
+          }
+
           if(this.$route.path.indexOf("localidade") != -1){ //página de localidade
             this.searchAnalysisUnit(newVal);
           } else if (this.$refs.currentRoute.setIdLocalidade) { //página de observatorio
@@ -768,8 +797,8 @@
         }
       },
       customFilter (item, queryText, itemText) {
-        queryText = this.replaceSpecialCharacters(queryText).toLowerCase();
-        itemText = this.replaceSpecialCharacters(itemText).toLowerCase();
+        queryText = this.$textTransformService.replaceSpecialCharacters(queryText).toLowerCase();
+        itemText = this.$textTransformService.replaceSpecialCharacters(itemText).toLowerCase();
         return itemText.indexOf(queryText) > -1 
       },      
       snackAlert(params) {
@@ -786,12 +815,8 @@
         }
       },
       themeEval: function() {
-        let id = this.identifyObservatory(this.$route.path.split('/')[1]);
-        if (id != null) {
-          this.changeTheme(id);  
-        } else {
-          this.changeTheme('default');
-        }
+        let theme = this.$observatories.getTheme(this.$observatories.identifyObservatory(this.$route.path.split('/')[1]));
+        if (theme) this.$vuetify.theme = theme; // Changes only if 
       },
       changeMiddleToolbar: function(params) {
         if (params && params.localidade) {
@@ -818,7 +843,7 @@
       },
 
       // changeLocale() {
-      //   this.setLocale(this.lang);
+      //   this.setLocale(this, this.lang);
       // },
 
       getGlobalDatasetIdLocalidade(idLocalidade) {

@@ -10,7 +10,7 @@
             </div>
             </v-flex>
             <v-flex xs12 pa-0 class="odometer-title caption text-xs-center" v-html="odometer.title ? odometer.title : ''"></v-flex>
-            <v-flex xs12 pa-0 class="odometer-title caption text-xs-center" v-if="odometer.show_pace && dtOdometros">{{ odometer.pace_description ? odometer.pace_description : ""}} {{ getPaceString(dtOdometros[odometer.id_odometer].delta_por_ms, true) }}</v-flex>
+            <v-flex xs12 pa-0 class="odometer-title caption text-xs-center" v-if="odometer.show_pace && dtOdometros">{{ odometer.pace_description ? odometer.pace_description : ""}} {{ $numberTransformService.getPaceString(dtOdometros[odometer.id_odometer].delta_por_ms, true) }}</v-flex>
           </v-layout>
         </v-flex>
       </v-layout>
@@ -42,7 +42,7 @@
     },
     mounted() {
 
-      axios(this.getAxiosOdometrosOptions("/sst"))
+      axios(this.$axiosCallSetupService.getAxiosOdometrosOptions("/sst", 'ACIDENTOMETROS'))
         .then(result => {
           let dtOdometros = JSON.parse(result.data);
 
@@ -70,7 +70,7 @@
       for(let odometer of this.odometerItems){
         if (odometer.api) {
           let url = odometer.api.fixed;
-          axios(this.getAxiosOptions(url))
+          axios(this.$axiosCallSetupService.getAxiosOptions(url))
             .then(result => {
               let options = Object.assign({}, odometer.options);
 
@@ -161,7 +161,7 @@
         this.commentData = "";
         if (comment.fixed !== undefined) {
           if (comment.format) {
-            this.commentData = this.formatNumber(comment.fixed, comment.format, comment.precision, comment.multiplier, comment.collapse, comment.signed, comment.uiTags);
+            this.commentData = this.$numberTransformService.formatNumber(comment.fixed, comment.format, comment.precision, comment.multiplier, comment.collapse, comment.signed, comment.uiTags);
           } else {
             this.commentData = comment.fixed;
           }

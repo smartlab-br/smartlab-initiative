@@ -51,13 +51,13 @@
           for (var markerIndx in rules) {
             let formatRules = rules[markerIndx];
             if (rules[markerIndx].format == 'auto') {
-              formatRules = this.getFormatRules(rules[markerIndx], base_object_list[eachRow]);
+              formatRules = this.$textTransformService.getFormatRules(rules[markerIndx], base_object_list[eachRow]);
             }
             
             let marker = {
               id: rules[markerIndx].id,
               value: dataset[eachRow][rules[markerIndx].id],
-              formattedValue: this.formatNumber(
+              formattedValue: this.$numberTransformService.formatNumber(
                 iterArg, formatRules.format, formatRules.precision,
                 formatRules.multiplier, formatRules.collapse, formatRules.signed,
                 formatRules.uiTags
@@ -68,7 +68,7 @@
             if (rules[markerIndx].color) {
               marker.color = rules[markerIndx].color;
             } else {
-              marker.color = this.getColorFromCategoricalScale('Set3', markerIndx);
+              marker.color = this.$colorsService.getColorFromCategoricalScale('Set3', markerIndx);
             }
             markers.push(marker);
 
@@ -171,7 +171,7 @@
           //   .attr("x", (markerPos - 5))
           //   .attr("y", text_margins.top)
           //   .attr("style", "font-size: 12;")
-          //   .style("fill", this.assessZebraTitleColor(this.sectionIndex))
+          //   .style("fill", this.$colorsService.assessZebraTitleColor(this.sectionIndex, null, $vuetify.theme))
           //   .text(Math.floor(markerPos));
         }
 

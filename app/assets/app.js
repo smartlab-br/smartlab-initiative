@@ -41,45 +41,46 @@ Vue.use(VueCookies)
 
 ///////////////////////////////
 // Habilitando plugins in-house
-// 1. Models
-// 1.1 Singletons
+// 1. Models (singletons)
 import ObservatoriesModel from './model/singleton/observatoriesModel'
 Vue.prototype.$observatories = new ObservatoriesModel();
 import AboutModel from './model/singleton/aboutModel'
 Vue.prototype.$about = new AboutModel();
 import DimensionsModel from './model/singleton/dimensionsModel'
 Vue.prototype.$dimensions = new DimensionsModel();
-// 1.2 Mixins
-import IndicatorsModel from '../mixins/model/indicatorsModel.js'
-Vue.use(IndicatorsModel)
-import PlacesModel from '../mixins/model/placesModel.js'
-Vue.use(PlacesModel)
-import TranslationModel from '../mixins/model/translationModel.js'
-Vue.use(TranslationModel)
+import TranslationModel from './model/singleton/translationModel'
+Vue.prototype.$translationModel = new TranslationModel();
+import AnalysisUnitModel from './model/singleton/analysisUnitModel'
+Vue.prototype.$analysisUnitModel = new AnalysisUnitModel();
+import IndicatorsModel from './model/singleton/indicatorsModel'
+Vue.prototype.$indicatorsModel = new IndicatorsModel();
 
 // 2. Services
-import AxiosCallSetup from '../mixins/service/axiosCallSetup.js'
-Vue.use(AxiosCallSetup)
-import ColorManager from '../mixins/service/colorManager.js'
-Vue.use(ColorManager)
+// 2.1. Singletons
+import AxiosCallSetupService from './service/singleton/axiosCallSetupService.js'
+Vue.prototype.$axiosCallSetupService = new AxiosCallSetupService();
+import DateFormatService from './service/singleton/dateFormatService.js'
+Vue.prototype.$dateFormatService = new DateFormatService();
+import NumberTransformService from './service/singleton/numberTransformService.js'
+Vue.prototype.$numberTransformService = new NumberTransformService();
+import ObjectTransformService from './service/singleton/objectTransformService.js'
+Vue.prototype.$objectTransformService = new ObjectTransformService();
+import TextTransformService from './service/singleton/textTransformService.js'
+Vue.prototype.$textTransformService = new TextTransformService();
+import ColorsService from './service/singleton/colorsService'
+Vue.prototype.$colorsService = new ColorsService();
+import TooltipBuildingService from './service/singleton/tooltipBuildingService'
+Vue.prototype.$tooltipBuildingService = new TooltipBuildingService();
+
+// 2.2. Global Mixins
 import DatasetManager from '../mixins/service/datasetManager.js'
 Vue.use(DatasetManager)
-import DateFormatter from '../mixins/service/dateFormatter.js'
-Vue.use(DateFormatter)
 import GeoIpClient from '../mixins/service/geoIpClient.js'
 Vue.use(GeoIpClient)
 import NavigationManager from '../mixins/service/navigationManager.js'
 Vue.use(NavigationManager)
-import NumberFormatter from '../mixins/service/numberFormatter.js'
-Vue.use(NumberFormatter)
 import SnackbarManager from '../mixins/service/snackbarManager.js'
 Vue.use(SnackbarManager)
-import TextManager from '../mixins/service/textManager.js'
-Vue.use(TextManager)
-import ThemeManager from '../mixins/service/themeManager.js'
-Vue.use(ThemeManager)
-import TooltipManager from '../mixins/service/tooltipManager.js'
-Vue.use(TooltipManager)
 import ViewConfReader from '../mixins/service/viewConfReader.js'
 Vue.use(ViewConfReader)
 ///////////////////////////////

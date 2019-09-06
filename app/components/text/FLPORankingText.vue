@@ -27,7 +27,7 @@
         for(let item of this.structure.args){
           let value = item.fixed;
           if (item.format){
-            value = this.formatNumber(
+            value = this.$numberTransformService.formatNumber(
               value, item.format, item.precision, item.multiplier, item.collapse, item.signed, item.uiTags
             );
           }

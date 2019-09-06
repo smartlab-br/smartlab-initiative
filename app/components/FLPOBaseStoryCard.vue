@@ -5,34 +5,36 @@
 
   export default {
     extends: FLPOBaseLayout,
+    props: ['selectedPlace', 'chartPosition'],
     data () {
       return {
         customFilters: {}
       }
     },
     created () {
+
       let structure = this.structure;
       if (structure.card_template) { // API Card
-        let url = this.replaceArgs(
+        let url = this.$textTransformService.replaceArgs(
           "/cardtemplate/{0}?datasource={1}&cd_indicador='{2}'&cd_analysis_unit={3}",
           [ structure.card_template,
             structure.datasource,
             structure.cd_indicador,
-            this.customParams.idLocalidade ]
+            this.selectedPlace ? this.selectedPlace : this.customParams.idLocalidade ]
         );
         if (structure.coefficient) url = url + "&coefficient=" + structure.coefficient;
         if (structure.term) {
           if (typeof structure.term == "string") {
             url = url + "&term=" + structure.term;
           } else if (structure.term.template){
-            url = url + "&term=" + this.applyInterpol(
+            url = url + "&term=" + this.$textTransformService.applyInterpol(
                                                   structure.term,
                                                   this.customParams,
                                                   this.customFunctions,
                                                   {});
           }
         }
-        axios(this.getAxiosOptions(url))
+        axios(this.$axiosCallSetupService.getAxiosOptions(url))
           .then(result => {
             structure = Object.assign(structure, result.data);
             this.structure = structure;
@@ -305,7 +307,7 @@
             if (filter.type == "slider" || filter.type == "select"){
               if (this.customFilters[filter.selection.rules.api.args[0].named_prop]){
                 filter.selection.rules.api.template = filterUrl + filter.selection.rules.filter
-                filterUrl = this.applyInterpol(filter.selection.rules.api, {}, this.customFunctions, this.customFilters);
+                filterUrl = this.$textTransformService.applyInterpol(filter.selection.rules.api, {}, this.customFunctions, this.customFilters);
                 filterText += "<br/>" + (filter.title ? filter.title + ": " : filter.label ? filter.label+ ": " : "");
                 if (filter.type == "slider"){
                   if (filter.selection.rules.api.args.length > 1){

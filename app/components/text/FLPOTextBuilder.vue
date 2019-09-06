@@ -120,9 +120,9 @@
           this.finalText = base_object_list;
           this.buildShortText(base_object_list);
         } else {
-          let finalText = this.replaceArgs(
+          let finalText = this.$textTransformService.replaceArgs(
             structure.template,
-            this.indicatorsToValueArray(
+            this.$indicatorsModel.indicatorsToValueArray(
               rules, 
               this.customFunctions, 
               base_object_list,

@@ -15,7 +15,7 @@
       }
 
       if (this.options.colorScale && this.options.colorScale.name) {
-        colorArray = this.getColorScale(this.options.colorScale.name, this.options.colorScale.type, this.options.colorScale.order, this.options.colorScale.levels);
+        colorArray = this.$colorsService.getColorScale(this.options.colorScale.name, this.options.colorScale.type, this.options.colorScale.order, this.options.colorScale.levels);
       } else if (this.options.colorArray) {
         colorArray = this.options.colorArray;
       }
@@ -76,7 +76,7 @@
           d.id = 1
           var vl_indicador = dataset[i].vl_indicador
           d.vl_indicador = accum;
-          d.fmt_vl_indicador = this.formatNumber(accum, accumDataType, accumDataPrecision, 1, accumDataCollapse, true, false)
+          d.fmt_vl_indicador = this.$numberTransformService.formatNumber(accum, accumDataType, accumDataPrecision, 1, accumDataCollapse, true, false)
           accum = accum + vl_indicador;
 
           dataset.push(d);
@@ -99,7 +99,7 @@
             .select(containerId)  // container DIV to hold the visualization
             .data(slicedDS)  // data to use with the visualization
             .label((d) => { //retira label se x < 0 - utilizado na pirâmide
-              return (d[options.x] < 0)? "" :  this.removeFromLabel(
+              return (d[options.x] < 0)? "" :  this.$tooltipBuildingService.removeFromLabel(
                 d[options.text],
                 options.removed_text_list
               );
@@ -113,8 +113,10 @@
       },
 
       generateViz(options){
-        let tooltip_function = options.tooltip_function ? options.tooltip_function : this.defaultTooltip;
+        let tooltip_function = options.tooltip_function ? options.tooltip_function : this.$tooltipBuildingService.defaultTooltip;
+        let tooltip_context = options.tooltip_function ? this : this.$tooltipBuildingService;
         let headers = this.headers;
+        let route = this.$route;
         let removed_text_list = options.removed_text_list;
 
         let barConfig = {
@@ -150,14 +152,14 @@
                 shapeConfig:{
                   labelConfig: {
                     fontSize: 14,
-                    fontColor: this.assessZebraTitleColor(this.sectionIndex)
+                    fontColor: this.$colorsService.assessZebraTitleColor(this.sectionIndex, this.$vuetify.theme)
                   }
                 }
               })
               .legendPosition("top")
               .tooltipConfig({
                               body: function(d) {
-                                return tooltip_function(d, headers, removed_text_list,options)
+                                return tooltip_function.apply(tooltip_context, [d, route, headers, removed_text_list, options]);
                               },
                               title: function(d) {
                                 return "";
@@ -175,7 +177,7 @@
           viz = viz.color(function(d) { return (d.color !== null && d.color !== undefined) ? d.color : '#2196F3'; });
         } else {
           viz = viz.colorScaleConfig({
-              color: this.getColorScale(options.colorScale.name)
+              color: this.$colorsService.getColorScale(options.colorScale.name)
           });           
           viz = viz.color("color");
         } 

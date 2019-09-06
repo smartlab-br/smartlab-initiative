@@ -2,27 +2,32 @@ import * as yaml from 'js-yaml'
 import axios from 'axios'
 
 class YamlFetcherService {
-    constructor() {}
+    constructor(store) {
+        this.store = store;
+    }
 
-    static loadYaml(location, cbFunction, context) {
-        let basePath = "/static/smartlab-initiative-viewconf/";
-        if (this.$store && this.$store.state && this.$store.state.GIT_VIEWCONF_TAG_URL) {
-            basePath = this.$store.state.GIT_VIEWCONF_TAG_URL;
-        } else if (process.env.GIT_VIEWCONF_TAG_URL) {
-            basePath = process.env.GIT_VIEWCONF_TAG_URL;
-        }
-        return axios.get(basePath + location + ".yaml")
+    setStore(store) {
+        this.store = store;
+    }
+
+    getBasePath() {
+        if (this.store && this.store.GIT_VIEWCONF_TAG_URL) return this.store.GIT_VIEWCONF_TAG_URL;
+        if (process.env.GIT_VIEWCONF_TAG_URL) return process.env.GIT_VIEWCONF_TAG_URL;
+        return "/static/smartlab-initiative-viewconf/";
+    }
+
+    loadYaml(location) {
+        return axios.get(this.getBasePath() + location + ".yaml")
             .then((response) => {
                 return yaml.safeLoad(response.data, { json: true });
             });
-        
     }
 
-    async loadYamlArray(currentStruct, yamlArray, finalCbFunction) {
+    loadYamlArray(currentStruct, yamlArray, finalCbFunction) {
         let promises = [];
         let promises_alt = [];
         
-        let basePath = this.$store.state.GIT_VIEWCONF_TAG_URL ? this.$store.state.GIT_VIEWCONF_TAG_URL : "/static/smartlab-initiative-viewconf/";
+        let basePath = this.getBasePath();
         
         // TODO Need to intercept 404 errors thrown to the browser console.
         for (let yamlConfIndex in yamlArray) {	

@@ -33,7 +33,7 @@
       // fetch the data when the view is created and the data is
       // already being observed
       if (this.idObservatorio === null || this.idObservatorio === undefined) {
-        this.idObservatorio = this.identifyObservatory(this.$route.path.split('/')[1]);
+        this.idObservatorio = this.$observatories.identifyObservatory(this.$route.path.split('/')[1]);
       }
 
       if (this.idObservatorio) {
@@ -123,7 +123,7 @@
           this.hasOdometers = true;
           if (this.idObservatorio == "sst"){
             let url="/sst";
-            axios(this.getAxiosOdometrosOptions(url))
+            axios(this.$axiosCallSetupService.getAxiosOdometrosOptions(url, 'ACIDENTOMETROS'))
               .then(result => {
                 let odometros = JSON.parse(result.data);
                 this.customParams.odometros = odometros;
@@ -165,11 +165,11 @@
       
       changeToGeoIP(parametro) {
         if (this.idLocalidade) {
-          return this.replaceArgs(parametro, [this.idLocalidade]);
-        } else if (this.$store.state.favLocation) {
-          return this.replaceArgs(parametro, [this.$store.state.favLocation]);
+          return this.$textTransformService.replaceArgs(parametro, [this.idLocalidade]);
+        } else if (this.$analysisUnitModel.getCurrentAnalysisUnit()) {
+          return this.$textTransformService.replaceArgs(parametro, [this.$analysisUnitModel.getCurrentAnalysisUnit()]);
         } else {
-          return this.replaceArgs(parametro, [0]);
+          return this.$textTransformService.replaceArgs(parametro, [0]);
         }
       },
 
@@ -177,16 +177,16 @@
         if (typeof base_object_list == 'string') {
           this[addedParams.attribute] = base_object_list;
         } else {
-          this[addedParams.attribute] = this.applyInterpol(
+          this[addedParams.attribute] = this.$textTransformService.applyInterpol(
             structure,
             this.customParams,
             this.customFunctions,
             base_object_list[0],
             this.sendInvalidInterpol
           );
-          // this[addedParams.attribute] = this.replaceArgs(
+          // this[addedParams.attribute] = this.$textTransformService.replaceArgs(
           //   structure.template,
-          //   this.indicatorsToValueArray(
+          //   this.$indicatorsModel.indicatorsToValueArray(
           //     structure.args, 
           //     this.customFunctions, 
           //     base_object_list,

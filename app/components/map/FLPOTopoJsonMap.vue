@@ -4,6 +4,7 @@
   import FLPOBaseChart from '../FLPOBaseChart.vue';
 
   export default {
+    props: ['selectedPlace'],
     extends: FLPOBaseChart,
     data () {
       return { 
@@ -59,7 +60,7 @@
           .legend(false);
         } else {
 
-          let aColorScale = this.getColorScale(options.colorScale.name, options.colorScale.type, options.colorScale.order, 9);
+          let aColorScale = this.$colorsService.getColorScale(options.colorScale.name, options.colorScale.type, options.colorScale.order, 9);
 
           let distValues = [];
           for (let reg of slicedDS) {  
@@ -109,7 +110,7 @@
             viz = viz.colorScaleConfig({
               color: aColorScale,
               axisConfig: objAxisConfig,            
-              rectConfig: { stroke: this.assessZebraTitleColor(this.sectionIndex) }
+              rectConfig: { stroke: this.$colorsService.assessZebraTitleColor(this.sectionIndex, null, this.$vuetify.theme) }
             });
             viz = viz.colorScale(options.value_field);
           } else {
@@ -141,19 +142,30 @@
             .detectResize(true);
             
 
-        // if (options.clickable){
-        //   let searchFunction = this.searchAnalysisUnit;
-        //   viz = viz.on("click", function(d) {
-        //         let place = {};
-        //         place.id = String(d[options.id_field]);
-        //         place.to = '/localidade/' + d[options.id_field] + '?';
-        //         if (this._tooltip) {
-        //                 this._tooltipClass.data([]).render();
-        //         }                
-        //         searchFunction(place);
-        //       });     
-        // }  
+        let searchFunction = this.searchAnalysisUnit;
+        let clickedPlace = "";
+        let hasTouch = this.hasTouch;
+        if (options.clickable){
+          viz = viz.on("click", function(d) {
+                if (clickedPlace == d[options.id_field] || !hasTouch()) {
+                  let place = {};
+                  place.id = String(d[options.id_field]);
+                  place.to = '/localidade/' + d[options.id_field] + '?';
+                  if (this._tooltip) {
+                          this._tooltipClass.data([]).render();
+                  }                
+                  searchFunction(place);
+                }
+                clickedPlace = d[options.id_field];
+              });     
+        }  
         return grafico;
+      },
+
+      hasTouch() { //identify touchable devices (mobile and tablet)
+        return (('ontouchstart' in window) ||       // html5 browsers
+                (navigator.maxTouchPoints > 0) ||   // future IE
+                (navigator.msMaxTouchPoints > 0));  // current IE10
       },
 
       // postGenerate(){
@@ -192,12 +204,14 @@
       // },
 
       generateViz(options) {
-        var tooltip_function = options.tooltip_function ? options.tooltip_function : this.defaultTooltip;
+        var tooltip_function = options.tooltip_function ? options.tooltip_function : this.$tooltipBuildingService.defaultTooltip;
+        let tooltip_context = options.tooltip_function ? this : this.$tooltipBuildingService;
         options.clickable = options.clickable == true || options.clickable == undefined  ? true : false;
         var headers = this.headers;
+        var route = this.$route;
         var removed_text_list = options.removed_text_list;
 
-        var idLocalidade = this.customParams.idLocalidade;
+        var idLocalidade = this.selectedPlace ? this.selectedPlace : this.customParams.idLocalidade;
         // var idField = options.id_field;
         // var longField = options.long ? options.long : 'longitude';
         // var latField = options.lat ? options.lat : 'latitude';
@@ -221,7 +235,7 @@
           .topojson(this.options.topology && this.options.topology == 'uf' ? this.topologyUf : this.topology) 
           .tooltipConfig({
             body: function(d) {
-              return tooltip_function(d, headers, removed_text_list, options)
+              return tooltip_function.apply(tooltip_context, [d, route, headers, removed_text_list, options]);
             },
             title: function(d) {
               return "";

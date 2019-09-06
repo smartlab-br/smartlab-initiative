@@ -49,10 +49,10 @@
           v-for="(secao, indexSecao) in estudo.secoes"  
           :key="secao.id"
           row wrap>
-          <v-layout column :id="secao.id" :style="'background-color:' + assessZebraBG(indexSecao) + ';'">
+          <v-layout column :id="secao.id" :style="'background-color:' + $colorsService.assessZebraBG(indexSecao, $vuetify.theme) + ';'">
             <v-flex xs12 v-if="secao.name !== null && secao.name !== undefined">
               <div
-                :class="'display-2-obs text-xs-center pt-5 pb-3 font-weight-bold ' + assessZebraTitle(indexSecao)">
+                :class="'display-2-obs text-xs-center pt-5 pb-3 font-weight-bold ' + $colorsService.assessZebraTitle(indexSecao, $vuetify.theme)">
                 {{ secao.name }}
               </div>
             </v-flex>
@@ -77,7 +77,7 @@
                   </v-layout>
                   <v-layout v-else-if="card.type && card.type == 'headline'"
                     justify-center pt-5 pb-3
-                    :class="'display-2-obs font-weight-bold ' + assessZebraTitle(indexSecao)"
+                    :class="'display-2-obs font-weight-bold ' + $colorsService.assessZebraTitle(indexSecao, $vuetify.theme)"
                     v-html="card.title.fixed">
                   </v-layout>
                   <flpo-story-card-autofill
@@ -116,7 +116,7 @@
     </v-container>
     <!-- Navegação lateral em dots pelos dimensoes e seções -->
     <flpo-dot-nav :sections="estudo.secoes"></flpo-dot-nav>
-    <!-- <v-container fluid ma-0 pa-5 :style="'background-color:' + assessZebraBG(1) + ';'">
+    <!-- <v-container fluid ma-0 pa-5 :style="'background-color:' + $colorsService.assessZebraBG(1, $vuetify.theme) + ';'">
       <v-layout row wrap text-xs-center pb-5>
         <div class="flex display-1-obs">Realização</div>
       </v-layout>
@@ -227,7 +227,7 @@
 //          this.customParams.enabled = payload.enabled;
 //          this.$refs.chart.adjustVisibleLayers();
 //        } else {
-//          var endpoint = this.applyInterpol(payload.rules.api, this.customParams, this.customFunctions, payload.item);
+//          var endpoint = this.$textTransformService.applyInterpol(payload.rules.api, this.customParams, this.customFunctions, payload.item);
 //          this.fetchData(endpoint);
 //        }
 //      },
@@ -236,16 +236,16 @@
         if (typeof base_object_list == 'string') {
           this[addedParams.attribute] = base_object_list;
         } else {
-          this[addedParams.attribute] = this.applyInterpol(
+          this[addedParams.attribute] = this.$textTransformService.applyInterpol(
             structure,
             this.customParams,
             this.customFunctions,
             base_object_list[0],
             this.sendInvalidInterpol
           );
-          // this[addedParams.attribute] = this.replaceArgs(
+          // this[addedParams.attribute] = this.$textTransformService.replaceArgs(
           //   structure.template,
-          //   this.indicatorsToValueArray(
+          //   this.$indicatorsModel.indicatorsToValueArray(
           //     structure.args, 
           //     this.customFunctions, 
           //     base_object_list,
@@ -265,9 +265,9 @@
         } else {
           this.cardLinks[addedParams.pos] = {
             id: addedParams.id,
-            title: this.replaceArgs(
+            title: this.$textTransformService.replaceArgs(
               this.structure.title.template,
-              this.indicatorsToValueArray(
+              this.$indicatorsModel.indicatorsToValueArray(
                 this.structure.title.preloaded, 
                 this.customFunctions, 
                 base_object_list,

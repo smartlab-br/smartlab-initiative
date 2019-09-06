@@ -1,7 +1,7 @@
 <template>
   <v-layout row wrap>
     <v-flex xs12>
-      <v-card :id="structure.id" :class= "'mx-4 mb-5 bg-card ' + getClassIfIsDark(null, sectionIndex)">
+      <v-card :id="structure.id" :class= "'mx-4 mb-5 bg-card ' + $colorsService.getClassIfIsDark(null, sectionIndex, this.$vuetify.theme)">
         <v-progress-linear
           height="5"
           :indeterminate="loadingStatusDataset == 'LOADING'"
@@ -16,7 +16,7 @@
           <v-layout column>
             <v-flex pb-0>
               <v-layout row fill-height wrap pl-3 pt-3 pb-0 pr-0 class="display-1-obs mb-0">
-                <v-flex xs10 sm11 md10 lg11 class="card-title">
+                <v-flex xs10 class="card-title">
                   {{ cmpTitle ? cmpTitle : '' }}
                   <v-tooltip :v-if="structure && structure.info" bottom max-width="700px">
                     <v-icon color="accent"
@@ -35,15 +35,15 @@
                   <div v-if="cmpTitleComment != null" class="title-comment" v-html="cmpTitleComment"></div>
                 </v-flex>
                 <!-- <v-spacer></v-spacer> -->
-                <!-- <v-btn small fill-height class="mb-0" flat :color="assessZebraTitleColor(this.sectionIndex)"
+                <!-- <v-btn small fill-height class="mb-0" flat :color="$colorsService.assessZebraTitleColor(this.sectionIndex, this.$vuetify.theme)"
                   @click.native="downloadChart">
                   <span class="hidden-sm-and-down body">Baixar gráfico</span>
                   <v-icon right>file_download</v-icon>
                 </v-btn> -->
-                <v-flex xs2 sm1 md2 lg1 d-flex >
-                <v-btn small flat :color="assessZebraTitleColor(this.sectionIndex)"
-                  @click.native="dialog = true" style="margin: 0px; min-width: auto;">
-                  <span class="hidden-sm-and-down body">Dados</span>
+                <v-flex xs2 text-xs-right pr-4>
+                <v-btn small flat :color="$colorsService.assessZebraTitleColor(this.sectionIndex, this.$vuetify.theme)"
+                  @click.native="dialog = true" style="margin: 0px;">
+                  <span :class="chartPosition == 'bottom'?'hidden-md-and-down body': 'hidden-sm-and-down body'">Dados</span>
                   <v-icon right>view_list</v-icon> <!-- list -->
                 </v-btn>
                 </v-flex>
@@ -51,7 +51,7 @@
             </v-flex>
             <v-flex pt-0>    
               <v-layout row wrap :style="structure.type != 'headline' && structure.type != 'text' ? 'min-height:500px;' : ''">
-                <v-flex xs12 md3 class="position-relative" column >
+                <v-flex xs12 :class="chartPosition != 'bottom' ? 'md3 position-relative': 'position-relative'" column>
                   <v-flex column pt-0 slot="description">
                     <flpo-composite-text
                       v-if="!invalidInterpol"
@@ -83,10 +83,10 @@
                     <a class="accent--text" v-on:click="openLinkAnalysis">{{ analysisDesc }}</a>
                   </div>
                 </v-flex>
-                <v-flex xs12 md9 py-3>
+                <v-flex xs12 :class="chartPosition != 'bottom' ? 'md9': ''" py-3>
                   <v-layout fill-height row wrap>
                     <v-flex xs12 fill-height :style="cmpStyle"
-                      :class="{'mx-0': $vuetify.breakpoint.smAndDown, 'mx-0': $vuetify.breakpoint.mdAndUp, 'px-3': $vuetify.breakpoint.smAndDown, 'pt-2 pr-4 pb-0': $vuetify.breakpoint.mdAndUp}">
+                      :class="{'mx-0 px-3': (this.$vuetify.breakpoint.smAndDown || chartPosition == 'bottom'), 'mx-0 pt-2 pr-4 pb-0': (this.$vuetify.breakpoint.mdAndUp && chartPosition != 'bottom')}">
                       <!-- Definition of all possible charts -->
                       <flpo-bar-chart
                         v-if="dataset !== null && structure && structure.chart_type == 'BAR' && structure.chart_options !== null"
@@ -135,6 +135,7 @@
                               ((structure.chart_options.type == 'topo' && cmpTopology) || (structure.chart_options.type !== 'topo'))"
                         ref = "chart"
                         :id = "chartId"
+                        :selected-place="selectedPlace"
                         :topology = "cmpTopology"
                         :topology-uf = "topologyUf"
                         :dataset = "dataset"
@@ -148,6 +149,7 @@
                         :topology="cmpTopology"
                         :topology-uf = "topologyUf"
                         :id="chartId"
+                        :selected-place="selectedPlace"
                         :dataset="dataset"
                         :options="structure.chart_options"
                         :customParams="customParams"
@@ -272,8 +274,8 @@
     },
     computed: {
       cmpStyle: function() {
-        if (this.$vuetify.breakpoint.smAndDown) {
-          return "height:313px;"
+        if (this.$vuetify.breakpoint.smAndDown || this.chartPosition == "bottom") {
+          return "min-height:313px;"
         }
       },
       chartId: function() {
@@ -336,9 +338,9 @@
           }
         } else if (payload.type && payload.type === 'slider' || payload.type && payload.type === 'check') {
           if (payload.rules.filter){
-            let apiUrl = this.applyInterpol(this.structure.api, this.customParams, this.customFunctions);
+            let apiUrl = this.$textTransformService.applyInterpol(this.structure.api, this.customParams, this.customFunctions);
             if (this.structure.apiBase){
-              apiUrl = this.applyInterpol(this.structure.apiBase, this.customParams, this.customFunctions);// this.structure.apiBase;
+              apiUrl = this.$textTransformService.applyInterpol(this.structure.apiBase, this.customParams, this.customFunctions);// this.structure.apiBase;
             }
             // if (this.customFilters.radioApi){
             //   apiUrl = this.customFilters.radioApi;
@@ -346,7 +348,7 @@
             endpoint = apiUrl + this.getFilters();
             this.structure.chart_options.filterText = this.customFilters.filterText;
           } else {
-            endpoint = this.applyInterpol(payload.rules.api, this.customParams, this.customFunctions, this.customFilters);
+            endpoint = this.$textTransformService.applyInterpol(payload.rules.api, this.customParams, this.customFunctions, this.customFilters);
           }
           this.fetchData(endpoint);
         } else {
@@ -381,9 +383,9 @@
         let apiUrl = ""
         let endpoint = ""
         if (this.structure.apiBase){
-          apiUrl = this.applyInterpol(this.structure.apiBase, this.customParams, this.customFunctions); //this.structure.apiBase;
+          apiUrl = this.$textTransformService.applyInterpol(this.structure.apiBase, this.customParams, this.customFunctions); //this.structure.apiBase;
         } else {
-          apiUrl = this.applyInterpol(this.structure.api, this.customParams, this.customFunctions);
+          apiUrl = this.$textTransformService.applyInterpol(this.structure.api, this.customParams, this.customFunctions);
         }
         // if (this.customFilters.radioApi){
         //   apiUrl = this.customFilters.radioApi;
@@ -393,7 +395,7 @@
           this.structure.chart_options.filterText = this.customFilters.filterText;
           this.fetchData(endpoint);
         } else if (payload.item){
-          endpoint = this.applyInterpol(payload.rules.api, this.customParams, this.customFunctions, this.customFilters);
+          endpoint = this.$textTransformService.applyInterpol(payload.rules.api, this.customParams, this.customFunctions, this.customFilters);
           this.fetchData(endpoint);
         } else {
           this.fetchData();
@@ -438,7 +440,9 @@
 
       downloadData() {
         // Dataset to binary data
-        const csvBin = new Blob([new Parser({delimiter: ';',withBOM: true }).parse(this.dataset)]);
+        let datasetCsv = new Parser({delimiter: ';',withBOM: true}).parse(this.dataset);
+        datasetCsv = datasetCsv.replace(/<span>/g,"").replace(/<\/span>/g,"")
+        const csvBin = new Blob([datasetCsv]);
         
         // Generates transient link
         let dynaLink = document.createElement("a");
@@ -446,8 +450,11 @@
         dynaLink.setAttribute("href", "data:text/plain;charset=utf-8," + encodeURIComponent(csvBin));
         dynaLink.href = URL.createObjectURL(csvBin);
         dynaLink.style.display = 'none';
+
         // Activates the transient link
+        document.body.appendChild(dynaLink);
         dynaLink.click();
+        document.body.removeChild(dynaLink);
       },
 
       downloadChart() {

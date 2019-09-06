@@ -1,7 +1,12 @@
-import YamlFetcherService from '../../service/singleton/yamlFetcher'
+import YamlFetcherService from '../../service/singleton/yamlFetcherService'
 
 class AboutModel {
     constructor(content) { }
+
+    setStore(store) {
+        this.store = store;
+        this.yamlFetcher = new YamlFetcherService(store);
+    }
 
     setAbout(content) {
         this.about = content;
@@ -10,7 +15,7 @@ class AboutModel {
 
     getAbout() {
         if (this.about == null && this.about == undefined) { // Start loading only once
-            return YamlFetcherService.loadYaml("br/about")
+            return this.yamlFetcher.loadYaml("br/about")
                 .then((result) => { return this.setAbout(result); });
         } else {
             return this.about;

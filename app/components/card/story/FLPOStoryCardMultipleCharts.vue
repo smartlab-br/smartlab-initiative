@@ -2,7 +2,7 @@
   <v-layout row wrap>
     <v-flex xs12>
       <!-- Estilo de CARD -->
-      <v-card :id="structure.id" :class="'mx-4 mb-5 bg-card' + getClassIfIsDark(null, sectionIndex)">
+      <v-card :id="structure.id" :class="'mx-4 mb-5 bg-card' + $colorsService.getClassIfIsDark(null, sectionIndex, $vuetify.theme)">
         <v-progress-linear
           height="5"
           :indeterminate="loadingStatusDataset == 'LOADING'"
@@ -17,39 +17,42 @@
           <v-layout column>
             <v-flex pb-0>
               <v-layout row align-end fill-height wrap pl-3 pt-3 pb-0 pr-0 class="display-1-obs mb-0">
-                <v-flex class="card-title">
+                <v-flex xs10 class="card-title">
                   {{ cmpTitle ? cmpTitle : '' }}
-                  <v-tooltip :v-if="structure.info" bottom max-width="700px">
+                  <v-tooltip :v-if="structure && structure.info" bottom max-width="700px">
                     <v-icon color="accent"
                       class="pb-1"
                       slot="activator">
                       info
                     </v-icon>
                     <flpo-composite-text
+                      ref = "description"
                       :id = "'info_' + structure.id"
                       :structure="structure.info"
                       :custom-params="customParams"
                       :custom-functions="customFunctions">
                     </flpo-composite-text>
                   </v-tooltip>
-                  <div v-if="cmpTitleComment != null" class="title-comment pb-2">{{ cmpTitleComment }}</div>
+                  <div v-if="cmpTitleComment != null" class="title-comment" v-html="cmpTitleComment"></div>
                 </v-flex>
-                <v-spacer></v-spacer>
-                <!-- <v-btn small  fill-height class="mb-0" flat :color="assessZebraTitleColor(this.sectionIndex)"
+                <!-- <v-spacer></v-spacer> -->
+                <!-- <v-btn small fill-height class="mb-0" flat :color="$colorsService.assessZebraTitleColor(this.sectionIndex, $vuetify.theme)"
                   @click.native="downloadChart">
-                  <span class="hidden-sm-and-down body">Baixar gráficos</span>
+                  <span class="hidden-sm-and-down body">Baixar gráfico</span>
                   <v-icon right>file_download</v-icon>
                 </v-btn> -->
-                <v-btn small flat class="mb-0 mr-4" :color="assessZebraTitleColor(this.sectionIndex)"
-                  @click.native="dialog = true">
-                  <span class="hidden-sm-and-down body">Dados</span>
+                <v-flex xs2 text-xs-right pr-4>
+                <v-btn small flat :color="$colorsService.assessZebraTitleColor(this.sectionIndex, $vuetify.theme)"
+                  @click.native="dialog = true" style="margin: 0px;">
+                  <span :class="chartPosition == 'bottom'?'hidden-md-and-down body': 'hidden-sm-and-down body'">Dados</span>
                   <v-icon right>view_list</v-icon> <!-- list -->
                 </v-btn>
+                </v-flex>
               </v-layout>
             </v-flex>
             <v-flex>
               <v-layout row wrap style="min-height:500px;">
-                <v-flex xs12 md3 class="position-relative" column>
+                <v-flex xs12 :class="chartPosition != 'bottom' ? 'md3 position-relative': 'position-relative'" column>
                   <v-flex column pt-0 slot="description">
                     <flpo-composite-text
                       v-if="!invalidInterpol"
@@ -95,7 +98,7 @@
                     </template>
                   </v-flex>
                 </v-flex>
-                <v-flex xs12 md9 py-2>
+                <v-flex xs12 :class="chartPosition != 'bottom' ? 'md9': ''" py-2>
                   <v-layout row wrap
                     v-if="datasetsComplete == structure.charts.length"
                     :class="$vuetify.breakpoint.mdAndUp ? ' fill-height' : ''">
@@ -150,6 +153,7 @@
                             v-if = "dataset && dataset[chart.id] !== null && chart.type == 'MAP_LEAFLET' && chart.options !== null &&
                                     ((chart.options.type == 'topo' && topology) || (chart.options.type !== 'topo'))"
                             :id="chartId[chart.id]"
+                            :selected-place="selectedPlace"
                             :dataset="dataset[chart.id]"
                             :options="chart.options"
                             :headers="chart.headers"
@@ -161,6 +165,7 @@
                           <flpo-topojson-map
                             v-if="dataset && dataset[chart.id] && dataset[chart.id].length >= 0 && chart.type == 'MAP_TOPOJSON' && chart.options !== null && topology"
                             :id="chartId[chart.id]"
+                            :selected-place="selectedPlace"
                             :dataset="dataset[chart.id]"
                             :options="chart.options"
                             :headers="chart.headers"
@@ -284,7 +289,7 @@
     },
     computed: {
       cmpStyle: function() {
-        if (this.$vuetify.breakpoint.smAndDown) {
+        if (this.$vuetify.breakpoint.smAndDown || this.chartPosition == "bottom") {
           return "height:313px;"
         }
       },
@@ -432,7 +437,7 @@
             base_object = base_object_list;
           }
 
-          let finalLbl = this.applyInterpol(
+          let finalLbl = this.$textTransformService.applyInterpol(
             structure,
             this.customParams,
             this.customFunctions,
@@ -440,7 +445,7 @@
             this.sendInvalidInterpol
           );
 
-          if (finalLbl && finalLbl !== null && finalLbl !== undefined) {
+          if (finalLbl) {
             this.chartFooter[addedParams.chartId] = finalLbl;
             this.updatedChartFooters++;
             return;
@@ -464,9 +469,9 @@
           if (payload.rules.filter){
             let apiUrl = ""
             if (eachChart.apiBase){
-              apiUrl = this.applyInterpol(eachChart.apiBase, this.customParams, this.customFunctions);//eachChart.apiBase;
+              apiUrl = this.$textTransformService.applyInterpol(eachChart.apiBase, this.customParams, this.customFunctions);//eachChart.apiBase;
             } else {
-              apiUrl = this.applyInterpol(eachChart.api, this.customParams, this.customFunctions);
+              apiUrl = this.$textTransformService.applyInterpol(eachChart.api, this.customParams, this.customFunctions);
             }
             // if (this.customFilters.radioApi){
             //   apiUrl = this.customFilters.radioApi;
@@ -474,7 +479,7 @@
             endpoint = apiUrl + this.getFilters();
             eachChart.options.filterText = this.customFilters.filterText;
           } else {
-            endpoint = this.applyInterpol(payload.rules.api, this.customParams, this.customFunctions, this.customFilters);
+            endpoint = this.$textTransformService.applyInterpol(payload.rules.api, this.customParams, this.customFunctions, this.customFilters);
           }
 
           if (payload.type && payload.type === 'slider' || payload.type && payload.type === 'check') {
@@ -532,7 +537,7 @@
       //     this.customParams.enabled = payload.enabled;
       //     this.$refs.chart.reloadMap();
       //   } else {
-      //     //var endpoint = this.applyInterpol(payload.rules.api, this.customParams, this.customFunctions, payload.item);
+      //     //var endpoint = this.$textTransformService.applyInterpol(payload.rules.api, this.customParams, this.customFunctions, payload.item);
       //     this.fetchData(endpoint);
       //   }
       // },
@@ -554,7 +559,9 @@
       downloadData() {
         for (let indexDS in this.dataset) {
           // Dataset to binary data
-          const csvBin = new Blob([new Parser({delimiter: ';', withBOM: true}).parse(this.dataset[indexDS])]);
+          let datasetCsv = new Parser({delimiter: ';',withBOM: true}).parse(this.dataset[indexDS]);
+          datasetCsv = datasetCsv.replace(/<span>/g,"").replace(/<\/span>/g,"")
+          const csvBin = new Blob([datasetCsv]);
           
           // Generates transient link
           let dynaLink = document.createElement("a");
@@ -563,7 +570,9 @@
           dynaLink.href = URL.createObjectURL(csvBin);
           dynaLink.style.display = 'none';
           // Activates the transient link
+          document.body.appendChild(dynaLink);
           dynaLink.click();
+          document.body.removeChild(dynaLink);
         }
       },
 

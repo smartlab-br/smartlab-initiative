@@ -85,7 +85,7 @@ const ViewConfReader = {
 							if (!Array.isArray(structure.api)) {
 								// If the structure defines a single API call, execute the
 								// callback after the axios call.
-								axios(this.getAxiosOptions(addedParams.endpoint))
+								axios(this.$axiosCallSetupService.getAxiosOptions(addedParams.endpoint))
 								.then(result => {
 									cbFunction(
 										this.reformDataset(
@@ -106,7 +106,7 @@ const ViewConfReader = {
 								let promises = [];
 								let fnReformDataset = this.reformDataset;
 								for (let indexApi in addedParams.endpoint) {
-									let apiCall = this.getAxiosOptions(addedParams.endpoint[indexApi]);
+									let apiCall = this.$axiosCallSetupService.getAxiosOptions(addedParams.endpoint[indexApi]);
 									// Cria um promise
 									let promise = new Promise(
 										function(resolve, reject) {
@@ -149,8 +149,8 @@ const ViewConfReader = {
 							// If the structure defines an API call, execute the
 							// callback after the axios call.
 							let fusionParams = Object.assign(customParams, addedParams.react);
-							let url = this.applyInterpol(structure.api_reactive, {}, customFunctions, fusionParams);
-							axios(this.getAxiosOptions(url))
+							let url = this.$textTransformService.applyInterpol(structure.api_reactive, {}, customFunctions, fusionParams);
+							axios(this.$axiosCallSetupService.getAxiosOptions(url))
 							.then(result => {
 								cbFunction(
 									this.reformDataset(
@@ -170,7 +170,7 @@ const ViewConfReader = {
 						} else if (structure.function) {
 							// Runs function with args defines in yaml structure
 							cbFunction(
-								this.runNamedFunction(
+								this.$objectTransformService.runNamedFunction(
 									structure, null,
 									Object.assign({}, customFunctions)
 								),
@@ -180,26 +180,43 @@ const ViewConfReader = {
 							);
 						} else if (structure.preloaded) {
 							// If the structure defines the usage of preloaded indicators.
-							cbFunction(
-								this.reformDataset(
-									this[structure.preloaded.function](
-										structure.preloaded, 
-										customParams && customParams[structure.preloaded.prop] ? customParams[structure.preloaded.prop] : this.$store.state.gDatasets[structure.preloaded.prop].ds,
-										Object.assign({}, customFunctions)
+							if (!this[structure.preloaded.function] && structure.preloaded.function == 'slice') {
+								cbFunction(
+									this.reformDataset(
+										this.$indicatorsModel.slice(
+											structure.preloaded, 
+											customParams && customParams[structure.preloaded.prop] ? customParams[structure.preloaded.prop] : this.$store.state.gDatasets[structure.preloaded.prop].ds,
+											Object.assign({}, customFunctions)
+										),
+										structure.preloaded.options,
+										customFunctions
 									),
-									structure.preloaded.options,
-									customFunctions
-								),
-								structure.args,
-								structure,
-								addedParams
-							);
+									structure.args,
+									structure,
+									addedParams
+								);
+							} else {
+								cbFunction(
+									this.reformDataset(
+										this[structure.preloaded.function](
+											structure.preloaded, 
+											customParams && customParams[structure.preloaded.prop] ? customParams[structure.preloaded.prop] : this.$store.state.gDatasets[structure.preloaded.prop].ds,
+											Object.assign({}, customFunctions)
+										),
+										structure.preloaded.options,
+										customFunctions
+									),
+									structure.args,
+									structure,
+									addedParams
+								);
+							}
 						} else if (structure.api !== null && structure.api !== undefined) {
 							if (!Array.isArray(structure.api)) {
 								// If the structure defines a single API call, execute the
 								// callback after the axios call.
-								let url = this.applyInterpol(structure.api, {}, customFunctions, customParams);
-								axios(this.getAxiosOptions(url))
+								let url = this.$textTransformService.applyInterpol(structure.api, {}, customFunctions, customParams);
+								axios(this.$axiosCallSetupService.getAxiosOptions(url))
 								.then(result => {
 									cbFunction(
 										this.reformDataset(
@@ -219,7 +236,7 @@ const ViewConfReader = {
 								let promises = [];
 								let fnReformDataset = this.reformDataset;
 								for (let eachApi of structure.api) {
-									let apiCall = this.getAxiosOptions(this.applyInterpol(eachApi, {}, customFunctions, customParams));
+									let apiCall = this.$axiosCallSetupService.getAxiosOptions(this.$textTransformService.applyInterpol(eachApi, {}, customFunctions, customParams));
 									// Cria um promise
 									let promise = new Promise(
 										function(resolve, reject) {
@@ -275,50 +292,6 @@ const ViewConfReader = {
 					}
 				},
 
-				getFormatRules(structure, indicator = null) {
-					let formatRules = structure;
-					let autoType = indicator.ds_indicador_prefixo;
-
-					// Verifica a precisão
-					if (structure.precision == null || structure.precision == undefined) {
-						if (autoType == '(Índice)') {
-							formatRules.precision = 3;
-						}
-					}
-
-					// Verifica o multiplicador
-					if (structure.multiplier == null || structure.multiplier == undefined) {
-						if (autoType == '(em R$ x 1.000)') {
-							formatRules.multiplier = 1000;
-						}
-					}
-
-					// Verifica o collapse
-					// Todo collapse seguirá o default do format, exceto quando expressamente definido
-
-					// Verifica o default
-					if (structure.default == null || structure.default == undefined) {
-						// Todo default será Sem Registros, salvo expresso no yaml
-						formatRules.default = "Sem Registros";
-					}
-
-					// Verifica o tipo da formatação
-					if (autoType == '(em R$ x 1.000)' || autoType == '(R$)') {
-						formatRules.format = 'monetario';
-					} else if (autoType == '(Índice)') {
-						formatRules.format = 'real';
-					} else if (autoType == '(Percentual)') {
-						formatRules.format = 'porcentagem';
-					}
-
-					//verifica se as tags de UI devem ser geradas na formatação
-					if (structure.uiTags == null || structure.uiTags == undefined) {
-						formatRules.uiTags = true;
-					}
-
-					return formatRules;
-				},
-
 				reformDataset(dataset, options, customFunctions) {
 					if (options) {
 						// Adiciona o mínimo e o máximo ao dataset
@@ -328,11 +301,11 @@ const ViewConfReader = {
 						}
 
 						if (options.combine) {
-							dataset = dataset.concat(this.combineIndicators(dataset, options.combine, customFunctions, options.place_id_field));
+							dataset = dataset.concat(this.$indicatorsModel.combineIndicators(dataset, options.combine, customFunctions, options.place_id_field));
 
 							// Faz um slice, se declarado
 							if (options.slice) {
-                				dataset = this.slice(options.slice, dataset, {});
+                				dataset = this.$indicatorsModel.slice(options.slice, dataset, {});
 							}
 						}
 						
@@ -353,13 +326,13 @@ const ViewConfReader = {
 							let nuField = 'calc_' + options.calcs[indx].id;
 							for (let eachRow in dataset) {
 								if (options.calcs[indx].function) {
-									dataset[eachRow][nuField] = this.runNamedFunction(
+									dataset[eachRow][nuField] = this.$objectTransformService.runNamedFunction(
 										options.calcs[indx], dataset[eachRow],
 										customFunctions, [dataset[eachRow]]);
 								}
 								
 								if(options.calcs[indx].format){
-									dataset[eachRow][nuField] = this.formatNumber(
+									dataset[eachRow][nuField] = this.$numberTransformService.formatNumber(
 										dataset[eachRow][nuField], options.calcs[indx].format,
 										options.calcs[indx].precision, options.calcs[indx].multiplier,
 										options.calcs[indx].collapse, options.calcs[indx].signed,
@@ -379,9 +352,9 @@ const ViewConfReader = {
 							let formatRules = options.formatters[indxFmts];
 							for (let eachRow in dataset) {
 								if (formatRules.format == 'auto') {
-									formatRules = this.getFormatRules(formatRules, dataset[eachRow]);
+									formatRules = this.$textTransformService.getFormatRules(formatRules, dataset[eachRow]);
 								}
-								dataset[eachRow][nuField] = this.formatNumber(
+								dataset[eachRow][nuField] = this.$numberTransformService.formatNumber(
 									dataset[eachRow][options.formatters[indxFmts].id], 
 									formatRules.format, 
 									formatRules.precision, 
@@ -417,6 +390,7 @@ const ViewConfReader = {
 				},
 
 				autoFillLayout(base_object_list, rules, preloaded, addedParams = null, metadata = null) {
+					let localFunctions = this.customFunctions;
 					if (base_object_list && base_object_list.length > 0) {
 						let base_object = base_object_list[0];
 						for (var ruleIndx in rules) {
@@ -426,7 +400,7 @@ const ViewConfReader = {
 							} else if (rules[ruleIndx].named_prop) {
 									prop = base_object[rules[ruleIndx].named_prop];
 							} else if (rules[ruleIndx].function) {
-								prop = this.runNamedFunction(rules[ruleIndx], base_object);
+								prop = this.$objectTransformService.runNamedFunction(rules[ruleIndx], base_object, localFunctions);
 							}
 
 							if ((prop === null || prop === undefined) && rules[ruleIndx].default) {
@@ -434,9 +408,9 @@ const ViewConfReader = {
 							} else if (rules[ruleIndx].format !== null && rules[ruleIndx].format !== undefined) {
 								let formatRules = rules[ruleIndx];
 								if (rules[ruleIndx].format == 'auto') {
-									formatRules = this.getFormatRules(rules[ruleIndx], base_object);
+									formatRules = this.$textTransformService.getFormatRules(rules[ruleIndx], base_object);
 								}
-								prop = this.formatNumber(
+								prop = this.$numberTransformService.formatNumber(
 									prop, formatRules.format, formatRules.precision,
 									formatRules.multiplier, formatRules.collapse, formatRules.signed,
 									formatRules.uiTags
@@ -452,47 +426,9 @@ const ViewConfReader = {
 					}
 				},
 
-				runNamedFunction(struct, base_object, localFunctions = null, initialArgs = []) {
-					// Runs function with args defines in yaml structure
-					var args = initialArgs;
-					
-					for (var indx in struct.fn_args) {
-						// Gets the args for the yaml-defined function
-						if (struct.fn_args[indx].fixed != null && struct.fn_args[indx].fixed != undefined) {
-							// Apply fized value to arg
-							args.push(struct.fn_args[indx].fixed);
-						} else if (struct.fn_args[indx].named_prop) {
-							if (base_object) {
-								args.push(base_object[struct.fn_args[indx].named_prop]);
-							} else {
-								args.push(undefined);
-							}
-						} else if (struct.fn_args[indx].function) {
-							// If arg has an internal function defined with args, apply it
-							args.push(this.runNamedFunction(struct.fn_args[indx], base_object));
-						}
-					}
-
-					if (localFunctions && localFunctions[struct.function]) {
-						// Checks if the function exist in the localFunctions argument
-						return localFunctions[struct.function].apply(null, args);
-					}
-					if (this.customFunctions && this.customFunctions[struct.function]) {
-						// Checks if the function exist in the customFunctions context attribute
-						return this.customFunctions[struct.function].apply(null, args);
-					}
-					if (this[struct.function]) {
-						// Runs function on context (this) otherwise
-						return this[struct.function].apply(null, args);
-					}
-					
-					// Returns null otherwise
-					return null;
-				},
-
 				getApiUrl(scope, thematic = false, added_filters = null, agregacao = null) {
 					let url =  '/';
-					let obsAtual = this.identifyObservatory(this.$route.path.split('/')[1]);
+					let obsAtual = this.$observatories.identifyObservatory(this.$route.path.split('/')[1]);
 					if (thematic && obsAtual && obsAtual != 'td') {
 					  url += obsAtual + '/';
 					}
