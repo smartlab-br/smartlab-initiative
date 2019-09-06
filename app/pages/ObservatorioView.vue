@@ -69,7 +69,7 @@
     </v-container>
     -->
     <v-container v-if="observatorio && observatorio.prevalencia" fluid ma-0 pa-0
-      :style="'background-color:' + assessZebraBG(0) + ';'">
+      :style="'background-color:' + $colorsService.assessZebraBG(0, $vuetify.theme) + ';'">
       <v-layout row wrap>
         <!--
         <v-layout pa-3 row wrap justify-center v-show="mapTextLoading || !thematicLoaded">
@@ -188,7 +188,7 @@
               </v-layout>
               </v-img>
           </v-layout>
-          <v-layout v-show="mapEnabled" style="position:absolute;z-index:2;right:10px" class="cursor-pointer pa-3 justify-end subheading" v-on:click="pushRoute('/'+identifyObservatoryById(idObservatorio)+'/smartmap')">
+          <v-layout v-show="mapEnabled" style="position:absolute;z-index:2;right:10px" class="cursor-pointer pa-3 justify-end subheading" v-on:click="pushRoute('/'+$observatories.identifyObservatoryById(idObservatorio)+'/smartmap')">
             Clique para modo avançado - SmartMap
           </v-layout>
           <flpo-leaflet-map
@@ -265,7 +265,7 @@
     </v-layout>
 
     <!--
-    <v-container fluid ma-0 pa-5 :style="'background-color:' + assessZebraBG(1) + ';'">
+    <v-container fluid ma-0 pa-5 :style="'background-color:' + $colorsService.assessZebraBG(1, $vuetify.theme) + ';'">
       <v-layout row wrap text-xs-center pb-5>
         <div class="flex display-1-obs">Realização</div>
       </v-layout>

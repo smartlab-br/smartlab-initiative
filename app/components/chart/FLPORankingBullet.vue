@@ -98,7 +98,7 @@
 
       redrawChart(dataset) {
         let containerId = this.id;
-        let removeFromLabel = this.removeFromLabel;
+        let removeFromLabel = this.$tooltipBuildingService.removeFromLabel;
 
         setTimeout(function(viz, dataset, containerId, options) {
           let chartContainer = document.getElementById(containerId);

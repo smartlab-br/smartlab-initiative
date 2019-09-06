@@ -14,7 +14,7 @@
     created() {
       let colorArray = null;
       if (this.options.colorScale) {
-        colorArray = this.getColorScale(this.options.colorScale.name);
+        colorArray = this.$colorsService.getColorScale(this.options.colorScale.name);
       } else if (this.options.colorArray) {
         colorArray = this.options.colorArray;
       }
@@ -40,7 +40,7 @@
             .select(containerId)  // container DIV to hold the visualization
             .data(slicedDS)  // data to use with the visualization
             .groupBy(this.options.id)         // key for which our data is unique on
-            .label((d) => { return this.removeFromLabel(d[this.options.text],this.options.removed_text_list); })
+            .label((d) => { return this.$tooltipBuildingService.removeFromLabel(d[this.options.text],this.options.removed_text_list); })
             //.text(this.options.text)
             .y(this.options.y)    // key to use for y-axis
             .x(this.options.x)         // key to use for x-axis
@@ -50,8 +50,10 @@
       },
 
       generateViz(options){
-        let tooltip_function = options.tooltip_function ? options.tooltip_function : this.defaultTooltip;
+        let tooltip_function = options.tooltip_function ? options.tooltip_function : this.$tooltipBuildingService.defaultTooltip;
+        let tooltip_context = options.tooltip_function ? this : this.$tooltipBuildingService;
         let headers = this.headers;
+        let route = this.$route;
         let removed_text_list = options.removed_text_list;
 
         let lineConfig = { strokeWidth: options.stroke ? options.stroke : 4 };
@@ -59,7 +61,7 @@
 
         if (options.colorScale || options.colorArray) {
           lineConfig.stroke = (d) => { return colorCat[d[options.id]]; };
-          //lineConfig.stroke = this.getColorScale(options.colorScale.name);
+          //lineConfig.stroke = this.$colorsService.getColorScale(options.colorScale.name);
         } else if (options.color !== null && options.color !== undefined) {
           lineConfig.stroke = options.color;
         } 
@@ -85,7 +87,7 @@
               .legendConfig({ 
                 shapeConfig:{
                   labelConfig: {
-                    fontColor: this.assessZebraTitleColor(this.sectionIndex)
+                    fontColor: this.$colorsService.assessZebraTitleColor(this.sectionIndex, null, this.$vuetify.theme)
                   }
                 }
               })
@@ -93,7 +95,7 @@
                 label: function (d) { return options.legend_field ? d[options.legend_field] : d[options.id] },
                 shapeConfig:{
                   labelConfig: {
-                    fontColor: this.assessZebraTitleColor(this.sectionIndex)
+                    fontColor: this.$colorsService.assessZebraTitleColor(this.sectionIndex, null, this.$vuetify.theme)
                   }
                 }
               })
@@ -102,7 +104,7 @@
               .yConfig(yConfig)
               .tooltipConfig({
                               body: function(d) {
-                                return tooltip_function(d, headers, removed_text_list,options)
+                                return tooltip_function.apply(tooltip_context, [d, route, headers, removed_text_list,options]);
                               },
                               title: function(d) {
                                 return "";

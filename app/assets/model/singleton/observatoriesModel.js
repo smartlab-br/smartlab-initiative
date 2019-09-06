@@ -1,5 +1,6 @@
 import colors from 'vuetify/es5/util/colors'
 import YamlFetcherService from '../../service/singleton/yamlFetcherService'
+import ColorsService from '../../service/singleton/colorsService';
 
 class ObservatoriesModel {
     observatoriesSearchOptions = [
@@ -25,7 +26,9 @@ class ObservatoriesModel {
             color: colors.deepPurple.darken4, textColor: "deep-purple--text darken-4" }
     ];
 
-    constructor() {}
+    constructor() {
+        this.colorsService = new ColorsService();
+    }
 
     setStore(store) {
         this.store = store;
@@ -57,8 +60,37 @@ class ObservatoriesModel {
         return null;
     }
 
+    identifyObservatory(route) {
+        if (route.includes('trabalhodecente')) return 'td';
+        if (route.includes('diversidade')) return 'des';
+        if (route.includes('trabalhoescravo')) return 'te';
+        if (route.includes('trabalhoinfantil')) return 'ti';
+        if (route.includes('sst')) return 'sst';
+        return;
+    }
+
+    // Mapeamento dos IDs para os observatorios
+    identifyObservatoryById(idObservatorio) {
+        switch (idObservatorio){
+            case 'td':
+            return 'trabalhodecente';
+            case 'des':
+            return 'diversidade';
+            case 'te':
+            return 'trabalhoescravo';
+            case 'ti':
+            return 'trabalhoinfantil';
+            case 'sst':
+            return 'sst';
+        }
+    } 
+
     getObservatoriesSearchOptions() {
         return this.observatoriesSearchOptions;
+    }
+
+    getTheme(observatorio) {
+        return this.colorsService.getThemeFromId(observatorio);
     }
 }
 

@@ -126,12 +126,12 @@
       getDefaultXYConfig(sectionIndex) {
         return { 
           gridConfig: { stroke: "transparent" },
-          barConfig:   { stroke: this.assessZebraAxesColor(sectionIndex)},
+          barConfig:   { stroke: this.$colorsService.assessZebraAxesColor(sectionIndex, this.$vuetify.theme)},
           shapeConfig: {
             labelConfig: {
-              fontColor: this.assessZebraAxesColor(sectionIndex)
+              fontColor: this.$colorsService.assessZebraAxesColor(sectionIndex, this.$vuetify.theme)
             },
-            stroke: this.assessZebraAxesColor(sectionIndex)
+            stroke: this.$colorsService.assessZebraAxesColor(sectionIndex, this.$vuetify.theme)
           }
         }
       },
