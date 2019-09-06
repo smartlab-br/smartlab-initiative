@@ -80,22 +80,24 @@
       leaflet_map.fitBounds(bounds, { padding: [10, 10] });
 
       // Adiciona o marker do município apenas se houver idLocalidade
-      let placeId;
-      if (this.selectedPlace) {
-        placeId = this.selectedPlace;
-      } else if (this.customParams && this.customParams.idLocalidade) { // Município
-        placeId = this.customParams.idLocalidade;
-      }
-      
-      if (placeId && placeId.length == 7) {
-        let findLoc = this.$analysisUnitModel.findPlaceByID(placeId);
-        if (findLoc && (findLoc instanceof Promise || findLoc.then)) {
-          findLoc.then(response => {
-            this.addDeafultMarker(response, leaflet_map);
-          })
-          .catch(error => { this.sendError(error); });
-        } else {
-          this.addDeafultMarker(findLoc, leaflet_map);
+      if (this.options.hide_place_marker == undefined || !this.options.hide_place_marker){
+        let placeId;
+        if (this.selectedPlace) {
+          placeId = this.selectedPlace;
+        } else if (this.customParams && this.customParams.idLocalidade) { // Município
+          placeId = this.customParams.idLocalidade;
+        }
+        
+        if (placeId && placeId.length == 7) {
+          let findLoc = this.$analysisUnitModel.findPlaceByID(placeId);
+          if (findLoc && (findLoc instanceof Promise || findLoc.then)) {
+            findLoc.then(response => {
+              this.addDeafultMarker(response, leaflet_map);
+            })
+            .catch(error => { this.sendError(error); });
+          } else {
+            this.addDeafultMarker(findLoc, leaflet_map);
+          }
         }
       }
           
@@ -302,10 +304,22 @@
 
           if (this.visibleLayers[this.options.indicadores[0]] == null || this.visibleLayers[this.options.indicadores[0]] == undefined) {
             for (let indx in this.options.indicadores) {
-              if (indx == 0 && (this.visibleLayers[this.options.indicadores[indx]] == null || this.visibleLayers[this.options.indicadores[indx]] == undefined)) {
-                this.visibleLayers[this.options.indicadores[indx]] = true;
+              let indicator = this.options.indicadores[indx];
+              if(this.options.markerIcons && this.options.markerIcons[indicator]){
+                this.options.markerIcons[indicator] = new L.Icon({
+                              iconUrl: '/static/markers/marker-icon-2x-'+ this.options.markerIcons[indicator].toString() +'.png',
+                              shadowUrl: '/static/markers/marker-shadow.png',
+                              iconSize: [25, 41],
+                              iconAnchor: [12, 41],
+                              popupAnchor: [1, -34],
+                              shadowSize: [41, 41]
+                            });
+              }
+
+              if (this.options.show_all || (indx == 0 && (this.visibleLayers[indicator] == null || this.visibleLayers[indicator] == undefined))) {
+                this.visibleLayers[indicator] = true;
               } else {
-                this.visibleLayers[this.options.indicadores[indx]] = false;
+                this.visibleLayers[indicator] = false;
               }
             }
           }
@@ -317,7 +331,7 @@
                 L.marker([
                   each_row[this.options.lat],
                   each_row[this.options.long]
-                ],{rowData: each_row}).on("click", this.circleClick)
+                ],{rowData: each_row, icon: this.options.markerIcons[each_row[id_field]]}).on("click", this.circleClick)
               );
             }
           }
@@ -800,6 +814,7 @@
 
       defaultLeafletTooltip(target, tooltip_list = [], removed_text_list = [], options = null) { 
         let d = target.options.rowData;
+        target.unbindPopup();
         target.bindPopup(this.defaultTooltip(d, tooltip_list, removed_text_list, options)).openPopup();
       },
 
