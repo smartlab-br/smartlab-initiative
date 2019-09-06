@@ -740,7 +740,7 @@
       let findLoc = this.$analysisUnitModel.findCurrentPlace();
       if (findLoc instanceof Promise || findLoc.then) {
         findLoc.then(response => {
-          console.log(response);
+          // console.log(response);
           this.changeMiddleToolbar(response);
           if (response.id_localidade && response.id_localidade.length > 5) this.localidade = response;
         })
