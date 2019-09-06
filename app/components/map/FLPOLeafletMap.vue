@@ -301,6 +301,16 @@
           }
           this.mapLayer = L.heatLayer(heatPoints, {radius: 25, maxZoom:14}).addTo(this.leafletMap);
         } else if (this.options.type == 'cluster') {
+          
+          //default icon = blue
+          let defaultIcon = new L.Icon({
+                              iconUrl: '/static/markers/marker-icon-2x-blue.png',
+                              shadowUrl: '/static/markers/marker-shadow.png',
+                              iconSize: [25, 41],
+                              iconAnchor: [12, 41],
+                              popupAnchor: [1, -34],
+                              shadowSize: [41, 41]
+                            });
 
           if (this.visibleLayers[this.options.indicadores[0]] == null || this.visibleLayers[this.options.indicadores[0]] == undefined) {
             for (let indx in this.options.indicadores) {
@@ -314,7 +324,7 @@
                               popupAnchor: [1, -34],
                               shadowSize: [41, 41]
                             });
-              }
+              } 
 
               if (this.options.show_all || (indx == 0 && (this.visibleLayers[indicator] == null || this.visibleLayers[indicator] == undefined))) {
                 this.visibleLayers[indicator] = true;
@@ -331,7 +341,7 @@
                 L.marker([
                   each_row[this.options.lat],
                   each_row[this.options.long]
-                ],{rowData: each_row, icon: this.options.markerIcons[each_row[id_field]]}).on("click", this.circleClick)
+                ],{rowData: each_row, icon: this.options.markerIcons ? this.options.markerIcons[each_row[id_field]]: defaultIcon}).on("click", this.circleClick)
               );
             }
           }
