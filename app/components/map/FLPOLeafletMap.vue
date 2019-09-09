@@ -827,7 +827,7 @@
         let text = "";
         let d = target.options.rowData;
         text = this.$tooltipBuildingService.defaultTooltip(d, route, tooltip_list, removed_text_list, options);
-        text += "<p class='text-xs-right ma-0'><a href='https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=" + d[options.lat] +"," + d[options.long] +"' target='_blank' class='primary--text font-weight-black'>GoogleStreetView</a></p>";
+        text += "<p class='text-xs-right ma-0'><a href='https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=" + d[options.lat] +"," + d[options.long] +"' target='_blank' class='primary--text font-weight-black'>Google Street View</a></p>";
         target.unbindPopup();
         target.bindPopup(text).openPopup();
       },
