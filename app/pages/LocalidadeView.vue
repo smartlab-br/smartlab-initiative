@@ -1203,6 +1203,8 @@
         }
       },
 
+      changeToCompareStructure(struct){}, // Only needed in comparison extension
+
       openCompareDialog() {
         let auOptions = null;
         while (auOptions == null) {
