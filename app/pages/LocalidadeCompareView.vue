@@ -613,43 +613,6 @@
         }
       },
 
-      keepLoadingDimension() {
-        
-        this.sections = this.dimStruct.secoes;
-        this.sections_compare = this.changeToCompareStructure(this.sections);
-
-        this.ind_principais_per_row = (this.dimStruct.principais_options && this.dimStruct.principais_options.per_row) ? this.dimStruct.principais_options.per_row : 3;
-
-        this.ind_principais = this.dimStruct.principais;
-        this.ind_principais_compare = this.changeToCompareStructure(this.ind_principais);
-
-        this.presentation = this.dimStruct.presentation;
-        this.presentation_compare = JSON.parse(JSON.stringify(this.dimStruct.presentation).replace(/centralindicadores/g,"centralindicadores_compare").replace(/idLocalidade/g,"idLocalidade_compare"));
-            
-        this.totalLinksSections = 0;
-        for (let section of this.sections) {
-          if (section.name != '') {
-            this.totalLinksSections += 1
-          }
-          this.totalLinksSections += section.cards.length;
-        }
-        this.cardLinks = [];
-        this.fetchVizLinks(this.sections);
-      
-        this.unlockLoading = true;
-
-        this.fillDataStructure(
-          this.dimStruct.master, this.customParams,
-          this.customFunctions, this.setIndicator, {indicator_var: 'masterIndicator'}
-        );
-        let dimStructMasterCompare = JSON.parse(JSON.stringify(this.dimStruct.master).replace(/centralindicadores/g,"centralindicadores_compare").replace(/idLocalidade/g,"idLocalidade_compare"));
-        this.fillDataStructure(
-          dimStructMasterCompare, this.customParams,
-          this.customFunctions, this.setIndicator, {indicator_var: 'masterIndicator_compare'}
-        );
-
-      },
-
       changeToCompareStructure(struct){
         let compareStruct = JSON.stringify(struct).replace(/idLocalidade/g,"idLocalidade_compare").replace(/\"base_object\":\"localidade\"/g,"\"base_object\":\"localidade_compare\"");
         for(let dataset of this.thematicDatasets){
@@ -843,24 +806,6 @@
 
       },
 
-      setIndicator(base_object_list, rules, structure, metadata) {
-        if (typeof base_object_list == 'string') {
-          this[metadata.indicator_var] = base_object_list;
-        } else {
-          let finalText = this.$textTransformService.replaceArgs(
-            structure.template,
-            this.$indicatorsModel.indicatorsToValueArray(
-              rules, 
-              this.customFunctions, 
-              base_object_list,
-              this.sendInvalidInterpol
-            ),
-            this.sendInvalidInterpol
-          );
-          this[metadata.indicator_var] = finalText;
-        }
-      },
-
       changeDim(idDimensao, idLocalidade, idObservatorio) {
         let urlComplemento = '';
         if (idDimensao) {
@@ -880,66 +825,3 @@
     }
   }
 </script>
-<style>
-  .dim-menu {
-    background-color:rgba(0,0,0,0.8) !important;
-    width: 100%;
-    position: fixed;
-    z-index: 99 !important;
-  }
-
-  .bg-transp-10{
-    background-color:rgba(256,256,256,0.10) !important;
-  }
-
-  .dim-menu .hidden {
-    display: none;
-  }
-
-  .dim-menu .flex:hover .hidden {
-    display: block;
-  }
-  
-  .dim-menu .flex { cursor: pointer; }
-  
-  .bg-black {
-    background-color: black;
-  }
-
-  .scroll-menu { cursor: pointer; }
-
-  /* .minicard {
-    background-color: rgba(0,0,0,0.7);
-    align-self: stretch;
-    overflow: hidden;
-  } */
-
-  .dim-description {
-    column-count: 2;
-    column-gap: 4.5em;
-  }
-
-  .icon-vertical-align-middle i {
-    vertical-align: middle !important;
-  }
-  .table-info th, .table-info td{
-    border:1px solid;
-    padding: 10px;
-  }
-
-  .master-indicator span{
-    align-self: auto;
-  }
-
-  .loadingPanel {
-    width: 100%; 
-    background-color: rgba(33, 33, 33, 0.9); 
-    position: absolute; 
-    z-index:99;
-  }
-
-  .card-title-bullet {
-    font-size: 0.75rem !important;
-    display: table-caption;
-  }
-</style>

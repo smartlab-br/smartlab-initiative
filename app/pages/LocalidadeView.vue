@@ -820,8 +820,20 @@
 
         this.fillDataStructure(
           this.dimStruct.master, this.customParams,
-          this.customFunctions, this.setMasterIndicator
+          this.customFunctions, this.setMasterIndicator // Defaults to masterIndicator
         );
+
+        if (this.$route.query.compare) { // In comparison view
+          this.sections_compare = this.changeToCompareStructure(this.sections);
+          this.ind_principais_compare = this.changeToCompareStructure(this.ind_principais);
+          this.presentation_compare = JSON.parse(JSON.stringify(this.dimStruct.presentation).replace(/centralindicadores/g,"centralindicadores_compare").replace(/idLocalidade/g,"idLocalidade_compare"));
+            
+          let dimStructMasterCompare = JSON.parse(JSON.stringify(this.dimStruct.master).replace(/centralindicadores/g,"centralindicadores_compare").replace(/idLocalidade/g,"idLocalidade_compare"));
+          this.fillDataStructure(
+            dimStructMasterCompare, this.customParams,
+            this.customFunctions, this.setMasterIndicator, {indicator_var: 'masterIndicator_compare'}
+          );
+        }
       },
 
       getMensagemErro(idLocalidade) {
@@ -958,8 +970,9 @@
       },
 
       setMasterIndicator(base_object_list, rules, structure, metadata) {
+        let masterVar = (metadata && metadata.indicator_var) ? metadata.indicator_var : 'masterIndicator';
         if (typeof base_object_list == 'string') {
-          this.masterIndicator = base_object_list;
+          this[masterVar] = base_object_list;
         } else {
           let finalText = this.$textTransformService.replaceArgs(
             structure.template,
@@ -971,7 +984,7 @@
             ),
             this.sendInvalidInterpol
           );
-          this.masterIndicator = finalText;
+          this[masterVar] = finalText;
         }
       },
 
