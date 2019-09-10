@@ -561,6 +561,28 @@
       }
     },
     watch: {
+      datasetsLoaded: function() {
+        if ((this.datasetsLoaded && this.$route.query.compare && this.datasetsCompareLoaded)
+          || (this.datasetsLoaded && (this.$route.query.compare === null || this.$route.query.compare === undefined))) {
+          this.keepLoading();
+        }
+      },
+      datasetsCompareLoaded: function() {
+        if (this.datasetsLoaded && this.datasetsCompareLoaded) {
+          this.keepLoading();
+        }
+      },
+      datasetsDimLoaded: function() {
+        if ((this.datasetsDimLoaded && this.$route.query.compare && this.datasetsDimCompareLoaded)
+          || (this.datasetsDimLoaded && (this.$route.query.compare === null || this.$route.query.compare === undefined))) {
+          this.keepLoadingDimension();
+        }
+      },
+      datasetsDimCompareLoaded: function() {
+        if (this.datasetsDimLoaded && this.datasetsDimCompareLoaded){
+          this.keepLoadingDimension();
+        }
+      },
       idLocalidade_compare(newVal, oldVal) {
         if (newVal && (this.$route.query.compare == null || this.$route.query.compare == undefined)) {
           let url = "";
@@ -664,12 +686,23 @@
         let auId = this.getIdLocalidadeFromRoute(this.$route.params.idLocalidade);
         let msgErro = this.getMensagemErro(this.$route.params.idLocalidade);
       
+        let compareScope, compareAuId, compareMsgErro;
+        if (this.$route.query.compare) {
+          compareScope = this.getEscopo(this.$route.query.compare);
+          compareAuId = this.getIdLocalidadeFromRoute(this.$route.query.compare);
+          compareMsgErro = this.getMensagemErro(this.$route.query.compare);
+
+          this.datasetsLoaded = false;
+          this.datasetsCompareLoaded = false;
+        }
+
         if (content.tematicos) {
-          let thematicDatasets = ['centralindicadores'];
+          this.thematicDatasets = ['centralindicadores'];
           for (let indxTematico in content.tematicos){
-            thematicDatasets.push(content.tematicos[indxTematico].dataset);
+            this.thematicDatasets.push(content.tematicos[indxTematico].dataset);
             if (parseInt(indxTematico) + 1 == content.tematicos.length) { 
-              this.getMultipleGlobalDatasets(thematicDatasets, scope, auId, this.keepLoading);
+              this.getMultipleGlobalDatasets(this.thematicDatasets, scope, auId, this.keepLoading);
+              if (this.$route.query.compare) this.getMultipleGlobalDatasets(this.thematicDatasets, compareScope, compareAuId, () => { this.datasetsCompareLoaded = true}, "_compare");
             }
           }
         } else {
@@ -678,8 +711,18 @@
             scope,
             msgErro,
             auId,
-            this.keepLoading
+            () => { this.datasetsLoaded = true}
           );
+          if (this.$route.query.compare) {
+            this.getGlobalDataset(
+              'centralindicadores',
+              compareScope,
+              compareMsgErro,
+              compareAuId,
+              () => { this.datasetsCompareLoaded = true},
+              "_compare"
+            );
+          }
         }
         this.$emit('alterToolbar', content.theme.toolbar);
       },
@@ -782,18 +825,29 @@
       },
 
       setDimension(content) {
-        let escopo = this.getEscopo(this.$route.params.idLocalidade);
+        let escopo = this.getEscopo(this.idLocalidade);
         this.dimStruct = content;
         if (content.tematicos) {
+          this.datasetsDimLoaded = false;
+          this.datasetsDimCompareLoaded = false;
           let thematicDatasets = ['centralindicadores'];
           for (let tematico of content.tematicos){
             thematicDatasets.push(tematico.dataset);
           }
+          this.thematicDatasets = thematicDatasets;
           this.getMultipleGlobalDatasets(
             thematicDatasets,
             escopo,
-            this.getIdLocalidadeFromRoute(this.$route.params.idLocalidade),
-            this.keepLoadingDimension);
+            this.idLocalidade,
+            () => { this.datasetsDimLoaded = true});
+          if (this.$route.query.compare) {
+            this.getMultipleGlobalDatasets(
+              thematicDatasets,
+              escopo,
+              this.idLocalidade_compare,
+              () => { this.datasetsDimCompareLoaded = true},
+              "_compare");
+          }
         } else {
           this.keepLoadingDimension();
         }
@@ -1031,10 +1085,10 @@
 
       changeDim(idDimensao, idLocalidade, idObservatorio) {
         let urlComplemento = '';
-        if (idDimensao) {
-          urlComplemento = '&dimensao=' + idDimensao;
-        }
-        this.$router.push("/" + this.$observatories.identifyObservatoryById(idObservatorio) + "/localidade/" + idLocalidade + "?" + urlComplemento);
+        let viewEndpoint = this.$route.query.compare ? 'localidadecompare' : 'localidade';
+        if (idDimensao) urlComplemento = '&dimensao=' + idDimensao;
+        if (this.$route.query.compare) urlComplemento += '&compare=' + this.idLocalidade_compare;
+        this.$router.push("/" + this.$observatories.identifyObservatoryById(idObservatorio) + "/" + viewEndpoint + "/" + idLocalidade + "?" + urlComplemento);
       },
 
       getLeadSlice(rowIndx) {

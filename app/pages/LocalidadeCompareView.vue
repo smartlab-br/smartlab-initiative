@@ -410,71 +410,11 @@
       }
     },
     watch: {
-      datasetsLoaded: function() {
-        if (this.datasetsLoaded && this.datasetsCompareLoaded){
-          this.keepLoading();
-        }
-      },
-      datasetsCompareLoaded: function() {
-        if (this.datasetsLoaded && this.datasetsCompareLoaded){
-          this.keepLoading();
-        }
-      },
-      datasetsDimLoaded: function() {
-        if (this.datasetsDimLoaded && this.datasetsDimCompareLoaded){
-          this.keepLoadingDimension();
-        }
-      },
-      datasetsDimCompareLoaded: function() {
-        if (this.datasetsDimLoaded && this.datasetsDimCompareLoaded){
-          this.keepLoadingDimension();
-        }
-      },
       localidade: function(){
           this.$emit('alterMiddleToolbar', { "localidade": this.localidade });
       }
     },
     methods: {
-      setObservatorio(content) {
-        let scope = this.getEscopo(this.$route.params.idLocalidade);
-        let auId = this.getIdLocalidadeFromRoute(this.$route.params.idLocalidade);
-        let msgErro = this.getMensagemErro(this.$route.params.idLocalidade);
-
-        let compareScope = this.getEscopo(this.$route.query.compare);
-        let compareAuId = this.getIdLocalidadeFromRoute(this.$route.query.compare);
-        let compareMsgErro = this.getMensagemErro(this.$route.query.compare);
-      
-        this.datasetsLoaded = false;
-        this.datasetsCompareLoaded = false;
-        this.thematicDatasets = ['centralindicadores'];
-        if (content.tematicos) {
-          for (let indxTematico in content.tematicos){
-            this.thematicDatasets.push(content.tematicos[indxTematico].dataset);
-            if (parseInt(indxTematico) + 1 == content.tematicos.length) { 
-              this.getMultipleGlobalDatasets(this.thematicDatasets, scope, auId, () => { this.datasetsLoaded = true});
-              this.getMultipleGlobalDatasets(this.thematicDatasets, compareScope, compareAuId, () => { this.datasetsCompareLoaded = true}, "_compare");
-            }
-          }
-        } else {
-          this.getGlobalDataset(
-            'centralindicadores',
-            scope,
-            msgErro,
-            auId,
-            () => { this.datasetsLoaded = true}
-          );
-          this.getGlobalDataset(
-            'centralindicadores',
-            compareScope,
-            compareMsgErro,
-            compareAuId,
-            () => { this.datasetsCompareLoaded = true},
-            "_compare"
-          );
-        }
-        this.$emit('alterToolbar', content.theme.toolbar);
-      },
-      
       keepLoading() {
         let tmpIdObs = this.$observatories.identifyObservatory(this.$route.path.split('/')[1]);
         
@@ -584,33 +524,6 @@
           { main: "br/" + observatorioDir + "localidade/" + escopo + "/" + idDimensao, alt: "br/" + observatorioDir + "localidade/default/" + idDimensao }
         ];
         this.loadYamlArray({}, baseStructYamls, this.setDimension);
-      },
-
-      setDimension(content) {
-        let escopo = this.getEscopo(this.idLocalidade);
-        this.dimStruct = content;
-        if (content.tematicos) {
-          this.datasetsDimLoaded = false;
-          this.datasetsDimCompareLoaded = false;
-          let thematicDatasets = ['centralindicadores'];
-          for (let tematico of content.tematicos){
-            thematicDatasets.push(tematico.dataset);
-          }
-          this.thematicDatasets = thematicDatasets;
-          this.getMultipleGlobalDatasets(
-            thematicDatasets,
-            escopo,
-            this.idLocalidade,
-            () => { this.datasetsDimLoaded = true});
-          this.getMultipleGlobalDatasets(
-            thematicDatasets,
-            escopo,
-            this.idLocalidade_compare,
-            () => { this.datasetsDimCompareLoaded = true},
-            "_compare");
-        } else {
-          this.keepLoadingDimension();
-        }
       },
 
       changeToCompareStructure(struct){
@@ -804,15 +717,6 @@
             });
         }
 
-      },
-
-      changeDim(idDimensao, idLocalidade, idObservatorio) {
-        let urlComplemento = '';
-        if (idDimensao) {
-          urlComplemento = '&dimensao=' + idDimensao;
-        }
-        urlComplemento +=  '&compare=' + this.idLocalidade_compare;
-        this.$router.push("/" + this.$observatories.identifyObservatoryById(idObservatorio) + "/localidadecompare/" + idLocalidade + "?" + urlComplemento);
       },
 
       removeCompare() {
