@@ -324,6 +324,7 @@ const DatasetManager = {
 
         getMultipleGlobalDatasets(thematicDatasets, scope, auId, cb = null, suffix = "") {
           let nLoadedDS = 0;
+          let promises = [];
 
           for (let indxDS in thematicDatasets) {
             let dataset = thematicDatasets[indxDS] + suffix;
@@ -337,20 +338,20 @@ const DatasetManager = {
               let url = this.$textTransformService.replaceArgs(this.datasetEndpoints[endpointName][scope], [auId]);
 
               // Busca o dataset da localidade
-              axios(this.$axiosCallSetupService.getAxiosOptions(url))
-                .then(result => {
-                  this.$store.state.gDatasets[dataset] = {
-                    ds: JSON.parse(result.data).dataset,
-                    valid: true
+              promises.push(
+                axios(this.$axiosCallSetupService.getAxiosOptions(url))
+                  .then(result => {
+                    this.$store.state.gDatasets[dataset] = {
+                      ds: JSON.parse(result.data).dataset,
+                      valid: true
                   };
-                  if (cb && ++nLoadedDS == thematicDatasets.length) cb(null);
                 }, error => {
                   this.sendError('Erro ao carregar dataset temático');
-                });
-            } else {
-              if (cb && ++nLoadedDS == thematicDatasets.length) cb(null);
+                })
+              );
             }
           }
+          Promise.all(promises).then((results) => { cb(null); });
         },
 
         setGlobalDataset(dataset, scope, msg_erro, auId = null, cb = null, suffix = "") {

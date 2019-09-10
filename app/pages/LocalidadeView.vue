@@ -351,7 +351,6 @@
         visibleCardMaxIndex: 1, //dois primeiros cards
         auOptions: [],
         compareDialog: false,
-        loadedPrincipais: false,
 
         // Compare data
         sections_compare: [],
@@ -683,34 +682,16 @@
           compareMsgErro = this.getMensagemErro(this.$route.query.compare);
         }
 
-        if (content.tematicos) {
-          this.thematicDatasets = ['centralindicadores'];
+        this.thematicDatasets = ['centralindicadores'];
+        if (content && content.tematicos) {
           for (let indxTematico in content.tematicos){
             this.thematicDatasets.push(content.tematicos[indxTematico].dataset);
-            if (parseInt(indxTematico) + 1 == content.tematicos.length) { 
-              this.getMultipleGlobalDatasets(this.thematicDatasets, scope, auId, () => { this.datasetsLoaded = true });
-              if (this.$route.query.compare) this.getMultipleGlobalDatasets(this.thematicDatasets, compareScope, compareAuId, () => { this.datasetsCompareLoaded = true }, "_compare");
-            }
-          }
-        } else {
-          this.getGlobalDataset(
-            'centralindicadores',
-            scope,
-            msgErro,
-            auId,
-            () => { this.datasetsLoaded = true}
-          );
-          if (this.$route.query.compare) {
-            this.getGlobalDataset(
-              'centralindicadores',
-              compareScope,
-              compareMsgErro,
-              compareAuId,
-              () => { this.datasetsCompareLoaded = true},
-              "_compare"
-            );
           }
         }
+        
+        this.getMultipleGlobalDatasets(this.thematicDatasets, scope, auId, () => { this.datasetsLoaded = true });
+        if (this.$route.query.compare) this.getMultipleGlobalDatasets(this.thematicDatasets, compareScope, compareAuId, () => { this.datasetsCompareLoaded = true }, "_compare");
+        
         this.$emit('alterToolbar', content.theme.toolbar);
       },
 
