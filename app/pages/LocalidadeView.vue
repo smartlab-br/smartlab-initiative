@@ -347,11 +347,31 @@
         unlockLoading: false,
         thematicDatasetQuantity: 0,
         thematicLoaded: 0,
-        isFavorite: false,
+        // isFavorite: false,
         visibleCardMaxIndex: 1, //dois primeiros cards
         auOptions: [],
         compareDialog: false,
+
+        // Compare data
+        sections_compare: [],
         idLocalidade_compare: null,
+        localidade_compare: null,
+        masterIndicator_compare: null,
+        presentation_compare: null,
+        ind_principais_compare:[],
+        topology_compare: null,
+        topology_uf_compare: null,
+        topologyUfLoaded_compare: false,
+        thematicDatasets: [],
+
+        datasetsLoaded: false,
+        datasetsCompareLoaded: false,
+        datasetsDimLoaded: false,
+        datasetsDimCompareLoaded: false,
+        loadedPrincipais: false,
+
+        // Functions
+        // TODO Migrate gradually to prototype objects
         custom_functions: {
           concat_values(indicador, value1, value2, value3 = "", value4 = "", value5 = "") {return value1 + ' ' + value2 + ' ' + value3 + ' ' + value4 + ' ' + value5; },
           calc_subtraction: function(a, b, c = 0) {  return a - (b - c); },
@@ -529,7 +549,7 @@
 
       if (tmpIdObs) {
         this.loadYaml("br/observatorio/" + tmpIdObs, this.setObservatorio);
-      } else {
+      } else if (this.$route.query.compare === null || this.$route.query.compare === undefined) { // Only if not comparing
         this.getGlobalDataset(
           'centralindicadores',
           scope,
@@ -542,7 +562,7 @@
     },
     watch: {
       idLocalidade_compare(newVal, oldVal) {
-        if (newVal) {
+        if (newVal && (this.$route.query.compare == null || this.$route.query.compare == undefined)) {
           let url = "";
           if (this.$route.path == this.$route.fullPath) { //não tem dimensão informada na url
             url = this.$route.fullPath.replace('/localidade/','/localidadecompare/') + '?compare=' + newVal.id;

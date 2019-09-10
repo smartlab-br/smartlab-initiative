@@ -383,241 +383,10 @@
 <script>
   import axios from 'axios'
 
-  import BaseStoryView from './BaseStoryView.vue';
+  import LocalidadeView from './LocalidadeView.vue';
 
   export default {
-    extends: BaseStoryView,
-    data () {
-      return {
-        displayHeight: "auto",
-        select: null,
-        dimensao_ativa: [],
-        dimensao_ativa_id: null,
-        sections: [],
-        sections_compare: [],
-        show: false,
-        idLocalidade: null,
-        idLocalidade_compare: null,
-        idObservatorio: null,
-        localidade: null,
-        localidade_compare: null,
-        masterIndicator: null,
-        masterIndicator_compare: null,
-        presentation: null,
-        presentation_compare: null,
-        ind_master: null,
-        ind_principais:[],
-        ind_principais_compare:[],
-        ind_principais_per_row: 2,
-        dimensoes: [],
-        customParams: {},
-        topology: null,
-        topology_uf: null,
-        topology_compare: null,
-        topology_uf_compare: null,
-        topologyUfLoaded: false,
-        topologyUfLoaded_compare: false,
-        isPageBottom: true,
-        cardLinks: [],
-        totalLinksSections: 0,
-        unlockLoading: false,
-        thematicDatasets: [],
-        thematicDatasetQuantity: 0,
-        thematicLoaded: 0,
-        isFavorite: false,
-        visibleCardMaxIndex: 1, //dois primeiros cards
-        datasetsLoaded: false,
-        datasetsCompareLoaded: false,
-        datasetsDimLoaded: false,
-        datasetsDimCompareLoaded: false,
-        custom_functions: {
-          concat_values(indicador, value1, value2, value3 = "", value4 = "", value5 = "") {return value1 + ' ' + value2 + ' ' + value3 + ' ' + value4 + ' ' + value5; },
-          calc_subtraction: function(a, b, c = 0) {  return a - (b - c); },
-          calc_complemetary_absolut_from_percentage: function(percentage, abs_total) {
-            return (abs_total * (100 - percentage)) / 100;
-          },
-          oppose: function(d, prop_ref, value_ref, prop_val) {
-            if (d[prop_ref] == value_ref) {
-              return -d[prop_val];
-            }
-            return d[prop_val];
-          },
-          get_bin_faixa_etaria: function(d, age_prop) {
-            if (d[age_prop] <= 17) return '01'; // < 18
-            if (d[age_prop] <= 24) return '02'; // 18-24
-            if (d[age_prop] <= 29) return '03'; // 25-29
-            if (d[age_prop] <= 34) return '04'; // 30-34
-            if (d[age_prop] <= 39) return '05'; // 35-39
-            if (d[age_prop] <= 44) return '06'; // 40-44
-            if (d[age_prop] <= 49) return '07'; // 45-49
-            if (d[age_prop] <= 54) return '08'; // 50-54
-            if (d[age_prop] <= 59) return '09'; // 55-59
-            return '10'; // > 60
-          },
-          get_faixa_etaria: function(d, age_prop) {
-            if (d[age_prop] <= 17) return '< 18'
-            if (d[age_prop] <= 24) return '18-24'
-            if (d[age_prop] <= 29) return '25-29'
-            if (d[age_prop] <= 34) return '30-34'
-            if (d[age_prop] <= 39) return '35-39'
-            if (d[age_prop] <= 44) return '40-44'
-            if (d[age_prop] <= 49) return '45-49'
-            if (d[age_prop] <= 54) return '50-54'
-            if (d[age_prop] <= 59) return '55-59'
-            return '> 60'
-          },
-          calc_subtraction_ds: function(d, a, b) { return a - b; },
-          calc_addition_ids_ds: function(d, a, b, multiplier=10000000) { return a*multiplier + b; },
-          calc_percentage: function(parte,total) { return parte / total * 100},
-          calc_percentage_val1: function(val1,val2) { return val1 / (val1 + val2) * 100},
-          calc_percentage_2values: function(val1,val2,total) { return (val1 + val2) / total * 100},
-          calc_proportion: function(dividendo, divisor) { return dividendo / divisor; },
-          calc_proportion_ds: function(d,dividendo, divisor) { return dividendo / divisor; },
-          get_flag_value: function(d) {return (d.vl_indicador == 0) ? d.ds_indicador_radical + ": NÃO" : d.ds_indicador_radical + ": SIM";},
-          get_te_label: function(d,campo) {
-              switch(d[campo]) {
-                  case 'te_nat':
-                      return 'Vítimas que nasceram na localidade'
-                      break;
-                  case 'te_res':
-                      return 'Vítimas que residem na localidade'
-                      break;
-                  case 'te_rgt':
-                      return 'Vítimas resgatadas na localidade'
-                      break;
-                  default:
-                      return d[campo];
-              }
-          },
-          get_period_from_string: function(str){ 
-            let reg = /de \d{4} a \d{4}/g;
-            return str.match(reg);
-            },
-          get_text_from_parentheses_ds: function(d, str){ 
-            let reg = /\(.*\)/;
-            var returnStr = String(str).match(reg);
-            returnStr = String(returnStr).replace('(', '').replace(')', '');
-            return returnStr;
-            },
-          get_proportional_indicator_uf: function(d,campo='vl_indicador', media="media_uf") { return Math.log(((d[campo] - d[media]) / d[media]) + 1.01); },
-          get_log: function(d,campo='vl_indicador') { return Math.log(d[campo] + 0.01); },
-          get_bipolar_scale: function(d, prop, origin = 0) {
-            let val = d[prop] - origin;
-            if (val > 0) {
-              return Math.log(val / d.maxVal + 1.0001);
-            }
-            if (val < 0) {
-              return -Math.log(Math.abs(val) / Math.abs(d.minVal) + 1.0001);
-            }
-            return 0;
-          },
-          inv_deviation: function(v, bs) {
-            let valor = (Math.exp(v) - 1.01) * bs + bs;
-            return valor.toLocaleString('pt-br', {maximumFractionDigits: 2, minimumFractionDigits: 2});
-          },
-          concat_ds_vl: function(d, formato, casasDecimais) {
-            let valor = null;
-            if(d.vl_indicador === null || d.vl_indicador == undefined){
-              valor = "-"; 
-            } else {
-              valor = parseFloat(d.vl_indicador);
-              if(casasDecimais === null || casasDecimais === undefined) {
-                casasDecimais = 2;
-              }
-              switch(formato) {
-                  case 'inteiro':
-                      valor = valor.toLocaleString('pt-br', {maximumFractionDigits: 0});
-                      break;
-                  case 'real':
-                      valor = valor.toLocaleString('pt-br', {maximumFractionDigits: casasDecimais, minimumFractionDigits: casasDecimais});
-                      break;
-                  case 'porcentagem':
-                      valor = valor.toLocaleString('pt-br', {maximumFractionDigits: casasDecimais, minimumFractionDigits: casasDecimais}) + "%";
-                      break;
-                  case 'monetario':
-                      valor = "R$ " + valor.toLocaleString('pt-br', {maximumFractionDigits: 0});
-                      // return valor.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'});
-                      break;
-                  default:
-                      valor = valor.toLocaleString('pt-br');
-              }
-            }
-            return d.ds_indicador_radical + ": " + valor; },
-          get_proportional_resg_fisc: function(d) { return d.qt_resgatados/ d.qt_ope; },
-          get_idh_level: (d) => {
-            if (d.vl_indicador < 0.5) return 1; // Muito Baixo
-            if (d.vl_indicador < 0.6) return 2; // Baixo
-            if (d.vl_indicador < 0.7) return 3; // Médio
-            if (d.vl_indicador < 0.8) return 4; // Alto
-            return 5;
-          },
-          remove_year: function(d){ return String(d.ds_indicador_radical).replace(d.nu_competencia,"").replace("  "," ")},
-          absolute: function(d, campo="vl_indicador") { return Math.abs(d[campo]); },
-          concat_descriptions: function(d) {
-            return d.desc_indicador + " - " + d.ds_indicador_radical;
-          },
-          replace_text_namepercent: function(data, options) {
-            return data[options.name_field] + " (" + data[options.pct_field] + ")"; 
-          },
-          replace_value_by_zero(show_value, value){
-            if (show_value){
-              return value;
-            } else {
-              return 0;
-            }
-          },
-          fn_in_interpol_functions: function(a, b) { return "args " + a + " " + b; },
-          calc_proportion_by_month: function(dividendo, divisor) { return dividendo / divisor / 12; },
-          calc_average_by_year: function(total1, ano1, total2, ano2) { return (total2-total1) / ((parseInt(ano2)- parseInt(ano1)) + 1); },
-          calc_class_idh: function(idh, showIdh = false, showParentheses = false, letterCaption = true) { 
-            var returText = "";
-            // showIdh = (String(showIdh) == 'true');
-            // showParentheses = (String(showParentheses) == 'true');
-            // letterCaption = (String(letterCaption) == 'true');
-
-            if (idh < 0.5){
-              returText = letterCaption ? "Muito baixo" : "muito baixo";
-            } else if (idh < 0.6){
-              returText = letterCaption ? "Baixo" : "baixo";
-            } else if (idh < 0.7){
-              returText = letterCaption ? "Médio" : "médio";
-            } else if (idh < 0.8){
-              returText = letterCaption ? "Alto" : "alto";
-            } else {
-              returText = letterCaption ? "Muito alto" : "muito alto";
-            }
-            returText = showParentheses ? " (" + returText + ")": returText;
-            returText = showIdh ? idh + " " + returText : returText;
-
-            return returText;
-          }
-        },
-        loadedPrincipais: false,
-      }
-    },
-   
-    created () {
-      let tmpIdObs = this.$observatories.identifyObservatory(this.$route.path.split('/')[1]);
-      this.$dimensions.getDimensions(tmpIdObs, this.setSiblingDimensions);
-      this.idObservatorio = tmpIdObs;
-      
-      let scope = this.getEscopo(this.$route.params.idLocalidade);
-      let auId = this.getIdLocalidadeFromRoute(this.$route.params.idLocalidade);
-      let msgErro = this.getMensagemErro(this.$route.params.idLocalidade);
-
-      if (tmpIdObs) {
-        this.loadYaml("br/observatorio/" + tmpIdObs, this.setObservatorio);
-      // } else {
-      //   this.getGlobalDataset(
-      //     'centralindicadores',
-      //     scope,
-      //     msgErro,
-      //     auId,
-      //     this.keepLoading
-      //   );
-      //   this.$emit('alterToolbar', null);
-      }
-    },
+    extends: LocalidadeView,
     computed: {
       cardLinksLoaded: function() {
         return this.totalLinksSections == this.cardLinks.length;
@@ -638,48 +407,7 @@
       },
       currentCompareParallax: function() {
         return 'background-image:url("/static/parallax/uf/' + this.customParams.cd_uf_compare + '.jpg"); background-position: center center; background-size: cover;';
-      },
-      dimSplitColumns: function() {
-        if (this.$vuetify.breakpoint.mdAndUp) {
-          return 'dim-description';
-        }
-      },
-      isFirstDim: function() {
-        if (this.dimensoes && this.dimensao_ativa) {
-          return this.dimensoes[0].id === this.dimensao_ativa.id;
-        }
-        return true;
-      },
-      isLastDim: function() {
-        if (this.dimensoes && this.dimensao_ativa) {
-          return this.dimensoes[this.dimensoes.length - 1].id === this.dimensao_ativa.id;
-        }
-        return true;
       }
-    },
-    mounted: function() {
-
-      if (this.$route.params.idLocalidade && this.$cookies.get("currentAnalysisUnit") != this.$route.params.idLocalidade) {
-        this.$cookies.set("currentAnalysisUnit", this.$route.params.idLocalidade, -1); // Never expires
-      }
-      
-      this.checkCurrentAnalysisUnit();
-      window.addEventListener('scroll', this.assessPageBottom);
-      window.addEventListener('scroll', this.setVisibleCardMaxIndex);
-      this.assessPageBottom();
-      window.addEventListener('resize', this.resizeFirstSection);
-      this.resizeFirstSection();
-
-      if (this.$cookies.isKey("currentAnalysisUnit")) {
-        this.isFavorite = this.$route.params.idLocalidade == this.$cookies.get("currentAnalysisUnit");
-      } else {
-        this.isFavorite = this.$route.params.idLocalidade == this.$store.state.favLocation;
-      }
-    },
-    beforeDestroy () {
-      window.removeEventListener('scroll', this.assessPageBottom);
-      window.removeEventListener('scroll', this.setVisibleCardMaxIndex);
-      window.removeEventListener('resize', this.resizeFirstSection);
     },
     watch: {
       datasetsLoaded: function() {
@@ -707,20 +435,6 @@
       }
     },
     methods: {
-      scrollDown(){
-        window.scrollBy(0, window.innerHeight / 2);        
-      },
-
-      setSiblingDimensions(content) {
-        let dimensoesTmp = [];
-        for (let dim of content.dimensoes) {
-          if (dim.status != 'EM BREVE') {
-            dimensoesTmp.push(dim);
-          }
-        }
-        this.dimensoes = dimensoesTmp;
-      },
-
       setObservatorio(content) {
         let scope = this.getEscopo(this.$route.params.idLocalidade);
         let auId = this.getIdLocalidadeFromRoute(this.$route.params.idLocalidade);
@@ -759,25 +473,6 @@
           );
         }
         this.$emit('alterToolbar', content.theme.toolbar);
-      },
-
-      setVisibleCardMaxIndex(){
-        const vHeight = (window.innerHeight || document.documentElement.clientHeight);
-        let indexSection = 0;
-        for(let section of this.sections){
-          if (!section.divider) {
-            for (let cardIndex in section.cards) {
-              let sectionCardIndex = indexSection * 100 + parseInt(cardIndex);
-              if (document.getElementById('anchor_' + section.cards[cardIndex].id) != null) {
-                var { top, bottom } = document.getElementById('anchor_' + section.cards[cardIndex].id).getBoundingClientRect();
-                if ((top > 0 || bottom > 0) && (top < vHeight) && (sectionCardIndex > this.visibleCardMaxIndex)) {  
-                  this.visibleCardMaxIndex = sectionCardIndex + 1;
-                } 
-              } 
-            }
-          }
-          indexSection++;
-        }
       },
       
       keepLoading() {
@@ -1039,24 +734,6 @@
         }
         return compareStruct;        
       },
-      
-      getMensagemErro(idLocalidade) {
-        if (idLocalidade == 0) return 'Falha ao buscar indicadores do país';
-        if (idLocalidade.includes("mptreg") || idLocalidade.includes("MPTREG")) return 'Falha ao buscar indicadores da regional do MPT';
-        if (idLocalidade.includes("prt") || idLocalidade.includes("PRT") ||
-            idLocalidade.includes("ptm") || idLocalidade.includes("PTM")) return 'Falha ao buscar indicadores da unidade do MPT';
-        switch (idLocalidade.length) {
-          case 1:
-            return "Falha ao buscar indicadores da região";
-          case 2:
-            return "Falha ao buscar indicadores do estado";
-          case 4:
-            return "Falha ao buscar indicadores mesorregionais";
-          case 5:
-            return "Falha ao buscar indicadores microrregionais";
-        }
-        return "Falha ao buscar indicadores do município";
-      },
 
       fetchDataLocalidade(idLocalidade, nm_var = 'localidade') {
         let localidade = {};
@@ -1184,47 +861,6 @@
         }
       },
 
-      setActiveDim(idLocalidade, idObservatorio = null, idDimensao = null) {
-        for (var indxDim in this.dimensoes) {
-          // Se não estiver em uma dimensão pela rota, pega a default
-          if ((!idDimensao || idDimensao == '') && this.dimensoes[indxDim].default) {
-            this.dimensao_ativa = this.dimensoes[indxDim];
-            this.dimensao_ativa_id = this.dimensao_ativa.id;
-            idDimensao = this.dimensoes[indxDim].id;
-            break;
-          } else if (this.dimensoes[indxDim].id == idDimensao) { 
-            // Se estiver em dimensão pela rota, tentar o match
-            this.dimensao_ativa = this.dimensoes[indxDim];
-            this.dimensao_ativa_id = this.dimensao_ativa.id;
-            break;
-          }
-        }
-        
-        this.loadLayout(idLocalidade, idDimensao, idObservatorio);
-      },
-
-      getGridPositionDimensao(dimensao, dimIndx) {
-        switch (this.dimensoes.length) {
-          case 6:
-            return 'xs4 sm2';
-            break;
-          case 8:
-            let clz = 'xs3 sm1';
-            if (dimIndx == 0) {
-              clz += ' offset-sm2';
-            }
-            return clz;
-          default:
-            return 'xs2 sm1';
-        }
-      },
-
-      scrollTo(anchor) {
-        var el = this.$el.querySelector("#" + anchor);
-        el.scrollIntoView();
-        window.scrollBy(0,-120);
-      },
-
       changeDim(idDimensao, idLocalidade, idObservatorio) {
         let urlComplemento = '';
         if (idDimensao) {
@@ -1234,87 +870,6 @@
         this.$router.push("/" + this.$observatories.identifyObservatoryById(idObservatorio) + "/localidadecompare/" + idLocalidade + "?" + urlComplemento);
       },
 
-      getLeadSlice(rowIndx) {
-        let startIndx = (rowIndx - 1) * this.ind_principais_per_row;
-        let endIndx = startIndx + this.ind_principais_per_row;
-        if (endIndx > this.ind_principais.length) {
-          endIndx = this.ind_principais.length;
-        }
-        return this.ind_principais.slice(startIndx, endIndx);
-      },
-
-      setCardLink(base_object_list, rules, structure, addedParams = null, metadata = null) {
-        if (typeof base_object_list == 'string') {
-          this.cardLinks[addedParams.pos] = {
-            id: addedParams.id,
-            title: base_object_list
-          };
-        } else {
-          let base_object = {};
-          if (Array.isArray(base_object_list) && base_object_list.length > 0) {
-            base_object = base_object_list[0];
-          } else if (base_object_list !== null && base_object_list !== undefined) {
-            base_object = base_object_list;
-          }
-          this.cardLinks[addedParams.pos] = {
-            id: addedParams.id,
-            title: this.$textTransformService.applyInterpol(
-                structure,
-                this.customParams,
-                this.customFunctions,
-                base_object,
-                this.sendInvalidInterpol
-                )}
-            // title: this.$textTransformService.replaceArgs(
-            //   structure.template,
-            //   this.indicatorsToValueArray(
-            //     structure.args, 
-            //     this.customFunctions, 
-            //     base_object_list,
-            //     this.sendInvalidInterpol
-            //   ),
-            // this.sendInvalidInterpol
-            // )
-        }
-      },
-
-      assessPageBottom() {
-        this.isPageBottom = false;
-        if (window && document) {
-          if (window.scrollY == 0){ //início
-            this.isPageBottom = false;
-          }
-          else{
-            this.isPageBottom = (window.innerHeight + window.scrollY) >= document.body.offsetHeight-1;
-          }
-        } 
-      },
-
-      navDim(delta) {
-        if (delta === 0) {
-          window.scrollTo(0,0);
-        } else {
-          for (var dimIndx in this.dimensoes) {
-            if (this.dimensoes[dimIndx].id === this.dimensao_ativa.id) {
-              this.changeDim(this.dimensoes[parseInt(dimIndx) + parseInt(delta)].id, this.idLocalidade, this.idObservatorio);
-              break;
-            }
-          }
-        }
-      },
-
-      toggleFavorite() {
-        if (this.isFavorite) {
-          if (this.$cookies.isKey("currentAnalysisUnit")) {
-            this.$cookies.remove("currentAnalysisUnit");
-          }
-          this.$store.state.favLocation = null;
-        } else {
-          this.$cookies.set("currentAnalysisUnit", this.$route.params.idLocalidade, -1);
-          this.$store.state.favLocation = this.$route.params.idLocalidade;
-        }
-        this.isFavorite = !this.isFavorite;
-      },
       removeCompare() {
           let url = this.$route.path.replace('/localidadecompare/','/localidade/');
           if (this.$route.query.dimensao) {
