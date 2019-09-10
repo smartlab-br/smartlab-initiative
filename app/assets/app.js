@@ -75,8 +75,6 @@ import YamlFetcherService from './service/singleton/yamlFetcherService'
 Vue.prototype.$yamlFetcherService = new YamlFetcherService();
 
 // 2.2. Global Mixins
-import DatasetManager from '../mixins/service/datasetManager.js'
-Vue.use(DatasetManager)
 import GeoIpClient from '../mixins/service/geoIpClient.js'
 Vue.use(GeoIpClient)
 import NavigationManager from '../mixins/service/navigationManager.js'

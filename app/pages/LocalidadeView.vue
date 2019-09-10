@@ -562,9 +562,26 @@
             }
           }
           
-          this.getMultipleGlobalDatasets(thematicDatasets, scope, auId, () => { this.datasetsLoaded = true });
-          if (this.$route.query.compare) this.getMultipleGlobalDatasets(thematicDatasets, compareScope, compareAuId, () => { this.datasetsCompareLoaded = true }, "_compare");
+          let indicadoresTematicos = this.$indicatorsModel.getMultipleGlobalDatasets(thematicDatasets, scope, auId);
+          if (indicadoresTematicos instanceof Promise || indicadoresTematicos.then) {
+            indicadoresTematicos.then(
+              (result) => { this.datasetsLoaded = true; },
+              (error) => { this.sendError(msgErro); });
+          } else {
+            this.datasetsLoaded = true;
+          }
           
+          if (this.$route.query.compare) {
+            let indicadoresTematicosCompare = this.$indicatorsModel.getMultipleGlobalDatasets(thematicDatasets, compareScope, compareAuId, "_compare");
+            if (indicadoresTematicosCompare instanceof Promise || indicadoresTematicosCompare.then) {
+              indicadoresTematicosCompare.then(
+                (result) => { this.datasetsCompareLoaded = true; },
+                (error) => { this.sendError(msgErro); });
+            } else {
+              this.datasetsCompareLoaded = true;
+            }
+          }
+
           this.thematicDatasets = thematicDatasets;
           this.$emit('alterToolbar', result.theme.toolbar);
         });
@@ -839,22 +856,26 @@
           }
         }
 
-        //this.datasetsDimLoaded = false;
-        //this.datasetsDimCompareLoaded = false;
-        
         this.thematicDatasets = thematicDatasets;
-        this.getMultipleGlobalDatasets(
-          thematicDatasets,
-          escopo,
-          this.idLocalidade,
-          () => { this.datasetsDimLoaded = true; });
+
+        let indicadoresTematicos = this.$indicatorsModel.getMultipleGlobalDatasets(thematicDatasets, escopo, this.idLocalidade);
+        if (indicadoresTematicos instanceof Promise || indicadoresTematicos.then) {
+          indicadoresTematicos.then(
+            (result) => { this.datasetsDimLoaded = true; },
+            (error) => { this.sendError('Falha ao carregar indicadores temáticos'); });
+        } else {
+          this.datasetsDimLoaded = true;
+        }
+        
         if (this.$route.query.compare) {
-          this.getMultipleGlobalDatasets(
-            thematicDatasets,
-            escopo,
-            this.idLocalidade_compare,
-            () => { this.datasetsDimCompareLoaded = true; },
-            "_compare");
+          let indicadoresTematicosCompare = this.$indicatorsModel.getMultipleGlobalDatasets(thematicDatasets, escopo, this.idLocalidade_compare, "_compare");
+          if (indicadoresTematicosCompare instanceof Promise || indicadoresTematicosCompare.then) {
+            indicadoresTematicosCompare.then(
+              (result) => { this.datasetsDimCompareLoaded = true; },
+              (error) => { this.sendError('Falha ao carregar indicadores do Brasil'); });
+          } else {
+            this.datasetsDimCompareLoaded = true;
+          }
         }
       },
 
@@ -1034,7 +1055,6 @@
         let masterVar = (metadata && metadata.indicator_var) ? metadata.indicator_var : 'masterIndicator';
         if (typeof base_object_list == 'string') {
           this[masterVar] = base_object_list;
-          console.log(this.masterIndicator);
         } else {
           let finalText = this.$textTransformService.replaceArgs(
             structure.template,
@@ -1047,7 +1067,6 @@
             this.sendInvalidInterpol
           );
           this[masterVar] = finalText;
-          console.log(this.masterIndicator);
         }
       },
 

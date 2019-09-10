@@ -210,7 +210,7 @@
 
           // // Prepares the dataset, if the layers have no range
           if (min_field == 'minVal' || !value_field.includes('api_calc_')) {  
-            dataset = this.getMinMaxEachIndicator(dataset, value_field);
+            dataset = this.$indicatorsModel.getMinMaxEachIndicator(dataset, value_field);
           }
           
           // Prepares the layers
@@ -221,7 +221,7 @@
             if (this.visibleLayers[ident] == null || this.visibleLayers[ident] == undefined) {
               this.visibleLayers[ident] = true;
             }
-            // let minMax = this.getMinMax(dataset, value_field);
+            // let minMax = this.$indicatorsModel.getMinMax(dataset, value_field);
           }
 
           // Iterates over the dataset, to build each circle and apply to the respective layer

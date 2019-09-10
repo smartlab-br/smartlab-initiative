@@ -600,8 +600,6 @@
       }
     },
     created () {    
-      this.$store.state.gDatasets = {};
-
       let tmpObs = this.$observatories.getObservatories();
       if (tmpObs instanceof Promise) {
         tmpObs.then((result) => { this.observatorios = result });
@@ -846,14 +844,14 @@
       //   this.setLocale(this, this.lang);
       // },
 
-      getGlobalDatasetIdLocalidade(idLocalidade) {
-        this.getGlobalDataset(
-          'centralindicadores',
-          'municipio',
-          'Falha ao buscar indicadores da localidade',
-          idLocalidade
-        );
-      },
+      // getGlobalDatasetIdLocalidade(idLocalidade) {
+      //   this.$indicatorsModel.getGlobalDataset(
+      //     'centralindicadores',
+      //     'municipio',
+      //     'Falha ao buscar indicadores da localidade',
+      //     idLocalidade
+      //   );
+      // },
       
       assessVisibleTitle() {
         // const vHeight = (window.innerHeight || document.documentElement.clientHeight);
