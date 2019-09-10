@@ -105,10 +105,8 @@
                 <v-layout pa-1 justify-center class="subheading master-indicator" v-if="masterIndicator"
                   v-html="masterIndicator">
                 </v-layout>
-                <v-layout row wrap justify-center>
-                  <flpo-minicard
-                    v-if="ind_principais && unlockLoading"
-                    v-for="(miniCardPrincipal, indexMinicardsPrincipal) in ind_principais"
+                <v-layout v-if="ind_principais && unlockLoading" row wrap justify-center>
+                  <flpo-minicard v-for="(miniCardPrincipal, indexMinicardsPrincipal) in ind_principais"
                     :key="'minicard_principal_'+indexMinicardsPrincipal"
                     :structure="miniCardPrincipal" :customFunctions="custom_functions"
                     :customParams="customParams" :row-class="miniCardPrincipal.rowClass">
@@ -143,10 +141,8 @@
                 <v-layout pa-1 justify-center class="subheading master-indicator" v-if="masterIndicator_compare"
                   v-html="masterIndicator_compare">
                 </v-layout>
-                <v-layout row wrap justify-center>
-                  <flpo-minicard
-                    v-if="ind_principais_compare && unlockLoading"
-                    v-for="(miniCardPrincipal, indexMinicardsPrincipal) in ind_principais_compare"
+                <v-layout v-if="ind_principais_compare && unlockLoading" row wrap justify-center>
+                  <flpo-minicard v-for="(miniCardPrincipal, indexMinicardsPrincipal) in ind_principais_compare"
                     :key="'minicard_principal_'+indexMinicardsPrincipal"
                     :structure="miniCardPrincipal" :customFunctions="custom_functions"
                     :customParams="customParams" :row-class="miniCardPrincipal.rowClass">
@@ -174,9 +170,8 @@
       </v-layout>
     </v-container>
     <v-container fluid  xs12  class="pa-0 ma-0">
-      <v-layout class="bg-page grey lighten-2" column pa-0 ma-0>
-        <v-layout  v-if="sections && sections.length > 0" 
-          v-for="(secao, indexSecao) in sections"  
+      <v-layout v-if="sections && sections.length > 0" class="bg-page grey lighten-2" column pa-0 ma-0>
+        <v-layout v-for="(secao, indexSecao) in sections"  
           :key="secao.id"
           row wrap>
           <v-layout column :id="secao.id" :style="'background-color:' + $colorsService.assessZebraBG(indexSecao, $vuetify.theme) + ';'">
@@ -326,7 +321,6 @@
             </v-container>
           </v-layout>
         </v-layout>
-        </v-flex>
       </v-layout>
     </v-container>
     <!-- Navegação lateral em dots pelos dimensoes e seções -->

@@ -132,9 +132,8 @@
     </v-container>
     <!-- Indicadores principais: Empregadores, Vínculos Formais, Municípios, Estabelecimentos, % MEI e EPPs -->
     <v-container fluid  xs12  class="pa-0 ma-0">
-      <v-layout class="bg-page grey lighten-2" column pa-0 ma-0>
-        <v-layout  v-if="sections && sections.length > 0" 
-          v-for="(secao, indexSecao) in sections"  
+      <v-layout v-if="sections && sections.length > 0" class="bg-page grey lighten-2" column pa-0 ma-0>
+        <v-layout v-for="(secao, indexSecao) in sections"  
           :key="secao.id"
           row wrap>
           <v-layout column :id="secao.id" :style="'background-color:' + $colorsService.assessZebraBG(indexSecao, $vuetify.theme) + ';'">
