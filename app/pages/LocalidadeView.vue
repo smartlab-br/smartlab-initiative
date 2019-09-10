@@ -538,10 +538,36 @@
    
     created () {
       let tmpIdObs = this.$observatories.identifyObservatory(this.$route.path.split('/')[1]);
-      this.$dimensions.getDimensions(tmpIdObs, this.setSiblingDimensions);
+      this.$dimensions.getDimensions(tmpIdObs)
+        .then((result) => this.setSiblingDimensions(result));
       this.idObservatorio = tmpIdObs;
       
-      this.loadYaml("br/observatorio/" + tmpIdObs, this.setObservatorio);
+      this.$yamlFetcherService.loadYaml("br/observatorio/" + tmpIdObs)
+        .then((result) => { 
+          let scope = this.getEscopo(this.$route.params.idLocalidade);
+          let auId = this.getIdLocalidadeFromRoute(this.$route.params.idLocalidade);
+          let msgErro = this.getMensagemErro(this.$route.params.idLocalidade);
+        
+          let compareScope, compareAuId, compareMsgErro;
+          if (this.$route.query.compare) {
+            compareScope = this.getEscopo(this.$route.query.compare);
+            compareAuId = this.getIdLocalidadeFromRoute(this.$route.query.compare);
+            compareMsgErro = this.getMensagemErro(this.$route.query.compare);
+          }
+
+          let thematicDatasets = ['centralindicadores'];
+          if (result && result.tematicos) {
+            for (let indxTematico in result.tematicos){
+              thematicDatasets.push(result.tematicos[indxTematico].dataset);
+            }
+          }
+          
+          this.getMultipleGlobalDatasets(thematicDatasets, scope, auId, () => { this.datasetsLoaded = true });
+          if (this.$route.query.compare) this.getMultipleGlobalDatasets(thematicDatasets, compareScope, compareAuId, () => { this.datasetsCompareLoaded = true }, "_compare");
+          
+          this.thematicDatasets = thematicDatasets;
+          this.$emit('alterToolbar', result.theme.toolbar);
+        });
     },
     watch: {
       datasetsLoaded: function() {
@@ -665,34 +691,6 @@
           }
         }
         this.dimensoes = dimensoesTmp;
-      },
-
-      setObservatorio(content) {
-        let scope = this.getEscopo(this.$route.params.idLocalidade);
-        let auId = this.getIdLocalidadeFromRoute(this.$route.params.idLocalidade);
-        let msgErro = this.getMensagemErro(this.$route.params.idLocalidade);
-      
-        this.datasetsLoaded = false;
-        this.datasetsCompareLoaded = false;
-
-        let compareScope, compareAuId, compareMsgErro;
-        if (this.$route.query.compare) {
-          compareScope = this.getEscopo(this.$route.query.compare);
-          compareAuId = this.getIdLocalidadeFromRoute(this.$route.query.compare);
-          compareMsgErro = this.getMensagemErro(this.$route.query.compare);
-        }
-
-        this.thematicDatasets = ['centralindicadores'];
-        if (content && content.tematicos) {
-          for (let indxTematico in content.tematicos){
-            this.thematicDatasets.push(content.tematicos[indxTematico].dataset);
-          }
-        }
-        
-        this.getMultipleGlobalDatasets(this.thematicDatasets, scope, auId, () => { this.datasetsLoaded = true });
-        if (this.$route.query.compare) this.getMultipleGlobalDatasets(this.thematicDatasets, compareScope, compareAuId, () => { this.datasetsCompareLoaded = true }, "_compare");
-        
-        this.$emit('alterToolbar', content.theme.toolbar);
       },
 
       setVisibleCardMaxIndex(){

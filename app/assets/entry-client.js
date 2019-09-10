@@ -26,6 +26,7 @@ app.$dimensions.setStore(app.$store.state);
 app.$indicatorsModel.setStore(app.$store.state);
 app.$observatories.setStore(app.$store.state);
 app.$axiosCallSetupService.setStore(app.$store.state);
+app.$yamlFetcherService.setStore(app.$store.state);
 
 // wait until router has resolved all async before hooks
 // and async components...

@@ -323,7 +323,6 @@ const DatasetManager = {
         },
 
         getMultipleGlobalDatasets(thematicDatasets, scope, auId, cb = null, suffix = "") {
-          let nLoadedDS = 0;
           let promises = [];
 
           for (let indxDS in thematicDatasets) {
