@@ -579,7 +579,7 @@ const ViewConfReader = {
 					}
 				
 					if (options.order_field !== null && options.order_field !== undefined) {
-					  dataset = this.sortObject(dataset, options.order_field);
+					  dataset = this.$indicatorsModel.sortObject(dataset, options.order_field);
 					}
 				
 					if (addedParams && addedParams.id) {
