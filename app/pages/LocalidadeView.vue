@@ -101,9 +101,9 @@
             <v-flex white--text subheading xs12 md4 lg3 :class="{'px-3': $vuetify.breakpoint.mdAndDown, 'px-4': $vuetify.breakpoint.lgAndUp}" v-html="dimensao_ativa.description">
             </v-flex>
             <v-flex text-xs-center xs12 md3 :class="{'px-3': $vuetify.breakpoint.mdAndDown, 'px-4': $vuetify.breakpoint.lgAndUp}" >
-              <v-layout row wrap justify-center>
+              <v-layout v-if="ind_principais && ind_principais.length > 0 && unlockLoading"
+                  row wrap justify-center>
                 <flpo-minicard
-                  v-if="ind_principais && unlockLoading"
                   v-for="(miniCardPrincipal, indexMinicardsPrincipal) in ind_principais"
                   :key="'minicard_principal_'+indexMinicardsPrincipal"
                   :structure="miniCardPrincipal" :customFunctions="custom_functions"
@@ -351,6 +351,7 @@
         visibleCardMaxIndex: 1, //dois primeiros cards
         auOptions: [],
         compareDialog: false,
+        loadedPrincipais: false,
 
         // Compare data
         sections_compare: [],
@@ -368,7 +369,6 @@
         datasetsCompareLoaded: false,
         datasetsDimLoaded: false,
         datasetsDimCompareLoaded: false,
-        loadedPrincipais: false,
 
         // Functions
         // TODO Migrate gradually to prototype objects
@@ -533,8 +533,7 @@
 
             return returText;
           }
-        },
-        loadedPrincipais: false,
+        }
       }
     },
    
@@ -543,22 +542,7 @@
       this.$dimensions.getDimensions(tmpIdObs, this.setSiblingDimensions);
       this.idObservatorio = tmpIdObs;
       
-      let scope = this.getEscopo(this.$route.params.idLocalidade);
-      let auId = this.getIdLocalidadeFromRoute(this.$route.params.idLocalidade);
-      let msgErro = this.getMensagemErro(this.$route.params.idLocalidade);
-
-      if (tmpIdObs) {
-        this.loadYaml("br/observatorio/" + tmpIdObs, this.setObservatorio);
-      } else if (this.$route.query.compare === null || this.$route.query.compare === undefined) { // Only if not comparing
-        this.getGlobalDataset(
-          'centralindicadores',
-          scope,
-          msgErro,
-          auId,
-          this.keepLoading
-        );
-        this.$emit('alterToolbar', null);
-      }
+      this.loadYaml("br/observatorio/" + tmpIdObs, this.setObservatorio);
     },
     watch: {
       datasetsLoaded: function() {
@@ -689,14 +673,14 @@
         let auId = this.getIdLocalidadeFromRoute(this.$route.params.idLocalidade);
         let msgErro = this.getMensagemErro(this.$route.params.idLocalidade);
       
+        this.datasetsLoaded = false;
+        this.datasetsCompareLoaded = false;
+
         let compareScope, compareAuId, compareMsgErro;
         if (this.$route.query.compare) {
           compareScope = this.getEscopo(this.$route.query.compare);
           compareAuId = this.getIdLocalidadeFromRoute(this.$route.query.compare);
           compareMsgErro = this.getMensagemErro(this.$route.query.compare);
-
-          this.datasetsLoaded = false;
-          this.datasetsCompareLoaded = false;
         }
 
         if (content.tematicos) {
@@ -704,8 +688,8 @@
           for (let indxTematico in content.tematicos){
             this.thematicDatasets.push(content.tematicos[indxTematico].dataset);
             if (parseInt(indxTematico) + 1 == content.tematicos.length) { 
-              this.getMultipleGlobalDatasets(this.thematicDatasets, scope, auId, this.keepLoading);
-              if (this.$route.query.compare) this.getMultipleGlobalDatasets(this.thematicDatasets, compareScope, compareAuId, () => { this.datasetsCompareLoaded = true}, "_compare");
+              this.getMultipleGlobalDatasets(this.thematicDatasets, scope, auId, () => { this.datasetsLoaded = true });
+              if (this.$route.query.compare) this.getMultipleGlobalDatasets(this.thematicDatasets, compareScope, compareAuId, () => { this.datasetsCompareLoaded = true }, "_compare");
             }
           }
         } else {
@@ -844,7 +828,7 @@
           if (this.idLocalidade_compare) this.customParams.idLocalidade_compareD6 = this.idLocalidade_compare.substring(0,6);
         }
 
-        this.fetchDataLocalidade(idLocalidade);
+        this.fetchDataLocalidade(this.idLocalidade);
         if (this.idLocalidade_compare) this.fetchDataLocalidade(this.idLocalidade_compare, 'localidade_compare');
 
         let escopo = this.getEscopo(this.idLocalidade);
@@ -868,29 +852,30 @@
       setDimension(content) {
         let escopo = this.getEscopo(this.idLocalidade);
         this.dimStruct = content;
-        if (content.tematicos) {
-          this.datasetsDimLoaded = false;
-          this.datasetsDimCompareLoaded = false;
-          let thematicDatasets = ['centralindicadores'];
+
+        let thematicDatasets = ['centralindicadores'];
+        if (content && content.tematicos) {
           for (let tematico of content.tematicos){
             thematicDatasets.push(tematico.dataset);
           }
-          this.thematicDatasets = thematicDatasets;
+        }
+
+        //this.datasetsDimLoaded = false;
+        //this.datasetsDimCompareLoaded = false;
+        
+        this.thematicDatasets = thematicDatasets;
+        this.getMultipleGlobalDatasets(
+          thematicDatasets,
+          escopo,
+          this.idLocalidade,
+          () => { this.datasetsDimLoaded = true; });
+        if (this.$route.query.compare) {
           this.getMultipleGlobalDatasets(
             thematicDatasets,
             escopo,
-            this.idLocalidade,
-            () => { this.datasetsDimLoaded = true});
-          if (this.$route.query.compare) {
-            this.getMultipleGlobalDatasets(
-              thematicDatasets,
-              escopo,
-              this.idLocalidade_compare,
-              () => { this.datasetsDimCompareLoaded = true},
-              "_compare");
-          }
-        } else {
-          this.keepLoadingDimension();
+            this.idLocalidade_compare,
+            () => { this.datasetsDimCompareLoaded = true; },
+            "_compare");
         }
       },
 
@@ -910,8 +895,6 @@
         }
         this.cardLinks = [];
         this.fetchVizLinks(this.sections);
-      
-        this.unlockLoading = true;
 
         this.fillDataStructure(
           this.dimStruct.master, this.customParams,
@@ -929,6 +912,8 @@
             this.customFunctions, this.setMasterIndicator, {indicator_var: 'masterIndicator_compare'}
           );
         }
+
+        this.unlockLoading = true;
       },
 
       getMensagemErro(idLocalidade) {
@@ -1070,6 +1055,7 @@
         let masterVar = (metadata && metadata.indicator_var) ? metadata.indicator_var : 'masterIndicator';
         if (typeof base_object_list == 'string') {
           this[masterVar] = base_object_list;
+          console.log(this.masterIndicator);
         } else {
           let finalText = this.$textTransformService.replaceArgs(
             structure.template,
@@ -1082,6 +1068,7 @@
             this.sendInvalidInterpol
           );
           this[masterVar] = finalText;
+          console.log(this.masterIndicator);
         }
       },
 
