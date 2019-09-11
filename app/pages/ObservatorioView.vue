@@ -137,6 +137,8 @@
                 :structure="observatorio.prevalencia.description"
                 :custom-params="customParams"
                 :custom-functions="customFunctions"
+                :reactive-filter="reactiveFilter"
+                :custom-filters="customParams"
                 v-on:selection="triggerSelect">
               </flpo-composite-text>
 
@@ -160,7 +162,9 @@
                 :id = "'story_home_prevalencia_footer_' + idObservatorio"
                 :structure="observatorio.prevalencia.footer"
                 :custom-params="customParams"
-                :custom-functions="customFunctions">
+                :custom-functions="customFunctions"
+                :custom-filters="customParams"
+                >
               </flpo-composite-text>
 
             </v-layout>

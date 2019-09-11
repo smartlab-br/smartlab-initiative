@@ -24,7 +24,7 @@
             Carregando prevalência nacional
           </v-progress-circular>
         </v-layout>
-        <v-flex xs12 md3 v-if="!mapTextLoading && thematicLoaded">
+        <v-flex sm12 md4 lg3 v-if="!mapTextLoading && thematicLoaded">
           <v-layout column wrap>
             <v-layout row align-end fill-height wrap pl-3 pt-3 pr-4 class="subheading mb-0">
               <v-flex class="display-1-obs card-title pl-3">
@@ -52,8 +52,11 @@
                 :structure="observatorio.prevalencia.mapa_filtros"
                 :custom-params="customParams"
                 :custom-functions="customFunctions"
+                :custom-filters="customParams"
+                :reactive-filter="reactiveFilter"
                 :active-group="activeGroup"
-                v-on:selection="triggerSelect">
+                v-on:selection="triggerSelect"
+                v-on:default-selection="triggerDefaultSelect">
               </flpo-composite-text>
 
               <v-layout column wrap>
@@ -72,7 +75,7 @@
             </v-layout>
           </v-layout>
         </v-flex>
-        <v-flex xs12 md9>
+        <v-flex sm12 md8 lg6>
           <v-layout style="display:block;">
             <v-layout fill-height>
               <flpo-leaflet-map
@@ -87,31 +90,27 @@
                 :customParams = "customParams"
                 :headers = "observatorio.prevalencia.headers">
               </flpo-leaflet-map>
-              <!--
-              <v-layout pa-3 row wrap justify-center align-center fill-height
-                v-show="mapDataLoading">
-                <v-progress-circular
-                  :size="120"
-                  :width="8"
-                  color="primary"
-                  indeterminate>
-                  Analisando municípios
-                </v-progress-circular>
-              </v-layout>
-              -->
             </v-layout>
           </v-layout>
-          <!--
-          <v-flex xs12>
-            <v-layout v-if="observatorio && observatorio.ranking_cards" row wrap pb-2>
-              <flpo-ranking-list v-for="(ranking, index) in observatorio.ranking_cards" :key="index"
-                :structure="ranking" :customFunctions="customFunctions"
-                :customParams="customParams">
-              </flpo-ranking-list>
-            </v-layout>
-          </v-flex>
-        -->
         </v-flex>
+        <v-flex sm12 md12 lg3>
+          <flpo-composite-text
+            v-if="observatorio && observatorio.prevalencia && observatorio.prevalencia.mapa_description_right && 
+                  (!hasOdometers || loadedOdometers)"
+            :id = "'story_home_prevalencia_desc_map_r_' + idObservatorio"
+            :structure="observatorio.prevalencia.mapa_description_right"
+            :custom-params="customParams"
+            :custom-functions="customFunctions"
+            :custom-filters="customParams"
+            :reactive-filter="reactiveFilter"
+            :active-group="activeGroup"
+            v-on:selection="triggerSelect"
+            v-on:default-selection="triggerDefaultSelect">
+          </flpo-composite-text>
+          <!--<v-layout px-4 v-if="customParams.filterText" v-html="'<b>Filtros:</b>' + customParams.filterText">
+          </v-layout>-->
+        </v-flex>
+        
       </v-layout>
     </v-container>
     <v-dialog :v-if="dialog" v-model="dialog">
@@ -188,7 +187,7 @@
         this.mapTextLoading = false;
       },
 
-      triggerSelect(payload) {
+      setFilter(payload) {
         if (payload.type && payload.type === 'switch-group') {
           this.customParams.enabled = payload.enabled;
           if (this.$refs.chart){
@@ -228,10 +227,11 @@
             else {
               let item = {}
               item[payload.rules.api.args[0].named_prop] = itemValue;
+              this.customParams[payload.rules.api.args[0].named_prop] = itemValue;
               let grp = {}
               grp[payload.rules.group] = true;
               this.customParams.enabled = grp;
-              this.customParams['baseApi'] = this.$textTransformService.applyInterpol(payload.rules.api, item, this.customFunctions, this.customFilters);
+              this.customParams.baseApi = this.$textTransformService.applyInterpol(payload.rules.api, item, this.customFunctions, this.customParams);
             }
           }
         } else if (payload.type && payload.type === 'radio') {
@@ -251,8 +251,16 @@
 //        } else {
 //          endpoint = this.applyFilters();
 //        }
+      },
+
+      triggerSelect(payload) {
+        this.setFilter(payload);
         let endpoint = this.applyFilters();
         this.fetchMapData(endpoint);
+      },
+      
+      triggerDefaultSelect(payload) {
+        this.setFilter(payload);
       },
 
       applyFilters() {
@@ -295,6 +303,7 @@
 
         this.customParams.filterUrl = apiUrl.replace(baseUrl,"");
         this.customParams.filterText = filterText;
+        this.reactiveFilter = apiUrl + this.customParams.filterUrl;
 
 
         let aApiUrl = [apiUrl];

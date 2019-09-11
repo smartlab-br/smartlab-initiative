@@ -59,8 +59,10 @@
     },
     watch: {
       reactiveFilter: function(newVal, oldVal) {
-        if (newVal != oldVal) { 
-          if (this.structure.api_reactive){
+        if (newVal != oldVal) {
+          if (this.structure.reactive){
+            this.updateReactiveDataStructure(this.customFilters.filterUrl);
+          } else if (this.structure.api_reactive){
             this.fillDataStructure(
               this.structure, this.customParams,
               this.customFunctions, this.fillMinicard,
@@ -73,8 +75,6 @@
                 { "react": newVal }
               );
             }
-          } else if (this.structure.reactive){
-            this.updateReactiveDataStructure(this.customFilters.filterUrl);
           }
         }
       },
@@ -183,7 +183,12 @@
       },
 
       updateReactiveDataStructure(filterUrl){
-        let apiUrl = this.$textTransformService.applyInterpol(this.structure.api, this.customParams, this.customFunctions);
+        let apiUrl = ""
+        if (this.structure.api_reactive && this.customParams[this.structure.api_reactive.args[0].named_prop]) {
+          apiUrl = this.$textTransformService.applyInterpol(this.structure.api_reactive, this.customParams, this.customFunctions);
+        } else {
+          apiUrl = this.$textTransformService.applyInterpol(this.structure.api, this.customParams, this.customFunctions);
+        }
         apiUrl = apiUrl + filterUrl;
         axios(this.$axiosCallSetupService.getAxiosOptions(apiUrl))
         .then(result => {
@@ -195,7 +200,7 @@
             ),
             this.structure.args,
             this.structure,
-            {},
+            null,
             JSON.parse(result.data).metadata
           );
         });

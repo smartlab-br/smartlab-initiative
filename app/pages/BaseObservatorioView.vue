@@ -26,7 +26,8 @@
         dialogMapLoading: false,
 
         hasOdometers: true,
-        loadedOdometers: false
+        loadedOdometers: false,
+        reactiveFilter: null
       }
     },
     created () {
