@@ -37,7 +37,7 @@
     methods: {
       sortDataset(dataset){
         //array temporário que armazena o índice e o valor para ordenação
-        var map = dataset.map(function(d, i) {
+        let map = dataset.map(function(d, i) {
           return { index: i, value: parseInt(d.nu_competencia) };
         })
         
@@ -47,11 +47,11 @@
         });
         
         //ordenaçao do dataset baseado no array temporário ordenado
-        var dataset = map.map(function(d){
+        let nuDataset = map.map(function(d){
           return dataset[d.index];
         });
         
-        return(dataset);
+        return(nuDataset);
       },
 
       prepareAccumData(dataset) {
@@ -59,7 +59,6 @@
         var accum = 0
         
         var originalLength = dataset.length;
-        var accumIncluded = 0;
 
         var accumDataType = this.options.accumDataType ? this.options.accumDataType : "inteiro";
         var accumDataPrecision = this.options.accumDataPrecision ? this.options.accumDataPrecision : 1;

@@ -375,8 +375,6 @@
 </template>
 
 <script>
-  import axios from 'axios'
-
   import LocalidadeView from './LocalidadeView.vue';
 
   export default {

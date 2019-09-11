@@ -535,11 +535,10 @@
           let auId = this.getIdLocalidadeFromRoute(this.$route.params.idLocalidade);
           let msgErro = this.getMensagemErro(this.$route.params.idLocalidade);
         
-          let compareScope, compareAuId, compareMsgErro;
+          let compareScope, compareAuId;
           if (this.$route.query.compare) {
             compareScope = this.getEscopo(this.$route.query.compare);
             compareAuId = this.getIdLocalidadeFromRoute(this.$route.query.compare);
-            compareMsgErro = this.getMensagemErro(this.$route.query.compare);
           }
 
           let thematicDatasets = ['centralindicadores'];
