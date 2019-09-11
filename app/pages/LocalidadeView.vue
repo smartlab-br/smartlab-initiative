@@ -81,8 +81,7 @@
                 </span>
                 -->
             </div>
-            <v-layout pa-1 justify-center class="subheading master-indicator" v-if="masterIndicator"
-              v-html="masterIndicator">
+            <v-layout pa-1 justify-center class="subheading master-indicator" v-if="masterIndicator" v-html="masterIndicator">
             </v-layout>
             <v-layout justify-center v-if='idLocalidade != 0'>
               <v-btn small class="accent--text" color="transparent"
@@ -101,8 +100,7 @@
             <v-flex white--text subheading xs12 md4 lg3 :class="{'px-3': $vuetify.breakpoint.mdAndDown, 'px-4': $vuetify.breakpoint.lgAndUp}" v-html="dimensao_ativa.description">
             </v-flex>
             <v-flex text-xs-center xs12 md3 :class="{'px-3': $vuetify.breakpoint.mdAndDown, 'px-4': $vuetify.breakpoint.lgAndUp}" >
-              <v-layout v-if="ind_principais && ind_principais.length > 0 && unlockLoading"
-                  row wrap justify-center>
+              <v-layout v-if="ind_principais && ind_principais.length > 0 && unlockLoading" row wrap justify-center>
                 <flpo-minicard
                   v-for="(miniCardPrincipal, indexMinicardsPrincipal) in ind_principais"
                   :key="'minicard_principal_'+indexMinicardsPrincipal"
@@ -116,8 +114,7 @@
                 <v-flex v-for="(cardLink, cardLinkIndx) in cardLinks"
                   :key="cardLink.id ? cardLink.id : ('sec' + cardLinkIndx)" py-0>
                   <!--<v-icon color="accent">arrow_right</v-icon>-->
-                  <a v-if="cardLink.id" class="accent--text subheading"
-                    v-on:click="scrollTo('anchor_' + cardLink.id)">
+                  <a v-if="cardLink.id" class="accent--text subheading" v-on:click="scrollTo('anchor_' + cardLink.id)">
                     <span class='card-title-bullet accent--text'>&#9679;</span> {{ cardLink.title }}
                   </a>
                   <div v-else :class="cardLinkIndx != 0 ? 'pt-2 title-obs white--text':'title-obs white--text'">
@@ -155,15 +152,13 @@
               </v-layout>
             </v-container> -->
             <v-container fluid grid-list-lg py-2 px-1>
-              <v-layout column
-                v-if="unlockLoading && secao.cards && secao.cards.length > 0" >
+              <v-layout column v-if="unlockLoading && secao.cards && secao.cards.length > 0">
                 <v-flex xs12 
                   v-for="(card, cardIndex) in secao.cards"
                   :key="card.id">
                   <v-layout :id="'anchor_' + card.id" ma-0 pa-0
                     :style="card.type != 'headline' && card.type != 'text' && card.type != 'presentation' ? 'min-height:500px;': ''">
-                    <v-layout v-if="card.type && (card.type == 'text' || card.type == 'presentation')"
-                      :id="card.id" px-4 pb-4>
+                    <v-layout v-if="card.type && (card.type == 'text' || card.type == 'presentation')" :id="card.id" px-4 pb-4>
                       <flpo-composite-text
                         :structure="card.description"
                         :custom-params = "customParams"
@@ -229,13 +224,11 @@
           </v-tooltip>
         </v-layout>
         -->
-        <v-layout column scroll-menu v-if="!isPageBottom" pa-2
-          v-on:click="scrollDown()">
+        <v-layout column scroll-menu v-if="!isPageBottom" pa-2 v-on:click="scrollDown()">
           Leia mais
           <v-icon dark>keyboard_arrow_down</v-icon>
         </v-layout>
-        <v-layout column scroll-menu v-if="isPageBottom" pa-2
-          v-on:click="navDim(0)">
+        <v-layout column scroll-menu v-if="isPageBottom" pa-2 v-on:click="navDim(0)">
           <v-icon dark>keyboard_arrow_up</v-icon>
           Para o topo
         </v-layout>
@@ -362,11 +355,6 @@
         topology_uf_compare: null,
         topologyUfLoaded_compare: false,
         thematicDatasets: [],
-
-        datasetsLoaded: false,
-        datasetsCompareLoaded: false,
-        datasetsDimLoaded: false,
-        datasetsDimCompareLoaded: false,
 
         // Functions
         // TODO Migrate gradually to prototype objects
@@ -562,23 +550,22 @@
           }
           
           let indicadoresTematicos = this.$indicatorsModel.getMultipleGlobalDatasets(thematicDatasets, scope, auId);
-          if (indicadoresTematicos instanceof Promise || indicadoresTematicos.then) {
-            indicadoresTematicos.then(
-              (result) => { this.datasetsLoaded = true; },
-              (error) => { this.sendError(msgErro); });
-          } else {
-            this.datasetsLoaded = true;
-          }
+          let datasetPromises = [];
+
+          if (indicadoresTematicos instanceof Promise || indicadoresTematicos.then) datasetPromises.push(indicadoresTematicos);
           
           if (this.$route.query.compare) {
             let indicadoresTematicosCompare = this.$indicatorsModel.getMultipleGlobalDatasets(thematicDatasets, compareScope, compareAuId, "_compare");
-            if (indicadoresTematicosCompare instanceof Promise || indicadoresTematicosCompare.then) {
-              indicadoresTematicosCompare.then(
-                (result) => { this.datasetsCompareLoaded = true; },
-                (error) => { this.sendError(msgErro); });
-            } else {
-              this.datasetsCompareLoaded = true;
-            }
+            if (indicadoresTematicosCompare instanceof Promise || indicadoresTematicosCompare.then) datasetPromises.push(indicadoresTematicosCompare);
+          }
+
+          if (datasetPromises.length == 0) {
+            this.keepLoading();
+          } else {
+            Promise.all(datasetPromises).then(
+              (result) => { this.keepLoading(); },
+              (error) => { this.sendError(msgErro); }
+            );
           }
 
           this.thematicDatasets = thematicDatasets;
@@ -586,28 +573,6 @@
         });
     },
     watch: {
-      datasetsLoaded: function() {
-        if ((this.datasetsLoaded && this.$route.query.compare && this.datasetsCompareLoaded)
-          || (this.datasetsLoaded && (this.$route.query.compare === null || this.$route.query.compare === undefined))) {
-          this.keepLoading();
-        }
-      },
-      datasetsCompareLoaded: function() {
-        if (this.datasetsLoaded && this.datasetsCompareLoaded) {
-          this.keepLoading();
-        }
-      },
-      datasetsDimLoaded: function() {
-        if ((this.datasetsDimLoaded && this.$route.query.compare && this.datasetsDimCompareLoaded)
-          || (this.datasetsDimLoaded && (this.$route.query.compare === null || this.$route.query.compare === undefined))) {
-          this.keepLoadingDimension();
-        }
-      },
-      datasetsDimCompareLoaded: function() {
-        if (this.datasetsDimLoaded && this.datasetsDimCompareLoaded){
-          this.keepLoadingDimension();
-        }
-      },
       idLocalidade_compare(newVal, oldVal) {
         if (newVal && (this.$route.query.compare == null || this.$route.query.compare == undefined)) {
           let url = "";
@@ -857,24 +822,21 @@
 
         this.thematicDatasets = thematicDatasets;
 
+        let datasetPromises = [];
         let indicadoresTematicos = this.$indicatorsModel.getMultipleGlobalDatasets(thematicDatasets, escopo, this.idLocalidade);
-        if (indicadoresTematicos instanceof Promise || indicadoresTematicos.then) {
-          indicadoresTematicos.then(
-            (result) => { this.datasetsDimLoaded = true; },
-            (error) => { this.sendError('Falha ao carregar indicadores temáticos'); });
-        } else {
-          this.datasetsDimLoaded = true;
-        }
-        
+        if (indicadoresTematicos instanceof Promise || indicadoresTematicos.then) datasetPromises.push(indicadoresTematicos);
+
         if (this.$route.query.compare) {
           let indicadoresTematicosCompare = this.$indicatorsModel.getMultipleGlobalDatasets(thematicDatasets, escopo, this.idLocalidade_compare, "_compare");
-          if (indicadoresTematicosCompare instanceof Promise || indicadoresTematicosCompare.then) {
-            indicadoresTematicosCompare.then(
-              (result) => { this.datasetsDimCompareLoaded = true; },
-              (error) => { this.sendError('Falha ao carregar indicadores do Brasil'); });
-          } else {
-            this.datasetsDimCompareLoaded = true;
-          }
+          if (indicadoresTematicosCompare instanceof Promise || indicadoresTematicosCompare.then) datasetPromises.push(indicadoresTematicosCompare); 
+        }
+
+        if (datasetPromises.length == 0) {
+          this.keepLoadingDimension();
+        } else {
+          Promise.all(datasetPromises).then(
+            (result) => { this.keepLoadingDimension(); },
+            (error) => { this.sendError('Falha ao carregar indicadores temáticos'); });
         }
       },
 
@@ -911,8 +873,6 @@
             this.customFunctions, this.setMasterIndicator, {indicator_var: 'masterIndicator_compare'}
           );
         }
-
-        this.unlockLoading = true;
       },
 
       getMensagemErro(idLocalidade) {
@@ -1067,6 +1027,7 @@
           );
           this[masterVar] = finalText;
         }
+        this.unlockLoading = true;
       },
 
       setActiveDim(idLocalidade, idObservatorio = null, idDimensao = null) {
@@ -1262,12 +1223,6 @@
   }
 
   .scroll-menu { cursor: pointer; }
-
-  /* .minicard {
-    background-color: rgba(0,0,0,0.7);
-    align-self: stretch;
-    overflow: hidden;
-  } */
 
   .dim-description {
     column-count: 2;
