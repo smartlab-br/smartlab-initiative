@@ -282,16 +282,16 @@
         return "chart_" + this.structure.chart_type.toLowerCase() + "_" + this.structure.id;
       },
       sourceDesc: function() {
-        return this.getSourceDesc(this.structure, this.dataset, this.metadata);
+        return this.$indicatorsModel.getSourceDesc(this.structure, this.dataset, this.metadata);
       },
       sourceLink: function() {
-        return this.getSourceLink(this.structure, this.dataset, this.metadata);
+        return this.$indicatorsModel.getSourceLink(this.structure, this.dataset, this.metadata);
       },
       analysisDesc: function() {
-        return this.getAnalysisDesc(this.structure, this.dataset, this.metadata);
+        return this.$indicatorsModel.getAnalysisDesc(this.structure, this.dataset, this.metadata);
       },
       analysisLink: function() {
-        return this.getAnalysisLink(this.structure, this.dataset, this.metadata);
+        return this.$indicatorsModel.getAnalysisLink(this.structure, this.dataset, this.metadata);
       },
       // chartFooter: function() {
       //   if (this.footnote) return this.footnote;

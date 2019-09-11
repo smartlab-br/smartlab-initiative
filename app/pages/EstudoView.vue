@@ -196,16 +196,16 @@
         return 'background-image:url("/static/parallax/' + this.estudo.imagem + '.jpg"); background-position: center center; background-size: cover;';
       },
       sourceDesc: function() {
-        return this.getSourceDesc(this.structure, this.dataset, this.metadata);
+        return this.$indicatorsModel.getSourceDesc(this.structure, this.dataset, this.metadata);
       },
       sourceLink: function() {
-        return this.getSourceLink(this.structure, this.dataset, this.metadata);
+        return this.$indicatorsModel.getSourceLink(this.structure, this.dataset, this.metadata);
       },
       analysisDesc: function() {
-        return this.getAnalysisDesc(this.structure, this.dataset, this.metadata);
+        return this.$indicatorsModel.getAnalysisDesc(this.structure, this.dataset, this.metadata);
       },
       analysisLink: function() {
-        return this.getAnalysisLink(this.structure, this.dataset, this.metadata);
+        return this.$indicatorsModel.getAnalysisLink(this.structure, this.dataset, this.metadata);
       },
     },
     methods: {

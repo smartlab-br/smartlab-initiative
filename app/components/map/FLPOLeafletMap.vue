@@ -80,22 +80,24 @@
       leaflet_map.fitBounds(bounds, { padding: [10, 10] });
 
       // Adiciona o marker do município apenas se houver idLocalidade
-      let placeId;
-      if (this.selectedPlace) {
-        placeId = this.selectedPlace;
-      } else if (this.customParams && this.customParams.idLocalidade) { // Município
-        placeId = this.customParams.idLocalidade;
-      }
-      
-      if (placeId && placeId.length == 7) {
-        let findLoc = this.$analysisUnitModel.findPlaceByID(placeId);
-        if (findLoc && (findLoc instanceof Promise || findLoc.then)) {
-          findLoc.then(response => {
-            this.addDeafultMarker(response, leaflet_map);
-          })
-          .catch(error => { this.sendError(error); });
-        } else {
-          this.addDeafultMarker(findLoc, leaflet_map);
+      if (this.options.hide_place_marker == undefined || !this.options.hide_place_marker){
+        let placeId;
+        if (this.selectedPlace) {
+          placeId = this.selectedPlace;
+        } else if (this.customParams && this.customParams.idLocalidade) { // Município
+          placeId = this.customParams.idLocalidade;
+        }
+        
+        if (placeId && placeId.length == 7) {
+          let findLoc = this.$analysisUnitModel.findPlaceByID(placeId);
+          if (findLoc && (findLoc instanceof Promise || findLoc.then)) {
+            findLoc.then(response => {
+              this.addDeafultMarker(response, leaflet_map);
+            })
+            .catch(error => { this.sendError(error); });
+          } else {
+            this.addDeafultMarker(findLoc, leaflet_map);
+          }
         }
       }
           
@@ -208,7 +210,7 @@
 
           // // Prepares the dataset, if the layers have no range
           if (min_field == 'minVal' || !value_field.includes('api_calc_')) {  
-            dataset = this.getMinMaxEachIndicator(dataset, value_field);
+            dataset = this.$indicatorsModel.getMinMaxEachIndicator(dataset, value_field);
           }
           
           // Prepares the layers
@@ -219,7 +221,7 @@
             if (this.visibleLayers[ident] == null || this.visibleLayers[ident] == undefined) {
               this.visibleLayers[ident] = true;
             }
-            // let minMax = this.getMinMax(dataset, value_field);
+            // let minMax = this.$indicatorsModel.getMinMax(dataset, value_field);
           }
 
           // Iterates over the dataset, to build each circle and apply to the respective layer
@@ -299,13 +301,35 @@
           }
           this.mapLayer = L.heatLayer(heatPoints, {radius: 25, maxZoom:14}).addTo(this.leafletMap);
         } else if (this.options.type == 'cluster') {
+          
+          //default icon = blue
+          let defaultIcon = new L.Icon({
+                              iconUrl: '/static/markers/marker-icon-2x-blue.png',
+                              shadowUrl: '/static/markers/marker-shadow.png',
+                              iconSize: [25, 41],
+                              iconAnchor: [12, 41],
+                              popupAnchor: [1, -34],
+                              shadowSize: [41, 41]
+                            });
 
           if (this.visibleLayers[this.options.indicadores[0]] == null || this.visibleLayers[this.options.indicadores[0]] == undefined) {
             for (let indx in this.options.indicadores) {
-              if (indx == 0 && (this.visibleLayers[this.options.indicadores[indx]] == null || this.visibleLayers[this.options.indicadores[indx]] == undefined)) {
-                this.visibleLayers[this.options.indicadores[indx]] = true;
+              let indicator = this.options.indicadores[indx];
+              if(this.options.markerIcons && this.options.markerIcons[indicator]){
+                this.options.markerIcons[indicator] = new L.Icon({
+                              iconUrl: '/static/markers/marker-icon-2x-'+ this.options.markerIcons[indicator].toString() +'.png',
+                              shadowUrl: '/static/markers/marker-shadow.png',
+                              iconSize: [25, 41],
+                              iconAnchor: [12, 41],
+                              popupAnchor: [1, -34],
+                              shadowSize: [41, 41]
+                            });
+              } 
+
+              if (this.options.show_all || (indx == 0 && (this.visibleLayers[indicator] == null || this.visibleLayers[indicator] == undefined))) {
+                this.visibleLayers[indicator] = true;
               } else {
-                this.visibleLayers[this.options.indicadores[indx]] = false;
+                this.visibleLayers[indicator] = false;
               }
             }
           }
@@ -317,7 +341,7 @@
                 L.marker([
                   each_row[this.options.lat],
                   each_row[this.options.long]
-                ],{rowData: each_row}).on("click", this.circleClick)
+                ],{rowData: each_row, icon: this.options.markerIcons ? this.options.markerIcons[each_row[id_field]]: defaultIcon}).on("click", this.circleClick)
               );
             }
           }
@@ -799,8 +823,18 @@
         }
       },
 
+      tooltipLinkGoogleStreetView(target, route, tooltip_list = [], removed_text_list = [], options = null) { 
+        let text = "";
+        let d = target.options.rowData;
+        text = this.$tooltipBuildingService.defaultTooltip(d, route, tooltip_list, removed_text_list, options);
+        text += "<p class='text-xs-right ma-0'><a href='https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=" + d[options.lat] +"," + d[options.long] +"' target='_blank' class='primary--text font-weight-black'>Google Street View</a></p>";
+        target.unbindPopup();
+        target.bindPopup(text).openPopup();
+      },
+
       defaultLeafletTooltip(target, route, tooltip_list = [], removed_text_list = [], options = null) { 
         let d = target.options.rowData;
+        target.unbindPopup();
         target.bindPopup(this.$tooltipBuildingService.defaultTooltip(d, route, tooltip_list, removed_text_list, options)).openPopup();
       },
 

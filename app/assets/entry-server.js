@@ -26,6 +26,7 @@ export default context => {
     app.$indicatorsModel.setStore(app.$store.state);
     app.$observatories.setStore(app.$store.state);
     app.$axiosCallSetupService.setStore(app.$store.state);
+    app.$yamlFetcherService.setStore(app.$store.state);
     
     // set router's location
     router.push(context.url)

@@ -29,8 +29,14 @@ class DimensionsModel {
                 return this.dimensions;
             }
         } else {
-            this.yamlFetcher.loadYaml("br/dimensao/" + idObservatorio)
-                .then((result) => { cbFunction(result); });
+            return this.yamlFetcher.loadYaml("br/dimensao/" + idObservatorio)
+                .then((result) => { 
+                    if (cbFunction) {
+                        cbFunction(result); 
+                    } else {
+                        return this.setDimensions(result);
+                    }
+                });
         }
     }
     

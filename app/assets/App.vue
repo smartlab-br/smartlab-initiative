@@ -600,8 +600,6 @@
       }
     },
     created () {    
-      this.$store.state.gDatasets = {};
-
       let tmpObs = this.$observatories.getObservatories();
       if (tmpObs instanceof Promise) {
         tmpObs.then((result) => { this.observatorios = result });
@@ -740,7 +738,7 @@
       let findLoc = this.$analysisUnitModel.findCurrentPlace();
       if (findLoc instanceof Promise || findLoc.then) {
         findLoc.then(response => {
-          console.log(response);
+          // console.log(response);
           this.changeMiddleToolbar(response);
           if (response.id_localidade && response.id_localidade.length > 5) this.localidade = response;
         })
@@ -846,14 +844,14 @@
       //   this.setLocale(this, this.lang);
       // },
 
-      getGlobalDatasetIdLocalidade(idLocalidade) {
-        this.getGlobalDataset(
-          'centralindicadores',
-          'municipio',
-          'Falha ao buscar indicadores da localidade',
-          idLocalidade
-        );
-      },
+      // getGlobalDatasetIdLocalidade(idLocalidade) {
+      //   this.$indicatorsModel.getGlobalDataset(
+      //     'centralindicadores',
+      //     'municipio',
+      //     'Falha ao buscar indicadores da localidade',
+      //     idLocalidade
+      //   );
+      // },
       
       assessVisibleTitle() {
         // const vHeight = (window.innerHeight || document.documentElement.clientHeight);

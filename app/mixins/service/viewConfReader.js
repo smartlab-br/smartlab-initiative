@@ -185,7 +185,7 @@ const ViewConfReader = {
 									this.reformDataset(
 										this.$indicatorsModel.slice(
 											structure.preloaded, 
-											customParams && customParams[structure.preloaded.prop] ? customParams[structure.preloaded.prop] : this.$store.state.gDatasets[structure.preloaded.prop].ds,
+											customParams && customParams[structure.preloaded.prop] ? customParams[structure.preloaded.prop] : this.$indicatorsModel.getGlobalDatasets()[structure.preloaded.prop].ds,
 											Object.assign({}, customFunctions)
 										),
 										structure.preloaded.options,
@@ -200,7 +200,7 @@ const ViewConfReader = {
 									this.reformDataset(
 										this[structure.preloaded.function](
 											structure.preloaded, 
-											customParams && customParams[structure.preloaded.prop] ? customParams[structure.preloaded.prop] : this.$store.state.gDatasets[structure.preloaded.prop].ds,
+											customParams && customParams[structure.preloaded.prop] ? customParams[structure.preloaded.prop] : this.$indicatorsModel.getGlobalDatasets()[structure.preloaded.prop].ds,
 											Object.assign({}, customFunctions)
 										),
 										structure.preloaded.options,
@@ -297,7 +297,7 @@ const ViewConfReader = {
 						// Adiciona o mínimo e o máximo ao dataset
 						if (options.recalc_min_max) {
 							let minmax_field = (options.minmax_field) ? options.minmax_field : 'vl_indicador';
-							dataset = this.getMinMaxEachIndicator(dataset, minmax_field);
+							dataset = this.$indicatorsModel.getMinMaxEachIndicator(dataset, minmax_field);
 						}
 
 						if (options.combine) {
@@ -311,7 +311,7 @@ const ViewConfReader = {
 						
 						// Melts the dataset (ruws to columns)
 						if (options.melt) {
-							dataset = this.melt(
+							dataset = this.$indicatorsModel.melt(
 								dataset,
 								options.melt.value_field,
 								options.melt.layer_fields,
@@ -343,7 +343,7 @@ const ViewConfReader = {
 
 							// Adiciona o mínimo e o máximo ao dataset
 							if (options.calcs[indx].recalc_min_max) {
-								dataset = this.getMinMaxEachIndicator(dataset, nuField);
+								dataset = this.$indicatorsModel.getMinMaxEachIndicator(dataset, nuField);
 							}
 						}
 
@@ -367,13 +367,13 @@ const ViewConfReader = {
 
 							// Adiciona o mínimo e o máximo ao dataset
 							if (options.formatters[indxFmts].recalc_min_max) {
-								dataset = this.getMinMaxEachIndicator(dataset, nuField);
+								dataset = this.$indicatorsModel.getMinMaxEachIndicator(dataset, nuField);
 							}
 						}
 		
 						// if (options.cast) {
 						// 	console.log(options);
-						// 	dataset = this.cast(
+						// 	dataset = this.$indicatorsModel.cast(
 						// 		dataset,
 						// 		options.cast.col_fields,
 						// 		options.value_field ? options.value_field : 'vl_indicador',
@@ -382,7 +382,7 @@ const ViewConfReader = {
 						// }
 
 						if (options.order_field !== null && options.order_field !== undefined) {
-							dataset = this.sortObject(dataset, options.order_field);
+							dataset = this.$indicatorsModel.sortObject(dataset, options.order_field);
 						}
 					}
 					
@@ -522,6 +522,84 @@ const ViewConfReader = {
 					} 
 					return idLocalidade;
 				},
+
+				setDataset(dataset, rules, structure, addedParams, metadata) {
+					let limCoords = { xmin: null, ymin: null, xmax: null, ymax: null }; // Obtém coordenadas limítrofes (se mapa)
+				
+					let options = structure.chart_options;
+					if (options === null || options === undefined) {
+					  options = structure.options;
+					}
+				
+					for (var eachRow in dataset) {
+					  if (options.pct_field !== null && options.pct_field !== undefined) {
+						dataset[eachRow].pct_indicador = dataset[eachRow][options.pct_field];
+					  }
+					  if (structure.chart_type == 'TREEMAP' && options.format_function !== null && options.format_function !== undefined) {
+						if (this.customFunctions && this.customFunctions[options.format_function]) {
+						  dataset[eachRow][options.id] = this.customFunctions[options.format_function](dataset[eachRow], options);
+						} else {
+						  dataset[eachRow][options.id] = this[options.format_function](dataset[eachRow], options);
+						}
+					  }
+				
+					  // Obtém coordenadas limítrofes (se mapa)
+					  if (structure.chart_type === 'MAP_LEAFLET') { // Só avalia as coordenadas caso o gráfico seja um mapa.
+						// Ignora os pontos 0x0
+						if (parseFloat(dataset[eachRow][options.long]) != 0 && 
+							parseFloat(dataset[eachRow][options.long]) != 0) {
+						  if (limCoords.xmin === null || limCoords.xmin === undefined) { // Primeiro valor de indicador
+							limCoords.xmin = parseFloat(dataset[eachRow][options.long]);
+							limCoords.xmax = parseFloat(dataset[eachRow][options.long]);
+							limCoords.ymin = parseFloat(dataset[eachRow][options.lat]);
+							limCoords.ymax = parseFloat(dataset[eachRow][options.lat]);
+						  } else {
+							var lat = parseFloat(dataset[eachRow][options.lat]);
+							var long = parseFloat(dataset[eachRow][options.long]);
+							if (limCoords.xmin > long) {
+							  limCoords.xmin = long;
+							}
+							if (limCoords.xmax < long) {
+							  limCoords.xmax = long;
+							}
+							if (limCoords.ymin > lat) {
+							  limCoords.ymin = lat;
+							}
+							if (limCoords.ymax < lat) {
+							  limCoords.ymax = lat;
+							}
+						  }
+						}
+					  }
+					}
+				
+					// Define as coordenadas apenas se for um mapa do leaflet
+					if (structure.chart_type === 'MAP_LEAFLET') {
+					  this.customParams.limCoords = limCoords;
+					}
+				
+					if (options.order_field !== null && options.order_field !== undefined) {
+					  dataset = this.$indicatorsModel.sortObject(dataset, options.order_field);
+					}
+				
+					if (addedParams && addedParams.id) {
+					  // Múltiplos gráficos
+					  this.dataset[addedParams.id] = dataset;
+					  this.metadata[addedParams.id] = metadata;
+					  this.datasetsComplete++;
+					} else if (addedParams && addedParams.props) {
+					  if (addedParams.props.dataset) this[addedParams.props.dataset] = dataset;
+					  if (addedParams.props.metadata) this[addedParams.props.metadata] = metadata;
+					} else {
+					  // Dataset único
+					  this.dataset = dataset;
+					  this.metadata = metadata;
+					}
+				
+					if (addedParams && addedParams.fnCallback) {
+					  addedParams.fnCallback();
+					}
+				}
 			}
 		})
 	}
