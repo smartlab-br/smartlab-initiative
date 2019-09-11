@@ -101,9 +101,9 @@
             <v-flex white--text subheading xs12 md4 lg3 :class="{'px-3': $vuetify.breakpoint.mdAndDown, 'px-4': $vuetify.breakpoint.lgAndUp}" v-html="dimensao_ativa.description">
             </v-flex>
             <v-flex text-xs-center xs12 md3 :class="{'px-3': $vuetify.breakpoint.mdAndDown, 'px-4': $vuetify.breakpoint.lgAndUp}" >
-              <v-layout row wrap justify-center>
+              <v-layout v-if="ind_principais && ind_principais.length > 0 && unlockLoading"
+                  row wrap justify-center>
                 <flpo-minicard
-                  v-if="ind_principais && unlockLoading"
                   v-for="(miniCardPrincipal, indexMinicardsPrincipal) in ind_principais"
                   :key="'minicard_principal_'+indexMinicardsPrincipal"
                   :structure="miniCardPrincipal" :customFunctions="custom_functions"
@@ -132,9 +132,8 @@
     </v-container>
     <!-- Indicadores principais: Empregadores, Vínculos Formais, Municípios, Estabelecimentos, % MEI e EPPs -->
     <v-container fluid  xs12  class="pa-0 ma-0">
-      <v-layout class="bg-page grey lighten-2" column pa-0 ma-0>
-        <v-layout  v-if="sections && sections.length > 0" 
-          v-for="(secao, indexSecao) in sections"  
+      <v-layout v-if="sections && sections.length > 0" class="bg-page grey lighten-2" column pa-0 ma-0>
+        <v-layout v-for="(secao, indexSecao) in sections"  
           :key="secao.id"
           row wrap>
           <v-layout column :id="secao.id" :style="'background-color:' + $colorsService.assessZebraBG(indexSecao, $vuetify.theme) + ';'">
@@ -347,11 +346,30 @@
         unlockLoading: false,
         thematicDatasetQuantity: 0,
         thematicLoaded: 0,
-        isFavorite: false,
+        // isFavorite: false,
         visibleCardMaxIndex: 1, //dois primeiros cards
         auOptions: [],
         compareDialog: false,
+
+        // Compare data
+        sections_compare: [],
         idLocalidade_compare: null,
+        localidade_compare: null,
+        masterIndicator_compare: null,
+        presentation_compare: null,
+        ind_principais_compare:[],
+        topology_compare: null,
+        topology_uf_compare: null,
+        topologyUfLoaded_compare: false,
+        thematicDatasets: [],
+
+        datasetsLoaded: false,
+        datasetsCompareLoaded: false,
+        datasetsDimLoaded: false,
+        datasetsDimCompareLoaded: false,
+
+        // Functions
+        // TODO Migrate gradually to prototype objects
         custom_functions: {
           concat_values(indicador, value1, value2, value3 = "", value4 = "", value5 = "") {return value1 + ' ' + value2 + ' ' + value3 + ' ' + value4 + ' ' + value5; },
           calc_subtraction: function(a, b, c = 0) {  return a - (b - c); },
@@ -513,36 +531,85 @@
 
             return returText;
           }
-        },
-        loadedPrincipais: false,
+        }
       }
     },
    
     created () {
       let tmpIdObs = this.$observatories.identifyObservatory(this.$route.path.split('/')[1]);
-      this.$dimensions.getDimensions(tmpIdObs, this.setSiblingDimensions);
+      this.$dimensions.getDimensions(tmpIdObs)
+        .then((result) => this.setSiblingDimensions(result));
       this.idObservatorio = tmpIdObs;
       
-      let scope = this.getEscopo(this.$route.params.idLocalidade);
-      let auId = this.getIdLocalidadeFromRoute(this.$route.params.idLocalidade);
-      let msgErro = this.getMensagemErro(this.$route.params.idLocalidade);
+      this.$yamlFetcherService.loadYaml("br/observatorio/" + tmpIdObs)
+        .then((result) => { 
+          let scope = this.getEscopo(this.$route.params.idLocalidade);
+          let auId = this.getIdLocalidadeFromRoute(this.$route.params.idLocalidade);
+          let msgErro = this.getMensagemErro(this.$route.params.idLocalidade);
+        
+          let compareScope, compareAuId, compareMsgErro;
+          if (this.$route.query.compare) {
+            compareScope = this.getEscopo(this.$route.query.compare);
+            compareAuId = this.getIdLocalidadeFromRoute(this.$route.query.compare);
+            compareMsgErro = this.getMensagemErro(this.$route.query.compare);
+          }
 
-      if (tmpIdObs) {
-        this.loadYaml("br/observatorio/" + tmpIdObs, this.setObservatorio);
-      } else {
-        this.getGlobalDataset(
-          'centralindicadores',
-          scope,
-          msgErro,
-          auId,
-          this.keepLoading
-        );
-        this.$emit('alterToolbar', null);
-      }
+          let thematicDatasets = ['centralindicadores'];
+          if (result && result.tematicos) {
+            for (let indxTematico in result.tematicos){
+              thematicDatasets.push(result.tematicos[indxTematico].dataset);
+            }
+          }
+          
+          let indicadoresTematicos = this.$indicatorsModel.getMultipleGlobalDatasets(thematicDatasets, scope, auId);
+          if (indicadoresTematicos instanceof Promise || indicadoresTematicos.then) {
+            indicadoresTematicos.then(
+              (result) => { this.datasetsLoaded = true; },
+              (error) => { this.sendError(msgErro); });
+          } else {
+            this.datasetsLoaded = true;
+          }
+          
+          if (this.$route.query.compare) {
+            let indicadoresTematicosCompare = this.$indicatorsModel.getMultipleGlobalDatasets(thematicDatasets, compareScope, compareAuId, "_compare");
+            if (indicadoresTematicosCompare instanceof Promise || indicadoresTematicosCompare.then) {
+              indicadoresTematicosCompare.then(
+                (result) => { this.datasetsCompareLoaded = true; },
+                (error) => { this.sendError(msgErro); });
+            } else {
+              this.datasetsCompareLoaded = true;
+            }
+          }
+
+          this.thematicDatasets = thematicDatasets;
+          this.$emit('alterToolbar', result.theme.toolbar);
+        });
     },
     watch: {
+      datasetsLoaded: function() {
+        if ((this.datasetsLoaded && this.$route.query.compare && this.datasetsCompareLoaded)
+          || (this.datasetsLoaded && (this.$route.query.compare === null || this.$route.query.compare === undefined))) {
+          this.keepLoading();
+        }
+      },
+      datasetsCompareLoaded: function() {
+        if (this.datasetsLoaded && this.datasetsCompareLoaded) {
+          this.keepLoading();
+        }
+      },
+      datasetsDimLoaded: function() {
+        if ((this.datasetsDimLoaded && this.$route.query.compare && this.datasetsDimCompareLoaded)
+          || (this.datasetsDimLoaded && (this.$route.query.compare === null || this.$route.query.compare === undefined))) {
+          this.keepLoadingDimension();
+        }
+      },
+      datasetsDimCompareLoaded: function() {
+        if (this.datasetsDimLoaded && this.datasetsDimCompareLoaded){
+          this.keepLoadingDimension();
+        }
+      },
       idLocalidade_compare(newVal, oldVal) {
-        if (newVal) {
+        if (newVal && (this.$route.query.compare == null || this.$route.query.compare == undefined)) {
           let url = "";
           if (this.$route.path == this.$route.fullPath) { //não tem dimensão informada na url
             url = this.$route.fullPath.replace('/localidade/','/localidadecompare/') + '?compare=' + newVal.id;
@@ -551,6 +618,9 @@
           }
           this.pushRoute(url);
         }
+      },
+      localidade: function(){
+        this.$emit('alterMiddleToolbar', { "localidade": this.localidade });
       }
     },
     computed: {
@@ -639,31 +709,6 @@
         this.dimensoes = dimensoesTmp;
       },
 
-      setObservatorio(content) {
-        let scope = this.getEscopo(this.$route.params.idLocalidade);
-        let auId = this.getIdLocalidadeFromRoute(this.$route.params.idLocalidade);
-        let msgErro = this.getMensagemErro(this.$route.params.idLocalidade);
-      
-        if (content.tematicos) {
-          let thematicDatasets = ['centralindicadores'];
-          for (let indxTematico in content.tematicos){
-            thematicDatasets.push(content.tematicos[indxTematico].dataset);
-            if (parseInt(indxTematico) + 1 == content.tematicos.length) { 
-              this.getMultipleGlobalDatasets(thematicDatasets, scope, auId, this.keepLoading);
-            }
-          }
-        } else {
-          this.getGlobalDataset(
-            'centralindicadores',
-            scope,
-            msgErro,
-            auId,
-            this.keepLoading
-          );
-        }
-        this.$emit('alterToolbar', content.theme.toolbar);
-      },
-
       setVisibleCardMaxIndex(){
         const vHeight = (window.innerHeight || document.documentElement.clientHeight);
         let indexSection = 0;
@@ -711,7 +756,32 @@
         } else {
           this.selectCoords("uf", "municipio", this.$route.params.idLocalidade.substring(0, 2));
         }
+
+        // Carrega a topologia do município de comparação
+        if (this.$route.query.compare) {
+          if (this.$route.query.compare == 0){ //Brasil
+            // this.selectCoords("/static/topojson/country.json");
+            this.selectCoords("br", "uf", 0, "_compare");
+          } else if (this.$route.query.compare.includes("mptreg") || this.$route.query.compare.includes("MPTREG")) {
+            this.selectCoords("uf", "municipio", this.getUFFromPlace(this.$route.query.compare), "_compare");
+          } else if (this.$route.query.compare.includes("prt") || this.$route.query.compare.includes("PRT") ||
+                    this.$route.query.compare.includes("ptm") || this.$route.query.compare.includes("PTM")) {
+            this.selectCoords("uf", "municipio", this.getUFFromPlace(this.$route.query.compare), "_compare");
+          } else if (this.$route.query.compare.length == 1){ //Região
+            this.selectCoords("br", "uf", 0, "_compare");
+            // this.selectCoords("/static/topojson/regiao.json");
+          } else if (this.$route.query.compare.length == 2){ //Estado
+            this.selectCoords("uf", "municipio", this.$route.query.compare.substring(0, 2), "_compare");
+          } else if (this.$route.query.compare.length == 4){ //Mesorregião
+            this.selectCoords("uf", "uf", this.$route.query.compare, "_compare");
+          } else if (this.$route.query.compare.length == 5){ //Microrregião
+            this.selectCoords("mesorregiao", "uf", this.$route.query.compare, "_compare");
+          } else {
+            this.selectCoords("uf", "municipio", this.$route.query.compare.substring(0, 2), "_compare");
+          }
+        }
       },
+
       resizeFirstSection(){
         if (this.$vuetify.breakpoint.mdAndDown){
           this.displayHeight = "auto";
@@ -719,10 +789,17 @@
           this.displayHeight = "min-height:" + window.innerHeight + "px";
         }
       },
+
+
       loadPlacePage(idLocalidade){
         if (this.dimensao_ativa) {
-          this.$router.push('/localidade/'+idLocalidade+'?dimensao='+this.dimensao_ativa.id);
-          this.$router.go('/localidade/'+idLocalidade+'?dimensao='+this.dimensao_ativa.id);
+          if (this.$route.query.compare) {
+            this.$router.push('/localidade/'+idLocalidade+'?dimensao='+this.dimensao_ativa.id+'&compare='+this.$route.query.compare);
+            this.$router.go('/localidade/'+idLocalidade+'?dimensao='+this.dimensao_ativa.id+'&compare='+this.$route.query.compare);
+          } else {
+            this.$router.push('/localidade/'+idLocalidade+'?dimensao='+this.dimensao_ativa.id);
+            this.$router.go('/localidade/'+idLocalidade+'?dimensao='+this.dimensao_ativa.id);
+          }
         }
       },
 
@@ -732,18 +809,24 @@
 
       loadLayout(idLocalidade, idDimensao, idObservatorio = null) {
         this.idLocalidade = idLocalidade;
+        this.idLocalidade_compare = this.$route.query.compare;
+
         this.customParams.idLocalidade = idLocalidade;
+        this.customParams.idLocalidade_compare = this.$route.query.compare;
 
         // if (idLocalidade.length > 2) {
-        this.customParams.cd_uf = idLocalidade.substring(0,2);
+        this.customParams.cd_uf = this.idLocalidade.substring(0,2);
+        if (this.idLocalidade_compare) this.customParams.cd_uf_compare = this.idLocalidade_compare.substring(0,2);
         // }
         if (idLocalidade.length > 6) {
-          this.customParams.idLocalidadeD6 = idLocalidade.substring(0,6);
+          this.customParams.idLocalidadeD6 = this.idLocalidade.substring(0,6);
+          if (this.idLocalidade_compare) this.customParams.idLocalidade_compareD6 = this.idLocalidade_compare.substring(0,6);
         }
 
-        this.fetchDataLocalidade(idLocalidade);
+        this.fetchDataLocalidade(this.idLocalidade);
+        if (this.idLocalidade_compare) this.fetchDataLocalidade(this.idLocalidade_compare, 'localidade_compare');
 
-        let escopo = this.getEscopo(idLocalidade);
+        let escopo = this.getEscopo(this.idLocalidade);
         let observatorioDir = '';
         if (idObservatorio !== null && idObservatorio !== undefined) {
           observatorioDir = 'observatorio/' + idObservatorio + '/';
@@ -762,20 +845,36 @@
       },
 
       setDimension(content) {
-        let escopo = this.getEscopo(this.$route.params.idLocalidade);
+        let escopo = this.getEscopo(this.idLocalidade);
         this.dimStruct = content;
-        if (content.tematicos) {
-          let thematicDatasets = ['centralindicadores'];
+
+        let thematicDatasets = ['centralindicadores'];
+        if (content && content.tematicos) {
           for (let tematico of content.tematicos){
             thematicDatasets.push(tematico.dataset);
           }
-          this.getMultipleGlobalDatasets(
-            thematicDatasets,
-            escopo,
-            this.getIdLocalidadeFromRoute(this.$route.params.idLocalidade),
-            this.keepLoadingDimension);
+        }
+
+        this.thematicDatasets = thematicDatasets;
+
+        let indicadoresTematicos = this.$indicatorsModel.getMultipleGlobalDatasets(thematicDatasets, escopo, this.idLocalidade);
+        if (indicadoresTematicos instanceof Promise || indicadoresTematicos.then) {
+          indicadoresTematicos.then(
+            (result) => { this.datasetsDimLoaded = true; },
+            (error) => { this.sendError('Falha ao carregar indicadores temáticos'); });
         } else {
-          this.keepLoadingDimension();
+          this.datasetsDimLoaded = true;
+        }
+        
+        if (this.$route.query.compare) {
+          let indicadoresTematicosCompare = this.$indicatorsModel.getMultipleGlobalDatasets(thematicDatasets, escopo, this.idLocalidade_compare, "_compare");
+          if (indicadoresTematicosCompare instanceof Promise || indicadoresTematicosCompare.then) {
+            indicadoresTematicosCompare.then(
+              (result) => { this.datasetsDimCompareLoaded = true; },
+              (error) => { this.sendError('Falha ao carregar indicadores do Brasil'); });
+          } else {
+            this.datasetsDimCompareLoaded = true;
+          }
         }
       },
 
@@ -795,13 +894,25 @@
         }
         this.cardLinks = [];
         this.fetchVizLinks(this.sections);
-      
-        this.unlockLoading = true;
 
         this.fillDataStructure(
           this.dimStruct.master, this.customParams,
-          this.customFunctions, this.setMasterIndicator
+          this.customFunctions, this.setMasterIndicator // Defaults to masterIndicator
         );
+
+        if (this.$route.query.compare) { // In comparison view
+          this.sections_compare = this.changeToCompareStructure(this.sections);
+          this.ind_principais_compare = this.changeToCompareStructure(this.ind_principais);
+          this.presentation_compare = JSON.parse(JSON.stringify(this.dimStruct.presentation).replace(/centralindicadores/g,"centralindicadores_compare").replace(/idLocalidade/g,"idLocalidade_compare"));
+            
+          let dimStructMasterCompare = JSON.parse(JSON.stringify(this.dimStruct.master).replace(/centralindicadores/g,"centralindicadores_compare").replace(/idLocalidade/g,"idLocalidade_compare"));
+          this.fillDataStructure(
+            dimStructMasterCompare, this.customParams,
+            this.customFunctions, this.setMasterIndicator, {indicator_var: 'masterIndicator_compare'}
+          );
+        }
+
+        this.unlockLoading = true;
       },
 
       getMensagemErro(idLocalidade) {
@@ -822,24 +933,25 @@
         return "Falha ao buscar indicadores do município";
       },
 
-      fetchDataLocalidade(idLocalidade) {
+      fetchDataLocalidade(idLocalidade, nm_var = 'localidade') {
+        let localidade = {};
         var url = null;
         //axios(this.$axiosCallSetupService.getAxiosOptions("/municipios?categorias=nm_municipio,cd_uf,nm_uf,sigla_uf,lat,long,ano_instalacao,ano_extincao,altitude&filtros=eq-cd_municipio_ibge-" + idLocalidade))
         if (idLocalidade == 0){ //Brasil
-          this.localidade = {
+          localidade = {
             id_localidade: 0,
             nm_localidade: 'Brasil',
             tipo: '',
             img: "/static/thumbs/municipios/" + idLocalidade + ".jpg"
           };
-          this.customParams.localidade = this.localidade;
 
-          this.$emit('alterMiddleToolbar', { title: 'Brasil', subTitle: this.dimensao_ativa.short_des, localidade: this.localidade });
+          this[nm_var] = localidade;
+          this.customParams[nm_var] = localidade;
         } else if (idLocalidade.includes("mptreg") || idLocalidade.includes("MPTREG")) {
-          let localidade = this.$analysisUnitModel.getPRTPTMInstance(this, idLocalidade.substring(0,6), idLocalidade.substring(6));
-          this.localidade = localidade;
-          this.customParams.localidade = localidade;
-          this.$emit('alterMiddleToolbar', { "localidade": localidade });
+          localidade = this.$analysisUnitModel.getPRTPTMInstance(this, idLocalidade.substring(0,6), idLocalidade.substring(6));
+
+          this[nm_var] = localidade;
+          this.customParams[nm_var] = localidade;
         } else if (idLocalidade.includes("prt") || idLocalidade.includes("PRT") ||
                    idLocalidade.includes("ptm") || idLocalidade.includes("PTM")) {
           url = "/municipios?categorias=cd_unidade,nm_unidade,cd_uf&agregacao=distinct&filtros=eq-cd_unidade-" + idLocalidade.substring(3);
@@ -847,14 +959,14 @@
             .then(result => {
               var infoUnidade = JSON.parse(result.data).dataset;
               if (infoUnidade.length > 0) {
-                let localidade = {
+                localidade = {
                   id_localidade: infoUnidade[0].cd_unidade,
                   nm_localidade: infoUnidade[0].nm_unidade,
                   tipo: idLocalidade.substring(0,3)
                 };
-                this.localidade = localidade;
-                this.customParams.localidade = localidade;
-                this.$emit('alterMiddleToolbar', { "localidade": localidade });
+
+                this[nm_var] = localidade;
+                this.customParams[nm_var] = localidade;
               }
             }, error => {
               console.error(error.toString());
@@ -862,25 +974,27 @@
               reject({ code: 500 });
             });
         } else if (idLocalidade.length == 1){ //Região
-          this.localidade.id_localidade = idLocalidade;
-          this.localidade.nm_localidade = this.$analysisUnitModel.getRegion(idLocalidade);
-          this.localidade.tipo = '';
-          this.localidade.img = "/static/thumbs/municipios/" + idLocalidade + ".jpg";
-          this.customParams.localidade = this.localidade;
+          localidade = {
+            id_localidade: idLocalidade,
+            nm_localidade: this.$analysisUnitModel.getRegion(idLocalidade),
+            tipo: '',
+            img: "/static/thumbs/municipios/" + idLocalidade + ".jpg"
+          };
 
-          this.$emit('alterMiddleToolbar', this.$analysisUnitModel.getRegion(idLocalidade));
+          this[nm_var] = localidade;
+          this.customParams[nm_var] = localidade;
         } else if (idLocalidade.length == 2){ //Estado
           url = "/municipios?categorias=cd_uf,nm_uf&filtros=eq-cd_uf-" + idLocalidade;
           axios(this.$axiosCallSetupService.getAxiosOptions(url))
             .then(result => {
-              this.localidade = JSON.parse(result.data).dataset[0];
-              this.localidade.id_localidade = this.localidade.cd_uf;
-              this.localidade.nm_localidade = this.localidade.nm_uf;
-              this.localidade.tipo = 'UF';
-              this.localidade.img = "/static/thumbs/municipios/" + idLocalidade + ".jpg";
-              this.customParams.localidade = this.localidade;
-
-              this.$emit('alterMiddleToolbar', { localidade: this.localidade });
+              localidade = JSON.parse(result.data).dataset[0];
+              localidade.id_localidade = localidade.cd_uf;
+              localidade.nm_localidade = localidade.nm_uf;
+              localidade.tipo = 'UF';
+              localidade.img = "/static/thumbs/municipios/" + idLocalidade + ".jpg";
+              
+              this[nm_var] = localidade;
+              this.customParams[nm_var] = localidade;
             }, error => {
               console.error(error.toString());
               this.sendError("Falha ao buscar dados do município");
@@ -889,14 +1003,14 @@
           url = "/municipios?categorias=cd_mesorregiao,nm_mesorregiao&filtros=eq-cd_mesorregiao-" + idLocalidade;
           axios(this.$axiosCallSetupService.getAxiosOptions(url))
             .then(result => {
-              this.localidade = JSON.parse(result.data).dataset[0];
-              this.localidade.id_localidade = this.localidade.cd_mesorregiao;
-              this.localidade.nm_localidade = this.localidade.nm_mesorregiao;
-              this.localidade.tipo = 'Mesorregião';
-              this.localidade.img = "/static/thumbs/municipios/" + idLocalidade + ".jpg";
-              this.customParams.localidade = this.localidade;
-
-              this.$emit('alterMiddleToolbar', { localidade: this.localidade });
+              localidade = JSON.parse(result.data).dataset[0];
+              localidade.id_localidade = localidade.cd_mesorregiao;
+              localidade.nm_localidade = localidade.nm_mesorregiao;
+              localidade.tipo = 'Mesorregião';
+              localidade.img = "/static/thumbs/municipios/" + idLocalidade + ".jpg";
+              
+              this[nm_var] = localidade;
+              this.customParams[nm_var] = localidade;
             }, error => {
               console.error(error.toString());
               this.sendError("Falha ao buscar dados da mesorregião");
@@ -905,14 +1019,14 @@
           url = "/municipios?categorias=cd_microrregiao,nm_microrregiao,latitude,longitude&filtros=eq-cd_microrregiao-" + idLocalidade;
           axios(this.$axiosCallSetupService.getAxiosOptions(url))
             .then(result => {
-              this.localidade = JSON.parse(result.data).dataset[0];
-              this.localidade.id_localidade = this.localidade.cd_microrregiao;
-              this.localidade.nm_localidade = this.localidade.nm_microrregiao;
-              this.localidade.tipo = 'Microrregião';
-              this.localidade.img = "/static/thumbs/municipios/" + idLocalidade + ".jpg";
-              this.customParams.localidade = this.localidade;
+              localidade = JSON.parse(result.data).dataset[0];
+              localidade.id_localidade = localidade.cd_microrregiao;
+              localidade.nm_localidade = localidade.nm_microrregiao;
+              localidade.tipo = 'Microrregião';
+              localidade.img = "/static/thumbs/municipios/" + idLocalidade + ".jpg";
               
-              this.$emit('alterMiddleToolbar', { localidade: this.localidade });
+              this[nm_var] = localidade;
+              this.customParams[nm_var] = localidade;
             }, error => {
               console.error(error.toString());
               this.sendError("Falha ao buscar dados da microrregião");
@@ -921,15 +1035,14 @@
           url = "/municipio/" + idLocalidade;
           axios(this.$axiosCallSetupService.getAxiosOptions(url))
             .then(result => {
-              var localidade = JSON.parse(result.data)[0];
+              localidade = JSON.parse(result.data)[0];
               localidade.id_localidade = localidade.cd_municipio_ibge_dv;
               localidade.nm_localidade = localidade.nm_municipio_uf;
               localidade.tipo = 'Município';
               localidade.img = "/static/thumbs/municipios/" + idLocalidade + ".jpg";
-              this.localidade = localidade;
-              this.customParams.localidade = localidade;
-
-              this.$emit('alterMiddleToolbar', { "localidade": localidade });
+              
+              this[nm_var] = localidade;
+              this.customParams[nm_var] = localidade;
             }, error => {
               console.error(error.toString());
               this.sendError("Falha ao buscar dados do município");
@@ -938,8 +1051,9 @@
       },
 
       setMasterIndicator(base_object_list, rules, structure, metadata) {
+        let masterVar = (metadata && metadata.indicator_var) ? metadata.indicator_var : 'masterIndicator';
         if (typeof base_object_list == 'string') {
-          this.masterIndicator = base_object_list;
+          this[masterVar] = base_object_list;
         } else {
           let finalText = this.$textTransformService.replaceArgs(
             structure.template,
@@ -951,7 +1065,7 @@
             ),
             this.sendInvalidInterpol
           );
-          this.masterIndicator = finalText;
+          this[masterVar] = finalText;
         }
       },
 
@@ -998,10 +1112,10 @@
 
       changeDim(idDimensao, idLocalidade, idObservatorio) {
         let urlComplemento = '';
-        if (idDimensao) {
-          urlComplemento = '&dimensao=' + idDimensao;
-        }
-        this.$router.push("/" + this.$observatories.identifyObservatoryById(idObservatorio) + "/localidade/" + idLocalidade + "?" + urlComplemento);
+        let viewEndpoint = this.$route.query.compare ? 'localidadecompare' : 'localidade';
+        if (idDimensao) urlComplemento = '&dimensao=' + idDimensao;
+        if (this.$route.query.compare) urlComplemento += '&compare=' + this.idLocalidade_compare;
+        this.$router.push("/" + this.$observatories.identifyObservatoryById(idObservatorio) + "/" + viewEndpoint + "/" + idLocalidade + "?" + urlComplemento);
       },
 
       getLeadSlice(rowIndx) {
@@ -1072,6 +1186,8 @@
           }
         }
       },
+
+      changeToCompareStructure(struct){}, // Only needed in comparison extension
 
       openCompareDialog() {
         let auOptions = null;

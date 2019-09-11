@@ -737,7 +737,7 @@ export default {
           let dataset = JSON.parse(result.data).dataset;
           // Percorre o dataset, calculando o log do valor normalizado para cálculo do tamanho da bolhas e escala de cores.
           // Obtém o min e o max
-          var minMax = this.getMinMax(dataset, value_field);
+          var minMax = this.$indicatorsModel.getMinMax(dataset, value_field);
           
           // Aplica o log sobre o valor normalizado
           for (let indxDS in dataset) {

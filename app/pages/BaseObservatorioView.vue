@@ -56,16 +56,16 @@
         return 'background-image:url("/static/parallax/' + this.observatorio.imagem + '.jpg"); background-position: center center; background-size: cover;';
       },
       sourceDesc: function() {
-        return this.getSourceDesc(this.observatorio.prevalencia, this.dataset, this.metadata);
+        return this.$indicatorsModel.getSourceDesc(this.observatorio.prevalencia, this.dataset, this.metadata);
       },
       sourceLink: function() {
-        return this.getSourceLink(this.observatorio.prevalencia, this.dataset, this.metadata);
+        return this.$indicatorsModel.getSourceLink(this.observatorio.prevalencia, this.dataset, this.metadata);
       },
       analysisDesc: function() {
-        return this.getAnalysisDesc(this.observatorio.prevalencia, this.dataset, this.metadata);
+        return this.$indicatorsModel.getAnalysisDesc(this.observatorio.prevalencia, this.dataset, this.metadata);
       },
       analysisLink: function() {
-        return this.getAnalysisLink(this.observatorio.prevalencia, this.dataset, this.metadata);
+        return this.$indicatorsModel.getAnalysisLink(this.observatorio.prevalencia, this.dataset, this.metadata);
       },
       thematicLoaded: function(){
         if (this.observatorio && 
@@ -73,8 +73,8 @@
               this.observatorio.tematicos == null || 
               this.observatorio.tematicos == undefined || 
               (
-                this.$store.state.gDatasets[this.observatorio.tematicos[this.observatorio.tematicos.length - 1].dataset] &&
-                this.$store.state.gDatasets[this.observatorio.tematicos[this.observatorio.tematicos.length - 1].dataset].ds
+                this.$indicatorsModel.getGlobalDatasets()[this.observatorio.tematicos[this.observatorio.tematicos.length - 1].dataset] &&
+                this.$indicatorsModel.getGlobalDatasets()[this.observatorio.tematicos[this.observatorio.tematicos.length - 1].dataset].ds
               )
             )
           ){
@@ -94,29 +94,24 @@
       },
       
       setObservatorio(content) {   
-        let scope = 'brasil';
-        let auId = 0;
-        let msgErro = 'Falha ao carregar indicadores do Brasil';
-      
         let observatorio = content;
         this.$emit('alterToolbar', observatorio.theme.toolbar);
         this.observatorio = observatorio;
 
-        this.getGlobalDataset(
-          'centralindicadores',
-          'brasil',
-          'Falha ao carregar indicadores do Brasil',
-          null,
-          this.keepLoading
-        );
-
-        if (observatorio.tematicos){
-          for(let indxTematico in observatorio.tematicos){
-            this.getGlobalDataset(observatorio.tematicos[indxTematico].dataset, 
-                                  scope,
-                                  msgErro,
-                                  auId);
+        let thematic = ['centralindicadores'];
+        if (observatorio && observatorio.tematicos) {
+          for(let indxTematico in observatorio.tematicos) {
+            thematic.push(observatorio.tematicos[indxTematico].dataset);
           }
+        }
+
+        let indicadoresTematicos = this.$indicatorsModel.getMultipleGlobalDatasets(thematic, 'brasil', 0);
+        if (indicadoresTematicos instanceof Promise || indicadoresTematicos.then) {
+          indicadoresTematicos.then(
+            (result) => { this.keepLoading(); },
+            (error) => { this.sendError('Falha ao carregar indicadores do Brasil'); });
+        } else {
+          this.keepLoading();
         }
 
         if (observatorio.prevalencia && observatorio.prevalencia.odometers){
