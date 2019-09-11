@@ -697,7 +697,7 @@
         
         this.setActiveDim(this.$route.params.idLocalidade, tmpIdObs, this.$route.query.dimensao);
 
-        this.customParams.deck = this.loadYaml("br/autocard");
+        // this.$yamlFetcherService.loadYaml("br/autocard").then((result) => { this.customParams.deck = result; });
 
         // Carrega a topologia do município
         if (this.$route.params.idLocalidade == 0){ //Brasil
@@ -805,6 +805,7 @@
           { main: "br/" + observatorioDir + "localidade/" + escopo + "/base", alt: "br/" + observatorioDir + "localidade/default/base" },
           { main: "br/" + observatorioDir + "localidade/" + escopo + "/" + idDimensao, alt: "br/" + observatorioDir + "localidade/default/" + idDimensao }
         ];
+        
         this.loadYamlArray({}, baseStructYamls, this.setDimension);
       },
 

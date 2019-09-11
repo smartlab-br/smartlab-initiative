@@ -37,7 +37,7 @@
       }
 
       if (this.idObservatorio) {
-        this.loadYaml("br/observatorio/" + this.idObservatorio, this.setObservatorio);
+        this.$yamlFetcherService.loadYaml("br/observatorio/" + this.idObservatorio).then((result) => { this.setObservatorio(result); });
       } else {
         this.setDimensionsArea();
 
