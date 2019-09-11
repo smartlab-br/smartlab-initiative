@@ -12,8 +12,17 @@
     props: ['dataset', 'id', 'options', 'headers', 'sectionIndex',
             'chart_size', 'customParams', 'customFunctions',
             'topology', 'topologyUf', 'structure'],
+    data() {
+      return {
+        generated: false
+      }
+    },
     mounted: function() {
-      this.generateChart(this.dataset, this.options, this.id);
+      if (!this.generated) {
+        this.generated = true;
+        this.generateChart(this.dataset, this.options, this.id);
+      } 
+
       //window.addEventListener('resize', this.redrawResize);
     },
     computed: {
