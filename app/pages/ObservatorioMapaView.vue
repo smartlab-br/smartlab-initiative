@@ -55,7 +55,8 @@
                 :custom-filters="customParams"
                 :reactive-filter="reactiveFilter"
                 :active-group="activeGroup"
-                v-on:selection="triggerSelect">
+                v-on:selection="triggerSelect"
+                v-on:default-selection="triggerDefaultSelect">
               </flpo-composite-text>
 
               <v-layout column wrap>
@@ -186,7 +187,7 @@
         this.mapTextLoading = false;
       },
 
-      triggerSelect(payload) {
+      setFilter(payload) {
         if (payload.type && payload.type === 'switch-group') {
           this.customParams.enabled = payload.enabled;
           if (this.$refs.chart){
@@ -226,10 +227,11 @@
             else {
               let item = {}
               item[payload.rules.api.args[0].named_prop] = itemValue;
+              this.customParams[payload.rules.api.args[0].named_prop] = itemValue;
               let grp = {}
               grp[payload.rules.group] = true;
               this.customParams.enabled = grp;
-              this.customParams['baseApi'] = this.$textTransformService.applyInterpol(payload.rules.api, item, this.customFunctions, this.customFilters);
+              this.customParams.baseApi = this.$textTransformService.applyInterpol(payload.rules.api, item, this.customFunctions, this.customParams);
             }
           }
         } else if (payload.type && payload.type === 'radio') {
@@ -249,13 +251,16 @@
 //        } else {
 //          endpoint = this.applyFilters();
 //        }
+      },
+
+      triggerSelect(payload) {
+        this.setFilter(payload);
         let endpoint = this.applyFilters();
         this.fetchMapData(endpoint);
-        this.reactiveFilter = payload.item ? payload.item : payload.value;
       },
       
       triggerDefaultSelect(payload) {
-        this.$emit('default-selection', payload);
+        this.setFilter(payload);
       },
 
       applyFilters() {
@@ -298,6 +303,7 @@
 
         this.customParams.filterUrl = apiUrl.replace(baseUrl,"");
         this.customParams.filterText = filterText;
+        this.reactiveFilter = apiUrl + this.customParams.filterUrl;
 
 
         let aApiUrl = [apiUrl];

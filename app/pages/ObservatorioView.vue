@@ -459,7 +459,6 @@
           var endpoint = this.$textTransformService.applyInterpol(payload.rules.api, this.customParams, this.customFunctions, payload.item);
           this.fetchData(endpoint);
         }
-        this.reactiveFilter = payload.item ? payload.item : payload.value;
       },
 
       fetchMapData(endpoint = null) {

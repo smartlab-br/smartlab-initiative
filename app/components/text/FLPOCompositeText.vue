@@ -57,7 +57,7 @@
           <v-flex pa-0 class="headline-obs">{{ descSection.title }}</v-flex>
           <v-layout row wrap pb-4>
             <flpo-minicard v-for="(miniCard, index) in descSection.cards" :key="index"
-              v-show="miniCard.group == undefined || miniCard.group == null || miniCard.group == activeGroup" 
+              v-if="miniCard.group == undefined || miniCard.group == null || miniCard.group == activeGroup" 
               :reactive-filter="reactiveFilter"
               :custom-filters="customFilters"
               :structure="miniCard" :customFunctions="customFunctions"
