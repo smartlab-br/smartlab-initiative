@@ -57,6 +57,7 @@
           <v-flex pa-0 class="headline-obs">{{ descSection.title }}</v-flex>
           <v-layout row wrap pb-4>
             <flpo-minicard v-for="(miniCard, index) in descSection.cards" :key="index"
+              v-show="miniCard.group == undefined || miniCard.group == null || miniCard.group == activeGroup" 
               :reactive-filter="reactiveFilter"
               :custom-filters="customFilters"
               :structure="miniCard" :customFunctions="customFunctions"
@@ -191,11 +192,10 @@
         dataset: [],
         metadata: [],
         datasetsComplete: 0,
-        reactiveFilter: null,
         reactiveParent: null
       }
     },
-    props: ['id','activeGroup', 'sectionClass', 'customFilters'],
+    props: ['id','activeGroup', 'reactiveFilter', 'sectionClass', 'customFilters'],
     created () {
       for (var indxDesc in this.structure) {
         if (this.structure[indxDesc].type === 'chart') {
@@ -216,7 +216,6 @@
     },
     methods: {
       triggerSelect(payload) {
-        this.reactiveFilter = payload.item;
         this.reactiveParent = payload.id;
         this.$emit('selection', payload);
       },

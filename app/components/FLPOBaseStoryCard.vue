@@ -8,7 +8,8 @@
     props: ['selectedPlace', 'chartPosition'],
     data () {
       return {
-        customFilters: {}
+        customFilters: {},
+        reactiveFilter: null
       }
     },
     created () {
@@ -342,6 +343,7 @@
 
       triggerSelect(payload) {
         this.setFilter(payload);
+        this.reactiveFilter = payload.item ? payload.item : payload.value;
         this.updateDataStructure(payload);
       },
 

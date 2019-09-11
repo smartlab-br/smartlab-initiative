@@ -60,6 +60,7 @@
                       :custom-params="customParams"
                       :custom-functions="customFunctions"
                       :custom-filters="customFilters"
+                      :reactive-filter="reactiveFilter"
                       v-on:selection="triggerSelect"
                       v-on:default-selection="triggerDefaultSelect"
                       v-on:resendInvalidInterpol="changeTextToInvalidInterpol">
