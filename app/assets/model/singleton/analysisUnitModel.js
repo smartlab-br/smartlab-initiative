@@ -316,7 +316,7 @@ class AnalysisUnitModel {
     var url = null;
     var localidade = {};
 
-    if (id == null || id == undefined) return;
+    if (id === null || id === undefined) return;
 
     if (id == 0){ //Brasil
       localidade.id_localidade = 0;

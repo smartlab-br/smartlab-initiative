@@ -144,6 +144,7 @@ class NumberTransformService {
         started = true;
       }
     }
+
     if (started) {
       strInterval += " " + minutes + "m";
     } else {
@@ -152,6 +153,7 @@ class NumberTransformService {
         started = true;
       }
     }
+    
     if (started) {
       strInterval += " " + seconds + "s";
     } else {
@@ -160,6 +162,7 @@ class NumberTransformService {
         started = true;
       }
     }
+
     if (!started) {
       strInterval += " " + milis + "ms";
     }
