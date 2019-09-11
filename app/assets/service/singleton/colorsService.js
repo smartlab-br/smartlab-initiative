@@ -152,7 +152,7 @@ class ColorsService {
   }
 
   assessZebraBG(index, theme) {
-    if (theme == null || theme == undefined) theme = this.themeLibrary['default'];
+    if (theme === null || theme === undefined) theme = this.themeLibrary['default'];
     let alternativa = index % 2;
     if (alternativa == 1) return theme.background2;
     return theme.background;

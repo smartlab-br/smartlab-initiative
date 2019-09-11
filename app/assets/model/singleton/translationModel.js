@@ -37,7 +37,7 @@ class TranslationModel {
 
   setLocale(locale) {
     // Sobrescreve apenas se efetivamente alterado
-    if (locale == null || locale == undefined) return;
+    if (locale === null || locale === undefined) return;
     if (this.currentLocale && this.currentLocale !== locale.value) {
       this.currentLocale = locale.value;
     } else if (this.currentLocale == null || this.currentLocale == undefined) {
