@@ -329,15 +329,9 @@
       updateDataStructure(payload) {
         let endpoint = "";
 
-        if (payload.type && payload.type === 'switch-group') {
-          if (this.$refs.chart){
-            this.$refs.chart.adjustVisibleLayers();
-          }
-        } else if (payload.type && payload.type === 'radio') {
-          if (this.$refs.chart){
-            this.$refs.chart.adjustVisibleLayers();
-          }
-        } else if (payload.type && payload.type === 'slider' || payload.type && payload.type === 'check') {
+        if (payload.type && (payload.type === 'switch-group' || payload.type === 'radio')) {
+          if (this.$refs.chart) this.$refs.chart.adjustVisibleLayers();
+        } else if (payload.type && (payload.type === 'slider' || payload.type === 'check')) {
           if (payload.rules.filter){
             let apiUrl = this.$textTransformService.applyInterpol(this.structure.api, this.customParams, this.customFunctions);
             if (this.structure.apiBase){

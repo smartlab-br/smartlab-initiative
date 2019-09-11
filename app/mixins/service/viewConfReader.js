@@ -9,17 +9,6 @@ const ViewConfReader = {
 				}
 			},
 			methods: {
-				async loadYaml(location, cbFunction) {
-					let basePath = "/static/smartlab-initiative-viewconf/";
-					if (this.$store && this.$store.state && this.$store.state.GIT_VIEWCONF_TAG_URL) {
-						basePath = this.$store.state.GIT_VIEWCONF_TAG_URL;
-					} else if (process.env.GIT_VIEWCONF_TAG_URL) {
-						basePath = process.env.GIT_VIEWCONF_TAG_URL;
-					}
-					let response = await axios.get(basePath + location + ".yaml");
-					if (cbFunction) cbFunction(yaml.safeLoad(response.data, { json: true }));
-				},
-
 				async loadYamlArray(currentStruct, yamlArray, finalCbFunction) {
 					let promises = [];
 					let promises_alt = [];

@@ -178,8 +178,7 @@
       // let auId = 0;
       
       if (this.idEstudo) {
-        let estudo = this.loadYaml("br/estudo/" + this.idEstudo);
-        this.estudo = estudo;
+        this.$yamlFetcherService.loadYaml("br/estudo/" + this.idEstudo).then((result) => { this.estudo = result; });
         //this.selectCoords("br", "uf", 0);
         this.selectCoords("uf", "municipio", 23);
       }
@@ -210,16 +209,17 @@
     },
     methods: {
       keepLoading() {
-        let estudo = this.loadYaml("br/estudo/" + this.idEstudo);
-        this.$emit('alterToolbar', estudo.theme.toolbar);
-        this.estudo = estudo;
+        this.$yamlFetcherService.loadYaml("br/estudo/" + this.idEstudo)
+          .then((result) => {
+            this.$emit('alterToolbar', result.theme.toolbar);
+            this.estudo = result;
+            this.fetchVizLinks(result.secoes);
+          });
 
 //        this.fillDataStructure(
 //          this.estudo.secoes, null,
 //          null, null
 //        );
-
-        this.fetchVizLinks(estudo.secoes);
       },
 
 //      triggerSelect(payload) {
