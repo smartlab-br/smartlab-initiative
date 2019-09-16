@@ -26,13 +26,12 @@
       //window.addEventListener('resize', this.redrawResize);
     },
     destroyed() {
-      document.getElementById(this.id).innerHTML = '';
+      if (document.getElementById(this.id)) document.getElementById(this.id).innerHTML = '';
     },
     computed: {
     },
     watch: {
       dataset: function(newVal, oldVal) {
-        document.getElementById(this.id).innerHTML = '';
         this.generateChart(newVal, this.options, this.id);
       }
     },
@@ -70,7 +69,10 @@
             this.options
           );
           // Timeout para garantir que o tamanho do espaço onde o gráfico vai ficar já está definido.
-          setTimeout(function(chart) { chart.render(); }, 0, chart); 
+          setTimeout(function(chart) {
+                        if (document.getElementById(id)) document.getElementById(id).innerHTML = ''; 
+                        chart.render(); 
+                      }, 0, chart); 
         }
       },
 
