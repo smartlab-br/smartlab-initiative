@@ -25,6 +25,9 @@
 
       //window.addEventListener('resize', this.redrawResize);
     },
+    destroyed() {
+      document.getElementById(this.id).innerHTML = '';
+    },
     computed: {
     },
     watch: {
@@ -53,20 +56,22 @@
         return slicedDS;
       },
 
-      generateChart(dataset, options, id){        
-        let chartContainer = document.getElementById(id);
-        
-        let viz = this.generateViz(this.options);
-        viz = this.refineViz(viz, this.options);
+      generateChart(dataset, options, id) {
+        if (id && document.getElementById(id)) {
+          let chartContainer = document.getElementById(id);
+          
+          let viz = this.generateViz(this.options);
+          viz = this.refineViz(viz, this.options);
 
-        var chart = this.prepareChart(
-          viz,
-          this.getSlicedDataset(dataset, this.options),
-          "#" + id,
-          this.options
-        );
-        // Timeout para garantir que o tamanho do espaço onde o gráfico vai ficar já está definido.
-        setTimeout(function(chart) { chart.render(); }, 0, chart); 
+          var chart = this.prepareChart(
+            viz,
+            this.getSlicedDataset(dataset, this.options),
+            "#" + id,
+            this.options
+          );
+          // Timeout para garantir que o tamanho do espaço onde o gráfico vai ficar já está definido.
+          setTimeout(function(chart) { chart.render(); }, 0, chart); 
+        }
       },
 
       refineViz(viz, options) {
