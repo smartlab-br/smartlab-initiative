@@ -607,6 +607,13 @@
         this.observatorios = tmpObs;
       }
 
+      this.dim = { label: null };
+      let observ = this.$observatories.identifyObservatory(this.$route.path.split('/')[1]);
+      if (observ != null && (this.$route.query.dimensao || this.$route.params.idLocalidade)) {
+        this.$dimensions.getDimensionByObservatoryAndId(observ, this.$route.query.dimensao)
+          .then((result) => { this.dim = result; });
+      }
+
       Promise.all(this.$analysisUnitModel.buildAllSearchOptions())
         .then((results) => {
           let hasLoading = false;

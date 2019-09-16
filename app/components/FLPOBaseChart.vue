@@ -54,18 +54,19 @@
       },
 
       generateChart(dataset, options, id){        
-        let slicedDS = this.getSlicedDataset(dataset, options);
-        
-        let containerId = "#" + id;
         let chartContainer = document.getElementById(id);
         
         let viz = this.generateViz(this.options);
         viz = this.refineViz(viz, this.options);
 
+        var chart = this.prepareChart(
+          viz,
+          this.getSlicedDataset(dataset, options),
+          "#" + id,
+          this.options
+        );
         // Timeout para garantir que o tamanho do espaço onde o gráfico vai ficar já está definido.
-        setTimeout(function(viz, slicedDS, containerId, chartContainer, options, fnPrep) {
-          fnPrep(viz, slicedDS, containerId, options).render();
-        }, 10, viz, slicedDS, containerId, chartContainer, options, this.prepareChart); 
+        setTimeout(function(chart) { chart.render(); }, 0, chart); 
       },
 
       refineViz(viz, options) {
