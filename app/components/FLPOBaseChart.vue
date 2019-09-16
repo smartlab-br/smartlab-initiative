@@ -61,7 +61,7 @@
 
         var chart = this.prepareChart(
           viz,
-          this.getSlicedDataset(dataset, options),
+          this.getSlicedDataset(dataset, this.options),
           "#" + id,
           this.options
         );
