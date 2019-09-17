@@ -68,7 +68,7 @@
             if (rules[markerIndx].color) {
               marker.color = rules[markerIndx].color;
             } else {
-              marker.color = this.$colorsService.getColorFromCategoricalScale('Set3', markerIndx);
+              marker.color = this.$colorsService.constructor.getColorFromCategoricalScale('Set3', markerIndx);
             }
             markers.push(marker);
 
@@ -171,7 +171,7 @@
           //   .attr("x", (markerPos - 5))
           //   .attr("y", text_margins.top)
           //   .attr("style", "font-size: 12;")
-          //   .style("fill", this.$colorsService.assessZebraTitleColor(this.sectionIndex, null, $vuetify.theme))
+          //   .style("fill", this.$colorsService.constructor.assessZebraTitleColor(this.sectionIndex, null, $vuetify.theme))
           //   .text(Math.floor(markerPos));
         }
 

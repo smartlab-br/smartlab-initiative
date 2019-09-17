@@ -74,6 +74,9 @@ Vue.prototype.$tooltipBuildingService = new TooltipBuildingService();
 import YamlFetcherService from './service/singleton/yamlFetcherService'
 Vue.prototype.$yamlFetcherService = new YamlFetcherService();
 
+// import ChartBuilderService from './service/chart/chartBuilderService'
+// Vue.prototype.$chartBuilderService = new ChartBuilderService();
+
 // 2.2. Global Mixins
 import GeoIpClient from '../mixins/service/geoIpClient.js'
 Vue.use(GeoIpClient)

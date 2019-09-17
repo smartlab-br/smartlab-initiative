@@ -2,7 +2,7 @@ import colors from 'vuetify/es5/util/colors'
 import * as d3chrom from 'd3-scale-chromatic'
 
 class ColorsService {
-  themeLibrary = {
+  static _themeLibrary = {
     default: {
       primary: colors.grey.darken4,
       secondary: colors.grey.darken3,
@@ -98,7 +98,7 @@ class ColorsService {
 
   constructor() {}
   
-  getColorScale(scale = null, type = 'categorical', order = 'asc', levels = null) {
+  static getColorScale(scale = null, type = 'categorical', order = 'asc', levels = null) {
     let size = null;
     if (order === undefined || order === null) {
       order = 'asc';
@@ -128,18 +128,18 @@ class ColorsService {
     return scl;
   }
 
-  getColorFromScale(scale, position, levels, order = 'asc') {
+  static getColorFromScale(scale, position, levels, order = 'asc') {
     let schemeName = "interpolate" + scale;
     return d3chrom[schemeName](position / levels);
   }
 
-  getColorFromCategoricalScale(scale, position) {
+  static getColorFromCategoricalScale(scale, position) {
     let schemeName = "scheme" + scale;
     let schemeArray = d3chrom[schemeName];
     return schemeArray[position % schemeArray.length];
   }
   
-  rgb2hex(rgb){
+  static rgb2hex(rgb){
     rgb = rgb.match(/^rgba?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?/i);
     return (rgb && rgb.length === 4) ? "#" +
       ("0" + parseInt(rgb[1],10).toString(16)).slice(-2) +
@@ -147,21 +147,21 @@ class ColorsService {
       ("0" + parseInt(rgb[3],10).toString(16)).slice(-2) : '';
   }
 
-  getThemeFromId(id) {
-    return this.themeLibrary[id] ? Object.assign({}, this.themeLibrary[id]) : null;
+  static getThemeFromId(id) {
+    return this._themeLibrary[id] ? Object.assign({}, this._themeLibrary[id]) : null;
   }
 
-  assessZebraBG(index, theme) {
-    if (theme === null || theme === undefined) theme = this.themeLibrary['default'];
+  static assessZebraBG(index, theme) {
+    if (theme === null || theme === undefined) theme = this._themeLibrary['default'];
     let alternativa = index % 2;
     if (alternativa == 1) return theme.background2;
     return theme.background;
   }
 
-  getClassIfIsDark(hex, index, theme){
+  static getClassIfIsDark(hex, index, theme){
     if (hex == null) {
       if (index != null) {
-        hex = this.assessZebraBG(index, theme);
+        hex = ColorsService.assessZebraBG(index, theme);
       } else {
         return "";
       }
@@ -177,13 +177,13 @@ class ColorsService {
     return "";          
   }
 
-  assessZebraTitle(index = 0, theme = null) {
-    if (this.getClassIfIsDark(this.assessZebraBG(index, theme), theme) == "theme--dark") return 'white--text';
+  static assessZebraTitle(index = 0, theme = null) {
+    if (ColorsService.getClassIfIsDark(ColorsService.assessZebraBG(index, theme), theme) == "theme--dark") return 'white--text';
     return '';
   }
 
-  assessZebraTitleColor(index = 0, opacity = null, theme = null) {
-    if (this.getClassIfIsDark(this.assessZebraBG(index, theme), theme) == "theme--dark"){
+  static assessZebraTitleColor(index = 0, opacity = null, theme = null) {
+    if (ColorsService.getClassIfIsDark(ColorsService.assessZebraBG(index, theme), theme) == "theme--dark"){
       if (opacity == null) return 'white';
       return "rgba(255, 255, 255, " + opacity + ")";
     }
@@ -191,8 +191,8 @@ class ColorsService {
     return "rgba(0, 0, 0, " + opacity + ")";
   }
 
-  assessZebraAxesColor(index = 0, theme = null) {
-    if (this.getClassIfIsDark(this.assessZebraBG(index, theme), theme) == "theme--dark") return 'white';
+  static assessZebraAxesColor(index = 0, theme = null) {
+    if (ColorsService.getClassIfIsDark(ColorsService.assessZebraBG(index, theme), theme) == "theme--dark") return 'white';
     return colors.grey.base;
   }
 }

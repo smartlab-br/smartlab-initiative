@@ -44,7 +44,7 @@
         };
         
         if (options.colorScale) {
-          areaConfig.stroke = this.$colorsService.getColorScale(options.colorScale.name);
+          areaConfig.stroke = this.$colorsService.constructor.getColorScale(options.colorScale.name);
         } else if (options.color !== null && options.color !== undefined) {
           areaConfig.stroke = options.color;
         } 
@@ -69,7 +69,7 @@
           .legendConfig({ 
             shapeConfig:{
               labelConfig: {
-                fontColor: this.$colorsService.assessZebraTitleColor(this.sectionIndex, null, this.$vuetify.theme)
+                fontColor: this.$colorsService.constructor.assessZebraTitleColor(this.sectionIndex, null, this.$vuetify.theme)
               }
             }
           })

@@ -27,14 +27,14 @@
             viz = viz.colorScaleConfig({
               color: aColorScale,
               axisConfig: this.getTransparentXYConfig(),
-              rectConfig: { stroke: this.$colorsService.assessZebraTitleColor(this.sectionIndex, null, this.$vuetify.theme) }
+              rectConfig: { stroke: this.$colorsService.constructor.assessZebraTitleColor(this.sectionIndex, null, this.$vuetify.theme) }
             });
             viz = viz.colorScalePosition(options.show_scale ? "right" : false);
           } else {
             if (options.colorScale.color_array){
               viz = viz.color((d) => { return options.colorScale.color_array[d[options.id]]; });
             } else {
-              aColorScale = this.$colorsService.getColorScale(options.colorScale.name, options.colorScale.type, options.colorScale.order, levels);
+              aColorScale = this.$colorsService.constructor.getColorScale(options.colorScale.name, options.colorScale.type, options.colorScale.order, levels);
               let distValues = [];
               for (let reg of slicedDS) {  
                 if (!distValues.includes(reg[options.size])){
@@ -61,7 +61,7 @@
                   viz = viz.colorScaleConfig({
                     color: aColorScale,
                     axisConfig: this.getTransparentXYConfig(),
-                    rectConfig: { stroke: this.$colorsService.assessZebraTitleColor(this.sectionIndex, null, this.$vuetify.theme) }
+                    rectConfig: { stroke: this.$colorsService.constructor.assessZebraTitleColor(this.sectionIndex, null, this.$vuetify.theme) }
                   });
                 } 
                 viz = viz.colorScalePosition(options.show_scale ? "right" : false);
@@ -131,7 +131,7 @@
               .legendConfig({ 
                 shapeConfig:{
                   labelConfig: {
-                    fontColor: this.$colorsService.assessZebraTitleColor(this.sectionIndex, null, this.$vuetify.theme)
+                    fontColor: this.$colorsService.constructor.assessZebraTitleColor(this.sectionIndex, null, this.$vuetify.theme)
                   }
                 }
               })

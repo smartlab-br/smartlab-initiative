@@ -69,7 +69,7 @@
     </v-container>
     -->
     <v-container v-if="observatorio && observatorio.prevalencia" fluid ma-0 pa-0
-      :style="'background-color:' + $colorsService.assessZebraBG(0, $vuetify.theme) + ';'">
+      :style="'background-color:' + $colorsService.constructor.assessZebraBG(0, $vuetify.theme) + ';'">
       <v-layout row wrap>
         <!--
         <v-layout pa-3 row wrap justify-center v-show="mapTextLoading || !thematicLoaded">
@@ -269,7 +269,7 @@
     </v-layout>
 
     <!--
-    <v-container fluid ma-0 pa-5 :style="'background-color:' + $colorsService.assessZebraBG(1, $vuetify.theme) + ';'">
+    <v-container fluid ma-0 pa-5 :style="'background-color:' + $colorsService.constructor.assessZebraBG(1, $vuetify.theme) + ';'">
       <v-layout row wrap text-xs-center pb-5>
         <div class="flex display-1-obs">Realização</div>
       </v-layout>

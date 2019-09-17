@@ -15,7 +15,7 @@
       }
 
       if (this.options.colorScale && this.options.colorScale.name) {
-        colorArray = this.$colorsService.getColorScale(this.options.colorScale.name, this.options.colorScale.type, this.options.colorScale.order, this.options.colorScale.levels);
+        colorArray = this.$colorsService.constructor.getColorScale(this.options.colorScale.name, this.options.colorScale.type, this.options.colorScale.order, this.options.colorScale.levels);
       } else if (this.options.colorArray) {
         colorArray = this.options.colorArray;
       }
@@ -151,7 +151,7 @@
                 shapeConfig:{
                   labelConfig: {
                     fontSize: 14,
-                    fontColor: this.$colorsService.assessZebraTitleColor(this.sectionIndex, this.$vuetify.theme)
+                    fontColor: this.$colorsService.constructor.assessZebraTitleColor(this.sectionIndex, this.$vuetify.theme)
                   }
                 }
               })
@@ -176,7 +176,7 @@
           viz = viz.color(function(d) { return (d.color !== null && d.color !== undefined) ? d.color : '#2196F3'; });
         } else {
           viz = viz.colorScaleConfig({
-              color: this.$colorsService.getColorScale(options.colorScale.name)
+              color: this.$colorsService.constructor.getColorScale(options.colorScale.name)
           });           
           viz = viz.color("color");
         } 

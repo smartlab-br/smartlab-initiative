@@ -14,7 +14,7 @@
     created() {
       let colorArray = null;
       if (this.options.colorScale) {
-        colorArray = this.$colorsService.getColorScale(this.options.colorScale.name);
+        colorArray = this.$colorsService.constructor.getColorScale(this.options.colorScale.name);
       } else if (this.options.colorArray) {
         colorArray = this.options.colorArray;
       }
@@ -61,7 +61,7 @@
 
         if (options.colorScale || options.colorArray) {
           lineConfig.stroke = (d) => { return colorCat[d[options.id]]; };
-          //lineConfig.stroke = this.$colorsService.getColorScale(options.colorScale.name);
+          //lineConfig.stroke = this.$colorsService.constructor.getColorScale(options.colorScale.name);
         } else if (options.color !== null && options.color !== undefined) {
           lineConfig.stroke = options.color;
         } 
@@ -87,7 +87,7 @@
               .legendConfig({ 
                 shapeConfig:{
                   labelConfig: {
-                    fontColor: this.$colorsService.assessZebraTitleColor(this.sectionIndex, null, this.$vuetify.theme)
+                    fontColor: this.$colorsService.constructor.assessZebraTitleColor(this.sectionIndex, null, this.$vuetify.theme)
                   }
                 }
               })
@@ -95,7 +95,7 @@
                 label: function (d) { return options.legend_field ? d[options.legend_field] : d[options.id] },
                 shapeConfig:{
                   labelConfig: {
-                    fontColor: this.$colorsService.assessZebraTitleColor(this.sectionIndex, null, this.$vuetify.theme)
+                    fontColor: this.$colorsService.constructor.assessZebraTitleColor(this.sectionIndex, null, this.$vuetify.theme)
                   }
                 }
               })

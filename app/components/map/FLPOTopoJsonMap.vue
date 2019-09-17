@@ -60,7 +60,7 @@
           .legend(false);
         } else {
 
-          let aColorScale = this.$colorsService.getColorScale(options.colorScale.name, options.colorScale.type, options.colorScale.order, 9);
+          let aColorScale = this.$colorsService.constructor.getColorScale(options.colorScale.name, options.colorScale.type, options.colorScale.order, 9);
 
           let distValues = [];
           for (let reg of slicedDS) {  
@@ -110,7 +110,7 @@
             viz = viz.colorScaleConfig({
               color: aColorScale,
               axisConfig: objAxisConfig,            
-              rectConfig: { stroke: this.$colorsService.assessZebraTitleColor(this.sectionIndex, null, this.$vuetify.theme) }
+              rectConfig: { stroke: this.$colorsService.constructor.assessZebraTitleColor(this.sectionIndex, null, this.$vuetify.theme) }
             });
             viz = viz.colorScale(options.value_field);
           } else {

@@ -27,7 +27,7 @@ class ObservatoriesModel {
     ];
 
     constructor() {
-        this.colorsService = new ColorsService();
+        //this.colorsService = new ColorsService();
     }
 
     setStore(store) {
@@ -90,7 +90,7 @@ class ObservatoriesModel {
     }
 
     getTheme(observatorio) {
-        return this.colorsService.getThemeFromId(observatorio);
+        return ColorsService.getThemeFromId(observatorio);
     }
 }
 
