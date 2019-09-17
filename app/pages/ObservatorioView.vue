@@ -192,7 +192,7 @@
               </v-layout>
               </v-img>
           </v-layout>
-          <v-layout v-show="mapEnabled" style="position:absolute;z-index:2;right:10px" class="cursor-pointer pa-3 justify-end subheading" v-on:click="pushRoute('/'+$observatories.identifyObservatoryById(idObservatorio)+'/smartmap')">
+          <v-layout v-show="mapEnabled" style="position:absolute;z-index:2;right:10px" class="cursor-pointer pa-3 justify-end subheading" v-on:click="pushRoute('/'+$observatories.constructor.identifyObservatoryById(idObservatorio)+'/smartmap')">
             Clique para modo avançado - SmartMap
           </v-layout>
           <flpo-leaflet-map

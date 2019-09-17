@@ -204,8 +204,8 @@
       // },
 
       generateViz(options) {
-        var tooltip_function = options.tooltip_function ? options.tooltip_function : this.$tooltipBuildingService.defaultTooltip;
-        let tooltip_context = options.tooltip_function ? this : this.$tooltipBuildingService;
+        var tooltip_function = options.tooltip_function ? options.tooltip_function : this.$tooltipBuildingService.constructor.defaultTooltip;
+        let tooltip_context = options.tooltip_function ? this : null;
         options.clickable = options.clickable == true || options.clickable == undefined  ? true : false;
         var headers = this.headers;
         var route = this.$route;

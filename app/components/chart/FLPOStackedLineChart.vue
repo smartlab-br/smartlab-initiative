@@ -20,7 +20,7 @@
         let grafico = viz
             .select(containerId)  // container DIV to hold the visualization
             .data(slicedDS)  // data to use with the visualization
-            .label((d) => { return this.$tooltipBuildingService.removeFromLabel(d[this.options.text],this.options.removed_text_list); })
+            .label((d) => { return this.$tooltipBuildingService.constructor.removeFromLabel(d[this.options.text],this.options.removed_text_list); })
             .groupBy(this.options.id)         // key for which our data is unique on
             .y(this.options.y)    // key to use for y-axis
             .x(this.options.x)         // key to use for x-axis
@@ -30,8 +30,8 @@
       },
 
       generateViz(options){
-        let tooltip_function = options.tooltip_function ? options.tooltip_function : this.$tooltipBuildingService.defaultTooltip;
-        let tooltip_context = options.tooltip_function ? this : this.$tooltipBuildingService;
+        let tooltip_function = options.tooltip_function ? options.tooltip_function : this.$tooltipBuildingService.constructor.defaultTooltip;
+        let tooltip_context = options.tooltip_function ? this : null;
         let headers = this.headers;
         let route = this.$route;
         let removed_text_list = options.removed_text_list;

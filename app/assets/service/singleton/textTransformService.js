@@ -48,7 +48,7 @@ class TextTransformService {
             if (struct.args[indx].format == 'auto') {
               formatRules = this.getFormatRules(struct.args[indx], iterArg);
             }
-            iterArg = this.numberTransformService.formatNumber(
+            iterArg = NumberTransformService.formatNumber(
               iterArg, formatRules.format, formatRules.precision,
               formatRules.multiplier, formatRules.collapse, formatRules.signed, 
               formatRules.uiTags

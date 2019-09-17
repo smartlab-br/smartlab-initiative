@@ -75,7 +75,7 @@
           d.id = 1
           var vl_indicador = dataset[i].vl_indicador
           d.vl_indicador = accum;
-          d.fmt_vl_indicador = this.$numberTransformService.formatNumber(accum, accumDataType, accumDataPrecision, 1, accumDataCollapse, true, false)
+          d.fmt_vl_indicador = this.$numberTransformService.constructor.formatNumber(accum, accumDataType, accumDataPrecision, 1, accumDataCollapse, true, false)
           accum = accum + vl_indicador;
 
           dataset.push(d);
@@ -98,7 +98,7 @@
             .select(containerId)  // container DIV to hold the visualization
             .data(slicedDS)  // data to use with the visualization
             .label((d) => { //retira label se x < 0 - utilizado na pirâmide
-              return (d[options.x] < 0)? "" :  this.$tooltipBuildingService.removeFromLabel(
+              return (d[options.x] < 0)? "" :  this.$tooltipBuildingService.constructor.removeFromLabel(
                 d[options.text],
                 options.removed_text_list
               );
@@ -112,8 +112,8 @@
       },
 
       generateViz(options){
-        let tooltip_function = options.tooltip_function ? options.tooltip_function : this.$tooltipBuildingService.defaultTooltip;
-        let tooltip_context = options.tooltip_function ? this : this.$tooltipBuildingService;
+        let tooltip_function = options.tooltip_function ? options.tooltip_function : this.$tooltipBuildingService.constructor.defaultTooltip;
+        let tooltip_context = options.tooltip_function ? this : null;
         let headers = this.headers;
         let route = this.$route;
         let removed_text_list = options.removed_text_list;

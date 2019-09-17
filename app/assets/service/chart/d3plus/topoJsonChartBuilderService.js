@@ -1,11 +1,18 @@
+import ColorsService from '../../singleton/colorsService'
+
 import D3PlusChartBuilderService from './d3plusChartBuilderService'
+import TooltipBuildingService from '../../singleton/tooltipBuildingService'
+
+import * as d3plus from 'd3plus'
 
 class TopoJsonChartBuilderService extends D3PlusChartBuilderService {
+    static _tilesUrl = 'https://services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}';
+
     constructor() {
         super();
     }
 
-    static prepareChart(viz, slicedDS, containerId, options) {        
+    prepareChart(viz, slicedDS, containerId, options, additionalOptions) { 
         if(!options.colorScale){ //default
             options.colorScale = {};
             options.colorScale.type = 'singleHue';
@@ -86,7 +93,7 @@ class TopoJsonChartBuilderService extends D3PlusChartBuilderService {
                 viz = viz.colorScaleConfig({
                     color: aColorScale,
                     axisConfig: objAxisConfig,            
-                    rectConfig: { stroke: ColorsService.assessZebraTitleColor(this.sectionIndex, null, this.$vuetify.theme) }
+                    rectConfig: { stroke: ColorsService.assessZebraTitleColor(additionalOptions.sectionIndex, null, additionalOptions.theme) }
                 });
                 viz = viz.colorScale(options.value_field);
             } else {
@@ -125,36 +132,32 @@ class TopoJsonChartBuilderService extends D3PlusChartBuilderService {
         return grafico;
     }
     
-    static hasTouch() { //identify touchable devices (mobile and tablet)
+    hasTouch() { //identify touchable devices (mobile and tablet)
         return (('ontouchstart' in window) ||       // html5 browsers
             (navigator.maxTouchPoints > 0) ||   // future IE
             (navigator.msMaxTouchPoints > 0));  // current IE10
     }      
         
-    static generateViz(options) {
-        var tooltip_function = options.tooltip_function ? options.tooltip_function : this.tooltipBuildingService.defaultTooltip;
-        let tooltip_context = options.tooltip_function ? this : this.tooltipBuildingService;
+    generateViz(options, additionalOptions) {
+        var tooltip_function = options.tooltip_function ? options.tooltip_function : TooltipBuildingService.defaultTooltip;
+        let tooltip_context = options.tooltip_function ? this : null;
         options.clickable = options.clickable == true || options.clickable == undefined  ? true : false;
-        var headers = this.headers;
-        var route = this.$route;
         var removed_text_list = options.removed_text_list;
 
-        var idLocalidade = this.selectedPlace ? this.selectedPlace : this.customParams.idLocalidade;
-        
         var viz = new d3plus.Geomap()
             .shapeConfig({ 
                 labelConfig: { fontFamily: "titulos-observatorio" },
                 Path: {
                     fillOpacity: 0.9,
-                    strokeWidth: function(d) { return (idLocalidade !== null && idLocalidade !== undefined && (d[options.id_field] == idLocalidade || (d.properties && d.properties[options.topo_key] == idLocalidade) ) )  ? 5 : 0.2 },
+                    strokeWidth: function(d) { return (additionalOptions.idAU !== null && additionalOptions.idAU !== undefined && (d[options.id_field] == additionalOptions.idAU || (d.properties && d.properties[options.topo_key] == additionalOptions.idAU) ) )  ? 5 : 0.2 },
                     stroke: 'black'
                 }
             })
-            .tileUrl(options.tiles_url)
-            .topojson(options.topology && options.topology == 'uf' ? this.topologyUf : this.topology) 
+            .tileUrl(options.tiles_url ? options.tiles_url : TopoJsonChartBuilderService._tilesUrl)
+            .topojson(options.topology && options.topology == 'uf' ? additionalOptions.topologyUf : additionalOptions.topology) 
             .tooltipConfig({
                 body: function(d) {
-                    return tooltip_function.apply(tooltip_context, [d, route, headers, removed_text_list, options]);
+                    return tooltip_function.apply(tooltip_context, [d, additionalOptions.route, additionalOptions.headers, removed_text_list, options]);
                 },
                 title: function(d) { return ""; }
             })

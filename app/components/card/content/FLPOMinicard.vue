@@ -102,7 +102,7 @@
           //caso o campo tenha um texto fixo, o valor é ajustado e o loop segue para a próxima iteração
           if (rule.fixed !== undefined) {
             if (rule.format) {
-              this[rule.prop] = this.$numberTransformService.formatNumber(rule.fixed, rule.format, rule.precision, rule.multiplier, rule.collapse, rule.signed, rule.uiTags);
+              this[rule.prop] = this.$numberTransformService.constructor.formatNumber(rule.fixed, rule.format, rule.precision, rule.multiplier, rule.collapse, rule.signed, rule.uiTags);
             } else {
               this[rule.prop] = rule.fixed;
             }

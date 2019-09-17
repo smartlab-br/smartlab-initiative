@@ -1,7 +1,7 @@
 class NumberTransformService {
   constructor() {}
   
-  formatNumber(valor, formato, casasDecimais, multiplier = 1, collapse = null, signed = false, uiTags = true){
+  static formatNumber(valor, formato, casasDecimais, multiplier = 1, collapse = null, signed = false, uiTags = true){
 
     if (formato == 'cep'){
       valor = ('00000000' + valor.toString()).slice(-8);
@@ -196,7 +196,7 @@ class NumberTransformService {
       return "";  //igual
     }
     
-    result = this.$numberTransformService.formatNumber(result, "real", 1);
+    result = NumberTransformService.formatNumber(result, "real", 1);
     return result + fieldText;
   }
 

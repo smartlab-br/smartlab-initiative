@@ -158,11 +158,11 @@
                         :headers="structure.headers"
                         :section-index="sectionIndex">
                       </flpo-topojson-map>
-                      <div
-                        v-if="dataset !== null && structure && structure.chart_type == 'MAP_TOPOJSON_JS' && structure.chart_options !== null && cmpTopology"
+                      <v-layout
+                        v-if="structure && structure.chart_type == 'MAP_TOPOJSON_JS' && structure.chart_options !== null"
                         ref = "chart"
                         :id="chartId">
-                      </div>
+                      </v-layout>
                       <flpo-line-chart
                         v-if="dataset !== null && structure && structure.chart_type == 'LINE' && structure.chart_options !== null"
                         ref = "chart"
@@ -281,9 +281,9 @@
       this.cmpTopology = this.topology;
     },
     mounted() {
-      if (this.structure.chart_type == 'MAP_TOPOJSON_JS') {
-        ChartBuilderService.generateChart(this.structure.chart_type, this.chartId, this.dataset, this.chart_options);
-      }
+      // if (this.structure.chart_type == 'MAP_TOPOJSON_JS') {
+      //   ChartBuilderService.generateChart(this.structure.chart_type, this.chartId, this.dataset, this.chart_options);
+      // }
     },
     computed: {
       cmpStyle: function() {
@@ -416,9 +416,29 @@
           this.customFunctions, this.setDataset,
           {
             "endpoint": endpoint,
-            "fnCallback": this.assessChartFooter
+            "fnCallback": this.triggerChartUpdates
           }
         );
+      },
+
+      triggerChartUpdates() {
+        if (this.structure && this.structure.chart_options && this.structure.chart_type == 'MAP_TOPOJSON_JS') {
+          ChartBuilderService.generateChart(
+            this.structure.chart_type, 
+            this.chartId,
+            this.dataset,
+            this.structure.chart_options,
+            { idAU: this.selectedPlace ? this.selectedPlace : this.customParams.idLocalidade,
+              theme: this.$vuetify.theme,
+              sectionIndex: this.sectionIndex,
+              topology: this.topology,
+              topologyUf: this.topologyUf,
+              headers: this.headers,
+              route: this.$route
+            }
+          );
+        }
+        this.assessChartFooter();
       },
 
       assessChartFooter(dataset, rules, structure, addedParams, metadata) {

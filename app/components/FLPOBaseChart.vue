@@ -20,7 +20,9 @@
     mounted: function() {
       if (!this.generated) {
         this.generated = true;
-        this.generateChart(this.dataset, this.options, this.id);
+        if (this.structure && this.structure.chart_type != 'MAP_TOPOJSON_JS') {
+          this.generateChart(this.dataset, this.options, this.id);
+        }
       } 
 
       //window.addEventListener('resize', this.redrawResize);
@@ -32,7 +34,9 @@
     },
     watch: {
       dataset: function(newVal, oldVal) {
-        this.generateChart(newVal, this.options, this.id);
+        if (this.structure.chart_type != 'MAP_TOPOJSON_JS') {
+          this.generateChart(newVal, this.options, this.id);
+        }
       }
     },
     beforeDestroy: function() {

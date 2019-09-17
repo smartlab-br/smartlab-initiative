@@ -524,7 +524,7 @@
     },
    
     created () {
-      let tmpIdObs = this.$observatories.identifyObservatory(this.$route.path.split('/')[1]);
+      let tmpIdObs = this.$observatories.constructor.identifyObservatory(this.$route.path.split('/')[1]);
       this.$dimensions.getDimensions(tmpIdObs)
         .then((result) => this.setSiblingDimensions(result));
       this.idObservatorio = tmpIdObs;
@@ -693,7 +693,7 @@
       },
       
       keepLoading() {
-        let tmpIdObs = this.$observatories.identifyObservatory(this.$route.path.split('/')[1]);
+        let tmpIdObs = this.$observatories.constructor.identifyObservatory(this.$route.path.split('/')[1]);
         
         this.setActiveDim(this.$route.params.idLocalidade, tmpIdObs, this.$route.query.dimensao);
 
@@ -1076,7 +1076,7 @@
         let viewEndpoint = this.$route.query.compare ? 'localidadecompare' : 'localidade';
         if (idDimensao) urlComplemento = '&dimensao=' + idDimensao;
         if (this.$route.query.compare) urlComplemento += '&compare=' + this.idLocalidade_compare;
-        this.$router.push("/" + this.$observatories.identifyObservatoryById(idObservatorio) + "/" + viewEndpoint + "/" + idLocalidade + "?" + urlComplemento);
+        this.$router.push("/" + this.$observatories.constructor.identifyObservatoryById(idObservatorio) + "/" + viewEndpoint + "/" + idLocalidade + "?" + urlComplemento);
       },
 
       getLeadSlice(rowIndx) {
