@@ -1,6 +1,7 @@
 <template>
   <v-flex>
     <v-autocomplete :items="items"
+      :filter="ignoreSpecialCharFilter"
       :outline="isOutline"
       v-model="chosen"
       :label="structure.label" item-text="label"
@@ -61,7 +62,14 @@
           this.sendDefaultSelection();
         } 
 
+      },
+
+      ignoreSpecialCharFilter (item, queryText, itemText) {
+        queryText = this.$textTransformService.replaceSpecialCharacters(queryText).toLowerCase();
+        itemText = this.$textTransformService.replaceSpecialCharacters(itemText).toLowerCase();
+        return itemText.indexOf(queryText) > -1 
       }
+      
     }
 
   }

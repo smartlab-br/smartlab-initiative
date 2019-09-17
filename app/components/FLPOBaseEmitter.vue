@@ -19,11 +19,19 @@
     watch: {
       reactiveFilter: function(newVal, oldVal) {
         if (this.reactiveParent.includes(this.structure.parent) && newVal != oldVal) {
-          this.fillDataStructure(
-            this.structure, this.customParams,
-            this.customFunctions, this.toItems,
-            { "react": newVal }
-          );
+          if (newVal == null || newVal == undefined || Object.values(newVal)[0] == "empty"){
+            this.fillDataStructure(
+              this.structure, this.customParams,
+              this.customFunctions, this.toItems
+            );
+          } else {
+            this.fillDataStructure(
+              this.structure, this.customParams,
+              this.customFunctions, this.toItems,
+              { "react": newVal }
+            );
+          }
+
         }
       }
     },

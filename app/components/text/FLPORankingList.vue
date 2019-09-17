@@ -1,5 +1,5 @@
 <template>
-  <v-flex :class="cls">
+  <v-flex :class="cls ? cls : 'xs12'">
     <v-layout column wrap ml-2 mb-2>
       <v-flex x12 px-0 class="display-1-obs ranking-list-title pb-2"> {{ title}} </v-flex>
       <v-flex xs12 class="ranking-list pa-0" v-for="(item, itemIndx) in ranking" :key="itemIndx">      
@@ -31,17 +31,36 @@
       return {
           ranking: [],
           cls: "xs12",
-          title: null
+          title: null,
+          limit: 5 //default 5
       }
     },
-    props: ['id', 'structure', 'customParams', 'customFunctions'],
+    props: ['id', 'structure', 'customParams', 'customFunctions', 'reactiveFilter', 'customFilters'],
     created () {
       if (this.structure.cls) this.cls = this.structure.cls;
       if (this.structure.title) this.title = this.structure.title;
+
+      let struct = Object.assign({},this.structure);
+      struct.api = Object.assign({},this.structure.api);
+      if (struct.api && struct.api.fixed && !struct.api.fixed.toLowerCase().includes('limit') ){
+        struct.api.fixed += "&limit=" + this.limit;
+      } else if (struct.api && struct.api.template && !struct.api.template.toLowerCase().includes('limit') ){
+        struct.api.template += "&limit=" + this.limit;
+      }
+
       this.fillDataStructure(
-        this.structure, this.customParams,
+        struct, this.customParams,
         this.customFunctions, this.fillRankingList
       );
+    },
+    watch: {
+      reactiveFilter: function(newVal, oldVal) {
+        if (newVal != oldVal) {
+          if (this.structure.reactive){
+            this.updateReactiveDataStructure(this.customFilters.filterUrl);
+          } 
+        }
+      },
     },
     methods: {
       fillRankingList(base_object_list, rules, preloaded, addedParams = null, metadata = null) {
@@ -61,6 +80,26 @@
           }
         }
         this.ranking = ranking;
+      },
+      updateReactiveDataStructure(filterUrl){
+        let structReactive = Object.assign({},this.structure);
+        structReactive.api = Object.assign({},this.structure.api);
+
+        if (structReactive.api && structReactive.api.fixed){
+          structReactive.api.fixed += filterUrl
+          if (!structReactive.api.fixed.toLowerCase().includes('limit')){
+            structReactive.api.fixed += "&limit=" + this.limit;
+          } 
+        } else if (structReactive.api && structReactive.api.template && !structReactive.api.template.toLowerCase().includes('limit') ){
+          structReactive.api.template += filterUrl
+          if (!structReactive.api.template.toLowerCase().includes('limit')){
+            structReactive.api.template += "&limit=" + this.limit;
+          } 
+        }
+        this.fillDataStructure(
+          structReactive, this.customParams,
+          this.customFunctions, this.fillRankingList
+        );
       }
     }
   }

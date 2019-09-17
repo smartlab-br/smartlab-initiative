@@ -37,9 +37,11 @@
         </v-layout>
         <v-layout v-else-if="descSection.type && descSection.type == 'ranking_list'" column pb-2>
           <v-flex pa-0 ml-2 class="headline-obs">{{ descSection.title }}</v-flex>
-          <v-layout row wrap pb-2>
+          <v-layout row wrap pb-4>
             <flpo-ranking-list v-for="(ranking, index) in descSection.rankings" :key="index"
               :structure="ranking" :customFunctions="customFunctions"
+              :reactive-filter="reactiveFilter"
+              :custom-filters="customFilters"
               :customParams="customParams">
             </flpo-ranking-list>
           </v-layout>

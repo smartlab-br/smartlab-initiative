@@ -188,6 +188,14 @@
       },
 
       setFilter(payload) {
+
+        //Limpa filtros dos selects que tem payload como pai (parent)
+        for (let item of this.observatorio.prevalencia.mapa_filtros) {
+          if (item.type &&  item.type == "select" && payload.id.includes(item.parent)){
+            this.customParams[item.selection.rules.api.args[0].named_prop] = null;
+          }
+        }
+
         if (payload.type && payload.type === 'switch-group') {
           this.customParams.enabled = payload.enabled;
           if (this.$refs.chart){
@@ -207,33 +215,66 @@
           }
         } else if (payload.type && payload.type === 'select') {
 
-          //substitui a vírgula e hífen por '\,' '\-'
-          let itemValue = null;
-          if (payload.item){
-            itemValue = payload.item[payload.rules.api.args[0].named_prop];
-            if (typeof(itemValue) == "string"){
-              itemValue = itemValue.replace(/,/g,"\\,");
-              itemValue = itemValue.replace(/-/g,"\\-");
-            }
-          }
 
+          let item_value = "";
+          let value = "";
+          let value_label = "";
           if (payload.item == null || payload.item == undefined){
             this.customParams[payload.rules.api.args[0].named_prop] = null;
           } else {
-            if (payload.rules.filter) {
-              this.customParams[payload.rules.api.args[0].named_prop] = itemValue; //payloadItem[payload.rules.api.args[0].named_prop];
-              this.customParams[payload.rules.api.args[0].named_prop + "_label"] = payload.item.label;
-            }
-            else {
-              let item = {}
-              item[payload.rules.api.args[0].named_prop] = itemValue;
-              this.customParams[payload.rules.api.args[0].named_prop] = itemValue;
-              let grp = {}
-              grp[payload.rules.group] = true;
-              this.customParams.enabled = grp;
-              this.customParams.baseApi = this.$textTransformService.applyInterpol(payload.rules.api, item, this.customFunctions, this.customParams);
+            if (Array.isArray(payload.item)){
+              let i = 0
+              for (let item of payload.item){
+                item_value = item[payload.rules.api.args[0].named_prop];
+                if(typeof item_value === 'string'){
+                  //substitui a vírgula e o hífen por '\,' e '\-'
+                  item_value = item_value.replace(/,/g,"\\,"); 
+                  item_value = item_value.replace(/-/g,"\\-"); 
+                
+                  if (i == 0) {
+                    value += "'" + item_value + "'";
+                    value_label += item.label;
+                  } else {
+                    value += "-'" + item_value + "'";
+                    value_label += ", " + item.label;
+                  }
+                } else {
+                  if (i == 0) {
+                    value += item_value;
+                    value_label += item.label;
+                  } else {
+                    value += "-" + item_value;
+                    value_label += ", " + item.label;
+                  }
+                }
+                i++;
+              }
+            } else {
+              item_value = payload.item[payload.rules.api.args[0].named_prop];
+              if(typeof item_value === 'string'){
+                //substitui a vírgula e o hífen por '\,' e '\-'
+                item_value = item_value.replace(/,/g,"\\,"); 
+                item_value = item_value.replace(/-/g,"\\-"); 
+              }
+              value = item_value;
+              value_label = payload.item.label;
             }
           }
+
+          if (payload.rules.filter) {
+              this.customParams[payload.rules.api.args[0].named_prop] = value;
+              this.customParams[payload.rules.api.args[0].named_prop + "_label"] = value_label;
+          }
+          else {
+            let item = {}
+            item[payload.rules.api.args[0].named_prop] = value;
+            this.customParams[payload.rules.api.args[0].named_prop] = value;
+            let grp = {}
+            grp[payload.rules.group] = true;
+            this.customParams.enabled = grp;
+            this.customParams.baseApi = this.$textTransformService.applyInterpol(payload.rules.api, item, this.customFunctions, this.customParams);
+          }
+
         } else if (payload.type && payload.type === 'radio') {
           if (payload.item == null || payload.item == undefined){
             this.customParams.baseApi = null;
@@ -247,7 +288,7 @@
         }
 //        let endpoint = "";
 //        if (payload.rules && payload.rules.api.template){
-//          endpoint = this.$textTransformService.applyInterpol(payload.rules.api, this.customParams, this.customFunctions, this.customFilters);          
+//          endpoint = this.$textTransformService.applyInterpol(payload.rules.api, this.customParams, this.customFunctions, this.customParams);          
 //        } else {
 //          endpoint = this.applyFilters();
 //        }
@@ -256,6 +297,14 @@
       triggerSelect(payload) {
         this.setFilter(payload);
         let endpoint = this.applyFilters();
+        let payload_item = payload.item ? payload.item : payload.value;
+        if (payload_item == undefined || payload_item == null){
+          let empty_item = {}
+          empty_item[payload.id] = 'empty';
+          this.reactiveFilter = empty_item;
+        } else {
+          this.reactiveFilter = payload_item;
+        }
         this.fetchMapData(endpoint);
       },
       
@@ -289,6 +338,8 @@
                   if (filter.selection.rules.api.args.length > 1){
                     if (this.customParams[filter.selection.rules.api.args[0].named_prop] != this.customParams[filter.selection.rules.api.args[1].named_prop]) {
                       filterText += this.customParams[filter.selection.rules.api.args[0].named_prop] + " a " + this.customParams[filter.selection.rules.api.args[1].named_prop];
+                    } else {
+                      filterText += this.customParams[filter.selection.rules.api.args[0].named_prop];
                     }
                   } else {
                     filterText += this.customParams[filter.selection.rules.api.args[0].named_prop];
@@ -303,7 +354,7 @@
 
         this.customParams.filterUrl = apiUrl.replace(baseUrl,"");
         this.customParams.filterText = filterText;
-        this.reactiveFilter = apiUrl + this.customParams.filterUrl;
+        // this.reactiveFilter = apiUrl + this.customParams.filterUrl;
 
 
         let aApiUrl = [apiUrl];
