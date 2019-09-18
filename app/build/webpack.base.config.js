@@ -3,11 +3,11 @@ const webpack = require('webpack')
 const vueConfig = require('./vue-loader.config')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin')
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 
 const isProd = (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'staging')
 const resolve = (file) => path.resolve(__dirname, file)
 
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = {
   devtool: isProd
@@ -82,11 +82,11 @@ module.exports = {
 //        new webpack.optimize.UglifyJsPlugin({
 //          compress: { warnings: false }
 //        }),
-//        new UglifyJsPlugin({
-//          uglifyOptions: {
-//            compress: { warnings: false }
-//          },
-//        }),
+        new UglifyJsPlugin({
+          uglifyOptions: {
+            compress: { warnings: false }
+          },
+        }),
         // new webpack.DefinePlugin({
         //   'process.env': {
         //   'NODE_ENV': JSON.stringify("production")
