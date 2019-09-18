@@ -78,14 +78,8 @@
 
         if (structReactive.api && structReactive.api.fixed){
           structReactive.api.fixed += filterUrl
-          if (!structReactive.api.fixed.toLowerCase().includes('limit')){
-            structReactive.api.fixed += "&limit=" + this.limit;
-          } 
         } else if (structReactive.api && structReactive.api.template && !structReactive.api.template.toLowerCase().includes('limit') ){
           structReactive.api.template += filterUrl
-          if (!structReactive.api.template.toLowerCase().includes('limit')){
-            structReactive.api.template += "&limit=" + this.limit;
-          } 
         }
         this.fillDataStructure(
           structReactive, this.customParams,
