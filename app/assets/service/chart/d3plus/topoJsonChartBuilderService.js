@@ -156,7 +156,11 @@ class TopoJsonChartBuilderService extends D3PlusChartBuilderService {
             .topojson(options.topology && options.topology == 'uf' ? additionalOptions.topologyUf : additionalOptions.topology) 
             .tooltipConfig({
                 body: function(d) {
-                    return tooltip_function.apply(tooltip_context, [d, additionalOptions.route, additionalOptions.headers, removed_text_list, options]);
+                    if (tooltip_function instanceof String) {
+                        return tooltip_context[tooltip_function].apply(tooltip_context, [d, additionalOptions.route, additionalOptions.headers, removed_text_list, options]);
+                    } else {
+                        return tooltip_function.apply(tooltip_context, [d, additionalOptions.route, additionalOptions.headers, removed_text_list, options]);
+                    }
                 },
                 title: function(d) { return ""; }
             })

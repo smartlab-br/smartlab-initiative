@@ -433,7 +433,7 @@
               sectionIndex: this.sectionIndex,
               topology: this.topology,
               topologyUf: this.topologyUf,
-              headers: this.headers,
+              headers: this.structure.headers,
               route: this.$route,
               context: this
             }
