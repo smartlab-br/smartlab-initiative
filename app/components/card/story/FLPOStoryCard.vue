@@ -434,7 +434,8 @@
               topology: this.topology,
               topologyUf: this.topologyUf,
               headers: this.headers,
-              route: this.$route
+              route: this.$route,
+              context: this
             }
           );
         }

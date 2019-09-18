@@ -112,9 +112,8 @@ class TopoJsonChartBuilderService extends D3PlusChartBuilderService {
             .topojsonId((t) => { return t.properties[options.topo_key]; })
             .detectResize(true);
             
-        let searchFunction = this.searchAnalysisUnit;
         let clickedPlace = "";
-        let hasTouch = TopoJsonChartBuilderService.hasTouch;
+        let hasTouch = this.hasTouch;
         if (options.clickable){
             viz = viz.on("click", function(d) {
                 if (clickedPlace == d[options.id_field] || !hasTouch()) {
@@ -124,7 +123,7 @@ class TopoJsonChartBuilderService extends D3PlusChartBuilderService {
                     if (this._tooltip) {
                             this._tooltipClass.data([]).render();
                     }                
-                    searchFunction(place);
+                    additionalOptions.context['searchAnalysisUnit'](place);
                 }
                 clickedPlace = d[options.id_field];
                 });     
@@ -139,12 +138,12 @@ class TopoJsonChartBuilderService extends D3PlusChartBuilderService {
     }      
         
     generateViz(options, additionalOptions) {
-        var tooltip_function = options.tooltip_function ? options.tooltip_function : TooltipBuildingService.defaultTooltip;
-        let tooltip_context = options.tooltip_function ? this : null;
+        let tooltip_function = options.tooltip_function ? options.tooltip_function : TooltipBuildingService.defaultTooltip;
+        let tooltip_context = additionalOptions.context ? additionalOptions.context : null;
         options.clickable = options.clickable == true || options.clickable == undefined  ? true : false;
-        var removed_text_list = options.removed_text_list;
+        let removed_text_list = options.removed_text_list;
 
-        var viz = new d3plus.Geomap()
+        let viz = new d3plus.Geomap()
             .shapeConfig({ 
                 labelConfig: { fontFamily: "titulos-observatorio" },
                 Path: {
