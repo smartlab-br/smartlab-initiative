@@ -31,8 +31,7 @@
       return {
           ranking: [],
           cls: "xs12",
-          title: null,
-          limit: 5 //default 5
+          title: null
       }
     },
     props: ['id', 'structure', 'customParams', 'customFunctions', 'reactiveFilter', 'customFilters'],
@@ -40,16 +39,8 @@
       if (this.structure.cls) this.cls = this.structure.cls;
       if (this.structure.title) this.title = this.structure.title;
 
-      let struct = Object.assign({},this.structure);
-      struct.api = Object.assign({},this.structure.api);
-      if (struct.api && struct.api.fixed && !struct.api.fixed.toLowerCase().includes('limit') ){
-        struct.api.fixed += "&limit=" + this.limit;
-      } else if (struct.api && struct.api.template && !struct.api.template.toLowerCase().includes('limit') ){
-        struct.api.template += "&limit=" + this.limit;
-      }
-
       this.fillDataStructure(
-        struct, this.customParams,
+        this.structure, this.customParams,
         this.customFunctions, this.fillRankingList
       );
     },
