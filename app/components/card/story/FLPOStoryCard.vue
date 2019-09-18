@@ -144,7 +144,7 @@
                         :customParams = "customParams"
                         :headers = "structure.headers">
                       </flpo-leaflet-map>
-                      <flpo-topojson-map
+                      <!-- <flpo-topojson-map
                         v-if="dataset !== null && structure && structure.chart_type == 'MAP_TOPOJSON' && structure.chart_options !== null && cmpTopology"
                         ref = "chart"
                         :topology="cmpTopology"
@@ -157,9 +157,9 @@
                         :custom-functions="customFunctions"
                         :headers="structure.headers"
                         :section-index="sectionIndex">
-                      </flpo-topojson-map>
+                      </flpo-topojson-map> -->
                       <v-layout
-                        v-if="structure && structure.chart_type == 'MAP_TOPOJSON_JS' && structure.chart_options !== null"
+                        v-if="structure && structure.chart_type == 'MAP_TOPOJSON' && structure.chart_options !== null"
                         ref = "chart"
                         :id="chartId">
                       </v-layout>
@@ -281,9 +281,6 @@
       this.cmpTopology = this.topology;
     },
     mounted() {
-      // if (this.structure.chart_type == 'MAP_TOPOJSON_JS') {
-      //   ChartBuilderService.generateChart(this.structure.chart_type, this.chartId, this.dataset, this.chart_options);
-      // }
     },
     computed: {
       cmpStyle: function() {
@@ -422,7 +419,7 @@
       },
 
       triggerChartUpdates() {
-        if (this.structure && this.structure.chart_options && this.structure.chart_type == 'MAP_TOPOJSON_JS') {
+        if (this.structure && this.structure.chart_options && this.structure.chart_type == 'MAP_TOPOJSON') {
           ChartBuilderService.generateChart(
             this.structure.chart_type, 
             this.chartId,

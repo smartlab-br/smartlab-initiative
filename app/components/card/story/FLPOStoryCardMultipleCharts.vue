@@ -164,7 +164,7 @@
                             :topology-uf = "topologyUf"
                             :customParams = "customParams">
                           </flpo-leaflet-map>
-                          <flpo-topojson-map
+                          <!-- <flpo-topojson-map
                             v-if="dataset && dataset[chart.id] && dataset[chart.id].length >= 0 && chart.type == 'MAP_TOPOJSON' && chart.options !== null && topology"
                             :id="chartId[chart.id]"
                             :selected-place="selectedPlace"
@@ -175,7 +175,11 @@
                             :topology="topology"
                             :topology-uf = "topologyUf"
                             :customParams="customParams">
-                          </flpo-topojson-map>
+                          </flpo-topojson-map> -->
+                          <v-layout
+                            v-if="chart.type == 'MAP_TOPOJSON' && chart.options !== null"
+                            :id="chartId[chart.id]">
+                          </v-layout>
                           <flpo-line-chart
                             v-if="dataset && dataset[chart.id] !== null && chart.type == 'LINE' && chart.options !== null"
                             :id="chartId[chart.id]"
@@ -552,9 +556,32 @@
             this.structure.charts[eachChart], this.customParams,
             this.customFunctions, this.setDataset,
             { "endpoint": endpoint,
-              id: this.structure.charts[eachChart].id
+              id: this.structure.charts[eachChart].id,
+              "fnCallback": this.triggerChartUpdates
             }
           );
+        }
+      },
+
+      triggerChartUpdates() {
+        for (let eachChart of this.structure.charts) {
+          if (eachChart && eachChart.options && eachChart.type == 'MAP_TOPOJSON') {
+            ChartBuilderService.generateChart(
+              eachChart.type, 
+              this.chartId[eachChart.id],
+              this.dataset[eachChart.id],
+              eachChart.options,
+              { idAU: this.selectedPlace ? this.selectedPlace : this.customParams.idLocalidade,
+                theme: this.$vuetify.theme,
+                sectionIndex: this.sectionIndex,
+                topology: this.topology,
+                topologyUf: this.topologyUf,
+                headers: eachChart.headers,
+                route: this.$route,
+                context: this
+              }
+            );
+          }
         }
       },
 

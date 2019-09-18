@@ -20,7 +20,7 @@
     mounted: function() {
       if (!this.generated) {
         this.generated = true;
-        if (this.structure && this.structure.chart_type != 'MAP_TOPOJSON_JS') {
+        if (this.structure && this.structure.chart_type != 'MAP_TOPOJSON') {
           this.generateChart(this.dataset, this.options, this.id);
         }
       } 
@@ -34,7 +34,7 @@
     },
     watch: {
       dataset: function(newVal, oldVal) {
-        if (this.structure.chart_type != 'MAP_TOPOJSON_JS') {
+        if (this.structure.chart_type != 'MAP_TOPOJSON') {
           this.generateChart(newVal, this.options, this.id);
         }
       }

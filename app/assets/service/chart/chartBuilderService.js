@@ -9,7 +9,7 @@ class ChartBuilderService {
             if (container) {
                 container.innerHTML = '';
                 switch (type) {
-                    case 'MAP_TOPOJSON_JS':
+                    case 'MAP_TOPOJSON':
                         (new TopoJsonChartBuilderService()).generateChart(containerId, dataset, options, additionalOptions);
                         break;
                     default:

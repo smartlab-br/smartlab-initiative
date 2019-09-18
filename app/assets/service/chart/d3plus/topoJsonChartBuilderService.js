@@ -73,7 +73,7 @@ class TopoJsonChartBuilderService extends D3PlusChartBuilderService {
             var objAxisConfig = TopoJsonChartBuilderService.getTransparentXYConfig();
             
             if (options.colorScale && options.colorScale.inv_function) {
-                var inv_tickFn = this.customFunctions[options.colorScale.inv_function.name];
+                var inv_tickFn = additionalOptions[options.colorScale.inv_function.name];
                 var inv_args = [];
                 for (var indxInvArg in options.colorScale.inv_function.args) {
                     if (options.colorScale.inv_function.args[indxInvArg].fixed) {
@@ -117,6 +117,7 @@ class TopoJsonChartBuilderService extends D3PlusChartBuilderService {
         if (options.clickable){
             viz = viz.on("click", function(d) {
                 if (clickedPlace == d[options.id_field] || !hasTouch()) {
+                    // TODO Work on making it generic
                     let place = {};
                     place.id = String(d[options.id_field]);
                     place.to = '/localidade/' + d[options.id_field] + '?';
