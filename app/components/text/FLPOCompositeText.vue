@@ -39,7 +39,10 @@
           <v-flex pa-0 ml-2 class="headline-obs">{{ descSection.title }}</v-flex>
           <v-layout row wrap pb-2>
             <flpo-ranking-list v-for="(ranking, index) in descSection.rankings" :key="index"
+              v-if="ranking.group == undefined || ranking.group == null || ranking.group == activeGroup"  
               :structure="ranking" :customFunctions="customFunctions"
+              :reactive-filter="reactiveFilter"
+              :custom-filters="customFilters"
               :customParams="customParams">
             </flpo-ranking-list>
           </v-layout>
@@ -67,8 +70,8 @@
           <v-flex v-if="descSection.comment != undefined" pa-0 pb-4 class="red--text">{{ descSection.comment.fixed }}</v-flex>
         </v-layout>
         <!-- Seção de select -->
-        <v-layout column v-else-if="descSection.type && descSection.type == 'select'" 
-          v-show="descSection.group == undefined || descSection.group == null || descSection.group == activeGroup"  
+        <v-layout column v-else-if="descSection.type && descSection.type == 'select' &&
+                                    (descSection.group == undefined || descSection.group == null || descSection.group == activeGroup)"  
           :class="descSection.cls?descSection.cls:'pb-2'">
           <v-flex pa-0 class="headline-obs">{{ descSection.title }}</v-flex>
           <flpo-select-emitter
@@ -83,8 +86,8 @@
             v-on:default-selection="triggerDefaultSelect">
           </flpo-select-emitter>
         </v-layout>
-        <v-layout column v-else-if="descSection.type && descSection.type == 'switch-group'" 
-          v-show="descSection.group == undefined || descSection.group == null || descSection.group == activeGroup" 
+        <v-layout column v-else-if="descSection.type && descSection.type == 'switch-group'&&
+                                    (descSection.group == undefined || descSection.group == null || descSection.group == activeGroup)" 
           :class="descSection.cls?descSection.cls:'pb-2'">
           <v-flex pa-0 class="headline-obs">{{ descSection.title }}</v-flex>
           <flpo-switch-group-emitter
@@ -95,8 +98,8 @@
             v-on:default-selection="triggerDefaultSelect">
           </flpo-switch-group-emitter>
         </v-layout>
-        <v-layout column v-else-if="descSection.type && descSection.type == 'radio'" 
-          v-show="descSection.group == undefined || descSection.group == null || descSection.group == activeGroup" 
+        <v-layout column v-else-if="descSection.type && descSection.type == 'radio'&&
+                                    (descSection.group == undefined || descSection.group == null || descSection.group == activeGroup)" 
           :class="descSection.cls?descSection.cls:'pb-2'">
           <flpo-radio-emitter
             :id = "descSection.id + '_' + id" 
@@ -107,8 +110,8 @@
             v-on:default-selection="triggerDefaultSelect">
           </flpo-radio-emitter>
         </v-layout>
-        <v-layout column v-else-if="descSection.type && descSection.type == 'check'" 
-          v-show="descSection.group == undefined || descSection.group == null || descSection.group == activeGroup" 
+        <v-layout column v-else-if="descSection.type && descSection.type == 'check'&&
+                                    (descSection.group == undefined || descSection.group == null || descSection.group == activeGroup)" 
           :class="descSection.cls?descSection.cls:'pb-2'">
           <flpo-check-emitter
             :id = "descSection.id + '_' + id" 
@@ -119,8 +122,8 @@
             v-on:default-selection="triggerDefaultSelect">
           </flpo-check-emitter>
         </v-layout>
-        <v-layout column v-else-if="descSection.type && descSection.type == 'slider'" 
-          v-show="descSection.group == undefined || descSection.group == null || descSection.group == activeGroup" 
+        <v-layout column v-else-if="descSection.type && descSection.type == 'slider'&&
+                                    (descSection.group == undefined || descSection.group == null || descSection.group == activeGroup)" 
           :class="descSection.cls?descSection.cls:'pb-2'">
           <v-flex pa-0 class="headline-obs">{{ descSection.title }}</v-flex>
           <flpo-slider-emitter
