@@ -1,4 +1,6 @@
 <script>
+  import GeoIpClient from '../assets/service/singleton/geoIpClient'
+  
   export default {
     data () {
       return {
@@ -91,7 +93,7 @@
         if (this.idObservatorio && this.idObservatorio == 'td' && currAU && currAU.toString().length != 7) {
           this.$emit('showLocationDialog');
         } else if (!currAU) { // Se não houver cookie, invoca o cliente geo_ip
-          this.getClientGeo(this.getClientGeoCallback);
+          (new GeoIpClient(this.getClientGeoCallback)).getClientGeo();
         } else {
           this.currentAnalysisUnit = currAU;
         }
