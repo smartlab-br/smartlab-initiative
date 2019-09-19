@@ -20,7 +20,7 @@ class LineChartBuilderService extends D3PlusChartBuilderService {
         }
         if (colorArray != null) {
             let colorIndx = 0;
-            for (let row in slicedDS) {
+            for (let row of slicedDS) {
                 if (colorCat[row[options.id]] === null ||
                     colorCat[row[options.id]] === undefined) {
                     colorCat[row[options.id]] = colorArray[colorIndx];
@@ -36,6 +36,7 @@ class LineChartBuilderService extends D3PlusChartBuilderService {
           lineConfig.stroke = options.color;
         }
 
+        let labelConfig = { fontFamily: additionalOptions.fontFamily ? additionalOptions.fontFamily : this._fontFamily };
         if (options.show_y_axis !== null && options.show_y_axis !== undefined && options.show_y_axis) {
             let container = document.getElementById(containerId);
             viz.shapeConfig().labelConfig.width = chartContainer.offsetWidth;
@@ -43,7 +44,7 @@ class LineChartBuilderService extends D3PlusChartBuilderService {
           
         let grafico = viz
             .shapeConfig({ 
-                labelConfig: { fontFamily: additionalOptions.fontFamily ? additionalOptions.fontFamily : this._fontFamily },
+                "labelConfig": labelConfig,
                 Line: lineConfig
             })
             .select(containerId)  // container DIV to hold the visualization
