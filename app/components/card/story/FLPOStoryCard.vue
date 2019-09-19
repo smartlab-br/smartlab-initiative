@@ -105,7 +105,7 @@
                         :dataset="dataset"
                         :options="structure.chart_options">
                       </flpo-boxplot-chart> -->
-                      <flpo-sankey
+                      <!-- <flpo-sankey
                         v-if="dataset !== null && metadata && metadata.sankey_data && structure && structure.chart_type == 'SANKEYD3' && structure.chart_options !== null"
                         ref = "chart"
                         :id="chartId"
@@ -113,7 +113,7 @@
                         :metadata="metadata"
                         :options="structure.chart_options"
                         :headers="structure.headers">
-                      </flpo-sankey>
+                      </flpo-sankey> -->
                       <!-- <flpo-scatter-chart
                         v-if="dataset !== null && structure && structure.chart_type == 'SCATTERPLOT' && structure.chart_options !== null"
                         ref = "chart"
@@ -160,7 +160,7 @@
                       </flpo-topojson-map> -->
                       <v-layout
                         v-if="structure && structure.chart_options !== null &&
-                              ['MAP_TOPOJSON', 'LINE', 'STACKED', 'BAR', 'TREEMAP', 'SCATTERPLOT', 'BOXPLOT'].includes(structure.chart_type)"
+                              ['MAP_TOPOJSON', 'LINE', 'STACKED', 'BAR', 'TREEMAP', 'SCATTERPLOT', 'BOXPLOT', 'CALENDAR', 'SANKEYD3'].includes(structure.chart_type)"
                         ref = "chart"
                         :id="chartId">
                       </v-layout>
@@ -182,7 +182,7 @@
                         :headers="structure.headers"
                         :section-index="sectionIndex">
                       </flpo-stacked-line-chart> -->
-                      <flpo-calendar-chart
+                      <!-- <flpo-calendar-chart
                         v-if="dataset !== null && structure && structure.chart_type == 'CALENDAR' && structure.chart_options !== null"
                         ref = "chart"
                         :id="chartId"
@@ -190,7 +190,7 @@
                         :options="structure.chart_options"
                         :headers="structure.headers"
                         :section-index="sectionIndex">
-                      </flpo-calendar-chart>
+                      </flpo-calendar-chart> -->
                     </v-flex>
                     <v-layout v-if="chartFooter" xs12 pt-0 justify-center chart-footer>
                       {{ chartFooter }}
@@ -421,21 +421,24 @@
 
       triggerChartUpdates() {
         if (this.structure && this.structure.chart_options &&
-            ['MAP_TOPOJSON', 'LINE', 'STACKED', 'BAR', 'TREEMAP', 'SCATTERPLOT', 'BOXPLOT'].includes(this.structure.chart_type)) {
+            ['MAP_TOPOJSON', 'LINE', 'STACKED', 'BAR', 'TREEMAP', 'SCATTERPLOT', 'BOXPLOT', 'CALENDAR', 'SANKEYD3'].includes(this.structure.chart_type)) {
+          let additionalOptions = { idAU: this.selectedPlace ? this.selectedPlace : this.customParams.idLocalidade,
+            theme: this.$vuetify.theme,
+            sectionIndex: this.sectionIndex,
+            topology: this.topology,
+            topologyUf: this.topologyUf,
+            headers: this.structure.headers,
+            route: this.$route,
+            context: this
+          }
+          if (this.structure.chart_type == 'SANKEYD3') additionalOptions.metadata = this.metadata;
+          
           ChartBuilderService.generateChart(
             this.structure.chart_type, 
             this.chartId,
             this.dataset,
             this.structure.chart_options,
-            { idAU: this.selectedPlace ? this.selectedPlace : this.customParams.idLocalidade,
-              theme: this.$vuetify.theme,
-              sectionIndex: this.sectionIndex,
-              topology: this.topology,
-              topologyUf: this.topologyUf,
-              headers: this.structure.headers,
-              route: this.$route,
-              context: this
-            }
+            additionalOptions
           );
         }
         this.assessChartFooter();

@@ -6,9 +6,9 @@ import AppIcon from './AppIcon'
 import FLPOLinearGauge from './chart/FLPOLinearGauge'
 import FLPORankingBullet from './chart/FLPORankingBullet'
 import FLPORankingSlider from './chart/FLPORankingSlider'
-import FLPOSankey from './chart/FLPOSankey'
+// [REM] import FLPOSankey from './chart/FLPOSankey'
 // Based on core d3
-import FLPOCalendarChart from './chart/FLPOCalendarChart'
+// [REM] import FLPOCalendarChart from './chart/FLPOCalendarChart'
 
 // Emitters
 import FLPOCheckEmitter from './emitter/FLPOCheckEmitter'
@@ -45,8 +45,6 @@ import FLPOOdometer from './FLPOOdometer'
 export default {
   'font-awesome-icon': FontAwesomeIcon,
   
-  'flpo-calendar-chart': FLPOCalendarChart,
-  'flpo-sankey': FLPOSankey,
   'flpo-composite-text': FLPOCompositeText,
   'flpo-leaflet-map': FLPOLeafletMap,
   'flpo-linked-view-card': FLPOLinkedViewCard,
