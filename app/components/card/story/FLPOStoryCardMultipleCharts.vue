@@ -119,14 +119,14 @@
                             :headers="chart.headers"
                             :section-index="sectionIndex">
                           </flpo-bar-chart> -->
-                          <flpo-boxplot-chart
+                          <!-- <flpo-boxplot-chart
                             v-if="dataset && dataset[chart.id] !== null && chart.type == 'BOXPLOT' && chart.options !== null"
                             :id="chartId[chart.id]"
                             :dataset="dataset[chart.id]"
                             :options="chart.options"
                             :headers="chart.headers"
                             :section-index="sectionIndex">
-                          </flpo-boxplot-chart>
+                          </flpo-boxplot-chart> -->
                           <flpo-sankey
                             v-if="dataset !== null && structure && structure.chart_type == 'SANKEYD3' && structure.chart_options !== null"
                             ref = "chart"
@@ -135,14 +135,14 @@
                             :options="structure.chart_options"
                             :headers="structure.headers">
                           </flpo-sankey>
-                          <flpo-scatter-chart
+                          <!-- <flpo-scatter-chart
                             v-if="dataset && dataset[chart.id] !== null && chart.type == 'SCATTERPLOT' && chart.options !== null"
                             :id="chartId[chart.id]"
                             :dataset="dataset[chart.id]"
                             :options="chart.options"
                             :headers="chart.headers"
                             :section-index="sectionIndex">
-                          </flpo-scatter-chart>
+                          </flpo-scatter-chart> -->
                           <!-- <flpo-treemap-chart
                             v-if="dataset && dataset[chart.id] && chart.type == 'TREEMAP' && chart.options !== null"
                             :id="chartId[chart.id]"
@@ -177,7 +177,7 @@
                             :customParams="customParams">
                           </flpo-topojson-map> -->
                           <v-layout
-                            v-if="['MAP_TOPOJSON', 'LINE', 'STACKED', 'BAR', 'TREEMAP'].includes(chart.type) && chart.options !== null"
+                            v-if="['MAP_TOPOJSON', 'LINE', 'STACKED', 'BAR', 'TREEMAP', 'SCATTERPLOT', 'BOXPLOT'].includes(chart.type) && chart.options !== null"
                             :id="chartId[chart.id]">
                           </v-layout>
                           <!-- <flpo-line-chart
@@ -564,7 +564,7 @@
 
       triggerChartUpdates() {
         for (let eachChart of this.structure.charts) {
-          if (eachChart && eachChart.options && ['MAP_TOPOJSON', 'LINE', 'STACKED', 'BAR', 'TREEMAP'].includes(eachChart.type)) {
+          if (eachChart && eachChart.options && ['MAP_TOPOJSON', 'LINE', 'STACKED', 'BAR', 'TREEMAP', 'SCATTERPLOT', 'BOXPLOT'].includes(eachChart.type)) {
             ChartBuilderService.generateChart(
               eachChart.type, 
               this.chartId[eachChart.id],

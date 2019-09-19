@@ -3,12 +3,10 @@ import AppIcon from './AppIcon'
 
 // Charts
 // Based on d3plus
-import FLPOBoxplotChart from './chart/FLPOBoxplotChart'
 import FLPOLinearGauge from './chart/FLPOLinearGauge'
 import FLPORankingBullet from './chart/FLPORankingBullet'
 import FLPORankingSlider from './chart/FLPORankingSlider'
 import FLPOSankey from './chart/FLPOSankey'
-import FLPOScatterChart from './chart/FLPOScatterChart'
 // Based on core d3
 import FLPOCalendarChart from './chart/FLPOCalendarChart'
 
@@ -48,9 +46,7 @@ export default {
   'font-awesome-icon': FontAwesomeIcon,
   
   'flpo-calendar-chart': FLPOCalendarChart,
-  'flpo-boxplot-chart': FLPOBoxplotChart,
   'flpo-sankey': FLPOSankey,
-  'flpo-scatter-chart': FLPOScatterChart,
   'flpo-composite-text': FLPOCompositeText,
   'flpo-leaflet-map': FLPOLeafletMap,
   'flpo-linked-view-card': FLPOLinkedViewCard,

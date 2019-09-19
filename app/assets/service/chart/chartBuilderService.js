@@ -19,7 +19,7 @@ class ChartBuilderService {
                     case 'LINE':
                         (new LineChartBuilderService()).generateChart(containerId, dataset, options, additionalOptions);
                         break;
-                    case 'STACKED':
+                    case 'STACKED': // Unused
                         (new StackedLineChartBuilderService()).generateChart(containerId, dataset, options, additionalOptions);
                         break;
                     case 'BAR':
@@ -27,6 +27,12 @@ class ChartBuilderService {
                         break;
                     case 'TREEMAP':
                         (new TreemapChartBuilderService()).generateChart(containerId, dataset, options, additionalOptions);
+                        break;
+                    case 'SCATTERPLOT': // Unused
+                        (new ScatterChartBuilderService()).generateChart(containerId, dataset, options, additionalOptions);
+                        break;
+                    case 'BOXPLOT': // Unused
+                        (new BoxplotChartBuilderService()).generateChart(containerId, dataset, options, additionalOptions);
                         break;
                     default:
                         break;

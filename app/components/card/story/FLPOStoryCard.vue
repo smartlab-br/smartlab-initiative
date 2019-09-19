@@ -98,13 +98,13 @@
                         :headers="structure.headers"
                         :section-index="sectionIndex">
                       </flpo-bar-chart> -->
-                      <flpo-boxplot-chart
+                      <!-- <flpo-boxplot-chart
                         v-if="dataset !== null && structure && structure.chart_type == 'BOXPLOT' && structure.chart_options !== null"
                         ref = "chart"
                         :id="chartId"
                         :dataset="dataset"
                         :options="structure.chart_options">
-                      </flpo-boxplot-chart>
+                      </flpo-boxplot-chart> -->
                       <flpo-sankey
                         v-if="dataset !== null && metadata && metadata.sankey_data && structure && structure.chart_type == 'SANKEYD3' && structure.chart_options !== null"
                         ref = "chart"
@@ -114,14 +114,14 @@
                         :options="structure.chart_options"
                         :headers="structure.headers">
                       </flpo-sankey>
-                      <flpo-scatter-chart
+                      <!-- <flpo-scatter-chart
                         v-if="dataset !== null && structure && structure.chart_type == 'SCATTERPLOT' && structure.chart_options !== null"
                         ref = "chart"
                         :id="chartId"
                         :dataset="dataset"
                         :options="structure.chart_options"
                         :headers="structure.headers">
-                      </flpo-scatter-chart>
+                      </flpo-scatter-chart> -->
                       <!-- <flpo-treemap-chart
                         v-if="dataset !== null && structure && structure.chart_type == 'TREEMAP' && structure.chart_options !== null"
                         ref = "chart"
@@ -160,7 +160,7 @@
                       </flpo-topojson-map> -->
                       <v-layout
                         v-if="structure && structure.chart_options !== null &&
-                              ['MAP_TOPOJSON', 'LINE', 'STACKED', 'BAR', 'TREEMAP'].includes(structure.chart_type)"
+                              ['MAP_TOPOJSON', 'LINE', 'STACKED', 'BAR', 'TREEMAP', 'SCATTERPLOT', 'BOXPLOT'].includes(structure.chart_type)"
                         ref = "chart"
                         :id="chartId">
                       </v-layout>
@@ -421,7 +421,7 @@
 
       triggerChartUpdates() {
         if (this.structure && this.structure.chart_options &&
-            ['MAP_TOPOJSON', 'LINE', 'STACKED', 'BAR', 'TREEMAP'].includes(this.structure.chart_type)) {
+            ['MAP_TOPOJSON', 'LINE', 'STACKED', 'BAR', 'TREEMAP', 'SCATTERPLOT', 'BOXPLOT'].includes(this.structure.chart_type)) {
           ChartBuilderService.generateChart(
             this.structure.chart_type, 
             this.chartId,
