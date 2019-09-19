@@ -177,17 +177,17 @@
                             :customParams="customParams">
                           </flpo-topojson-map> -->
                           <v-layout
-                            v-if="chart.type == 'MAP_TOPOJSON' && chart.options !== null"
+                            v-if="(chart.type == 'MAP_TOPOJSON' || chart.type == 'LINE') && chart.options !== null"
                             :id="chartId[chart.id]">
                           </v-layout>
-                          <flpo-line-chart
+                          <!-- <flpo-line-chart
                             v-if="dataset && dataset[chart.id] !== null && chart.type == 'LINE' && chart.options !== null"
                             :id="chartId[chart.id]"
                             :dataset="dataset[chart.id]"
                             :options="chart.options"
                             :headers="chart.headers"
                             :section-index="sectionIndex">
-                          </flpo-line-chart>
+                          </flpo-line-chart> -->
                           <flpo-stacked-line-chart
                             v-if="dataset && dataset[chart.id] !== null && chart.type == 'STACKED' && chart.options !== null"
                             :id="chartId[chart.id]"
@@ -565,7 +565,7 @@
 
       triggerChartUpdates() {
         for (let eachChart of this.structure.charts) {
-          if (eachChart && eachChart.options && eachChart.type == 'MAP_TOPOJSON') {
+          if (eachChart && eachChart.options && (eachChart.type == 'MAP_TOPOJSON' || eachChart.type == 'LINE')) {
             ChartBuilderService.generateChart(
               eachChart.type, 
               this.chartId[eachChart.id],

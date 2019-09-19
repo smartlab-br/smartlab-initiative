@@ -1,6 +1,8 @@
 import ColorsService from '../singleton/colorsService'
 
 class GeneralChartBuilderService {
+    _fontFamily = "titulos-observatorio";
+
     constructor() {}
 
     static getSlicedDataset(dataset, options) {
@@ -14,15 +16,15 @@ class GeneralChartBuilderService {
     }
 
     // Helper functions ( TODO move to services)
-    static getDefaultXYConfig(sectionIndex) { // TODO Deal with theme
+    static getDefaultXYConfig(sectionIndex, theme) { // TODO Deal with theme
         return { 
             gridConfig: { stroke: "transparent" },
-            barConfig:   { stroke: ColorsService.assessZebraAxesColor(sectionIndex, this.$vuetify.theme)},
+            barConfig:   { stroke: ColorsService.assessZebraAxesColor(sectionIndex, theme)},
             shapeConfig: {
                 labelConfig: {
-                    fontColor: ColorsService.assessZebraAxesColor(sectionIndex, this.$vuetify.theme)
+                    fontColor: ColorsService.assessZebraAxesColor(sectionIndex, theme)
                 },
-                stroke: ColorsService.assessZebraAxesColor(sectionIndex, this.$vuetify.theme)
+                stroke: ColorsService.assessZebraAxesColor(sectionIndex, theme)
             }
         }
     }

@@ -146,7 +146,7 @@ class TopoJsonChartBuilderService extends D3PlusChartBuilderService {
 
         let viz = new d3plus.Geomap()
             .shapeConfig({ 
-                labelConfig: { fontFamily: "titulos-observatorio" },
+                labelConfig: { fontFamily: additionalOptions.fontFamily ? additionalOptions.fontFamily : this._fontFamily },
                 Path: {
                     fillOpacity: 0.9,
                     strokeWidth: function(d) { return (additionalOptions.idAU !== null && additionalOptions.idAU !== undefined && (d[options.id_field] == additionalOptions.idAU || (d.properties && d.properties[options.topo_key] == additionalOptions.idAU) ) )  ? 5 : 0.2 },

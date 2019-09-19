@@ -6,7 +6,7 @@ import AppIcon from './AppIcon'
 import FLPOBarChart from './chart/FLPOBarChart'
 import FLPOBoxplotChart from './chart/FLPOBoxplotChart'
 import FLPOLinearGauge from './chart/FLPOLinearGauge'
-import FLPOLineChart from './chart/FLPOLineChart'
+// import FLPOLineChart from './chart/FLPOLineChart'
 import FLPORankingBullet from './chart/FLPORankingBullet'
 import FLPORankingSlider from './chart/FLPORankingSlider'
 import FLPOSankey from './chart/FLPOSankey'
@@ -25,7 +25,7 @@ import FLPOSwitchGroupEmitter from './emitter/FLPOSwitchGroupEmitter'
 
 // Maps
 import FLPOLeafletMap from './map/FLPOLeafletMap'
-import FLPOTopoJsonMap from './map/FLPOTopoJsonMap'
+// import FLPOTopoJsonMap from './map/FLPOTopoJsonMap'
 
 // Texts
 import FLPOCompositeText from './text/FLPOCompositeText'
@@ -60,8 +60,6 @@ export default {
   'flpo-treemap-chart': FLPOTreemapChart,
   'flpo-composite-text': FLPOCompositeText,
   'flpo-leaflet-map': FLPOLeafletMap,
-  'flpo-topojson-map': FLPOTopoJsonMap,
-  'flpo-line-chart': FLPOLineChart,
   'flpo-stacked-line-chart': FLPOStackedLineChart,
   'flpo-linked-view-card': FLPOLinkedViewCard,
   'flpo-sobre-layout': FLPOSobreLayout,
