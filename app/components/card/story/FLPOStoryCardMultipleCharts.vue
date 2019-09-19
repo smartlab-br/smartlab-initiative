@@ -143,14 +143,14 @@
                             :headers="chart.headers"
                             :section-index="sectionIndex">
                           </flpo-scatter-chart>
-                          <flpo-treemap-chart
+                          <!-- <flpo-treemap-chart
                             v-if="dataset && dataset[chart.id] && chart.type == 'TREEMAP' && chart.options !== null"
                             :id="chartId[chart.id]"
                             :dataset="dataset[chart.id]"
                             :options="chart.options"
                             :headers="chart.headers"
                             :section-index="sectionIndex">
-                          </flpo-treemap-chart>
+                          </flpo-treemap-chart> -->
                           <flpo-leaflet-map
                             v-if = "dataset && dataset[chart.id] !== null && chart.type == 'MAP_LEAFLET' && chart.options !== null &&
                                     ((chart.options.type == 'topo' && topology) || (chart.options.type !== 'topo'))"
@@ -177,7 +177,7 @@
                             :customParams="customParams">
                           </flpo-topojson-map> -->
                           <v-layout
-                            v-if="(chart.type == 'MAP_TOPOJSON' || chart.type == 'LINE' || chart.type == 'BAR') && chart.options !== null"
+                            v-if="['MAP_TOPOJSON', 'LINE', 'STACKED', 'BAR', 'TREEMAP'].includes(chart.type) && chart.options !== null"
                             :id="chartId[chart.id]">
                           </v-layout>
                           <!-- <flpo-line-chart
@@ -188,14 +188,14 @@
                             :headers="chart.headers"
                             :section-index="sectionIndex">
                           </flpo-line-chart> -->
-                          <flpo-stacked-line-chart
+                          <!-- <flpo-stacked-line-chart
                             v-if="dataset && dataset[chart.id] !== null && chart.type == 'STACKED' && chart.options !== null"
                             :id="chartId[chart.id]"
                             :dataset="dataset[chart.id]"
                             :options="chart.options"
                             :headers="chart.headers"
                             :section-index="sectionIndex">
-                          </flpo-stacked-line-chart>
+                          </flpo-stacked-line-chart> -->
                         </v-flex>
                         <v-layout v-if="chartFooter && chartFooter[chart.id] && updatedChartFooters == structure.charts.length" pb-0 xs12 justify-center chart-footer>
                           {{ chartFooter[chart.id] }}
@@ -556,8 +556,7 @@
             this.structure.charts[eachChart], this.customParams,
             this.customFunctions, this.setDataset,
             { "endpoint": endpoint,
-              id: this.structure.charts[eachChart].id,
-              "fnCallback": this.triggerChartUpdates
+              id: this.structure.charts[eachChart].id
             }
           );
         }
@@ -565,7 +564,7 @@
 
       triggerChartUpdates() {
         for (let eachChart of this.structure.charts) {
-          if (eachChart && eachChart.options && (eachChart.type == 'MAP_TOPOJSON' || eachChart.type == 'LINE' || eachChart.type == 'LINE')) {
+          if (eachChart && eachChart.options && ['MAP_TOPOJSON', 'LINE', 'STACKED', 'BAR', 'TREEMAP'].includes(eachChart.type)) {
             ChartBuilderService.generateChart(
               eachChart.type, 
               this.chartId[eachChart.id],

@@ -9,8 +9,6 @@ import FLPORankingBullet from './chart/FLPORankingBullet'
 import FLPORankingSlider from './chart/FLPORankingSlider'
 import FLPOSankey from './chart/FLPOSankey'
 import FLPOScatterChart from './chart/FLPOScatterChart'
-import FLPOStackedLineChart from './chart/FLPOStackedLineChart'
-import FLPOTreemapChart from './chart/FLPOTreemapChart'
 // Based on core d3
 import FLPOCalendarChart from './chart/FLPOCalendarChart'
 
@@ -53,10 +51,8 @@ export default {
   'flpo-boxplot-chart': FLPOBoxplotChart,
   'flpo-sankey': FLPOSankey,
   'flpo-scatter-chart': FLPOScatterChart,
-  'flpo-treemap-chart': FLPOTreemapChart,
   'flpo-composite-text': FLPOCompositeText,
   'flpo-leaflet-map': FLPOLeafletMap,
-  'flpo-stacked-line-chart': FLPOStackedLineChart,
   'flpo-linked-view-card': FLPOLinkedViewCard,
   'flpo-sobre-layout': FLPOSobreLayout,
   'flpo-dot-nav': FLPODotNav,

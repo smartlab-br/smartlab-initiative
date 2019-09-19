@@ -39,7 +39,7 @@ class LineChartBuilderService extends D3PlusChartBuilderService {
         let labelConfig = { fontFamily: additionalOptions.fontFamily ? additionalOptions.fontFamily : this._fontFamily };
         if (options.show_y_axis !== null && options.show_y_axis !== undefined && options.show_y_axis) {
             let container = document.getElementById(containerId);
-            viz.shapeConfig().labelConfig.width = chartContainer.offsetWidth;
+            viz.shapeConfig().labelConfig.width = container.offsetWidth;
         }
           
         let grafico = viz

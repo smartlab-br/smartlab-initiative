@@ -1,6 +1,8 @@
 import TopoJsonChartBuilderService from './d3plus/topoJsonChartBuilderService'
 import LineChartBuilderService from './d3plus/lineChartBuilderService'
+import StackedLineChartBuilderService from './d3plus/stackedLineChartBuilderService'
 import BarChartBuilderService from './d3plus/barChartBuilderService'
+import TreemapChartBuilderService from './d3plus/treemapChartBuilderService'
 
 class ChartBuilderService {
     constructor() {}
@@ -17,8 +19,14 @@ class ChartBuilderService {
                     case 'LINE':
                         (new LineChartBuilderService()).generateChart(containerId, dataset, options, additionalOptions);
                         break;
+                    case 'STACKED':
+                        (new StackedLineChartBuilderService()).generateChart(containerId, dataset, options, additionalOptions);
+                        break;
                     case 'BAR':
                         (new BarChartBuilderService()).generateChart(containerId, dataset, options, additionalOptions);
+                        break;
+                    case 'TREEMAP':
+                        (new TreemapChartBuilderService()).generateChart(containerId, dataset, options, additionalOptions);
                         break;
                     default:
                         break;
