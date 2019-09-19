@@ -432,7 +432,7 @@
             context: this
           }
           if (this.structure.chart_type == 'SANKEYD3') additionalOptions.metadata = this.metadata;
-          
+
           ChartBuilderService.generateChart(
             this.structure.chart_type, 
             this.chartId,
@@ -522,5 +522,4 @@
     color: rgba(0,0,0,0.87);
     font-family: titulos-observatorio, Calibri, sans-serif !important;
   }
-
 </style>

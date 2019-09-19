@@ -54,7 +54,7 @@ class SankeyChartBuilderService {
                 .append("title")
                     .text(d => `${d.title}`);
 
-            const link = svg.append("g")
+            let link = svg.append("g")
                 .attr("fill", "none")
                 .selectAll("g")
                 .data(links)
@@ -65,13 +65,10 @@ class SankeyChartBuilderService {
             link.append("path")
                 .attr("d", d3Sankey.sankeyLinkHorizontal())
                 .attr("stroke-width", d => Math.max(1, d.width))
-                .attr("class", "link")
+                .attr("class", "sankey-link")
                 .style("fill", "none")
                 .style("stroke", "#000")
-                .style("stroke-opacity", ".2")
-
-            link.on("mouseover", d => d3.select(this.parentNode).select("path").style("stroke-opacity", ".5"))
-                .on("mouseout", d => d3.select(this.parentNode).select("path").style("stroke-opacity", ".2"));
+                .style("stroke-opacity", ".2");
 
             link.append("title")
                 .text(d => `${d.source.id} → ${d.target.id}\n${d.value.toLocaleString()}`);
