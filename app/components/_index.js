@@ -6,9 +6,7 @@ import AppIcon from './AppIcon'
 import FLPOLinearGauge from './chart/FLPOLinearGauge'
 import FLPORankingBullet from './chart/FLPORankingBullet'
 import FLPORankingSlider from './chart/FLPORankingSlider'
-// [REM] import FLPOSankey from './chart/FLPOSankey'
 // Based on core d3
-// [REM] import FLPOCalendarChart from './chart/FLPOCalendarChart'
 
 // Emitters
 import FLPOCheckEmitter from './emitter/FLPOCheckEmitter'
