@@ -2,7 +2,6 @@ import axios from 'axios'
 
 class GeoIpClient  {
 
-
         constructor (){ }
 
         static getClientGeo(callback) {
