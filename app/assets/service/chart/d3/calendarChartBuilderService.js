@@ -51,7 +51,7 @@ class CalendarChartBuilderService {
         svg = d3.select(contId).append("svg");
 
         setTimeout(() => {
-            let width = document.getElementById(containerId).offsetWidth;
+            let width = document.getElementById(containerId).offsetWidth - 16;
             let height = document.getElementById(containerId).offsetHeight;
             
             let yearHeight = height / years.length,
@@ -92,7 +92,7 @@ class CalendarChartBuilderService {
                 .append("rect")
                 .attr("class", "day")
                 // ===== Day class style
-                .style("fill", "#fff")
+                .attr("fill", "#fff")
                 .style("stroke", "#ccc")
                 // =====
                 .attr("width", cellSize)
@@ -116,7 +116,7 @@ class CalendarChartBuilderService {
                 .append("path")
                 .attr("class", "month")
                 // ===== Month class style
-                .style("fill", "none")
+                .attr("fill", "none")
                 .style("stroke", "#000")
                 .style("stroke-width", "2px")
                 // ======
@@ -132,11 +132,12 @@ class CalendarChartBuilderService {
                         });
 
             let rdata_keys = Object.keys(rdata);
+            let quantileStyles = this.quantileStyles;
             g.selectAll(".day")
                 .filter(function(d) { return rdata_keys.includes('$'+d); })
                 .attr("class", function(d) { return "day " + color(rdata['$'+d].sev); })
                 // ===== Day class style
-                .style("fill", function(d) { return this.quantileStyles[color(rdata['$'+d].sev)]; })
+                .attr("fill", function(d) { return quantileStyles[color(rdata['$'+d].sev)]; })
                 // =====
                 .select("title")
                 .text((d) => { return d + ": " + (rdata['$'+d] ? rdata['$'+d].qt : 0); });

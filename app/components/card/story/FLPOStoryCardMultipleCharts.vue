@@ -176,7 +176,7 @@
                             :topology-uf = "topologyUf"
                             :customParams="customParams">
                           </flpo-topojson-map> -->
-                          <v-layout
+                          <v-layout fill-height
                             v-if="['MAP_TOPOJSON', 'LINE', 'STACKED', 'BAR', 'TREEMAP', 'SCATTERPLOT', 'BOXPLOT', 'CALENDAR', 'SANKEYD3'].includes(chart.type) && chart.options !== null"
                             :id="chartId[chart.id]">
                           </v-layout>

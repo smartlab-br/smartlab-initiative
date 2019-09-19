@@ -158,7 +158,7 @@
                         :headers="structure.headers"
                         :section-index="sectionIndex">
                       </flpo-topojson-map> -->
-                      <v-layout
+                      <v-layout fill-height
                         v-if="structure && structure.chart_options !== null &&
                               ['MAP_TOPOJSON', 'LINE', 'STACKED', 'BAR', 'TREEMAP', 'SCATTERPLOT', 'BOXPLOT', 'CALENDAR', 'SANKEYD3'].includes(structure.chart_type)"
                         ref = "chart"
