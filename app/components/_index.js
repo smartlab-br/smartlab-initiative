@@ -3,10 +3,8 @@ import AppIcon from './AppIcon'
 
 // Charts
 // Based on d3plus
-import FLPOBarChart from './chart/FLPOBarChart'
 import FLPOBoxplotChart from './chart/FLPOBoxplotChart'
 import FLPOLinearGauge from './chart/FLPOLinearGauge'
-// [MOV] import FLPOLineChart from './chart/FLPOLineChart'
 import FLPORankingBullet from './chart/FLPORankingBullet'
 import FLPORankingSlider from './chart/FLPORankingSlider'
 import FLPOSankey from './chart/FLPOSankey'
@@ -25,7 +23,6 @@ import FLPOSwitchGroupEmitter from './emitter/FLPOSwitchGroupEmitter'
 
 // Maps
 import FLPOLeafletMap from './map/FLPOLeafletMap'
-// [REM] import FLPOTopoJsonMap from './map/FLPOTopoJsonMap'
 
 // Texts
 import FLPOCompositeText from './text/FLPOCompositeText'
@@ -52,7 +49,6 @@ import FLPOOdometer from './FLPOOdometer'
 export default {
   'font-awesome-icon': FontAwesomeIcon,
   
-  'flpo-bar-chart': FLPOBarChart,
   'flpo-calendar-chart': FLPOCalendarChart,
   'flpo-boxplot-chart': FLPOBoxplotChart,
   'flpo-sankey': FLPOSankey,

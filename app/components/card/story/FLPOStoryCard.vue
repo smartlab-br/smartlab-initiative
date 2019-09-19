@@ -89,7 +89,7 @@
                     <v-flex xs12 fill-height :style="cmpStyle"
                       :class="{'mx-0 px-3': (this.$vuetify.breakpoint.smAndDown || chartPosition == 'bottom'), 'mx-0 pt-2 pr-4 pb-0': (this.$vuetify.breakpoint.mdAndUp && chartPosition != 'bottom')}">
                       <!-- Definition of all possible charts -->
-                      <flpo-bar-chart
+                      <!-- <flpo-bar-chart
                         v-if="dataset !== null && structure && structure.chart_type == 'BAR' && structure.chart_options !== null"
                         ref = "chart"
                         :id="chartId"
@@ -97,7 +97,7 @@
                         :options="structure.chart_options"
                         :headers="structure.headers"
                         :section-index="sectionIndex">
-                      </flpo-bar-chart>
+                      </flpo-bar-chart> -->
                       <flpo-boxplot-chart
                         v-if="dataset !== null && structure && structure.chart_type == 'BOXPLOT' && structure.chart_options !== null"
                         ref = "chart"
@@ -160,7 +160,7 @@
                       </flpo-topojson-map> -->
                       <v-layout
                         v-if="structure && structure.chart_options !== null &&
-                              (structure.chart_type == 'MAP_TOPOJSON' || structure.chart_type == 'LINE')"
+                              (structure.chart_type == 'MAP_TOPOJSON' || structure.chart_type == 'LINE' || structure.chart_type == 'BAR')"
                         ref = "chart"
                         :id="chartId">
                       </v-layout>
@@ -421,7 +421,7 @@
 
       triggerChartUpdates() {
         if (this.structure && this.structure.chart_options &&
-            (this.structure.chart_type == 'MAP_TOPOJSON' || this.structure.chart_type == 'LINE')) {
+            (this.structure.chart_type == 'MAP_TOPOJSON' || this.structure.chart_type == 'LINE' || this.structure.chart_type == 'BAR')) {
           ChartBuilderService.generateChart(
             this.structure.chart_type, 
             this.chartId,

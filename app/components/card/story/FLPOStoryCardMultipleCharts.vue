@@ -111,14 +111,14 @@
                       <v-layout column :style="cmpStyle" :class="{'px-3': $vuetify.breakpoint.smAndDown, 'px-0 mx-0 fill-height': $vuetify.breakpoint.mdAndUp}">
                         <v-flex fill-height :class="{'mx-0': $vuetify.breakpoint.smAndDown, 'mx-3 pb-0': $vuetify.breakpoint.mdAndUp}">
                           <!-- Definition of all possible charts -->
-                          <flpo-bar-chart
+                          <!-- <flpo-bar-chart
                             v-if="dataset && dataset[chart.id] !== null && chart.type == 'BAR' && chart.options !== null"
                             :id="chartId[chart.id]"
                             :dataset="dataset[chart.id]"
                             :options="chart.options"
                             :headers="chart.headers"
                             :section-index="sectionIndex">
-                          </flpo-bar-chart>
+                          </flpo-bar-chart> -->
                           <flpo-boxplot-chart
                             v-if="dataset && dataset[chart.id] !== null && chart.type == 'BOXPLOT' && chart.options !== null"
                             :id="chartId[chart.id]"
@@ -177,7 +177,7 @@
                             :customParams="customParams">
                           </flpo-topojson-map> -->
                           <v-layout
-                            v-if="(chart.type == 'MAP_TOPOJSON' || chart.type == 'LINE') && chart.options !== null"
+                            v-if="(chart.type == 'MAP_TOPOJSON' || chart.type == 'LINE' || chart.type == 'BAR') && chart.options !== null"
                             :id="chartId[chart.id]">
                           </v-layout>
                           <!-- <flpo-line-chart
@@ -565,7 +565,7 @@
 
       triggerChartUpdates() {
         for (let eachChart of this.structure.charts) {
-          if (eachChart && eachChart.options && (eachChart.type == 'MAP_TOPOJSON' || eachChart.type == 'LINE')) {
+          if (eachChart && eachChart.options && (eachChart.type == 'MAP_TOPOJSON' || eachChart.type == 'LINE' || eachChart.type == 'LINE')) {
             ChartBuilderService.generateChart(
               eachChart.type, 
               this.chartId[eachChart.id],

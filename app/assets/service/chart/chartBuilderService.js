@@ -1,5 +1,6 @@
 import TopoJsonChartBuilderService from './d3plus/topoJsonChartBuilderService'
 import LineChartBuilderService from './d3plus/lineChartBuilderService'
+import BarChartBuilderService from './d3plus/barChartBuilderService'
 
 class ChartBuilderService {
     constructor() {}
@@ -15,6 +16,9 @@ class ChartBuilderService {
                         break;
                     case 'LINE':
                         (new LineChartBuilderService()).generateChart(containerId, dataset, options, additionalOptions);
+                        break;
+                    case 'BAR':
+                        (new BarChartBuilderService()).generateChart(containerId, dataset, options, additionalOptions);
                         break;
                     default:
                         break;
