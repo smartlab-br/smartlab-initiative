@@ -743,16 +743,16 @@
       }
 
       let findLoc = this.$analysisUnitModel.findCurrentPlace();
-      if (findLoc instanceof Promise || findLoc.then) {
+      if (findLoc && (findLoc instanceof Promise || findLoc.then)) {
         findLoc.then(response => {
           // console.log(response);
           this.changeMiddleToolbar(response);
           if (response.id_localidade && response.id_localidade.length > 5) this.localidade = response;
         })
         .catch(error => { this.sendError(error); });
-      } else {
+      } else if (findLoc){
         this.changeMiddleToolbar(findLoc);
-        if (response.id_localidade && response.id_localidade.length > 5) this.localidade = findLoc;
+        if (findLoc.id_localidade && findLoc.id_localidade.length > 5) this.localidade = findLoc;
       }
     
       this.langs = this.$translationModel.findAllLocales();
