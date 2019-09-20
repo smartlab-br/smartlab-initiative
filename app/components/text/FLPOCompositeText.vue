@@ -158,7 +158,7 @@
         <!-- Seção de gráfico -->
         <v-layout v-else-if="descSection.type && descSection.type == 'chart'" column pb-2>
           <v-flex pa-0 class="headline-obs">{{ descSection.title }}</v-flex>
-          <flpo-bar-chart
+          <!-- <flpo-bar-chart
             v-if="descSection.chartType == 'BAR'
                   && descSection.options && dataset[descSection.id]"
             :id="descSection.id"
@@ -175,7 +175,12 @@
             :options="descSection.options"
             :headers="descSection.headers"
             :section-index="descSection.index">
-          </flpo-treemap-chart>
+          </flpo-treemap-chart> -->
+          <v-layout fill-height
+            v-if="descSection && descSection.chartType &&
+                  ['MAP_TOPOJSON', 'LINE', 'STACKED', 'BAR', 'TREEMAP', 'SCATTERPLOT', 'BOXPLOT', 'CALENDAR', 'SANKEYD3'].includes(descSection.chartType)"
+            :id="descSection.id">
+          </v-layout>
         </v-layout>
       </v-layout>
     </v-flex>
@@ -226,7 +231,39 @@
 
       throwInvalidInterpol(payload) {
         this.$emit('resendInvalidInterpol', payload);
+      },
+
+      triggerChartUpdates(id, dataset, metadata) {
+        for (let sectionIndex in this.structure) {
+          if (this.structure[sectionIndex].type == 'chart') {
+            let eachChart = this.structure[sectionIndex];
+            if (eachChart && eachChart.id == id && eachChart.options &&
+              ['MAP_TOPOJSON', 'LINE', 'STACKED', 'BAR', 'TREEMAP', 'SCATTERPLOT', 'BOXPLOT', 'CALENDAR', 'SANKEYD3'].includes(eachChart.chartType)) {
+
+              let additionalOptions = { 
+                idAU: this.selectedPlace ? this.selectedPlace : this.customParams.idLocalidade,
+                theme: this.$vuetify.theme,
+                sectionIndex: sectionIndex,
+                topology: this.topology,
+                topologyUf: this.topologyUf,
+                headers: eachChart.headers,
+                route: this.$route,
+                context: this
+              }
+              if (eachChart.type == 'SANKEYD3') additionalOptions.metadata = metadata;
+
+              ChartBuilderService.generateChart(
+                eachChart.chartType,
+                eachChart.id, // ??
+                dataset,
+                eachChart.options,
+                additionalOptions
+              );
+            }
+          }
+        }
       }
+
     }
   }
 </script>

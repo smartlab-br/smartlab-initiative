@@ -216,7 +216,6 @@
             additionalOptions
           );
         }
-        // this.assessChartFooter();
       },
 
       updateReactiveDataStructure(filterUrl){
