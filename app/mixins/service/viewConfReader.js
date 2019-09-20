@@ -575,6 +575,7 @@ const ViewConfReader = {
 					  // Múltiplos gráficos
 					  this.dataset[addedParams.id] = dataset;
 					  this.metadata[addedParams.id] = metadata;
+					  this.triggerChartUpdates(addedParams.id, dataset, metadata);
 					  this.datasetsComplete++;
 					} else if (addedParams && addedParams.props) {
 					  if (addedParams.props.dataset) this[addedParams.props.dataset] = dataset;

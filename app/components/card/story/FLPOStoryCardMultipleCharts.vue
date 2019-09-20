@@ -275,6 +275,8 @@
 
   import FLPOBaseStoryCard from '../../FLPOBaseStoryCard.vue';
 
+  import ChartBuilderService from '../../../assets/service/chart/chartBuilderService'
+
   export default {
     extends: FLPOBaseStoryCard,
     data () {
@@ -562,23 +564,29 @@
         }
       },
 
-      triggerChartUpdates() {
+      triggerChartUpdates(id, dataset, metadata) {
         for (let eachChart of this.structure.charts) {
-          if (eachChart && eachChart.options && ['MAP_TOPOJSON', 'LINE', 'STACKED', 'BAR', 'TREEMAP', 'SCATTERPLOT', 'BOXPLOT', 'CALENDAR', 'SANKEYD3'].includes(eachChart.type)) {
+          if (eachChart && eachChart.id == id && eachChart.options &&
+            ['MAP_TOPOJSON', 'LINE', 'STACKED', 'BAR', 'TREEMAP', 'SCATTERPLOT', 'BOXPLOT', 'CALENDAR', 'SANKEYD3'].includes(eachChart.type)) {
+
+            let additionalOptions = { 
+              idAU: this.selectedPlace ? this.selectedPlace : this.customParams.idLocalidade,
+              theme: this.$vuetify.theme,
+              sectionIndex: this.sectionIndex,
+              topology: this.topology,
+              topologyUf: this.topologyUf,
+              headers: eachChart.headers,
+              route: this.$route,
+              context: this
+            }
+            if (eachChart.type == 'SANKEYD3') additionalOptions.metadata = metadata;
+
             ChartBuilderService.generateChart(
               eachChart.type, 
-              this.chartId[eachChart.id],
-              this.dataset[eachChart.id],
+              this.chartId[id],
+              dataset,
               eachChart.options,
-              { idAU: this.selectedPlace ? this.selectedPlace : this.customParams.idLocalidade,
-                theme: this.$vuetify.theme,
-                sectionIndex: this.sectionIndex,
-                topology: this.topology,
-                topologyUf: this.topologyUf,
-                headers: eachChart.headers,
-                route: this.$route,
-                context: this
-              }
+              additionalOptions
             );
           }
         }
