@@ -123,8 +123,12 @@ class TopoJsonChartBuilderService extends D3PlusChartBuilderService {
                     place.to = '/localidade/' + d[options.id_field] + '?';
                     if (this._tooltip) {
                             this._tooltipClass.data([]).render();
-                    }                
-                    additionalOptions.context['searchAnalysisUnit'](place);
+                    }
+                    try {         
+                        additionalOptions.context['searchAnalysisUnit'](place);
+                    } catch (err) {
+                        additionalOptions.context['sendError'](err);
+                    }
                 }
                 clickedPlace = d[options.id_field];
                 });     

@@ -73,15 +73,13 @@ import TooltipBuildingService from './service/singleton/tooltipBuildingService'
 Vue.prototype.$tooltipBuildingService = new TooltipBuildingService();
 import YamlFetcherService from './service/singleton/yamlFetcherService'
 Vue.prototype.$yamlFetcherService = new YamlFetcherService();
+import NavigationManager from './service/singleton/navigationManager'
+Vue.prototype.$navigationManager = new NavigationManager();
 
 // import ChartBuilderService from './service/chart/chartBuilderService'
 // Vue.prototype.$chartBuilderService = new ChartBuilderService();
 
 // 2.2. Global Mixins
-import GeoIpClient from '../mixins/service/geoIpClient.js'
-Vue.use(GeoIpClient)
-import NavigationManager from '../mixins/service/navigationManager.js'
-Vue.use(NavigationManager)
 import SnackbarManager from '../mixins/service/snackbarManager.js'
 Vue.use(SnackbarManager)
 import ViewConfReader from '../mixins/service/viewConfReader.js'
@@ -111,7 +109,7 @@ export function createApp (ssrContext, secrets) {
 
   // create the app instance.
   // here we inject the router, store and ssr context to all child components,
-  // making them available everywhere as `this.$router` and `this.$store`.
+  // making them available everywhere as `this.$r` and `this.$store`.
   const app = new Vue({
     router,
     store,

@@ -1,4 +1,6 @@
 <script>
+  import GeoIpClient from '../assets/service/singleton/geoIpClient'
+  
   export default {
     data () {
       return {
@@ -68,7 +70,7 @@
           // this.sendError("Falha ao determinar a localidade. (Código 2)");
         } else {
           // this.infoGeoIp = info;
-          this.$analysisUnitModel.getIdLocalidade(this, info.state, info.city)
+          this.$analysisUnitModel.getIdLocalidade(info.state, info.city)
             .then(
               (result) => {
                 if (result != null) {
@@ -91,7 +93,7 @@
         if (this.idObservatorio && this.idObservatorio == 'td' && currAU && currAU.toString().length != 7) {
           this.$emit('showLocationDialog');
         } else if (!currAU) { // Se não houver cookie, invoca o cliente geo_ip
-          this.getClientGeo(this.getClientGeoCallback);
+          GeoIpClient.getClientGeo(this.getClientGeoCallback);
         } else {
           this.currentAnalysisUnit = currAU;
         }

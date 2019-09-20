@@ -475,7 +475,7 @@
           if (this.$route.query.dimensao) {
             url += '?dimensao=' + this.$route.query.dimensao;
           }
-          this.pushRoute(url);
+          this.$navigationManager.constructor.pushRoute(this.$router, url);
       }
     }
   }

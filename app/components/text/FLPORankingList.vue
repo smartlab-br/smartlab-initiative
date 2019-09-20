@@ -1,5 +1,5 @@
 <template>
-  <v-flex :class="cls">
+  <v-flex :class="cls ? cls : 'xs12'">
     <v-layout column wrap ml-2 mb-2>
       <v-flex x12 px-0 class="display-1-obs ranking-list-title pb-2"> {{ title}} </v-flex>
       <v-flex xs12 class="ranking-list pa-0" v-for="(item, itemIndx) in ranking" :key="itemIndx">      
@@ -34,14 +34,24 @@
           title: null
       }
     },
-    props: ['id', 'structure', 'customParams', 'customFunctions'],
+    props: ['id', 'structure', 'customParams', 'customFunctions', 'reactiveFilter', 'customFilters'],
     created () {
       if (this.structure.cls) this.cls = this.structure.cls;
       if (this.structure.title) this.title = this.structure.title;
+
       this.fillDataStructure(
         this.structure, this.customParams,
         this.customFunctions, this.fillRankingList
       );
+    },
+    watch: {
+      reactiveFilter: function(newVal, oldVal) {
+        if (newVal != oldVal) {
+          if (this.structure.reactive){
+            this.updateReactiveDataStructure(this.customFilters.filterUrl);
+          } 
+        }
+      },
     },
     methods: {
       fillRankingList(base_object_list, rules, preloaded, addedParams = null, metadata = null) {
@@ -61,6 +71,20 @@
           }
         }
         this.ranking = ranking;
+      },
+      updateReactiveDataStructure(filterUrl){
+        let structReactive = Object.assign({},this.structure);
+        structReactive.api = Object.assign({},this.structure.api);
+
+        if (structReactive.api && structReactive.api.fixed){
+          structReactive.api.fixed += filterUrl
+        } else if (structReactive.api && structReactive.api.template && !structReactive.api.template.toLowerCase().includes('limit') ){
+          structReactive.api.template += filterUrl
+        }
+        this.fillDataStructure(
+          structReactive, this.customParams,
+          this.customFunctions, this.fillRankingList
+        );
       }
     }
   }
