@@ -580,7 +580,7 @@
           } else {
             url = this.$route.fullPath.replace('/localidade/','/localidadecompare/') + '&compare=' + newVal.id;
           }
-          this.pushRoute(url);
+          this.$navigationManager.constructor.pushRoute(this.$router, url);
         }
       },
       localidade: function(){
