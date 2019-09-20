@@ -117,21 +117,15 @@ class TopoJsonChartBuilderService extends D3PlusChartBuilderService {
         if (options.clickable){
             viz = viz.on("click", function(d) {
                 if (clickedPlace == d[options.id_field] || !hasTouch()) {
-                    // TODO Work on making it generic
-                    let place = {};
-                    place.id = String(d[options.id_field]);
-                    place.to = '/localidade/' + d[options.id_field] + '?';
-                    if (this._tooltip) {
-                            this._tooltipClass.data([]).render();
-                    }
-                    try {         
-                        additionalOptions.context['searchAnalysisUnit'](place);
-                    } catch (err) {
-                        additionalOptions.context['sendError'](err);
+                    if (this._tooltip) this._tooltipClass.data([]).render();
+                    if (additionalOptions.navigate) {
+                        let args = additionalOptions.navigate.openingArgs ? additionalOptions.navigate.openingArgs : [];
+                        args.push(String(d[options.id_field]));
+                        if (additionalOptions.navigate.fnNav) additionalOptions.navigate.fnNav.apply(additionalOptions.context, args);
                     }
                 }
                 clickedPlace = d[options.id_field];
-                });     
+            });     
         }  
         return grafico;
     }

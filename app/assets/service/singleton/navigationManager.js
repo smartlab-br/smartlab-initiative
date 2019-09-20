@@ -5,18 +5,17 @@ class NavigationManager {
   constructor (){ }
 
   static searchAnalysisUnit(router, searchItem, idObservatorio = null) {
-    let observatories = new ObservatoriesModel();
     let route = router.currentRoute;
 
     if (searchItem === null || searchItem === undefined) {
       throw "Nenhum item selecionado";
     }
 
-    let obsAtual = observatories.identifyObservatory(route.path.split('/')[1]);
+    let obsAtual = ObservatoriesModel.identifyObservatory(route.path.split('/')[1]);
     
     let url = '';
     if (idObservatorio != null) {
-      url = "/" + observatories.identifyObservatoryById(idObservatorio) + searchItem.to;  
+      url = "/" + ObservatoriesModel.identifyObservatoryById(idObservatorio) + searchItem.to;  
       if(obsAtual && idObservatorio == obsAtual){
         if (route.query && route.query.dimensao) {
           url = url + '&dimensao=' + route.query.dimensao;
@@ -27,7 +26,7 @@ class NavigationManager {
         throw "A análise da localidade escolhida ("+ searchItem.detail +") não está disponível para esse observatório.";
       }
 
-      url = "/" + observatories.identifyObservatoryById(obsAtual) + searchItem.to;  
+      url = "/" + ObservatoriesModel.identifyObservatoryById(obsAtual) + searchItem.to;  
 
       if (route.query && route.query.dimensao) {
         url = url + '&dimensao=' + route.query.dimensao;
