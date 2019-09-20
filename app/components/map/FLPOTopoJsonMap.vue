@@ -142,7 +142,9 @@
             .detectResize(true);
             
 
-        let searchFunction = this.searchAnalysisUnit;
+        let searchFunction = this.$navigationManager.constructor.searchAnalysisUnit;
+        let router = this.$router;
+        let sendError = this.sendError;
         let clickedPlace = "";
         let hasTouch = this.hasTouch;
         if (options.clickable){
@@ -153,8 +155,13 @@
                   place.to = '/localidade/' + d[options.id_field] + '?';
                   if (this._tooltip) {
                           this._tooltipClass.data([]).render();
-                  }                
-                  searchFunction(place);
+                  }  
+                  try {
+                    searchFunction(router, place);
+                  } 
+                  catch (err) {
+                    sendError (err);
+                  }             
                 }
                 clickedPlace = d[options.id_field];
               });     

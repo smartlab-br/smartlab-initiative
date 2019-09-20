@@ -4,7 +4,10 @@ const SnackbarManager = {
       methods: {
         sendError(message) {
           this.$emit('showSnackbar', { color : 'error', text: message });
-        }  
+        },
+        openBugDialog(cardTitle){
+          this.$emit('showBugDialog', cardTitle);
+        }
       }
     })
   }

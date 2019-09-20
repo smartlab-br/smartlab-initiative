@@ -2,8 +2,8 @@
   <v-layout class="linked-view-card elevation-5" 
     v-ripple
     :ripple = "{ class: rippleColor }"
-    v-on:click="blocked ? '' : pushRoute(to, external)"
-    v-on:keyup.enter="blocked ? '' : pushRoute(to, external)">
+    v-on:click="blocked ? '' : $navigationManager.constructor.pushRoute($router, to, external)"
+    v-on:keyup.enter="blocked ? '' : $navigationManager.constructor.pushRoute($router, to, external)">
     <v-img 
       :tabindex = "indexTab"
       :src="cmpMedia"
@@ -16,7 +16,7 @@
           <v-layout align-center>
             <v-layout column pa-0>
               <v-flex
-                v-on:click="blocked ? '' : pushRoute(to, external)"
+                v-on:click="blocked ? '' : $navigationManager.constructor.pushRoute($router, to, external)"
                 :class = "detail ? 'linked-view-icon-container' : 'text-xs-center'">
                 <v-btn v-if="icon || appIcon"
                   :color="btnColor ? btnColor : 'transparent'"
@@ -42,7 +42,7 @@
               <v-layout v-if="detail"
                 column pt-1 pb-5 class="linked-view-detail-container">
                 <v-flex caption px-3 pb-4 pt-2 mt-4 text-xs-center 
-                  v-on:click="blocked ? '' : pushRoute(to, external)"
+                  v-on:click="blocked ? '' : $navigationManager.constructor.pushRoute($router, to, external)"
                   class="body-1">
                   {{ detail.fixed }}
                 </v-flex>

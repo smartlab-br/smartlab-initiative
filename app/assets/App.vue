@@ -94,19 +94,19 @@
           <v-flex pr-2 pt-2 hidden-xs-only>
             <img 
               tabindex = "20"
-              @keyup.enter = "pushRoute('/', false)"
-              v-on:click="pushRoute('/', false)" src="/static/icons/smartlab_labeled-30.png" class="cursor-pointer"
+              @keyup.enter = "$navigationManager.constructor.pushRoute($router, '/', false)"
+              v-on:click="$navigationManager.constructor.pushRoute($router, '/', false)" src="/static/icons/smartlab_labeled-30.png" class="cursor-pointer"
               alt="Smartlab"></img> 
           </v-flex>
           <v-flex pr-2 pt-2 hidden-sm-and-up>
             <img 
               tabindex = "20"
-              v-on:click="pushRoute('/', false)" src="/static/icons/smartlab-icon-30x30.png" class="cursor-pointer"
+              v-on:click="$navigationManager.constructor.pushRoute($router, '/', false)" src="/static/icons/smartlab-icon-30x30.png" class="cursor-pointer"
               alt="Smartlab"></img> 
           </v-flex>
           <v-divider v-show="computedTitle" vertical class="mx-2" style="background-color:rgba(255,255,255,0.7)"></v-divider>
           <v-flex text-xs-right class="line-height-1">
-            <v-flex v-on:click="pushRoute(($route && ($route.path.indexOf('localidade') != -1)) ? '../' : ($route && ($route.path.indexOf('estudo') != -1 || $route.path.indexOf('smartmap') != -1)) ? './' : '', false);" class="cursor-pointer" pa-0>{{ computedTitle }}</v-flex>
+            <v-flex v-on:click="$navigationManager.constructor.pushRoute($router, ($route && ($route.path.indexOf('localidade') != -1)) ? '../' : ($route && ($route.path.indexOf('estudo') != -1 || $route.path.indexOf('smartmap') != -1)) ? './' : '', false);" class="cursor-pointer" pa-0>{{ computedTitle }}</v-flex>
             <v-flex pa-0 caption>{{ computedSubtitle }}</v-flex>
           </v-flex>
           <v-divider v-show="computedPlaceTitle" vertical class="mx-2" style="background-color:rgba(255,255,255,0.7)"></v-divider>
@@ -165,18 +165,17 @@
                 <v-icon>{{ data.item.icon }}</v-icon>
               </v-list-tile-avatar>
               -->
-              <v-list-tile-content
-                v-on:click="searchAnalysisUnit(data.item)">
-                <v-list-tile-title v-html="data.item.label + (data.item.scope == 'uf'? ' (UF)': '')"></v-list-tile-title>
+              <v-list-tile-content>
+                <v-list-tile-title v-on:click="changeAnalysisUnit($router, data.item)" v-html="data.item.label + (data.item.scope == 'uf'? ' (UF)': '')"></v-list-tile-title>
                 <!--<v-list-tile-sub-title v-html="data.item.detail"></v-list-tile-sub-title>-->
               </v-list-tile-content>
-              <v-list-tile-action style="min-width: 120px">
+              <v-list-tile-action style="min-width: 120px" >
                 <v-layout row wrap>
                   <v-layout px-1 v-for="(search_item, indxSearch) in $observatories.getObservatoriesSearchOptions()"
                   :key="'search_item_obs_' + indxSearch">
                     <v-layout column wrap align-center
                       v-if="data.item.exclude_from == null || data.item.exclude_from == undefined || !data.item.exclude_from.includes(search_item.id)"
-                      v-on:click="searchAnalysisUnit(data.item, search_item.id)">
+                      v-on:click="changeAnalysisUnit($router, data.item, search_item.id)">
                       <v-tooltip bottom>
                         <v-icon v-if="search_item.icon"
                           small :class="search_item.color"
@@ -190,10 +189,6 @@
                         </app-icon>
                         <v-layout v-html="search_item.title"> 
                         </v-layout>
-                    <!--  <v-layout :class="'micro-caption ' + search_item.textColor"
-                        pt-1 text-xs-center
-                        v-html="search_item.title"> 
-                      </v-layout> -->
                       </v-tooltip>
                     </v-layout>
                   </v-layout>
@@ -300,7 +295,7 @@
         <v-flex xs2 sm1 md1 lg2 xl2 :class="{'pt-5 pb-3': $vuetify.breakpoint.smAndDown }" >
              <v-layout row wrap class="text-xs-left">
                <v-flex xs12>
-                <a class="white--text" v-on:click="pushRoute('/saibamais/smartlab', false)">
+                <a class="white--text" v-on:click="$navigationManager.constructor.pushRoute($router, '/saibamais/smartlab', false)">
                   <img  src="/static/smartlab/smartlab-small.svg" alt="Smartlab" height="25px" style="margin-bottom: -5px;"/><span class="ml-3">Sobre</span>
                 </a>
                </v-flex>
@@ -311,13 +306,13 @@
             max-height="80%"
             min-height="50%" -->
           <img 
-            v-on:click="pushRoute('https://mpt.mp.br', true)" 
+            v-on:click="$navigationManager.constructor.pushRoute($router, 'https://mpt.mp.br', true)" 
             src="/static/smartlab/mpt.svg"
             class="cursor-pointer mr-2" alt="Ministério Público do Trabalho"
             height="50px"
           />
           <img 
-            v-on:click="pushRoute('https://ilo.org', true)" 
+            v-on:click="$navigationManager.constructor.pushRoute($router, 'https://ilo.org', true)" 
             src="/static/smartlab/oit_100anos.png"
             class="cursor-pointer mr-2 ml-2" alt="Organização Internacional do Trabalho"
             height="50px"
@@ -325,7 +320,7 @@
           
           <!-- <hr class="mx-2 v-divider v-divider--vertical theme--dark" style="background-color: rgba(255, 255, 255, 0.7);"> -->
           <img
-            v-on:click="pushRoute('http://cnmp.mp.br', true)" 
+            v-on:click="$navigationManager.constructor.pushRoute($router, 'http://cnmp.mp.br', true)" 
             src="/static/smartlab/cnmp.svg"
             class="cursor-pointer mb-1 ml-2" alt="Conselho Nacional do Ministério Público"
             max-height="80%"
@@ -333,27 +328,27 @@
             style="border-left: 1px solid white; padding-left: 10px;"
           />
           <img v-if="this.$observatories.identifyObservatory(this.$route.path.split('/')[1]) == 'ti'"
-            v-on:click="pushRoute('https://fnpeti.org.br', true)" 
+            v-on:click="$navigationManager.constructor.pushRoute($router, 'https://fnpeti.org.br', true)" 
             src="/static/smartlab/fnpeti.svg"
             class="cursor-pointer mb-1 ml-0" alt="Fórum Nacional de Prevenção e Erradicação do Trabalho Infantil"
             max-height="80%"
             min-height="50%"
           />
           <img v-if="this.$observatories.identifyObservatory(this.$route.path.split('/')[1]) == 'ti' || this.$observatories.identifyObservatory(this.$route.path.split('/')[1]) == 'td'"
-            v-on:click="pushRoute('http:///ibge.gov.br', true)" 
+            v-on:click="$navigationManager.constructor.pushRoute($router, 'http:///ibge.gov.br', true)" 
             src="/static/smartlab/ibge.png"
             class="cursor-pointer mb-1 ml-0" alt="Instituto Brasileiro de Geografia e Estatística"
             height="50px"
           />
           <img v-if="this.$observatories.identifyObservatory(this.$route.path.split('/')[1]) == 'des'"
-            v-on:click="pushRoute('https://www.pactoglobal.org.br', true)" 
+            v-on:click="$navigationManager.constructor.pushRoute($router, 'https://www.pactoglobal.org.br', true)" 
             src="/static/smartlab/pacto.svg"
             class="cursor-pointer mb-1 ml-0" alt="Pacto Global - Rede Brasil"
             max-height="80%"
             min-height="50%"
           />
           <img v-if="this.$observatories.identifyObservatory(this.$route.path.split('/')[1]) == 'des'"
-            v-on:click="pushRoute('http://www.onumulheres.org.br/', true)" 
+            v-on:click="$navigationManager.constructor.pushRoute($router, 'http://www.onumulheres.org.br/', true)" 
             src="/static/smartlab/onumulheres.svg"
             class="cursor-pointer ml-2" alt="ONU Mulheres"
             height="20px" style="margin-bottom: 12px;"
@@ -362,17 +357,17 @@
         </v-flex>
         <v-flex xs6 sm6 md2 lg3 xl3 class="text-xs-left text-sm-left text-md-center"
             :class="{'pt-5 pb-3': $vuetify.breakpoint.smAndDown }" >
-              <a class="white--text mr-3" v-on:click="pushRoute('https://github.com/smartlab-br', true)"><v-icon color="white">fab fa-github</v-icon></a>
-              <a class="white--text mr-3" v-on:click="pushRoute('https://hub.docker.com/u/smartlab/', true)"><v-icon color="white">fab fa-docker</v-icon></a>
-              <a class="white--text mr-3" v-on:click="pushRoute('', true)"><v-icon color="white">fab fa-facebook</v-icon></a>
-              <a class="white--text" v-on:click="pushRoute('', true)"><v-icon color="white">fab fa-twitter</v-icon></a>
+              <a class="white--text mr-3" v-on:click="$navigationManager.constructor.pushRoute($router, 'https://github.com/smartlab-br', true)"><v-icon color="white">fab fa-github</v-icon></a>
+              <a class="white--text mr-3" v-on:click="$navigationManager.constructor.pushRoute($router, 'https://hub.docker.com/u/smartlab/', true)"><v-icon color="white">fab fa-docker</v-icon></a>
+              <a class="white--text mr-3" v-on:click="$navigationManager.constructor.pushRoute($router, '', true)"><v-icon color="white">fab fa-facebook</v-icon></a>
+              <a class="white--text" v-on:click="$navigationManager.constructor.pushRoute($router, '', true)"><v-icon color="white">fab fa-twitter</v-icon></a>
         </v-flex>
         <v-flex xs6 sm6 md2 lg2 xl3 class="text-xs-right text-sm-right text-md-right"
             :class="{'pt-5 pb-3': $vuetify.breakpoint.smAndDown }" >
               <v-icon class="mr-2" color="white">fab fa-lic</v-icon><span class="hidden-xs-only hidden-md-only">Licenças: </span> 
-              <a class="white--text" v-on:click="pushRoute('https://creativecommons.org/licences/by-nc-sa/4.0/', true)"><u>CC BY 4.0</u></a>
+              <a class="white--text" v-on:click="$navigationManager.constructor.pushRoute($router, 'https://creativecommons.org/licences/by-nc-sa/4.0/', true)"><u>CC BY 4.0</u></a>
                | 
-              <a class="white--text" v-on:click="pushRoute('https://opensource.org/licenses/MIT', true)"><u>MIT</u></a>
+              <a class="white--text" v-on:click="$navigationManager.constructor.pushRoute($router, 'https://opensource.org/licenses/MIT', true)"><u>MIT</u></a>
         </v-flex>
       </v-layout>
     <!--</v-container>-->
@@ -743,16 +738,16 @@
       }
 
       let findLoc = this.$analysisUnitModel.findCurrentPlace();
-      if (findLoc instanceof Promise || findLoc.then) {
+      if (findLoc && (findLoc instanceof Promise || findLoc.then)) {
         findLoc.then(response => {
           // console.log(response);
           this.changeMiddleToolbar(response);
           if (response.id_localidade && response.id_localidade.length > 5) this.localidade = response;
         })
         .catch(error => { this.sendError(error); });
-      } else {
+      } else if (findLoc){
         this.changeMiddleToolbar(findLoc);
-        if (response.id_localidade && response.id_localidade.length > 5) this.localidade = findLoc;
+        if (findLoc.id_localidade && findLoc.id_localidade.length > 5) this.localidade = findLoc;
       }
     
       this.langs = this.$translationModel.findAllLocales();
@@ -788,7 +783,7 @@
           }
 
           if(this.$route.path.indexOf("localidade") != -1){ //página de localidade
-            this.searchAnalysisUnit(newVal);
+            this.changeAnalysisUnit(this.$router, newVal);
           } else if (this.$refs.currentRoute.setIdLocalidade) { //página de observatorio
             this.$refs.currentRoute.setIdLocalidade(newVal.id);
           }
@@ -798,7 +793,7 @@
     methods: {
       itemClick(item) {
         if (!item.blocked){
-          this.pushRoute(item.to, item.external);
+          this.$navigationManager.constructor.pushRoute(this.$router, item.to, item.external);
         }
       },
       customFilter (item, queryText, itemText) {
@@ -943,7 +938,16 @@
             snackAlert({ color : 'error', text: "Falha no envio do formulário. Tente novamente mais tarde." });
           });
         }
+      },
+      changeAnalysisUnit(router, searchItem, idObservatorio = null) {
+        try {
+          this.$navigationManager.constructor.searchAnalysisUnit(router, searchItem, idObservatorio);
+        }
+        catch(err){
+          this.snackAlert({ color : 'error', text: err });
+        }
       }
+      
     }
   }
 </script>
