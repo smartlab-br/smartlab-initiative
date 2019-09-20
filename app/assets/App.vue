@@ -170,13 +170,38 @@
                 <!--<v-list-tile-sub-title v-html="data.item.detail"></v-list-tile-sub-title>-->
               </v-list-tile-content>
               <v-list-tile-action style="min-width: 120px" >
-                <v-layout row wrap>
-                  <v-layout px-1 v-for="(search_item, indxSearch) in $observatories.getObservatoriesSearchOptions()"
+                <v-layout row>
+                  <v-layout v-for="(search_item, indxSearch) in $observatories.getObservatoriesSearchOptions()"
                   :key="'search_item_obs_' + indxSearch">
                     <v-layout column wrap align-center
                       v-if="data.item.exclude_from == null || data.item.exclude_from == undefined || !data.item.exclude_from.includes(search_item.id)"
-                      v-on:click="changeAnalysisUnit($router, data.item, search_item.id)">
+                      >
                       <v-tooltip bottom>
+                        <template slot="activator">
+                          <v-btn v-if="search_item.icon || search_item.app_icon"
+                            color="transparent"
+                            class="mx-0"
+                            fab
+                            flat
+                            small
+                            v-on:click="changeAnalysisUnit($router, data.item, search_item.id)"
+                            >
+                              <v-icon v-if="search_item.icon"
+                                :color="search_item.color ? search_item.color : ''"
+                                >
+                                {{search_item.icon}}
+                              </v-icon>
+                              <app-icon v-else-if="search_item.app_icon"
+                                :fill="search_item.color ? search_item.color : ''"
+                                :icon="search_item.app_icon"
+                                >
+                              </app-icon>
+                        </v-btn>
+                        </template>
+                        <v-layout v-html="search_item.title"> 
+                        </v-layout>
+                      </v-tooltip>
+                     <!-- <v-tooltip bottom>
                         <v-icon v-if="search_item.icon"
                           small :class="search_item.color"
                           v-html="search_item.icon"
@@ -189,7 +214,7 @@
                         </app-icon>
                         <v-layout v-html="search_item.title"> 
                         </v-layout>
-                      </v-tooltip>
+                      </v-tooltip> -->
                     </v-layout>
                   </v-layout>
                 </v-layout>
@@ -520,6 +545,7 @@
     data () {
       return {
         // clipped: true,
+        on: {},
         toolbar: null,
         middleToolbar: null,
         middleToolbarSubtitle: null,
@@ -1295,4 +1321,11 @@
     background-color:  var(--v-accent-base) !important;
     border-color:  var(--v-accent-base) !important;    
   }
+  /*
+  .v-btn--floating.v-btn--small {
+      height: 25px;
+      width: 25px;
+  }  
+  -->
+  */
 </style>

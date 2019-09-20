@@ -32,6 +32,15 @@ class NavigationManager {
       if (route.query && route.query.dimensao) {
         url = url + '&dimensao=' + route.query.dimensao;
       }
+    } else {
+      for (let obs of observatories.observatoriesSearchOptions){
+        if(searchItem.exclude_from && searchItem.exclude_from.includes(obs.id)){
+          continue;
+        } else {
+          url = obs.to + searchItem.to;
+          break;
+        }
+      }
     }
     
     NavigationManager.pushRoute(router, url);
