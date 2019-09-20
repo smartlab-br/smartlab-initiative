@@ -240,6 +240,8 @@
         for (let sectionIndex in this.structure) {
           if (this.structure[sectionIndex].type == 'chart') {
             let eachChart = this.structure[sectionIndex];
+            let fnNavigation = this.$navigationManager.constructor.searchAnalysisUnit;
+            let fnSendError = this.sendError;
             if (eachChart && eachChart.id == id && eachChart.options &&
               ['MAP_TOPOJSON', 'LINE', 'STACKED', 'BAR', 'TREEMAP', 'SCATTERPLOT', 'BOXPLOT', 'CALENDAR', 'SANKEYD3'].includes(eachChart.chartType)) {
 
@@ -251,7 +253,17 @@
                 topologyUf: this.topologyUf,
                 headers: eachChart.headers,
                 route: this.$route,
-                context: this
+                context: this,
+                navigate: {
+                  fnNav: (router, placeId) => {
+                    try {         
+                        fnNavigation(router, { id: placeId, to: '/localidade/' + placeId + '?' });
+                    } catch (err) {
+                        fnSendError(err);
+                    }
+                  },
+                  openingArgs: [this.$router]
+                }
               }
               if (eachChart.type == 'SANKEYD3') additionalOptions.metadata = metadata;
 

@@ -194,6 +194,8 @@
       },
 
       triggerChartUpdates() {
+        let fnNavigation = this.$navigationManager.constructor.searchAnalysisUnit;
+        let fnSendError = this.sendError;
         if (this.structure && this.structure.chart && this.structure.chart.options &&
             ['MAP_TOPOJSON', 'LINE', 'STACKED', 'BAR', 'TREEMAP', 'SCATTERPLOT', 'BOXPLOT', 'CALENDAR', 'SANKEYD3'].includes(this.structure.chart.type)) {
           let additionalOptions = {
@@ -204,7 +206,17 @@
             topologyUf: this.topologyUf,
             headers: this.structure.chart.headers,
             route: this.$route,
-            context: this
+            context: this,
+            navigate: {
+              fnNav: (router, placeId) => {
+                try {         
+                    fnNavigation(router, { id: placeId, to: '/localidade/' + placeId + '?' });
+                } catch (err) {
+                    fnSendError(err);
+                }
+              },
+              openingArgs: [this.$router]
+            }
           }
           if (this.structure.chart.type == 'SANKEYD3') additionalOptions.metadata = this.metadata;
 

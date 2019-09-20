@@ -568,7 +568,8 @@
         for (let eachChart of this.structure.charts) {
           if (eachChart && eachChart.id == id && eachChart.options &&
             ['MAP_TOPOJSON', 'LINE', 'STACKED', 'BAR', 'TREEMAP', 'SCATTERPLOT', 'BOXPLOT', 'CALENDAR', 'SANKEYD3'].includes(eachChart.type)) {
-
+            let fnNavigation = this.$navigationManager.constructor.searchAnalysisUnit;
+            let fnSendError = this.sendError;
             let additionalOptions = { 
               idAU: this.selectedPlace ? this.selectedPlace : this.customParams.idLocalidade,
               theme: this.$vuetify.theme,
@@ -577,7 +578,17 @@
               topologyUf: this.topologyUf,
               headers: eachChart.headers,
               route: this.$route,
-              context: this
+              context: this,
+              navigate: {
+                fnNav: (router, placeId) => {
+                  try {         
+                      fnNavigation(router, { id: placeId, to: '/localidade/' + placeId + '?' });
+                  } catch (err) {
+                      fnSendError(err);
+                  }
+                },
+                openingArgs: [this.$router]
+              }
             }
             if (eachChart.type == 'SANKEYD3') additionalOptions.metadata = metadata;
 
