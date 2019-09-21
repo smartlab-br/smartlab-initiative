@@ -259,8 +259,6 @@
 
   import FLPOBaseStoryCard from '../../FLPOBaseStoryCard.vue';
 
-  import ChartBuilderService from '../../../assets/service/chart/chartBuilderService'
-
   export default {
     extends: FLPOBaseStoryCard,
     data () {
@@ -420,39 +418,14 @@
       },
 
       triggerChartUpdates() {
-        let fnNavigation = this.$navigationManager.constructor.searchAnalysisUnit;
-        let fnSendError = this.sendError;
-        if (this.structure && this.structure.chart_options &&
-            ['MAP_TOPOJSON', 'LINE', 'STACKED', 'BAR', 'TREEMAP', 'SCATTERPLOT', 'BOXPLOT', 'CALENDAR', 'SANKEYD3'].includes(this.structure.chart_type)) {
-          let additionalOptions = { idAU: this.selectedPlace ? this.selectedPlace : this.customParams.idLocalidade,
-            theme: this.$vuetify.theme,
-            sectionIndex: this.sectionIndex,
-            topology: this.topology,
-            topologyUf: this.topologyUf,
-            headers: this.structure.headers,
-            route: this.$route,
-            context: this,
-            navigate: {
-              fnNav: (router, placeId) => {
-                try {         
-                    fnNavigation(router, { id: placeId, to: '/localidade/' + placeId + '?' });
-                } catch (err) {
-                    fnSendError(err);
-                }
-              },
-              openingArgs: [this.$router]
-            }
-          }
-          if (this.structure.chart_type == 'SANKEYD3') additionalOptions.metadata = this.metadata;
-
-          ChartBuilderService.generateChart(
-            this.structure.chart_type, 
-            this.chartId,
-            this.dataset,
-            this.structure.chart_options,
-            additionalOptions
-          );
-        }
+        this.chartGen(
+          this.chartId,
+          this.structure.chart_type,
+          this.structure,
+          this.structure.chart_options,
+          this.dataset,
+          this.metadata,
+          this.sectionIndex);
         this.assessChartFooter();
       },
 

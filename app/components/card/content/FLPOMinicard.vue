@@ -6,7 +6,7 @@
         <v-flex pl-1 v-if="structure.desc_position == 'right'" class="title-obs-desc minicard-description" v-html = "description != null ? description.toUpperCase() : ''"></v-flex>
       </v-layout>
       <div v-else class="minicard-value"  v-html = "value"></div>
-      <div class="minicard-chart" v-if="dataset !== null && dataset.length > 1 && structure && structure.chart && structure.chart.options !== null">
+      <div class="minicard-chart" v-if="dataset !== null && dataset.length > 1 && structure && structure.chart">
         <!-- <flpo-line-chart
           v-if="structure.chart.type == 'LINE'"
           ref = "chart"
@@ -32,8 +32,6 @@
 <script>
   import FLPOBaseLayout from '../../FLPOBaseLayout.vue';
   import axios from "axios";
-
-  import ChartBuilderService from '../../../assets/service/chart/chartBuilderService'
 
   export default {
     extends: FLPOBaseLayout,
@@ -194,39 +192,15 @@
       },
 
       triggerChartUpdates() {
-        let fnNavigation = this.$navigationManager.constructor.searchAnalysisUnit;
-        let fnSendError = this.sendError;
-        if (this.structure && this.structure.chart && this.structure.chart.options &&
-            ['MAP_TOPOJSON', 'LINE', 'STACKED', 'BAR', 'TREEMAP', 'SCATTERPLOT', 'BOXPLOT', 'CALENDAR', 'SANKEYD3'].includes(this.structure.chart.type)) {
-          let additionalOptions = {
-            idAU: this.selectedPlace ? this.selectedPlace : this.customParams.idLocalidade,
-            theme: this.$vuetify.theme,
-            sectionIndex: this.sectionIndex,
-            topology: this.topology,
-            topologyUf: this.topologyUf,
-            headers: this.structure.chart.headers,
-            route: this.$route,
-            context: this,
-            navigate: {
-              fnNav: (router, placeId) => {
-                try {         
-                    fnNavigation(router, { id: placeId, to: '/localidade/' + placeId + '?' });
-                } catch (err) {
-                    fnSendError(err);
-                }
-              },
-              openingArgs: [this.$router]
-            }
-          }
-          if (this.structure.chart.type == 'SANKEYD3') additionalOptions.metadata = this.metadata;
-
-          ChartBuilderService.generateChart(
-            this.structure.chart.type, 
+        if (this.structure && this.structure.chart && this.structure.chart.options && this.structure.chart.type) {
+          this.chartGen(
             this.chartId,
-            this.dataset,
+            this.structure.chart.type,
+            this.structure.chart,
             this.structure.chart.options,
-            additionalOptions
-          );
+            this.dataset,
+            this.metadata,
+            this.sectionIndex);
         }
       },
 

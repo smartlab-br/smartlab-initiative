@@ -240,40 +240,15 @@
         for (let sectionIndex in this.structure) {
           if (this.structure[sectionIndex].type == 'chart') {
             let eachChart = this.structure[sectionIndex];
-            let fnNavigation = this.$navigationManager.constructor.searchAnalysisUnit;
-            let fnSendError = this.sendError;
-            if (eachChart && eachChart.id == id && eachChart.options &&
-              ['MAP_TOPOJSON', 'LINE', 'STACKED', 'BAR', 'TREEMAP', 'SCATTERPLOT', 'BOXPLOT', 'CALENDAR', 'SANKEYD3'].includes(eachChart.chartType)) {
-
-              let additionalOptions = { 
-                idAU: this.selectedPlace ? this.selectedPlace : this.customParams.idLocalidade,
-                theme: this.$vuetify.theme,
-                sectionIndex: sectionIndex,
-                topology: this.topology,
-                topologyUf: this.topologyUf,
-                headers: eachChart.headers,
-                route: this.$route,
-                context: this,
-                navigate: {
-                  fnNav: (router, placeId) => {
-                    try {         
-                        fnNavigation(router, { id: placeId, to: '/localidade/' + placeId + '?' });
-                    } catch (err) {
-                        fnSendError(err);
-                    }
-                  },
-                  openingArgs: [this.$router]
-                }
-              }
-              if (eachChart.type == 'SANKEYD3') additionalOptions.metadata = metadata;
-
-              ChartBuilderService.generateChart(
+            if (eachChart && eachChart.id == id) {
+              this.chartGen(
+                this.chartId[id],
                 eachChart.chartType,
-                eachChart.id, // ??
-                dataset,
+                eachChart,
                 eachChart.options,
-                additionalOptions
-              );
+                dataset,
+                metadata,
+                sectionIndex);
             }
           }
         }

@@ -275,8 +275,6 @@
 
   import FLPOBaseStoryCard from '../../FLPOBaseStoryCard.vue';
 
-  import ChartBuilderService from '../../../assets/service/chart/chartBuilderService'
-
   export default {
     extends: FLPOBaseStoryCard,
     data () {
@@ -566,39 +564,15 @@
 
       triggerChartUpdates(id, dataset, metadata) {
         for (let eachChart of this.structure.charts) {
-          if (eachChart && eachChart.id == id && eachChart.options &&
-            ['MAP_TOPOJSON', 'LINE', 'STACKED', 'BAR', 'TREEMAP', 'SCATTERPLOT', 'BOXPLOT', 'CALENDAR', 'SANKEYD3'].includes(eachChart.type)) {
-            let fnNavigation = this.$navigationManager.constructor.searchAnalysisUnit;
-            let fnSendError = this.sendError;
-            let additionalOptions = { 
-              idAU: this.selectedPlace ? this.selectedPlace : this.customParams.idLocalidade,
-              theme: this.$vuetify.theme,
-              sectionIndex: this.sectionIndex,
-              topology: this.topology,
-              topologyUf: this.topologyUf,
-              headers: eachChart.headers,
-              route: this.$route,
-              context: this,
-              navigate: {
-                fnNav: (router, placeId) => {
-                  try {         
-                      fnNavigation(router, { id: placeId, to: '/localidade/' + placeId + '?' });
-                  } catch (err) {
-                      fnSendError(err);
-                  }
-                },
-                openingArgs: [this.$router]
-              }
-            }
-            if (eachChart.type == 'SANKEYD3') additionalOptions.metadata = metadata;
-
-            ChartBuilderService.generateChart(
-              eachChart.type, 
+          if (eachChart && eachChart.id == id) {
+            this.chartGen(
               this.chartId[id],
-              dataset,
+              eachChart.type,
+              eachChart,
               eachChart.options,
-              additionalOptions
-            );
+              dataset,
+              metadata,
+              this.sectionIndex);
           }
         }
       },
