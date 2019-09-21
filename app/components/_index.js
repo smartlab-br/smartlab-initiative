@@ -15,9 +15,6 @@ import FLPOSelectEmitter from './emitter/FLPOSelectEmitter'
 import FLPOSliderEmitter from './emitter/FLPOSliderEmitter'
 import FLPOSwitchGroupEmitter from './emitter/FLPOSwitchGroupEmitter'
 
-// Maps
-import FLPOLeafletMap from './map/FLPOLeafletMap'
-
 // Texts
 import FLPOCompositeText from './text/FLPOCompositeText'
 import FLPORankingText from './text/FLPORankingText'
@@ -44,7 +41,6 @@ export default {
   'font-awesome-icon': FontAwesomeIcon,
   
   'flpo-composite-text': FLPOCompositeText,
-  'flpo-leaflet-map': FLPOLeafletMap,
   'flpo-linked-view-card': FLPOLinkedViewCard,
   'flpo-sobre-layout': FLPOSobreLayout,
   'flpo-dot-nav': FLPODotNav,
