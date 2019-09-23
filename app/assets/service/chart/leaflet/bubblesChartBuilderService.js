@@ -51,60 +51,55 @@ class BubblesChartBuilderService extends LeafletChartBuilderService {
                 each_row[options.lat] != 0 && each_row[options.long] != 0) {
                 // Iterates over the layers
                 for (const [pos, ident] of options.indicadores.entries()) {
-                // Checks if the row is for the layer (moves to next if different)
-                if (ident != each_row[id_field]) continue;
+                    // Checks if the row is for the layer (moves to next if different)
+                    if (ident != each_row[id_field]) continue;
 
-                // Gets the value for each layer
-                let value = each_row[value_field];
-                
-                // Builds the circle
-                let eachCircle = new circleDataPoint(
-                  	[each_row[options.lat], each_row[options.long]],
-					{ rowData: each_row,
-						color: options.color != null ? 
-								options.color : 
-								( options.colorArray != null ? 
-									options.colorArray[pos] :
-									( each_row.color != null ? each_row.color : '#4A148C' )
-								),
-						weight: options.weight != null ? options.weight : (each_row.weight != null ? each_row.weight : 0),
-						fillColor: options.fillColor != null ?
-									options.fillColor : 
-									( options.colorArray != null ?
-										options.colorArray[pos] :
-										( each_row.fillColor != null ? each_row.fillColor : '#4A148C' )
-									),
-						fillOpacity: options.fillOpacity != null ? 
-										options.fillOpacity : 
-										( each_row.fillOpacity != null ? each_row.fillOpacity : 0.5 ),
-						radius: value != null ? value > 0 ? value * multiplier + this.radius.base : this.radius.base : 0
-					}
-                ).on("click", this.circleClick);
+                    // Gets the value for each layer
+                    let value = each_row[value_field];
+                    
+                    // Builds the circle
+                    let eachCircle = new circleDataPoint(
+                        [each_row[options.lat], each_row[options.long]],
+                        { rowData: each_row,
+                            color: options.color != null ? 
+                                    options.color : 
+                                    ( options.colorArray != null ? 
+                                        options.colorArray[pos] :
+                                        ( each_row.color != null ? each_row.color : '#4A148C' )
+                                    ),
+                            weight: options.weight != null ? options.weight : (each_row.weight != null ? each_row.weight : 0),
+                            fillColor: options.fillColor != null ?
+                                        options.fillColor : 
+                                        ( options.colorArray != null ?
+                                            options.colorArray[pos] :
+                                            ( each_row.fillColor != null ? each_row.fillColor : '#4A148C' )
+                                        ),
+                            fillOpacity: options.fillOpacity != null ? 
+                                            options.fillOpacity : 
+                                            ( each_row.fillOpacity != null ? each_row.fillOpacity : 0.5 ),
+                            radius: value != null ? value > 0 ? value * multiplier + this.radius.base : this.radius.base : 0
+                        }
+                    ).on("click", this.circleClick);
 
-                eachCircle.addTo(this.layers[ident]);
-              }
+                    eachCircle.addTo(this.layers[ident]);
+                }
             }
-          }
-          this.adjustVisibleLayers(additionalOptions);
-        
-        this.sendMapLoaded();
+        }
+
+        this.adjustVisibleLayers(options);
+        return map;
     }
 
-	// TODO how to get options into this function
-    circleClick(e) {
-        let tooltip_function = this.options.tooltip_function ? this[this.options.tooltip_function] : this.defaultLeafletTooltip;
-        let tooltip_context = this.options.tooltip_function ? this : this.$tooltipBuildingService;
-        tooltip_function.apply(tooltip_context, [e.target, this.$route, this.headers, this.options.removed_text_list, this.options]);
-    }
-
-    adjustVisibleLayers(map, additionalOptions) {
-        for (let indx in additionalOptions.enabled) {
-            if (additionalOptions.enabled[indx]) {
-              map.addLayer(this.layers[indx]);
-            } else {
-              map.removeLayer(this.layers[indx]);
+    adjustVisibleLayers(map, options) {
+        if (options && options.enabled) {
+            for (let indx in options.enabled) {
+                if (options.enabled[indx]) {
+                    map.addLayer(this.layers[indx]);
+                } else {
+                    map.removeLayer(this.layers[indx]);
+                }
+                this.visibleLayers[indx] = options.enabled[indx];
             }
-            this.visibleLayers[indx] = additionalOptions.enabled[indx];
         }
     }
       

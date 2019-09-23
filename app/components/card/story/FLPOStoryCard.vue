@@ -160,7 +160,7 @@
                       </flpo-topojson-map> -->
                       <v-layout fill-height
                         v-if="structure && structure.chart_options !== null &&
-                              ['MAP_TOPOJSON', 'LINE', 'STACKED', 'BAR', 'TREEMAP', 'SCATTERPLOT', 'BOXPLOT', 'CALENDAR', 'SANKEYD3'].includes(structure.chart_type)"
+                              ['MAP_TOPOJSON', 'LINE', 'STACKED', 'BAR', 'TREEMAP', 'SCATTERPLOT', 'BOXPLOT', 'CALENDAR', 'SANKEYD3', 'MAP_BUBBLES', 'MAP_HEAT', 'MAP_CLUSTER'].includes(structure.chart_type)"
                         ref = "chart"
                         :id="chartId">
                       </v-layout>

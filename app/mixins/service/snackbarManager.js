@@ -10,6 +10,7 @@ const SnackbarManager = {
         openBugDialog(cardTitle){
           this.$emit('showBugDialog', cardTitle);
         },
+        sendChartLoaded(){ this.$emit('chart-loaded'); },
         chartGen(id, chartType, structure, chartOptions, dataset, metadata, sectionIndex = 0) {
           let validCharts = ['MAP_TOPOJSON', 'LINE', 'STACKED', 'BAR', 'TREEMAP', 'SCATTERPLOT', 'BOXPLOT', 'CALENDAR', 'SANKEYD3', 'MAP_BUBBLES', 'MAP_HEAT', 'MAP_CLUSTER'];
           if (structure && chartOptions && validCharts.includes(chartType)) {
@@ -17,6 +18,7 @@ const SnackbarManager = {
             let fnSendError = this.sendError;    
             let additionalOptions = { 
               idAU: this.selectedPlace ? this.selectedPlace : this.customParams.idLocalidade,
+              au: this.$analysisUnitModel.findPlaceByID(this.selectedPlace ? this.selectedPlace : this.customParams.idLocalidade),
               theme: this.$vuetify.theme,
               sectionIndex: sectionIndex,
               topology: this.topology,
@@ -43,6 +45,8 @@ const SnackbarManager = {
               dataset,
               chartOptions,
               additionalOptions
+            ).then(
+              (chart) => { this.sendChartLoaded(); } 
             );
           }
         },

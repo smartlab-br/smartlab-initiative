@@ -22,6 +22,7 @@ class D3PlusChartBuilderService extends GeneralChartBuilderService{
                 function(chart) {
                     if (document.getElementById(containerId)) document.getElementById(containerId).innerHTML = ''; 
                     chart.render(); 
+                    return chart;
                 }, 0, chart); 
         }
     }

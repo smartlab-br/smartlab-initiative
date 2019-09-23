@@ -181,7 +181,7 @@
           </flpo-treemap-chart> -->
           <v-layout fill-height
             v-if="descSection && descSection.chartType &&
-                  ['MAP_TOPOJSON', 'LINE', 'STACKED', 'BAR', 'TREEMAP', 'SCATTERPLOT', 'BOXPLOT', 'CALENDAR', 'SANKEYD3'].includes(descSection.chartType)"
+                  ['MAP_TOPOJSON', 'LINE', 'STACKED', 'BAR', 'TREEMAP', 'SCATTERPLOT', 'BOXPLOT', 'CALENDAR', 'SANKEYD3', 'MAP_BUBBLES', 'MAP_HEAT', 'MAP_CLUSTER'].includes(descSection.chartType)"
             :id="descSection.id">
           </v-layout>
         </v-layout>

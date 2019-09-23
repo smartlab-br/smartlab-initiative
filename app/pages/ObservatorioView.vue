@@ -206,7 +206,7 @@
             :options = "observatorio.prevalencia.chart_options"
             :customParams = "customParams"
             :headers = "observatorio.prevalencia.headers"
-            v-on:map-loaded="mapLoaded">
+            v-on:chart-loaded="mapLoaded">
           </flpo-leaflet-map>
           <!--
           <v-layout pa-3 row wrap justify-center align-center fill-height
