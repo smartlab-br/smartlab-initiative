@@ -135,6 +135,7 @@
             append-icon="search"
         -->
         <v-autocomplete
+          :menu-props="{minWidth:'380px'}"
           tabindex = "21"
           ref = "autocompleteChangePlace"
           v-if="auOptions.length > 0"
@@ -172,36 +173,13 @@
               <v-list-tile-action style="min-width: 120px" >
                 <v-layout row>
                   <v-layout v-for="(search_item, indxSearch) in $observatories.getObservatoriesSearchOptions()"
-                  :key="'search_item_obs_' + indxSearch">
+                  :key="'search_item_obs_' + indxSearch"
+                  v-on:click="changeAnalysisUnit($router, data.item, search_item.id)">
                     <v-layout column wrap align-center
                       v-if="data.item.exclude_from == null || data.item.exclude_from == undefined || !data.item.exclude_from.includes(search_item.id)"
                       >
-                      <v-tooltip bottom>
-                        <template slot="activator">
-                          <v-btn v-if="search_item.icon || search_item.app_icon"
-                            color="transparent"
-                            class="mx-0"
-                            fab
-                            flat
-                            small
-                            v-on:click="changeAnalysisUnit($router, data.item, search_item.id)"
-                            >
-                              <v-icon v-if="search_item.icon"
-                                :color="search_item.color ? search_item.color : ''"
-                                >
-                                {{search_item.icon}}
-                              </v-icon>
-                              <app-icon v-else-if="search_item.app_icon"
-                                :fill="search_item.color ? search_item.color : ''"
-                                :icon="search_item.app_icon"
-                                >
-                              </app-icon>
-                        </v-btn>
-                        </template>
-                        <v-layout v-html="search_item.title"> 
-                        </v-layout>
-                      </v-tooltip>
-                     <!-- <v-tooltip bottom>
+                     <v-tooltip bottom>
+                     
                         <v-icon v-if="search_item.icon"
                           small :class="search_item.color"
                           v-html="search_item.icon"
@@ -214,7 +192,7 @@
                         </app-icon>
                         <v-layout v-html="search_item.title"> 
                         </v-layout>
-                      </v-tooltip> -->
+                      </v-tooltip>
                     </v-layout>
                   </v-layout>
                 </v-layout>
