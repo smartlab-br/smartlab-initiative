@@ -1,4 +1,4 @@
-import LeafletChartBuilderService from '../leafletChartBuilderService'
+import LeafletChartBuilderService from './leafletChartBuilderService'
 
 class ClusterChartBuilderService extends LeafletChartBuilderService {
     constructor() {

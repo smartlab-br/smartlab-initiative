@@ -1,21 +1,23 @@
-import LeafletChartBuilderService from '../leafletChartBuilderService'
+import LeafletChartBuilderService from './leafletChartBuilderService'
+
+import * as d3 from 'd3'
+
+import IndicatorsModel from '../../../model/singleton/indicatorsModel'
 
 class BubblesChartBuilderService extends LeafletChartBuilderService {
-    radius = { 
-        multiplier: 1600000,
-        base: 5000
-    }
+    radius = { multiplier: 1600000, base: 5000 };
+	fCircleSize = d3.scaleLog().range([1, 4001]);
+
     constructor() {
         super();
     }
 
-    fillLayers(dataset, options, boundsZoom = null) {
+    fillLayers(map, dataset, options, boundsZoom = null) {
         // Sets the bubbles size handlers
         if (options && options.radius && options.radius.multiplier) this.radius.multiplier = options.radius.multiplier;
         if (options && options.radius && options.radius.base) this.radius.base = options.radius.base;
         
-        // TODO Decouple
-        if (boundsZoom == null) boundsZoom = this.leafletMap.getZoom();
+        if (boundsZoom == null) boundsZoom = map.getZoom();
         let zoomIndex = boundsZoom > 5 ? Math.pow(boundsZoom/4,4) : 1;
           
         let multiplier = this.radius.multiplier / zoomIndex;
@@ -29,14 +31,14 @@ class BubblesChartBuilderService extends LeafletChartBuilderService {
         // TODO - Analisar se é necessário getMinMaxEachIndicator
         // // Prepares the dataset, if the layers have no range
         if (min_field == 'minVal' || !value_field.includes('api_calc_')) {  
-            dataset = this.$indicatorsModel.getMinMaxEachIndicator(dataset, value_field);
+            dataset = (new IndicatorsModel()).getMinMaxEachIndicator(dataset, value_field);
         }
           
         // TODO - decouple
         // Prepares the layers
-        for (const ident of this.options.indicadores) {
+        for (const ident of options.indicadores) {
             let group = L.layerGroup();
-            group.addTo(this.leafletMap);
+            group.addTo(map);
             this.layers[ident] = group;
             if (this.visibleLayers[ident] == null || this.visibleLayers[ident] == undefined) {
               this.visibleLayers[ident] = true;
@@ -45,12 +47,10 @@ class BubblesChartBuilderService extends LeafletChartBuilderService {
 
         // Iterates over the dataset, to build each circle and apply to the respective layer
         for(let each_row of dataset) {
-            if (each_row[this.options.lat] &&
-                each_row[this.options.long] &&
-                each_row[this.options.lat] != 0 &&
-                each_row[this.options.long] != 0) {
+            if (each_row[options.lat] && each_row[options.long] &&
+                each_row[options.lat] != 0 && each_row[options.long] != 0) {
                 // Iterates over the layers
-                for (const [pos, ident] of this.options.indicadores.entries()) {
+                for (const [pos, ident] of options.indicadores.entries()) {
                 // Checks if the row is for the layer (moves to next if different)
                 if (ident != each_row[id_field]) continue;
 
@@ -59,65 +59,52 @@ class BubblesChartBuilderService extends LeafletChartBuilderService {
                 
                 // Builds the circle
                 let eachCircle = new circleDataPoint(
-                  [each_row[this.options.lat], each_row[this.options.long]],
-                  { rowData: each_row,
-                    color: this.options.color != null ? 
-                            this.options.color : 
-                            (this.options.colorArray != null ? 
-                              this.options.colorArray[pos] :
-                              (each_row.color != null ? 
-                                each_row.color : 
-                                '#4A148C'
-                              )
-                            ),
-                    weight: this.options.weight != null ? this.options.weight : (each_row.weight != null ? each_row.weight : 0),
-                    fillColor: this.options.fillColor != null ?
-                                this.options.fillColor : 
-                                (this.options.colorArray != null ?
-                                  this.options.colorArray[pos] :
-                                  (each_row.fillColor != null ?
-                                    each_row.fillColor :
-                                    '#4A148C'
-                                  )
-                                ),
-                    fillOpacity: this.options.fillOpacity != null ? 
-                                  this.options.fillOpacity : 
-                                  (each_row.fillOpacity != null ? 
-                                    each_row.fillOpacity :
-                                    0.5
-                                  ),
-                    radius: value != null ? value > 0 ? value * multiplier + base : base : 0
-                  }
+                  	[each_row[options.lat], each_row[options.long]],
+					{ rowData: each_row,
+						color: options.color != null ? 
+								options.color : 
+								( options.colorArray != null ? 
+									options.colorArray[pos] :
+									( each_row.color != null ? each_row.color : '#4A148C' )
+								),
+						weight: options.weight != null ? options.weight : (each_row.weight != null ? each_row.weight : 0),
+						fillColor: options.fillColor != null ?
+									options.fillColor : 
+									( options.colorArray != null ?
+										options.colorArray[pos] :
+										( each_row.fillColor != null ? each_row.fillColor : '#4A148C' )
+									),
+						fillOpacity: options.fillOpacity != null ? 
+										options.fillOpacity : 
+										( each_row.fillOpacity != null ? each_row.fillOpacity : 0.5 ),
+						radius: value != null ? value > 0 ? value * multiplier + this.radius.base : this.radius.base : 0
+					}
                 ).on("click", this.circleClick);
 
-                // if (this.visibleLayers[ident]) {
                 eachCircle.addTo(this.layers[ident]);
-                // }
               }
             }
           }
-          this.adjustVisibleLayers();
+          this.adjustVisibleLayers(additionalOptions);
         
         this.sendMapLoaded();
     }
 
+	// TODO how to get options into this function
     circleClick(e) {
         let tooltip_function = this.options.tooltip_function ? this[this.options.tooltip_function] : this.defaultLeafletTooltip;
         let tooltip_context = this.options.tooltip_function ? this : this.$tooltipBuildingService;
         tooltip_function.apply(tooltip_context, [e.target, this.$route, this.headers, this.options.removed_text_list, this.options]);
-      }
+    }
 
-    adjustVisibleLayers() {
-        for (let indx in this.customParams.enabled) {
-            // Verifica quais parâmetros mudaram
-            // if (this.customParams.enabled[indx] != this.visibleLayers[indx]) {
-            if (this.customParams.enabled[indx]) {
-              this.leafletMap.addLayer(this.layers[indx]);
+    adjustVisibleLayers(map, additionalOptions) {
+        for (let indx in additionalOptions.enabled) {
+            if (additionalOptions.enabled[indx]) {
+              map.addLayer(this.layers[indx]);
             } else {
-              this.leafletMap.removeLayer(this.layers[indx]);
+              map.removeLayer(this.layers[indx]);
             }
-            this.visibleLayers[indx] = this.customParams.enabled[indx];
-            // }
+            this.visibleLayers[indx] = additionalOptions.enabled[indx];
         }
     }
       

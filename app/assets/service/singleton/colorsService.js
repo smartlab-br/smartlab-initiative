@@ -149,9 +149,9 @@ class ColorsService {
 
   static getThemeFromId(id) {
     if (id){
-      return this.themeLibrary[id] ? Object.assign({}, this.themeLibrary[id]) : null;
+      return this._themeLibrary[id] ? Object.assign({}, this._themeLibrary[id]) : null;
     } else {
-      return Object.assign({}, this.themeLibrary['default']);
+      return Object.assign({}, this._themeLibrary['default']);
     }
   }
 

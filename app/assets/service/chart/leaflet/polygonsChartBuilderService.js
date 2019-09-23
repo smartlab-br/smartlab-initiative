@@ -1,4 +1,4 @@
-import LeafletChartBuilderService from '../leafletChartBuilderService'
+import LeafletChartBuilderService from './leafletChartBuilderService'
 
 class PolygonsChartBuilderService extends LeafletChartBuilderService {
     constructor() {

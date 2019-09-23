@@ -24,6 +24,7 @@ class ChartBuilderService {
         setTimeout(() => {
             let container = document.getElementById(containerId);
             if (container) {
+                let builder;
                 container.innerHTML = '';
                 switch (type) {
                     // D3Plus based

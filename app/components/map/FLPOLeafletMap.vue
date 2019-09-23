@@ -578,10 +578,10 @@
             for (let item of dtIndicadores){
               switch(item.cd_indicador){
                 case "01_15_01_00": // População
-                  text += "<tr><td>" + item.ds_indicador_radical + ": " + this.$numberTransformService.constructor.constructor.formatNumber(item.vl_indicador,"inteiro") + " ("+ item.nu_competencia +")</td></tr>";
+                  text += "<tr><td>" + item.ds_indicador_radical + ": " + this.$numberTransformService.constructor.formatNumber(item.vl_indicador,"inteiro") + " ("+ item.nu_competencia +")</td></tr>";
                   break;
                 case "06_01_09_01": // IDHM
-                  text += "<tr><td>" + item.ds_indicador_radical + ": " + this.$numberTransformService.constructor.constructor.formatNumber(item.vl_indicador,"real",3) + " ("+ item.nu_competencia +")</td></tr>";
+                  text += "<tr><td>" + item.ds_indicador_radical + ": " + this.$numberTransformService.constructor.formatNumber(item.vl_indicador,"real",3) + " ("+ item.nu_competencia +")</td></tr>";
                   break;
                 case "01_14_13_00": // Proporção Pobreza
                   text += "<tr><td>" + item.ds_indicador_radical + ": " + this.$numberTransformService.constructor.formatNumber(item.vl_indicador,"porcentagem") + " ("+ item.nu_competencia +")</td></tr>";
