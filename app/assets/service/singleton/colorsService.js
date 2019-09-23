@@ -148,7 +148,11 @@ class ColorsService {
   }
 
   getThemeFromId(id) {
-    return this.themeLibrary[id] ? Object.assign({}, this.themeLibrary[id]) : null;
+    if (id){
+      return this.themeLibrary[id] ? Object.assign({}, this.themeLibrary[id]) : null;
+    } else {
+      return Object.assign({}, this.themeLibrary['default']);
+    }
   }
 
   assessZebraBG(index, theme) {
