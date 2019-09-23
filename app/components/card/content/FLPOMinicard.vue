@@ -6,8 +6,8 @@
         <v-flex pl-1 v-if="structure.desc_position == 'right'" class="title-obs-desc minicard-description" v-html = "description != null ? description.toUpperCase() : ''"></v-flex>
       </v-layout>
       <div v-else class="minicard-value"  v-html = "value"></div>
-      <div class="minicard-chart" v-if="dataset !== null && dataset.length > 1 && structure && structure.chart && structure.chart.options !== null">
-        <flpo-line-chart
+      <div class="minicard-chart" v-if="dataset !== null && dataset.length > 1 && structure && structure.chart">
+        <!-- <flpo-line-chart
           v-if="structure.chart.type == 'LINE'"
           ref = "chart"
           :id="chartId"
@@ -15,9 +15,15 @@
           :options="structure.chart.options"
           :headers="structure.chart.headers"
           :section-index="sectionIndex">
-        </flpo-line-chart>
+        </flpo-line-chart> -->
+        <v-layout fill-height
+          v-if="structure && structure.chart && structure.chart.type &&
+                ['MAP_TOPOJSON', 'LINE', 'STACKED', 'BAR', 'TREEMAP', 'SCATTERPLOT', 'BOXPLOT', 'CALENDAR', 'SANKEYD3'].includes(structure.chart.type)"
+          ref = "chart"
+          :id="chartId">
+        </v-layout>
       </div>
-      <div v-if="structure.desc_position != 'right'"class="title-obs-desc minicard-description" v-html = "description != null ? description.toUpperCase() : ''"></div>
+      <div v-if="structure.desc_position != 'right'" class="title-obs-desc minicard-description" v-html = "description != null ? description.toUpperCase() : ''"></div>
       <div :class="'minicard-comment ' + commentColorClass" v-html = "comment"></div>
     </v-layout>
   </v-flex>
@@ -38,7 +44,8 @@
         cardClass: '',
         colorClass: '',
         commentColorClass: '',
-        dataset: null
+        dataset: null,
+        metadata: null
       }
     },
     props: ['rowClass', 'reactiveFilter', 'customFilters'],
@@ -91,6 +98,8 @@
     methods: {
       setDataset(dataset, rules, structure, addedParams, metadata) {
         this.dataset = dataset;
+        this.metadata = metadata;
+        this.triggerChartUpdates();
       },
       sendError(message) {
         this.$emit('showSnackbar', { color : 'error', text: message });
@@ -102,7 +111,7 @@
           //caso o campo tenha um texto fixo, o valor é ajustado e o loop segue para a próxima iteração
           if (rule.fixed !== undefined) {
             if (rule.format) {
-              this[rule.prop] = this.$numberTransformService.formatNumber(rule.fixed, rule.format, rule.precision, rule.multiplier, rule.collapse, rule.signed, rule.uiTags);
+              this[rule.prop] = this.$numberTransformService.constructor.formatNumber(rule.fixed, rule.format, rule.precision, rule.multiplier, rule.collapse, rule.signed, rule.uiTags);
             } else {
               this[rule.prop] = rule.fixed;
             }
@@ -179,6 +188,19 @@
           }
 
           this.fillProp(base_object_list, rule.args, preloaded, addedParams, metadata);
+        }
+      },
+
+      triggerChartUpdates() {
+        if (this.structure && this.structure.chart && this.structure.chart.options && this.structure.chart.type) {
+          this.chartGen(
+            this.chartId,
+            this.structure.chart.type,
+            this.structure.chart,
+            this.structure.chart.options,
+            this.dataset,
+            this.metadata,
+            this.sectionIndex);
         }
       },
 

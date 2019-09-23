@@ -361,5 +361,9 @@
     line-height: 1rem;
     color: rgb(239,97,69);
   }
+
+  .sankey-link:hover {
+    stroke-opacity: .5 !important;
+  }
   
 </style>

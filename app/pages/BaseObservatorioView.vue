@@ -34,7 +34,7 @@
       // fetch the data when the view is created and the data is
       // already being observed
       if (this.idObservatorio === null || this.idObservatorio === undefined) {
-        this.idObservatorio = this.$observatories.identifyObservatory(this.$route.path.split('/')[1]);
+        this.idObservatorio = this.$observatories.constructor.identifyObservatory(this.$route.path.split('/')[1]);
       }
 
       if (this.idObservatorio) {

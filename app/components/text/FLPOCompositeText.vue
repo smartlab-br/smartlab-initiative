@@ -161,7 +161,7 @@
         <!-- Seção de gráfico -->
         <v-layout v-else-if="descSection.type && descSection.type == 'chart'" column pb-2>
           <v-flex pa-0 class="headline-obs">{{ descSection.title }}</v-flex>
-          <flpo-bar-chart
+          <!-- <flpo-bar-chart
             v-if="descSection.chartType == 'BAR'
                   && descSection.options && dataset[descSection.id]"
             :id="descSection.id"
@@ -178,7 +178,12 @@
             :options="descSection.options"
             :headers="descSection.headers"
             :section-index="descSection.index">
-          </flpo-treemap-chart>
+          </flpo-treemap-chart> -->
+          <v-layout fill-height
+            v-if="descSection && descSection.chartType &&
+                  ['MAP_TOPOJSON', 'LINE', 'STACKED', 'BAR', 'TREEMAP', 'SCATTERPLOT', 'BOXPLOT', 'CALENDAR', 'SANKEYD3'].includes(descSection.chartType)"
+            :id="descSection.id">
+          </v-layout>
         </v-layout>
       </v-layout>
     </v-flex>
@@ -229,7 +234,26 @@
 
       throwInvalidInterpol(payload) {
         this.$emit('resendInvalidInterpol', payload);
+      },
+
+      triggerChartUpdates(id, dataset, metadata) {
+        for (let sectionIndex in this.structure) {
+          if (this.structure[sectionIndex].type == 'chart') {
+            let eachChart = this.structure[sectionIndex];
+            if (eachChart && eachChart.id == id) {
+              this.chartGen(
+                this.chartId[id],
+                eachChart.chartType,
+                eachChart,
+                eachChart.options,
+                dataset,
+                metadata,
+                sectionIndex);
+            }
+          }
+        }
       }
+
     }
   }
 </script>

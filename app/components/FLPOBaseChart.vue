@@ -20,7 +20,9 @@
     mounted: function() {
       if (!this.generated) {
         this.generated = true;
-        this.generateChart(this.dataset, this.options, this.id);
+        if (this.structure && this.structure.chart_type != 'MAP_TOPOJSON') {
+          this.generateChart(this.dataset, this.options, this.id);
+        }
       } 
 
       //window.addEventListener('resize', this.redrawResize);
@@ -32,7 +34,9 @@
     },
     watch: {
       dataset: function(newVal, oldVal) {
-        this.generateChart(newVal, this.options, this.id);
+        if (this.structure.chart_type != 'MAP_TOPOJSON') {
+          this.generateChart(newVal, this.options, this.id);
+        }
       }
     },
     beforeDestroy: function() {
@@ -143,12 +147,12 @@
       getDefaultXYConfig(sectionIndex) {
         return { 
           gridConfig: { stroke: "transparent" },
-          barConfig:   { stroke: this.$colorsService.assessZebraAxesColor(sectionIndex, this.$vuetify.theme)},
+          barConfig:   { stroke: this.$colorsService.constructor.assessZebraAxesColor(sectionIndex, this.$vuetify.theme)},
           shapeConfig: {
             labelConfig: {
-              fontColor: this.$colorsService.assessZebraAxesColor(sectionIndex, this.$vuetify.theme)
+              fontColor: this.$colorsService.constructor.assessZebraAxesColor(sectionIndex, this.$vuetify.theme)
             },
-            stroke: this.$colorsService.assessZebraAxesColor(sectionIndex, this.$vuetify.theme)
+            stroke: this.$colorsService.constructor.assessZebraAxesColor(sectionIndex, this.$vuetify.theme)
           }
         }
       },

@@ -321,7 +321,7 @@ const ViewConfReader = {
 								}
 								
 								if(options.calcs[indx].format){
-									dataset[eachRow][nuField] = this.$numberTransformService.formatNumber(
+									dataset[eachRow][nuField] = this.$numberTransformService.constructor.formatNumber(
 										dataset[eachRow][nuField], options.calcs[indx].format,
 										options.calcs[indx].precision, options.calcs[indx].multiplier,
 										options.calcs[indx].collapse, options.calcs[indx].signed,
@@ -343,7 +343,7 @@ const ViewConfReader = {
 								if (formatRules.format == 'auto') {
 									formatRules = this.$textTransformService.getFormatRules(formatRules, dataset[eachRow]);
 								}
-								dataset[eachRow][nuField] = this.$numberTransformService.formatNumber(
+								dataset[eachRow][nuField] = this.$numberTransformService.constructor.formatNumber(
 									dataset[eachRow][options.formatters[indxFmts].id], 
 									formatRules.format, 
 									formatRules.precision, 
@@ -399,7 +399,7 @@ const ViewConfReader = {
 								if (rules[ruleIndx].format == 'auto') {
 									formatRules = this.$textTransformService.getFormatRules(rules[ruleIndx], base_object);
 								}
-								prop = this.$numberTransformService.formatNumber(
+								prop = this.$numberTransformService.constructor.formatNumber(
 									prop, formatRules.format, formatRules.precision,
 									formatRules.multiplier, formatRules.collapse, formatRules.signed,
 									formatRules.uiTags
@@ -417,7 +417,7 @@ const ViewConfReader = {
 
 				getApiUrl(scope, thematic = false, added_filters = null, agregacao = null) {
 					let url =  '/';
-					let obsAtual = this.$observatories.identifyObservatory(this.$route.path.split('/')[1]);
+					let obsAtual = this.$observatories.constructor.identifyObservatory(this.$route.path.split('/')[1]);
 					if (thematic && obsAtual && obsAtual != 'td') {
 					  url += obsAtual + '/';
 					}
@@ -575,6 +575,7 @@ const ViewConfReader = {
 					  // Múltiplos gráficos
 					  this.dataset[addedParams.id] = dataset;
 					  this.metadata[addedParams.id] = metadata;
+					  this.triggerChartUpdates(addedParams.id, dataset, metadata);
 					  this.datasetsComplete++;
 					} else if (addedParams && addedParams.props) {
 					  if (addedParams.props.dataset) this[addedParams.props.dataset] = dataset;

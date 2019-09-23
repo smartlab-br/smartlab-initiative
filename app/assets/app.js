@@ -76,6 +76,9 @@ Vue.prototype.$yamlFetcherService = new YamlFetcherService();
 import NavigationManager from './service/singleton/navigationManager'
 Vue.prototype.$navigationManager = new NavigationManager();
 
+// import ChartBuilderService from './service/chart/chartBuilderService'
+// Vue.prototype.$chartBuilderService = new ChartBuilderService();
+
 // 2.2. Global Mixins
 import SnackbarManager from '../mixins/service/snackbarManager.js'
 Vue.use(SnackbarManager)

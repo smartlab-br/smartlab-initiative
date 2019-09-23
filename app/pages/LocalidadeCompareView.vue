@@ -174,10 +174,10 @@
         <v-layout v-for="(secao, indexSecao) in sections"  
           :key="secao.id"
           row wrap>
-          <v-layout column :id="secao.id" :style="'background-color:' + $colorsService.assessZebraBG(indexSecao, $vuetify.theme) + ';'">
+          <v-layout column :id="secao.id" :style="'background-color:' + $colorsService.constructor.assessZebraBG(indexSecao, $vuetify.theme) + ';'">
             <v-flex xs12>
               <div
-                :class="'display-2-obs pt-5 pb-3  ml-5 pl-3 font-weight-bold ' + $colorsService.assessZebraTitle(indexSecao, $vuetify.theme)">
+                :class="'display-2-obs pt-5 pb-3  ml-5 pl-3 font-weight-bold ' + $colorsService.constructor.assessZebraTitle(indexSecao, $vuetify.theme)">
                 {{ secao.name }}
               </div>
             </v-flex>
@@ -226,7 +226,7 @@
                       </v-layout>
                       <v-layout v-else-if="card.type && card.type == 'headline'"
                         pt-5 pb-3 ml-5 pl-2
-                        :class="'display-2-obs font-weight-bold ' + $colorsService.assessZebraTitle(indexSecao, $vuetify.theme)"
+                        :class="'display-2-obs font-weight-bold ' + $colorsService.constructor.assessZebraTitle(indexSecao, $vuetify.theme)"
                         v-html="card.title.fixed">
                       </v-layout>
                       <flpo-story-card-autofill
@@ -277,7 +277,7 @@
                       </v-layout>
                       <v-layout v-else-if="sections_compare[indexSecao].cards[cardIndex].type && sections_compare[indexSecao].cards[cardIndex].type == 'headline'"
                         pt-5 pb-3 ml-5 pl-2
-                        :class="'display-2-obs font-weight-bold ' + $colorsService.assessZebraTitle(indexSecao, $vuetify.theme)"
+                        :class="'display-2-obs font-weight-bold ' + $colorsService.constructor.assessZebraTitle(indexSecao, $vuetify.theme)"
                         v-html="sections_compare[indexSecao].cards[cardIndex].title.fixed">
                       </v-layout>
                       <flpo-story-card-autofill

@@ -27,7 +27,7 @@ class ObservatoriesModel {
     ];
 
     constructor() {
-        this.colorsService = new ColorsService();
+        //this.colorsService = new ColorsService();
     }
 
     setStore(store) {
@@ -60,7 +60,7 @@ class ObservatoriesModel {
         return null;
     }
 
-    identifyObservatory(route) {
+    static identifyObservatory(route) {
         if (route.includes('trabalhodecente')) return 'td';
         if (route.includes('diversidade')) return 'des';
         if (route.includes('trabalhoescravo')) return 'te';
@@ -70,7 +70,7 @@ class ObservatoriesModel {
     }
 
     // Mapeamento dos IDs para os observatorios
-    identifyObservatoryById(idObservatorio) {
+    static identifyObservatoryById(idObservatorio) {
         switch (idObservatorio){
             case 'td':
             return 'trabalhodecente';
@@ -90,7 +90,7 @@ class ObservatoriesModel {
     }
 
     getTheme(observatorio) {
-        return this.colorsService.getThemeFromId(observatorio);
+        return ColorsService.getThemeFromId(observatorio);
     }
 }
 

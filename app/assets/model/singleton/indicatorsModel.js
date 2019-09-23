@@ -351,7 +351,7 @@ class IndicatorsModel {
       if (structure.format == 'auto') {
         formatRules = this.textTransformService.getFormatRules(structure, indicator);
       }
-      value = this.numberTransformService.formatNumber(
+      value = NumberTransformService.formatNumber(
         value, formatRules.format, formatRules.precision, formatRules.multiplier, formatRules.collapse, formatRules.signed, formatRules.uiTags
       );
     } else if(structure && structure.required && value === null && cbInvalidate !== null){

@@ -30,7 +30,7 @@ describe('ThemeManager', () => {
       "teste4"
     ];
 
-    let result = wrapper.vm.$tooltipBuildingService.removeFromLabel(label, remove_list);
+    let result = wrapper.vm.$tooltipBuildingService.constructor.removeFromLabel(label, remove_list);
     expect(result).toEqual(["teste","teste2","teste3","teste4"]);
   })
 
@@ -39,7 +39,7 @@ describe('ThemeManager', () => {
 
     let label = "testeremovedelete";
 
-    let result = wrapper.vm.$tooltipBuildingService.removeFromLabel(label, remove_list);
+    let result = wrapper.vm.$tooltipBuildingService.constructor.removeFromLabel(label, remove_list);
     expect(result).toEqual("teste");
   })
 
@@ -48,7 +48,7 @@ describe('ThemeManager', () => {
 
     let indicador = { cd_indicador: 1, nu_competencia: 2099, vl_indicador: 123.45 };
     
-    let result = wrapper.vm.$tooltipBuildingService.defaultTooltip(indicador, null, null, remove_list);
+    let result = wrapper.vm.$tooltipBuildingService.constructor.defaultTooltip(indicador, null, null, remove_list);
     expect(result).toEqual('Tooltip!');
   })
 
@@ -58,7 +58,7 @@ describe('ThemeManager', () => {
     let indicador = { cd_indicador: 1, nu_competencia: 2099, vl_indicador: 123.45 };
     let vals = { text: "Valor", value: "vl_indicador" };
 
-    let result = wrapper.vm.$tooltipBuildingService.defaultTooltip(indicador, null, vals, remove_list);
+    let result = wrapper.vm.$tooltipBuildingService.constructor.defaultTooltip(indicador, null, vals, remove_list);
     expect(result).toEqual(
       "<table width='100%'><tr><td class='font-weight-bold'>undefined:</td>"+
       "<td class='text-xs-right'>undefined</td></tr></table><table width="+
@@ -78,7 +78,7 @@ describe('ThemeManager', () => {
       { text: "Lista", value: "lista" }
     ];
 
-    let result = wrapper.vm.$tooltipBuildingService.defaultTooltip(indicador, null, vals, remove_list);
+    let result = wrapper.vm.$tooltipBuildingService.constructor.defaultTooltip(indicador, null, vals, remove_list);
     expect(result).toEqual(
       "<p class='headline-obs'><b>1</b></p><hr class='tooltip_divider'>"+
       "<table width='100%'></table><table width='100%'><tr><td class="+

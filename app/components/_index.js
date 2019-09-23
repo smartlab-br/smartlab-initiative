@@ -3,18 +3,10 @@ import AppIcon from './AppIcon'
 
 // Charts
 // Based on d3plus
-import FLPOBarChart from './chart/FLPOBarChart'
-import FLPOBoxplotChart from './chart/FLPOBoxplotChart'
 import FLPOLinearGauge from './chart/FLPOLinearGauge'
-import FLPOLineChart from './chart/FLPOLineChart'
 import FLPORankingBullet from './chart/FLPORankingBullet'
 import FLPORankingSlider from './chart/FLPORankingSlider'
-import FLPOSankey from './chart/FLPOSankey'
-import FLPOScatterChart from './chart/FLPOScatterChart'
-import FLPOStackedLineChart from './chart/FLPOStackedLineChart'
-import FLPOTreemapChart from './chart/FLPOTreemapChart'
 // Based on core d3
-import FLPOCalendarChart from './chart/FLPOCalendarChart'
 
 // Emitters
 import FLPOCheckEmitter from './emitter/FLPOCheckEmitter'
@@ -22,10 +14,6 @@ import FLPORadioEmitter from './emitter/FLPORadioEmitter'
 import FLPOSelectEmitter from './emitter/FLPOSelectEmitter'
 import FLPOSliderEmitter from './emitter/FLPOSliderEmitter'
 import FLPOSwitchGroupEmitter from './emitter/FLPOSwitchGroupEmitter'
-
-// Maps
-import FLPOLeafletMap from './map/FLPOLeafletMap'
-import FLPOTopoJsonMap from './map/FLPOTopoJsonMap'
 
 // Texts
 import FLPOCompositeText from './text/FLPOCompositeText'
@@ -49,20 +37,15 @@ import FLPOSobreLayout from './FLPOSobreLayout'
 import FLPODotNav from './FLPODotNav'
 import FLPOOdometer from './FLPOOdometer'
 
+// TODO - REM - Leaflet component
+import FLPOLeafletMap from './map/FLPOLeafletMap'
+
 export default {
   'font-awesome-icon': FontAwesomeIcon,
   
-  'flpo-bar-chart': FLPOBarChart,
-  'flpo-calendar-chart': FLPOCalendarChart,
-  'flpo-boxplot-chart': FLPOBoxplotChart,
-  'flpo-sankey': FLPOSankey,
-  'flpo-scatter-chart': FLPOScatterChart,
-  'flpo-treemap-chart': FLPOTreemapChart,
-  'flpo-composite-text': FLPOCompositeText,
   'flpo-leaflet-map': FLPOLeafletMap,
-  'flpo-topojson-map': FLPOTopoJsonMap,
-  'flpo-line-chart': FLPOLineChart,
-  'flpo-stacked-line-chart': FLPOStackedLineChart,
+  
+  'flpo-composite-text': FLPOCompositeText,
   'flpo-linked-view-card': FLPOLinkedViewCard,
   'flpo-sobre-layout': FLPOSobreLayout,
   'flpo-dot-nav': FLPODotNav,

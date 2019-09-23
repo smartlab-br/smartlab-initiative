@@ -228,7 +228,7 @@ export default {
     };
   },
   created() {
-    this.$indicatorsModel.buildIndicatorsOptions(this.$observatories.identifyObservatory(this.$route.path.split('/')[1]))
+    this.$indicatorsModel.buildIndicatorsOptions(this.$observatories.constructor.identifyObservatory(this.$route.path.split('/')[1]))
       .then((result) => {
         for (let option of result) {
           this.indicators.push(option);
@@ -562,7 +562,7 @@ export default {
         })
         .colorScalePosition("right")
         .colorScaleConfig({
-          color: this.$colorsService.getColorScale("Blues", "singleHue", "asc", 9),
+          color: this.$colorsService.constructor.getColorScale("Blues", "singleHue", "asc", 9),
           axisConfig: {
             labels: [],
             gridConfig: {stroke: "transparent"},
@@ -590,7 +590,7 @@ export default {
 
     fetchData(indicador, pos, value_field = 'valor') {
       // Defines the observatory namespace
-      let urlPrefix = this.$observatories.identifyObservatory(this.$route.path.split('/')[1]);
+      let urlPrefix = this.$observatories.constructor.identifyObservatory(this.$route.path.split('/')[1]);
       if (urlPrefix && urlPrefix == 'td') {
         urlPrefix = '';
       } else {
