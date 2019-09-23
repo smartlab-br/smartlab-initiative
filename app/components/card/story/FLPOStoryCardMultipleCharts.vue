@@ -151,7 +151,7 @@
                             :headers="chart.headers"
                             :section-index="sectionIndex">
                           </flpo-treemap-chart> -->
-                          <flpo-leaflet-map
+                          <!-- <flpo-leaflet-map
                             v-if = "dataset && dataset[chart.id] !== null && chart.type == 'MAP_LEAFLET' && chart.options !== null &&
                                     ((chart.options.type == 'topo' && topology) || (chart.options.type !== 'topo'))"
                             :id="chartId[chart.id]"
@@ -163,7 +163,7 @@
                             :topology="topology"
                             :topology-uf = "topologyUf"
                             :customParams = "customParams">
-                          </flpo-leaflet-map>
+                          </flpo-leaflet-map> -->
                           <!-- <flpo-topojson-map
                             v-if="dataset && dataset[chart.id] && dataset[chart.id].length >= 0 && chart.type == 'MAP_TOPOJSON' && chart.options !== null && topology"
                             :id="chartId[chart.id]"

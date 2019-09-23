@@ -37,13 +37,8 @@ import FLPOSobreLayout from './FLPOSobreLayout'
 import FLPODotNav from './FLPODotNav'
 import FLPOOdometer from './FLPOOdometer'
 
-// TODO - REM - Leaflet component
-import FLPOLeafletMap from './map/FLPOLeafletMap'
-
 export default {
   'font-awesome-icon': FontAwesomeIcon,
-  
-  'flpo-leaflet-map': FLPOLeafletMap,
   
   'flpo-composite-text': FLPOCompositeText,
   'flpo-linked-view-card': FLPOLinkedViewCard,

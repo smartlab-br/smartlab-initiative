@@ -131,7 +131,7 @@
                         :headers="structure.headers"
                         :section-index="sectionIndex">
                       </flpo-treemap-chart> -->
-                      <flpo-leaflet-map
+                      <!-- <flpo-leaflet-map
                         v-if="dataset !== null && structure && structure.chart_type == 'MAP_LEAFLET' && structure.chart_options !== null &&
                               ((structure.chart_options.type == 'topo' && cmpTopology) || (structure.chart_options.type !== 'topo'))"
                         ref = "chart"
@@ -143,7 +143,7 @@
                         :options = "structure.chart_options"
                         :customParams = "customParams"
                         :headers = "structure.headers">
-                      </flpo-leaflet-map>
+                      </flpo-leaflet-map> -->
                       <!-- <flpo-topojson-map
                         v-if="dataset !== null && structure && structure.chart_type == 'MAP_TOPOJSON' && structure.chart_options !== null && cmpTopology"
                         ref = "chart"

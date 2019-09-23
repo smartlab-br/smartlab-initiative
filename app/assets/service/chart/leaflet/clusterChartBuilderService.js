@@ -39,12 +39,12 @@ class ClusterChartBuilderService extends LeafletChartBuilderService {
 			}
 		}
 		
-		this.mapLayer = this.L.markerClusterGroup();
+		let mapLayer = this.L.markerClusterGroup();
 		let id_field = options.id_field ? options.id_field : 'cd_indicador';
 		
 		for (let each_row of dataset) {
 			if (this.visibleLayers[each_row[id_field]]) {
-				this.mapLayer.addLayer(
+				mapLayer.addLayer(
 					this.L.marker(
 						[ each_row[options.lat], each_row[options.long] ],
 						{rowData: each_row, icon: options.markerIcons ? options.markerIcons[each_row[id_field]]: defaultIcon }
@@ -53,7 +53,7 @@ class ClusterChartBuilderService extends LeafletChartBuilderService {
 			}
 		}
 		
-		map.addLayer(map);
+		map.addLayer(mapLayer);
 
 		return map;
     }
