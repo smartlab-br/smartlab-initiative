@@ -182,6 +182,7 @@
           <v-layout fill-height
             v-if="descSection && descSection.chartType &&
                   ['MAP_TOPOJSON', 'LINE', 'STACKED', 'BAR', 'TREEMAP', 'SCATTERPLOT', 'BOXPLOT', 'CALENDAR', 'SANKEYD3', 'MAP_BUBBLES', 'MAP_HEAT', 'MAP_CLUSTER'].includes(descSection.chartType)"
+            :class = "['MAP_BUBBLES', 'MAP_HEAT', 'MAP_CLUSTER'].includes(descSection.chartType) ? 'map_geo' : ''"
             :id="descSection.id">
           </v-layout>
         </v-layout>

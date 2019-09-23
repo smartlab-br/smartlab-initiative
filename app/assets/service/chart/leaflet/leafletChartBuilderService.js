@@ -22,6 +22,9 @@ class LeafletChartBuilderService extends GeneralChartBuilderService {
     }
 
     generateChart(containerId, dataset, options, additionalOptions) {
+        let chartContainer = document.getElementById(containerId);
+        if (chartContainer.innerHTML != '') throw 'Mapa já instanciado!';
+        
         // Replacing defaults
         if (options.tiles_url) this.tiles.url = options.tiles_url;
         if (options.tiles_attribution) this.tiles.attribution = options.tiles_attribution;
@@ -36,7 +39,6 @@ class LeafletChartBuilderService extends GeneralChartBuilderService {
 			shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
         });
         
-        let chartContainer = document.getElementById(containerId);
         let height = parseInt(chartContainer.offsetWidth / this.heightProportion);
         chartContainer.style.height = height + "px";
   

@@ -19,6 +19,7 @@
         <v-layout fill-height
           v-if="structure && structure.chart && structure.chart.type &&
                 ['MAP_TOPOJSON', 'LINE', 'STACKED', 'BAR', 'TREEMAP', 'SCATTERPLOT', 'BOXPLOT', 'CALENDAR', 'SANKEYD3', 'MAP_BUBBLES', 'MAP_HEAT', 'MAP_CLUSTER'].includes(structure.chart.type)"
+          :class = "['MAP_BUBBLES', 'MAP_HEAT', 'MAP_CLUSTER'].includes(structure.chart.type) ? 'map_geo' : ''"
           ref = "chart"
           :id="chartId">
         </v-layout>

@@ -41,3 +41,15 @@
   }
 </script>
 
+<style>
+  @import "../node_modules/leaflet/dist/leaflet.css";
+  @import "../node_modules/leaflet.markercluster/dist/MarkerCluster.css";
+  @import "../node_modules/leaflet.markercluster/dist/MarkerCluster.Default.css";
+
+  .leaflet-container {
+        font-family: Palanquin !important;
+  }
+  .leaflet-interactive {
+    cursor: pointer;
+  }
+</style>

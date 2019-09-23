@@ -74,7 +74,12 @@ class ChartBuilderService {
                             break;
                     }
                     if (builder) {
-                        resolve(builder.generateChart(containerId, dataset, options, additionalOptions));
+                        try {
+                            let chart = builder.generateChart(containerId, dataset, options, additionalOptions);
+                            resolve(chart);
+                        } catch (err) {
+                            reject(err);
+                        }
                     } else {
                         reject("Falha ao gerar o gráfico")
                     }

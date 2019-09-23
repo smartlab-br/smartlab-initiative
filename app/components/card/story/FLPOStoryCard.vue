@@ -162,6 +162,7 @@
                         v-if="structure && structure.chart_options !== null &&
                               ['MAP_TOPOJSON', 'LINE', 'STACKED', 'BAR', 'TREEMAP', 'SCATTERPLOT', 'BOXPLOT', 'CALENDAR', 'SANKEYD3', 'MAP_BUBBLES', 'MAP_HEAT', 'MAP_CLUSTER'].includes(structure.chart_type)"
                         ref = "chart"
+                        :class = "['MAP_BUBBLES', 'MAP_HEAT', 'MAP_CLUSTER'].includes(structure.chart_type) ? 'map_geo' : ''"
                         :id="chartId">
                       </v-layout>
                       <!-- <flpo-line-chart

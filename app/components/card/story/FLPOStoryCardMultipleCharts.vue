@@ -178,6 +178,7 @@
                           </flpo-topojson-map> -->
                           <v-layout fill-height
                             v-if="['MAP_TOPOJSON', 'LINE', 'STACKED', 'BAR', 'TREEMAP', 'SCATTERPLOT', 'BOXPLOT', 'CALENDAR', 'SANKEYD3', 'MAP_BUBBLES', 'MAP_HEAT', 'MAP_CLUSTER'].includes(chart.type) && chart.options !== null"
+                            :class = "['MAP_BUBBLES', 'MAP_HEAT', 'MAP_CLUSTER'].includes(chart.type) ? 'map_geo' : ''"
                             :id="chartId[chart.id]">
                           </v-layout>
                           <!-- <flpo-line-chart

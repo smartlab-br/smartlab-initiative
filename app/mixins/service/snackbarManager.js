@@ -46,7 +46,8 @@ const SnackbarManager = {
               chartOptions,
               additionalOptions
             ).then(
-              (chart) => { this.sendChartLoaded(); } 
+              (chart) => { this.sendChartLoaded(); },
+              (reject) => { this.sendError(reject); }
             );
           }
         },
