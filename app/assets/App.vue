@@ -135,6 +135,7 @@
             append-icon="search"
         -->
         <v-autocomplete
+          :menu-props="{minWidth:'380px'}"
           tabindex = "21"
           ref = "autocompleteChangePlace"
           v-if="auOptions.length > 0"
@@ -170,13 +171,15 @@
                 <!--<v-list-tile-sub-title v-html="data.item.detail"></v-list-tile-sub-title>-->
               </v-list-tile-content>
               <v-list-tile-action style="min-width: 120px" >
-                <v-layout row wrap>
-                  <v-layout px-1 v-for="(search_item, indxSearch) in $observatories.getObservatoriesSearchOptions()"
-                  :key="'search_item_obs_' + indxSearch">
+                <v-layout row>
+                  <v-layout v-for="(search_item, indxSearch) in $observatories.getObservatoriesSearchOptions()"
+                  :key="'search_item_obs_' + indxSearch"
+                  v-on:click="changeAnalysisUnit($router, data.item, search_item.id)">
                     <v-layout column wrap align-center
                       v-if="data.item.exclude_from == null || data.item.exclude_from == undefined || !data.item.exclude_from.includes(search_item.id)"
-                      v-on:click="changeAnalysisUnit($router, data.item, search_item.id)">
-                      <v-tooltip bottom>
+                      >
+                     <v-tooltip bottom>
+                     
                         <v-icon v-if="search_item.icon"
                           small :class="search_item.color"
                           v-html="search_item.icon"
@@ -520,6 +523,7 @@
     data () {
       return {
         // clipped: true,
+        on: {},
         toolbar: null,
         middleToolbar: null,
         middleToolbarSubtitle: null,
@@ -1295,4 +1299,11 @@
     background-color:  var(--v-accent-base) !important;
     border-color:  var(--v-accent-base) !important;    
   }
+  /*
+  .v-btn--floating.v-btn--small {
+      height: 25px;
+      width: 25px;
+  }  
+  -->
+  */
 </style>
