@@ -21,6 +21,10 @@ class LeafletChartBuilderService extends GeneralChartBuilderService {
     }
 
     generateChart(containerId, dataset, options, additionalOptions) {
+        this.dataset = dataset;
+        this.options = options;
+        this.additionalOptions = additionalOptions;
+
         let chartContainer = document.getElementById(containerId);
         //if (chartContainer.innerHTML != '') throw 'Mapa já instanciado!';
         
@@ -53,7 +57,8 @@ class LeafletChartBuilderService extends GeneralChartBuilderService {
 				[additionalOptions.limCoords.ymax, additionalOptions.limCoords.xmax]
 			);
 			leaflet_map.fitBounds(bounds, { padding: [10, 10] });
-		}
+        }
+        this.bounds = bounds;
   
 		// Adiciona o marker do município apenas se houver idLocalidade
 		// TODO Check possible problem with promise
@@ -77,11 +82,12 @@ class LeafletChartBuilderService extends GeneralChartBuilderService {
 
         additionalOptions.containerId = containerId;
   
-		leaflet_map = this.fillLayers(leaflet_map, dataset, Object.assign(options, additionalOptions), bounds ? leaflet_map.getBoundsZoom(bounds) : null);
+        this.chart = leaflet_map;
+		this.fillLayers(dataset, Object.assign(options, additionalOptions), bounds ? leaflet_map.getBoundsZoom(bounds) : null);
   
 		window.addEventListener('resize', this.resizeMapArea, null, containerId);
 		
-		return leaflet_map;
+		return this;
     }
 
     circleClick(e) {
@@ -165,6 +171,10 @@ class LeafletChartBuilderService extends GeneralChartBuilderService {
 	}
 
 	reloadMap(map, containerId, dataset, options, additionalOptions) {
+        this.dataset = dataset;
+        this.options = options;
+        this.additionalOptions = additionalOptions;
+
         if (map !== null && map !== undefined) {
           map.off();
           map.remove();
@@ -193,7 +203,8 @@ class LeafletChartBuilderService extends GeneralChartBuilderService {
 				);
 				// console.log(this.customParams.limCoords);
 				leaflet_map.fitBounds(bounds, { padding: [10, 10] });
-			}
+            }
+            this.bounds = bounds;
 
 			// Adiciona o marker do município apenas se houver idLocalidade
 			// TODO Check possible problem with promise
@@ -213,17 +224,17 @@ class LeafletChartBuilderService extends GeneralChartBuilderService {
         	tileLayer.addTo(leaflet_map)
         	this.createPrintPlugin(tileLayer).addTo(leaflet_map);
   
-			leaflet_map = this.fillLayers(leaflet_map, dataset, Object.assign(options, additionalOptions), bounds ? leaflet_map.getBoundsZoom(bounds) : null);
+            this.chart = leaflet_map;
+            this.fillLayers(dataset, Object.assign(options, additionalOptions), bounds ? leaflet_map.getBoundsZoom(bounds) : null);
 
-			return leaflet_map;
+			return this;
 		}
       }
 
-	  // TODO Decouple
-	  adjustVisibleLayers(map, options) {
-        map.removeLayer(this.mapLayer);
-        // this.visibleLayers = this.customParams.enabled;
-        this.fillLayers();
+	  adjustVisibleLayers(enabled) {
+        this.chart.removeLayer(this.mapLayer);
+        this.additionalOptions.visibleLayers = enabled;
+        this.fillLayers(this.dataset, Object.assign(this.options, this.additionalOptions), this.bounds ? this.chart.getBoundsZoom(this.bounds) : null);
       }
 }
 

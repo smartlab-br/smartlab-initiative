@@ -340,7 +340,7 @@
         let endpoint = "";
 
         if (payload.type && (payload.type === 'switch-group' || payload.type === 'radio')) {
-          if (this.$refs.chart) this.$refs.chart.adjustVisibleLayers();
+          if (this.chartHandler) this.chartHandler.adjustVisibleLayers(payload.enabled);
         } else if (payload.type && (payload.type === 'slider' || payload.type === 'check')) {
           if (payload.rules.filter){
             let apiUrl = this.$textTransformService.applyInterpol(this.structure.api, this.customParams, this.customFunctions);
@@ -419,9 +419,9 @@
       },
 
       triggerChartUpdates() {
-        if (this.chart) {
+        if (this.chartHandler) {
           this.chartRegen(
-            this.chart,
+            this.chartHandler,
             this.chartId,
             this.structure.chart_type,
             this.structure,
@@ -430,7 +430,7 @@
             this.metadata,
             this.sectionIndex
           ).then(
-            (chart) => { this.sendChartLoaded(chart); },
+            (chartHandler) => { this.sendChartLoaded(chartHandler); },
             (reject) => { this.sendError(reject); }
           );
         } else {
@@ -443,15 +443,15 @@
             this.metadata,
             this.sectionIndex
           ).then(
-            (chart) => { this.sendChartLoaded(chart); },
+            (chartHandler) => { this.sendChartLoaded(chartHandler); },
             (reject) => { this.sendError(reject); }
           );
         }
         this.assessChartFooter();
       },
 
-      sendChartLoaded(chart) {
-        this.chart = chart;
+      sendChartLoaded(chartHandler) {
+        this.chartHandler = chartHandler;
         this.$emit('chart-loaded'); 
       },
 

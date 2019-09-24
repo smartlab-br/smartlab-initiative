@@ -5,7 +5,7 @@ class HeatChartBuilderService extends LeafletChartBuilderService {
         super();
     }
 
-    fillLayers(map, dataset, options, boundsZoom = null) {
+    fillLayers(dataset, options, boundsZoom = null) {
 		let heatPoints = [];
       	let id_field = options.id_field ? options.id_field : 'cd_indicador';
 	  
@@ -19,9 +19,7 @@ class HeatChartBuilderService extends LeafletChartBuilderService {
         	}
       	}
 	  
-		this.mapLayer = this.L.heatLayer(heatPoints, {radius: 25, maxZoom:14}).addTo(map);
-
-		return map;
+		this.mapLayer = this.L.heatLayer(heatPoints, {radius: 25, maxZoom:14}).addTo(this.chart);
     }
 }
 

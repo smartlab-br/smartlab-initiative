@@ -12,12 +12,12 @@ class BubblesChartBuilderService extends LeafletChartBuilderService {
         super();
     }
 
-    fillLayers(map, dataset, options, boundsZoom = null) {
+    fillLayers(dataset, options, boundsZoom = null) {
         // Sets the bubbles size handlers
         if (options && options.radius && options.radius.multiplier) this.radius.multiplier = options.radius.multiplier;
         if (options && options.radius && options.radius.base) this.radius.base = options.radius.base;
         
-        if (boundsZoom == null) boundsZoom = map.getZoom();
+        if (boundsZoom == null) boundsZoom = this.chart.getZoom();
         let zoomIndex = boundsZoom > 5 ? Math.pow(boundsZoom/4,4) : 1;
           
         let multiplier = this.radius.multiplier / zoomIndex;
@@ -35,7 +35,7 @@ class BubblesChartBuilderService extends LeafletChartBuilderService {
           
         for (const ident of options.indicadores) {
             let group = L.layerGroup();
-            group.addTo(map);
+            group.addTo(this.chart);
             this.layers[ident] = group;
         }
 
@@ -81,20 +81,18 @@ class BubblesChartBuilderService extends LeafletChartBuilderService {
             }
         }
 
-        this.adjustVisibleLayers(map, options);
-        return map;
+        this.adjustVisibleLayers(options.visibleLayers);
     }
 
-    adjustVisibleLayers(map, options) {
-        if (options && options.enabled) {
-            for (let indx in options.enabled) {
-                if (options.enabled[indx]) {
-                    map.addLayer(this.layers[indx]);
-                } else {
-                    map.removeLayer(this.layers[indx]);
-                }
-                // this.visibleLayers[indx] = options.enabled[indx];
+    adjustVisibleLayers(enabled) {
+        this.additionalOptions.visibleLayers = enabled;
+        for (let indx in enabled) {
+            if (enabled[indx]) {
+                this.chart.addLayer(this.layers[indx]);
+            } else {
+                this.chart.removeLayer(this.layers[indx]);
             }
+            // this.visibleLayers[indx] = options.enabled[indx];
         }
     }
       
