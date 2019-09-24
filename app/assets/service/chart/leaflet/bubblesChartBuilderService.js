@@ -73,10 +73,10 @@ class BubblesChartBuilderService extends LeafletChartBuilderService {
                                             options.fillOpacity : 
                                             ( each_row.fillOpacity != null ? each_row.fillOpacity : 0.5 ),
                             radius: value != null ? value > 0 ? value * multiplier + this.radius.base : this.radius.base : 0,
-                            customOptions: options 
+                            customOptions: options
                         }
                     ).on("click", this.circleClick);
-                                        
+
                     eachCircle.addTo(this.layers[ident]);
                 }
             }

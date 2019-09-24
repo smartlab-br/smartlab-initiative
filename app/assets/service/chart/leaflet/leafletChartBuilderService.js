@@ -74,6 +74,8 @@ class LeafletChartBuilderService extends GeneralChartBuilderService {
         let tileLayer = this.createTileLayer(options);
         tileLayer.addTo(leaflet_map)
         this.createPrintPlugin(tileLayer).addTo(leaflet_map);
+
+        additionalOptions.containerId = containerId;
   
 		leaflet_map = this.fillLayers(leaflet_map, dataset, Object.assign(options, additionalOptions), bounds ? leaflet_map.getBoundsZoom(bounds) : null);
   

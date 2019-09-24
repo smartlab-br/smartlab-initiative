@@ -161,7 +161,7 @@
                       <v-layout fill-height
                         v-if="structure && structure.chart_options !== null &&
                               ['MAP_TOPOJSON', 'LINE', 'STACKED', 'BAR', 'TREEMAP', 'SCATTERPLOT', 'BOXPLOT', 'CALENDAR', 'SANKEYD3', 'MAP_BUBBLES', 'MAP_HEAT', 'MAP_CLUSTER'].includes(structure.chart_type)"
-                        ref = "chart"
+                        ref = "chartRef"
                         :class = "['MAP_BUBBLES', 'MAP_HEAT', 'MAP_CLUSTER'].includes(structure.chart_type) ? 'map_geo' : ''"
                         :id="chartId">
                       </v-layout>
@@ -274,7 +274,8 @@
         invalidInterpol: false,
         footnote: null,
         cmpTopology: null,
-        chartFooter: null
+        chartFooter: null,
+        chart: null
       }
     },
     created() {
@@ -406,7 +407,6 @@
         }
       },
 
-
       fetchData(endpoint = null) {
         this.fillDataStructure(
           this.structure, this.customParams,
@@ -419,15 +419,40 @@
       },
 
       triggerChartUpdates() {
-        this.chartGen(
-          this.chartId,
-          this.structure.chart_type,
-          this.structure,
-          this.structure.chart_options,
-          this.dataset,
-          this.metadata,
-          this.sectionIndex);
+        if (this.chart) {
+          this.chartRegen(
+            this.chart,
+            this.chartId,
+            this.structure.chart_type,
+            this.structure,
+            this.structure.chart_options,
+            this.dataset,
+            this.metadata,
+            this.sectionIndex
+          ).then(
+            (chart) => { this.sendChartLoaded(chart); },
+            (reject) => { this.sendError(reject); }
+          );
+        } else {
+          this.chartGen(
+            this.chartId,
+            this.structure.chart_type,
+            this.structure,
+            this.structure.chart_options,
+            this.dataset,
+            this.metadata,
+            this.sectionIndex
+          ).then(
+            (chart) => { this.sendChartLoaded(chart); },
+            (reject) => { this.sendError(reject); }
+          );
+        }
         this.assessChartFooter();
+      },
+
+      sendChartLoaded(chart) {
+        this.chart = chart;
+        this.$emit('chart-loaded'); 
       },
 
       assessChartFooter(dataset, rules, structure, addedParams, metadata) {
