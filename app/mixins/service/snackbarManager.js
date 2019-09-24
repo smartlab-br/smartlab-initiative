@@ -32,12 +32,12 @@ const SnackbarManager = {
             );
           }
         },
-        chartRegen(chart, id, chartType, structure, chartOptions, dataset, metadata, sectionIndex = 0) {
+        chartRegen(chartHandler, id, chartType, structure, chartOptions, dataset, metadata, sectionIndex = 0) {
           if (structure && chartOptions && this.validCharts.includes(chartType)) {
             let additionalOptions = this.buildChartAdditionalOptions(id, chartType, structure, chartOptions, dataset, metadata, sectionIndex);
   
             return ChartBuilderService.regenerateChart(
-              chart,
+              chartHandler,
               chartType, 
               id,
               dataset,

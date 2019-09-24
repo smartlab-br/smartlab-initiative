@@ -88,6 +88,15 @@ class ChartBuilderService {
             }, 0);
         })
     }
+
+    static regenerateChart(chartHandler, type, containerId, dataset, options, additionalOptions = {}) {
+        if (['MAP_TOPOJSON', 'LINE', 'STACKED', 'BAR', 'TREEMAP', 'SCATTERPLOT', 'BOXPLOT', 'CALENDAR', 'SANKEYD3'].includes(type)) {
+            return ChartBuilderService.generateChart(type, containerId, dataset, options, additionalOptions);
+        } else if (['MAP_BUBBLES', 'MAP_CLUSTER', 'MAP_HEAT', 'MAP_POLYGON'].includes(type)) {
+            chartHandler.removeChart();
+            return ChartBuilderService.generateChart(type, containerId, dataset, options, additionalOptions);
+        }
+    }
 }
 
 export default ChartBuilderService

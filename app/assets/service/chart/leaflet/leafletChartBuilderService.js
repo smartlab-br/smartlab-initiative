@@ -170,6 +170,14 @@ class LeafletChartBuilderService extends GeneralChartBuilderService {
         printPlugin.printMap('CurrentSize', 'teste');
 	}
 
+    removeChart() {
+        if (this.chart !== null && this.chart !== undefined) {
+            this.chart.off();
+            this.chart.remove();
+            this.chart = null;
+        }
+    }
+    
 	reloadMap(map, containerId, dataset, options, additionalOptions) {
         this.dataset = dataset;
         this.options = options;
