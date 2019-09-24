@@ -1,7 +1,6 @@
 // import ColorsService from '../../singleton/colorsService'
 
 import D3PlusChartBuilderService from './d3plusChartBuilderService'
-import TooltipBuildingService from '../../singleton/tooltipBuildingService'
 
 import * as d3plus from 'd3plus'
 
@@ -25,7 +24,7 @@ class ScatterChartBuilderService extends D3PlusChartBuilderService {
     }
         
     generateViz(options, additionalOptions) {
-        let tooltip_function = options.tooltip_function ? options.tooltip_function : TooltipBuildingService.defaultTooltip;
+        let tooltip_function = additionalOptions.tooltipFunction;
         let tooltip_context = additionalOptions.context ? additionalOptions.context : null;
         let removed_text_list = options.removed_text_list; 
         

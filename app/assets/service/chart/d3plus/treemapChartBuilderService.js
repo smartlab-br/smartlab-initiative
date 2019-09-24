@@ -89,7 +89,7 @@ class TreemapChartBuilderService extends D3PlusChartBuilderService {
     }
         
     generateViz(options, additionalOptions) {
-        let tooltip_function = options.tooltip_function ? options.tooltip_function : TooltipBuildingService.defaultTooltip;
+        let tooltip_function = additionalOptions.tooltipFunction;
         let tooltip_context = additionalOptions.context ? additionalOptions.context : null;
         let removed_text_list = options.removed_text_list;
 

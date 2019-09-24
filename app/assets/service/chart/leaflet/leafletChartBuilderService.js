@@ -11,7 +11,6 @@ class LeafletChartBuilderService extends GeneralChartBuilderService {
     }
 	clickable = true
 	layers = {}
-    visibleLayers = {}
     L = require('../../../../node_modules/leaflet/dist/leaflet.js');
     
     constructor() {
@@ -23,7 +22,7 @@ class LeafletChartBuilderService extends GeneralChartBuilderService {
 
     generateChart(containerId, dataset, options, additionalOptions) {
         let chartContainer = document.getElementById(containerId);
-        if (chartContainer.innerHTML != '') throw 'Mapa já instanciado!';
+        //if (chartContainer.innerHTML != '') throw 'Mapa já instanciado!';
         
         // Replacing defaults
         if (options.tiles_url) this.tiles.url = options.tiles_url;
@@ -78,16 +77,15 @@ class LeafletChartBuilderService extends GeneralChartBuilderService {
   
 		leaflet_map = this.fillLayers(leaflet_map, dataset, Object.assign(options, additionalOptions), bounds ? leaflet_map.getBoundsZoom(bounds) : null);
   
-		window.addEventListener('resize', this.resizeMapArea);
+		window.addEventListener('resize', this.resizeMapArea, null, containerId);
 		
 		return leaflet_map;
     }
 
-    // TODO how to get options into this function
-    circleClick(e) {
-        let tooltip_function = this.options.tooltip_function ? this[this.options.tooltip_function] : this.defaultLeafletTooltip;
-        let tooltip_context = this.options.tooltip_function ? this : this.$tooltipBuildingService;
-        tooltip_function.apply(tooltip_context, [e.target, this.$route, this.headers, this.options.removed_text_list, this.options]);
+    circleClick(e, options) {
+        let tooltip_function = options.tooltipFunction;
+        let tooltip_context = options.context ? options.context : null;
+        tooltip_function.apply(tooltip_context, [e.target, options.route, options.headers, options.removed_text_list, options]);
     }
 
     createTileLayer(options) {
@@ -126,18 +124,11 @@ class LeafletChartBuilderService extends GeneralChartBuilderService {
         return printPlugin;
     }
 
-	// TODO Check passing of ID
     resizeMapArea(id) {
         let chartContainer = document.getElementById(id);
         let height = parseInt(chartContainer.offsetWidth / this.heightProportion);
         chartContainer.style.height = height + "px";
     }
-
-    defaultLeafletTooltip(target, route, tooltip_list = [], removed_text_list = [], options = null) { 
-        let d = target.options.rowData;
-        target.unbindPopup();
-        target.bindPopup(TooltipBuildingService.defaultTooltip(d, route, tooltip_list, removed_text_list, options)).openPopup();
-	}
 
 	addDeafultMarker(localidade, map) {
 		let icon = this.L.icon({
@@ -219,9 +210,9 @@ class LeafletChartBuilderService extends GeneralChartBuilderService {
       }
 
 	  // TODO Decouple
-	  adjustVisibleLayers() {
-        this.leafletMap.removeLayer(this.mapLayer);
-        this.visibleLayers = this.customParams.enabled;
+	  adjustVisibleLayers(map, options) {
+        map.removeLayer(this.mapLayer);
+        // this.visibleLayers = this.customParams.enabled;
         this.fillLayers();
       }
 }

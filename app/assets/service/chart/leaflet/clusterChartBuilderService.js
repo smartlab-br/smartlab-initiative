@@ -48,7 +48,7 @@ class ClusterChartBuilderService extends LeafletChartBuilderService {
 					this.L.marker(
 						[ each_row[options.lat], each_row[options.long] ],
 						{rowData: each_row, icon: options.markerIcons ? options.markerIcons[each_row[id_field]]: defaultIcon }
-					).on("click", this.circleClick)
+					).on("click", this.L.bind(this.circleClick, null, options))
 				);
 			}
 		}

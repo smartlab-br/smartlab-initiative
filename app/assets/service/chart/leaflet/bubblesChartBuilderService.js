@@ -6,7 +6,7 @@ import IndicatorsModel from '../../../model/singleton/indicatorsModel'
 
 class BubblesChartBuilderService extends LeafletChartBuilderService {
     radius = { multiplier: 1600000, base: 5000 };
-	fCircleSize = d3.scaleLog().range([1, 4001]);
+    fCircleSize = d3.scaleLog().range([1, 4001]);
 
     constructor() {
         super();
@@ -34,15 +34,10 @@ class BubblesChartBuilderService extends LeafletChartBuilderService {
             dataset = (new IndicatorsModel()).getMinMaxEachIndicator(dataset, value_field);
         }
           
-        // TODO - decouple
-        // Prepares the layers
         for (const ident of options.indicadores) {
             let group = L.layerGroup();
             group.addTo(map);
             this.layers[ident] = group;
-            if (this.visibleLayers[ident] == null || this.visibleLayers[ident] == undefined) {
-              this.visibleLayers[ident] = true;
-            }
         }
 
         // Iterates over the dataset, to build each circle and apply to the respective layer
@@ -79,14 +74,14 @@ class BubblesChartBuilderService extends LeafletChartBuilderService {
                                             ( each_row.fillOpacity != null ? each_row.fillOpacity : 0.5 ),
                             radius: value != null ? value > 0 ? value * multiplier + this.radius.base : this.radius.base : 0
                         }
-                    ).on("click", this.circleClick);
-
+                    ).on("click", this.L.bind(this.circleClick, null, options));
+                    
                     eachCircle.addTo(this.layers[ident]);
                 }
             }
         }
 
-        this.adjustVisibleLayers(options);
+        this.adjustVisibleLayers(map, options);
         return map;
     }
 
@@ -98,7 +93,7 @@ class BubblesChartBuilderService extends LeafletChartBuilderService {
                 } else {
                     map.removeLayer(this.layers[indx]);
                 }
-                this.visibleLayers[indx] = options.enabled[indx];
+                // this.visibleLayers[indx] = options.enabled[indx];
             }
         }
     }

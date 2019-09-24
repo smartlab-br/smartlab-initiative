@@ -1,4 +1,5 @@
 import ChartBuilderService from '../../assets/service/chart/chartBuilderService'
+import TooltipBuildingService from '../../assets/service/singleton/tooltipBuildingService'
 
 const SnackbarManager = {
   install(Vue, options) {
@@ -35,9 +36,28 @@ const SnackbarManager = {
                   }
                 },
                 openingArgs: [this.$router]
-              }
+              },
+              tooltipFunction: chartOptions.tooltipFunction ? this[chartOptions.tooltipFunction] : TooltipBuildingService.defaultTooltip,
             }
             if (chartType == 'SANKEYD3') additionalOptions.metadata = metadata;
+            if (['MAP_BUBBLES', 'MAP_HEAT', 'MAP_CLUSTER'].includes(chartType)) {
+                if (chartOptions.tooltipFunction == null) additionalOptions.tooltipFunction = TooltipBuildingService.defaultLealfetTooltip; 
+
+                if (this.customParams && this.customParams.limCoords) {
+                  additionalOptions.limCoords = this.customParams.limCoords;
+                }
+                
+                // Prepares the layers
+                let visibleLayers = {}
+                if (chartOptions.indicadores) {
+                  for (const ident of chartOptions.indicadores) {
+                    if (visibleLayers[ident] == null || visibleLayers[ident] == undefined) visibleLayers[ident] = true;
+                  }
+                  
+                }
+                this.visibleLayers = visibleLayers;
+                additionalOptions.visibleLayers = visibleLayers;
+            }
   
             ChartBuilderService.generateChart(
               chartType, 
