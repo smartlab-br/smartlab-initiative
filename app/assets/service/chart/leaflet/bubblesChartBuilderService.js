@@ -28,8 +28,7 @@ class BubblesChartBuilderService extends LeafletChartBuilderService {
         let id_field = options.id_field ? options.id_field : 'cd_indicador';
         let min_field = options.min_field ? options.min_field : 'calc_min_part';
 
-        // TODO - Analisar se é necessário getMinMaxEachIndicator
-        // // Prepares the dataset, if the layers have no range
+        // Prepares the dataset, if the layers have no range
         if (min_field == 'minVal' || !value_field.includes('api_calc_')) {  
             dataset = (new IndicatorsModel()).getMinMaxEachIndicator(dataset, value_field);
         }

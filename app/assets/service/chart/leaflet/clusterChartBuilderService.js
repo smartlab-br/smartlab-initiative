@@ -40,7 +40,10 @@ class ClusterChartBuilderService extends LeafletChartBuilderService {
 				mapLayer.addLayer(
 					this.L.marker(
 						[ each_row[options.lat], each_row[options.long] ],
-						{rowData: each_row, icon: options.markerIcons ? options.markerIcons[each_row[id_field]]: defaultIcon }
+						{ rowData: each_row,
+						  icon: options.markerIcons ? options.markerIcons[each_row[id_field]]: defaultIcon,
+						  customOptions: options
+						}
 					).on("click", this.circleClick)
 				);
 			}
