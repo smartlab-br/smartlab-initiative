@@ -7,15 +7,6 @@
       </v-layout>
       <div v-else class="minicard-value"  v-html = "value"></div>
       <div class="minicard-chart" v-if="dataset !== null && dataset.length > 1 && structure && structure.chart">
-        <!-- <flpo-line-chart
-          v-if="structure.chart.type == 'LINE'"
-          ref = "chart"
-          :id="chartId"
-          :dataset="dataset"
-          :options="structure.chart.options"
-          :headers="structure.chart.headers"
-          :section-index="sectionIndex">
-        </flpo-line-chart> -->
         <v-layout fill-height
           v-if="structure && structure.chart && structure.chart.type && validCharts.includes(structure.chart.type)"
           :class = "leafletBasedCharts.includes(structure.chart.type) ? 'map_geo' : ''"

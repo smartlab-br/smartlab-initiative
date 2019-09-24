@@ -89,75 +89,6 @@
                     <v-flex xs12 fill-height :style="cmpStyle"
                       :class="{'mx-0 px-3': (this.$vuetify.breakpoint.smAndDown || chartPosition == 'bottom'), 'mx-0 pt-2 pr-4 pb-0': (this.$vuetify.breakpoint.mdAndUp && chartPosition != 'bottom')}">
                       <!-- Definition of all possible charts -->
-                      <!-- <flpo-bar-chart
-                        v-if="dataset !== null && structure && structure.chart_type == 'BAR' && structure.chart_options !== null"
-                        ref = "chart"
-                        :id="chartId"
-                        :dataset="dataset"
-                        :options="structure.chart_options"
-                        :headers="structure.headers"
-                        :section-index="sectionIndex">
-                      </flpo-bar-chart> -->
-                      <!-- <flpo-boxplot-chart
-                        v-if="dataset !== null && structure && structure.chart_type == 'BOXPLOT' && structure.chart_options !== null"
-                        ref = "chart"
-                        :id="chartId"
-                        :dataset="dataset"
-                        :options="structure.chart_options">
-                      </flpo-boxplot-chart> -->
-                      <!-- <flpo-sankey
-                        v-if="dataset !== null && metadata && metadata.sankey_data && structure && structure.chart_type == 'SANKEYD3' && structure.chart_options !== null"
-                        ref = "chart"
-                        :id="chartId"
-                        :dataset="dataset"
-                        :metadata="metadata"
-                        :options="structure.chart_options"
-                        :headers="structure.headers">
-                      </flpo-sankey> -->
-                      <!-- <flpo-scatter-chart
-                        v-if="dataset !== null && structure && structure.chart_type == 'SCATTERPLOT' && structure.chart_options !== null"
-                        ref = "chart"
-                        :id="chartId"
-                        :dataset="dataset"
-                        :options="structure.chart_options"
-                        :headers="structure.headers">
-                      </flpo-scatter-chart> -->
-                      <!-- <flpo-treemap-chart
-                        v-if="dataset !== null && structure && structure.chart_type == 'TREEMAP' && structure.chart_options !== null"
-                        ref = "chart"
-                        :id="chartId"
-                        :dataset="dataset"
-                        :options="structure.chart_options"
-                        :headers="structure.headers"
-                        :section-index="sectionIndex">
-                      </flpo-treemap-chart> -->
-                      <!-- <flpo-leaflet-map
-                        v-if="dataset !== null && structure && structure.chart_type == 'MAP_LEAFLET' && structure.chart_options !== null &&
-                              ((structure.chart_options.type == 'topo' && cmpTopology) || (structure.chart_options.type !== 'topo'))"
-                        ref = "chart"
-                        :id = "chartId"
-                        :selected-place="selectedPlace"
-                        :topology = "cmpTopology"
-                        :topology-uf = "topologyUf"
-                        :dataset = "dataset"
-                        :options = "structure.chart_options"
-                        :customParams = "customParams"
-                        :headers = "structure.headers">
-                      </flpo-leaflet-map> -->
-                      <!-- <flpo-topojson-map
-                        v-if="dataset !== null && structure && structure.chart_type == 'MAP_TOPOJSON' && structure.chart_options !== null && cmpTopology"
-                        ref = "chart"
-                        :topology="cmpTopology"
-                        :topology-uf = "topologyUf"
-                        :id="chartId"
-                        :selected-place="selectedPlace"
-                        :dataset="dataset"
-                        :options="structure.chart_options"
-                        :customParams="customParams"
-                        :custom-functions="customFunctions"
-                        :headers="structure.headers"
-                        :section-index="sectionIndex">
-                      </flpo-topojson-map> -->
                       <v-layout fill-height
                         v-if="structure && structure.chart_options !== null &&
                               validCharts.includes(structure.chart_type)"
@@ -165,33 +96,6 @@
                         :class = "leafletBasedCharts.includes(structure.chart_type) ? 'map_geo' : ''"
                         :id="chartId">
                       </v-layout>
-                      <!-- <flpo-line-chart
-                        v-if="dataset !== null && structure && structure.chart_type == 'LINE' && structure.chart_options !== null"
-                        ref = "chart"
-                        :id="chartId"
-                        :dataset="dataset"
-                        :options="structure.chart_options"
-                        :headers="structure.headers"
-                        :section-index="sectionIndex">
-                      </flpo-line-chart> -->
-                      <!-- <flpo-stacked-line-chart
-                        v-if="dataset !== null && structure && structure.chart_type == 'STACKED' && structure.chart_options !== null"
-                        ref = "chart"
-                        :id="chartId"
-                        :dataset="dataset"
-                        :options="structure.chart_options"
-                        :headers="structure.headers"
-                        :section-index="sectionIndex">
-                      </flpo-stacked-line-chart> -->
-                      <!-- <flpo-calendar-chart
-                        v-if="dataset !== null && structure && structure.chart_type == 'CALENDAR' && structure.chart_options !== null"
-                        ref = "chart"
-                        :id="chartId"
-                        :dataset="dataset"
-                        :options="structure.chart_options"
-                        :headers="structure.headers"
-                        :section-index="sectionIndex">
-                      </flpo-calendar-chart> -->
                     </v-flex>
                     <v-layout v-if="chartFooter" xs12 pt-0 justify-center chart-footer>
                       {{ chartFooter }}
@@ -285,10 +189,7 @@
     },
     watch: {
       dataset: function (nuDS, oldDS) {
-        if (oldDS) {
-          console.log("triggered");
-          this.triggerChartUpdates();
-        }
+        if (oldDS) this.triggerChartUpdates();
       }
     },
     computed: {

@@ -111,92 +111,11 @@
                       <v-layout column :style="cmpStyle" :class="{'px-3': $vuetify.breakpoint.smAndDown, 'px-0 mx-0 fill-height': $vuetify.breakpoint.mdAndUp}">
                         <v-flex fill-height :class="{'mx-0': $vuetify.breakpoint.smAndDown, 'mx-3 pb-0': $vuetify.breakpoint.mdAndUp}">
                           <!-- Definition of all possible charts -->
-                          <!-- <flpo-bar-chart
-                            v-if="dataset && dataset[chart.id] !== null && chart.type == 'BAR' && chart.options !== null"
-                            :id="chartId[chart.id]"
-                            :dataset="dataset[chart.id]"
-                            :options="chart.options"
-                            :headers="chart.headers"
-                            :section-index="sectionIndex">
-                          </flpo-bar-chart> -->
-                          <!-- <flpo-boxplot-chart
-                            v-if="dataset && dataset[chart.id] !== null && chart.type == 'BOXPLOT' && chart.options !== null"
-                            :id="chartId[chart.id]"
-                            :dataset="dataset[chart.id]"
-                            :options="chart.options"
-                            :headers="chart.headers"
-                            :section-index="sectionIndex">
-                          </flpo-boxplot-chart> -->
-                          <!-- <flpo-sankey
-                            v-if="dataset !== null && structure && structure.chart_type == 'SANKEYD3' && structure.chart_options !== null"
-                            ref = "chart"
-                            :id="chartId"
-                            :dataset="dataset"
-                            :options="structure.chart_options"
-                            :headers="structure.headers">
-                          </flpo-sankey> -->
-                          <!-- <flpo-scatter-chart
-                            v-if="dataset && dataset[chart.id] !== null && chart.type == 'SCATTERPLOT' && chart.options !== null"
-                            :id="chartId[chart.id]"
-                            :dataset="dataset[chart.id]"
-                            :options="chart.options"
-                            :headers="chart.headers"
-                            :section-index="sectionIndex">
-                          </flpo-scatter-chart> -->
-                          <!-- <flpo-treemap-chart
-                            v-if="dataset && dataset[chart.id] && chart.type == 'TREEMAP' && chart.options !== null"
-                            :id="chartId[chart.id]"
-                            :dataset="dataset[chart.id]"
-                            :options="chart.options"
-                            :headers="chart.headers"
-                            :section-index="sectionIndex">
-                          </flpo-treemap-chart> -->
-                          <!-- <flpo-leaflet-map
-                            v-if = "dataset && dataset[chart.id] !== null && chart.type == 'MAP_LEAFLET' && chart.options !== null &&
-                                    ((chart.options.type == 'topo' && topology) || (chart.options.type !== 'topo'))"
-                            :id="chartId[chart.id]"
-                            :selected-place="selectedPlace"
-                            :dataset="dataset[chart.id]"
-                            :options="chart.options"
-                            :headers="chart.headers"
-                            :section-index="sectionIndex"
-                            :topology="topology"
-                            :topology-uf = "topologyUf"
-                            :customParams = "customParams">
-                          </flpo-leaflet-map> -->
-                          <!-- <flpo-topojson-map
-                            v-if="dataset && dataset[chart.id] && dataset[chart.id].length >= 0 && chart.type == 'MAP_TOPOJSON' && chart.options !== null && topology"
-                            :id="chartId[chart.id]"
-                            :selected-place="selectedPlace"
-                            :dataset="dataset[chart.id]"
-                            :options="chart.options"
-                            :headers="chart.headers"
-                            :section-index="sectionIndex"
-                            :topology="topology"
-                            :topology-uf = "topologyUf"
-                            :customParams="customParams">
-                          </flpo-topojson-map> -->
                           <v-layout fill-height
                             v-if="validCharts.includes(chart.type) && chart.options !== null"
                             :class = "leafletBasedCharts.includes(chart.type) ? 'map_geo' : ''"
                             :id="chartId[chart.id]">
                           </v-layout>
-                          <!-- <flpo-line-chart
-                            v-if="dataset && dataset[chart.id] !== null && chart.type == 'LINE' && chart.options !== null"
-                            :id="chartId[chart.id]"
-                            :dataset="dataset[chart.id]"
-                            :options="chart.options"
-                            :headers="chart.headers"
-                            :section-index="sectionIndex">
-                          </flpo-line-chart> -->
-                          <!-- <flpo-stacked-line-chart
-                            v-if="dataset && dataset[chart.id] !== null && chart.type == 'STACKED' && chart.options !== null"
-                            :id="chartId[chart.id]"
-                            :dataset="dataset[chart.id]"
-                            :options="chart.options"
-                            :headers="chart.headers"
-                            :section-index="sectionIndex">
-                          </flpo-stacked-line-chart> -->
                         </v-flex>
                         <v-layout v-if="chartFooter && chartFooter[chart.id] && updatedChartFooters == structure.charts.length" pb-0 xs12 justify-center chart-footer>
                           {{ chartFooter[chart.id] }}

@@ -161,24 +161,6 @@
         <!-- Seção de gráfico -->
         <v-layout v-else-if="descSection.type && descSection.type == 'chart'" column pb-2>
           <v-flex pa-0 class="headline-obs">{{ descSection.title }}</v-flex>
-          <!-- <flpo-bar-chart
-            v-if="descSection.chartType == 'BAR'
-                  && descSection.options && dataset[descSection.id]"
-            :id="descSection.id"
-            :dataset="dataset[descSection.id]"
-            :options="descSection.options"
-            :headers="descSection.headers"
-            :section-index="descSection.index">
-          </flpo-bar-chart>
-          <flpo-treemap-chart
-            v-else-if="descSection.chartType == 'TREEMAP'
-                       && descSection.options && dataset[descSection.id]"
-            :id="descSection.id"
-            :dataset="dataset[descSection.id]"
-            :options="descSection.options"
-            :headers="descSection.headers"
-            :section-index="descSection.index">
-          </flpo-treemap-chart> -->
           <v-layout fill-height
             v-if="descSection && descSection.chartType && validCharts.includes(descSection.chartType)"
             :class = "leafletBasedCharts.includes(descSection.chartType) ? 'map_geo' : ''"

@@ -195,7 +195,7 @@
           <v-layout v-show="mapEnabled" style="position:absolute;z-index:2;right:10px" class="cursor-pointer pa-3 justify-end subheading" v-on:click="$navigationManager.constructor.pushRoute($router,'/'+$observatories.constructor.identifyObservatoryById(idObservatorio)+'/smartmap')">
             Clique para modo avançado - SmartMap
           </v-layout>
-          <flpo-leaflet-map
+          <!-- <flpo-leaflet-map
             v-if="dataset !== null && observatorio && observatorio.prevalencia &&
                   observatorio.prevalencia.chart_type == 'MAP_LEAFLET' &&
                   observatorio.prevalencia.chart_options &&  mapEnabled"
@@ -207,7 +207,15 @@
             :customParams = "customParams"
             :headers = "observatorio.prevalencia.headers"
             v-on:chart-loaded="mapLoaded">
-          </flpo-leaflet-map>
+          </flpo-leaflet-map> -->
+          <v-layout fill-height
+            v-if="dataset !== null && observatorio && observatorio.prevalencia &&
+                  observatorio.prevalencia.chart_type == 'MAP_BUBBLES' &&
+                  observatorio.prevalencia.chart_options &&  mapEnabled"
+            ref = "chartRef"
+            :class = "leafletBasedCharts.includes(observatorio.prevalencia.chart_type) ? 'map_geo' : ''"
+            id="observatorio_home_prevalencia_map">
+          </v-layout>
           <!--
           <v-layout pa-3 row wrap justify-center align-center fill-height
             v-show="mapDataLoading">
@@ -337,7 +345,8 @@
         displayHeight: "auto",
         dims: null,
         mapEnabled: false,
-        isPageBottom: true
+        isPageBottom: true,
+        chartHandler: null
       }
     },
     mounted: function() {
@@ -388,9 +397,7 @@
       },
 
       enableMap(){
-        if (!this.mapEnabled){
-          this.fetchMapData();        
-        }
+        if (!this.mapEnabled) this.fetchMapData();        
       },
 
       mapLoaded(){
@@ -462,14 +469,52 @@
       },
 
       fetchMapData(endpoint = null) {
+        console.log("fetching");
         this.fillDataStructure(
           this.observatorio.prevalencia,
           this.customParams, this.customFunctions,
           this.setDataset,
           { "endpoint": endpoint,
-            "fnCallback": () => { this.mapEnabled = true}
+            "fnCallback": () => { this.triggerChartUpdates }
           },
         );
+      },
+
+      triggerChartUpdates() {
+        console.log("aqui");
+        this.mapEnabled = true;
+        if (this.chartHandler) {
+          this.chartRegen(
+            this.chartHandler,
+            "observatorio_home_prevalencia_map",
+            this.observatorio.prevalencia.chart_type,
+            this.observatorio.prevalencia,
+            this.observatorio.prevalencia.chart_options,
+            this.dataset,
+            this.metadata,
+            this.sectionIndex
+          ).then(
+            (chartHandler) => { this.sendChartLoaded(chartHandler); },
+            (reject) => { this.sendError(reject); }
+          );
+        } else {
+          this.chartGen(
+            "observatorio_home_prevalencia_map",
+            this.observatorio.prevalencia.chart_type,
+            this.observatorio.prevalencia,
+            this.observatorio.prevalencia.chart_options,
+            this.dataset,
+            this.metadata
+          ).then(
+            (chartHandler) => { this.sendChartLoaded(chartHandler); },
+            (reject) => { this.sendError(reject); }
+          );
+        }
+      },
+
+      sendChartLoaded() {
+        this.mapLoaded = true;
+        this.chartHandler = chartHandler;
       }
     }
   }
