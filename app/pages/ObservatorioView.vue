@@ -361,6 +361,11 @@
     beforeDestroy () {
       window.removeEventListener('scroll', this.assessPageBottom);
     },
+    watch: {
+      dataset: function (nuDS, oldDS) {
+        if (oldDS) this.triggerChartUpdates();
+      }
+    },
     computed: {
       currentParallaxFile: function() {
         return '/static/parallax/' + this.observatorio.imagem + '.jpg';

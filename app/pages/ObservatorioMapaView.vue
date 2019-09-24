@@ -421,7 +421,7 @@
         }
       },
 
-      sendChartLoaded() {
+      sendChartLoaded(chartHandler) {
         this.chartHandler = chartHandler;
         this.mapDataLoading = false;
         this.dialogMapLoading = false;

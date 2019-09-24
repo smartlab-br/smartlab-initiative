@@ -82,12 +82,16 @@ const SnackbarManager = {
               
               // Prepares the layers
               let visibleLayers = {}
-              if (chartOptions.indicadores) {
-                for (const ident of chartOptions.indicadores) {
-                  if (chartOptions.show_all || visibleLayers[ident] == null || visibleLayers[ident] == undefined) {
-                    visibleLayers[ident] = true;
-                  } else {
-                    visibleLayers[ident] = false;
+              if (this.customParams.enabled) {
+                visibleLayers = this.customParams.enabled;
+              } else {
+                if (chartOptions.indicadores) {
+                  for (const ident of chartOptions.indicadores) {
+                    if (chartOptions.show_all || visibleLayers[ident] == null || visibleLayers[ident] == undefined) {
+                      visibleLayers[ident] = true;
+                    } else {
+                      visibleLayers[ident] = false;
+                    }
                   }
                 }
               }
