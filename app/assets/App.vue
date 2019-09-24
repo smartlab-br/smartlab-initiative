@@ -360,17 +360,16 @@
         </v-flex>
         <v-flex xs6 sm6 md2 lg3 xl3 class="text-xs-left text-sm-left text-md-center"
             :class="{'pt-5 pb-3': $vuetify.breakpoint.smAndDown }" >
-              <a class="white--text mr-3" v-on:click="$navigationManager.constructor.pushRoute($router, 'https://github.com/smartlab-br', true)"><v-icon color="white">fab fa-github</v-icon></a>
-              <a class="white--text mr-3" v-on:click="$navigationManager.constructor.pushRoute($router, 'https://hub.docker.com/u/smartlab/', true)"><v-icon color="white">fab fa-docker</v-icon></a>
-              <a class="white--text mr-3" v-on:click="$navigationManager.constructor.pushRoute($router, '', true)"><v-icon color="white">fab fa-facebook</v-icon></a>
-              <a class="white--text" v-on:click="$navigationManager.constructor.pushRoute($router, '', true)"><v-icon color="white">fab fa-twitter</v-icon></a>
+              <a class="white--text mr-3" v-on:click="$navigationManager.constructor.pushRoute($router, 'https://github.com/smartlab-br', true)"><span v-html="renderIcon('fab','faGithub','GitHub')"/></a>
+              <a class="white--text mr-3" v-on:click="$navigationManager.constructor.pushRoute($router, 'https://hub.docker.com/u/smartlab/', true)"><span v-html="renderIcon('fab','faDocker','Docker')"/></a>
+              <a class="white--text mr-3" v-on:click="$navigationManager.constructor.pushRoute($router, '', true)"><span v-html="renderIcon('fab','faFacebook','Facebook')"/></a>
+              <a class="white--text" v-on:click="$navigationManager.constructor.pushRoute($router, '', true)"><span v-html="renderIcon('fab','faTwitter','Twitter')"/></a>
         </v-flex>
-        <v-flex xs6 sm6 md2 lg2 xl3 class="text-xs-right text-sm-right text-md-right"
+        <v-flex xs6 sm6 md2 lg2 xl3 class="text-xs-right" 
             :class="{'pt-5 pb-3': $vuetify.breakpoint.smAndDown }" >
-              <v-icon class="mr-2" color="white">fab fa-lic</v-icon><span class="hidden-xs-only hidden-md-only">Licenças: </span> 
-              <a class="white--text" v-on:click="$navigationManager.constructor.pushRoute($router, 'https://creativecommons.org/licences/by-nc-sa/4.0/', true)"><u>CC BY 4.0</u></a>
-               | 
-              <a class="white--text" v-on:click="$navigationManager.constructor.pushRoute($router, 'https://opensource.org/licenses/MIT', true)"><u>MIT</u></a>
+              <div class="caption mr-2 mb-1">Licenças</div>
+              <a class="white--text mx-2" v-on:click="$navigationManager.constructor.pushRoute($router, 'https://creativecommons.org/licences/by-nc-sa/4.0/', true)"><span v-html="renderIcon('fab','faCreativeCommons','CC BY 4.0')"/></a>
+              <a class="white--text" v-on:click="$navigationManager.constructor.pushRoute($router, 'https://opensource.org/licenses/MIT', true)"><span v-html="renderIcon('fab','faOsi','MIT - Open Source Initiative')"/></a>
         </v-flex>
       </v-layout>
     <!--</v-container>-->
@@ -517,7 +516,12 @@
 <script>
   import Meta from 'mixins/meta'
   import axios from 'axios'
-  
+
+  import fontawesome from '@fortawesome/fontawesome'
+  import fa_brands from '@fortawesome/fontawesome-free-brands'
+  import fa_solid from '@fortawesome/fontawesome-free-solid'
+  // import fa_regular from '@fortawesome/fontawesome-free-regular'
+
   export default {
     mixins: [Meta],
     data () {
@@ -950,6 +954,24 @@
         catch(err){
           this.snackAlert({ color : 'error', text: err });
         }
+      },
+      renderIcon(prefix,icon,icon_title="",icon_size="fa-2x") {
+        if (prefix == "fab"){
+          if (fa_brands[icon]){
+            return fontawesome.icon(fa_brands[icon],{classes: [icon_size], title: icon_title}).html[0];
+          }
+        } else if (prefix == "fas"){
+          if (fa_solid[icon]){
+            return fontawesome.icon(fa_solid[icon],{classes: [icon_size], title: icon_title}).html[0];
+          }
+        // } else if (prefix == "far"){
+        //   if (fa_regular[icon]){
+        //     return fontawesome.icon(fa_regular[icon],{classes: [icon_size], title: icon_title}).html[0];
+        //   }
+        } 
+        console.log("Icon not found: " + icon);
+        return null;
+        
       }
       
     }
@@ -957,6 +979,8 @@
 </script>
 
 <style>
+  @import "../node_modules/@fortawesome/fontawesome/styles.css";
+  
   .v-toolbar {
     z-index: 101 !important;
   }
