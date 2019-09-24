@@ -211,7 +211,7 @@
           <v-layout fill-height
             v-if="dataset !== null && observatorio && observatorio.prevalencia &&
                   observatorio.prevalencia.chart_type == 'MAP_BUBBLES' &&
-                  observatorio.prevalencia.chart_options &&  mapEnabled"
+                  observatorio.prevalencia.chart_options && mapEnabled"
             ref = "chartRef"
             :class = "leafletBasedCharts.includes(observatorio.prevalencia.chart_type) ? 'map_geo' : ''"
             id="observatorio_home_prevalencia_map">
@@ -400,10 +400,6 @@
         if (!this.mapEnabled) this.fetchMapData();        
       },
 
-      mapLoaded(){
-        this.dialogMapLoading = false;
-      },
-
       setDimensionsArea() {
         this.$dimensions.getDimensions(this.idObservatorio, this.setDimensionsStyles);
       },
@@ -451,9 +447,7 @@
       triggerSelect(payload) {
         if (payload.type && payload.type === 'switch-group') {
           this.customParams.enabled = payload.enabled;
-          if (this.$refs.chart){
-            this.$refs.chart.adjustVisibleLayers();
-          }
+          if (this.chartHandler) this.chartHandler.adjustVisibleLayers(payload.enabled);
         } else if (payload.type && payload.type === 'radio') {
           if (payload.item == null || payload.item == undefined){
             this.customParams.radioApi = null;
@@ -469,19 +463,17 @@
       },
 
       fetchMapData(endpoint = null) {
-        console.log("fetching");
         this.fillDataStructure(
           this.observatorio.prevalencia,
           this.customParams, this.customFunctions,
           this.setDataset,
           { "endpoint": endpoint,
-            "fnCallback": () => { this.triggerChartUpdates }
+            "fnCallback": this.triggerChartUpdates
           },
         );
       },
 
       triggerChartUpdates() {
-        console.log("aqui");
         this.mapEnabled = true;
         if (this.chartHandler) {
           this.chartRegen(
@@ -512,9 +504,9 @@
         }
       },
 
-      sendChartLoaded() {
-        this.mapLoaded = true;
+      sendChartLoaded(chartHandler) {
         this.chartHandler = chartHandler;
+        this.dialogMapLoading = false;
       }
     }
   }
