@@ -11,16 +11,6 @@ import { createStore } from 'store/index'
 import { createRouter } from 'router/index'
 import { sync } from 'vuex-router-sync'
 
-import fontawesome from '@fortawesome/fontawesome'
-// import solid from '@fortawesome/fontawesome-free-solid'
-import brands from '@fortawesome/fontawesome-free-brands'
-
-fontawesome.library.add(brands, brands.faGithub)
-fontawesome.library.add(brands, brands.faDocker)
-fontawesome.library.add(brands, brands.faLinkedinIn)
-fontawesome.library.add(brands, brands.faFacebookF)
-fontawesome.library.add(brands, brands.faTwitter)
-
 Vue.use(Vuetify, {
   options: {
     customProperties: true

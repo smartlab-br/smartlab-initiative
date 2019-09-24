@@ -1,4 +1,3 @@
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import AppIcon from './AppIcon'
 
 // Charts
@@ -41,7 +40,6 @@ import FLPOOdometer from './FLPOOdometer'
 import FLPOLeafletMap from './map/FLPOLeafletMap'
 
 export default {
-  'font-awesome-icon': FontAwesomeIcon,
   
   'flpo-leaflet-map': FLPOLeafletMap,
   
