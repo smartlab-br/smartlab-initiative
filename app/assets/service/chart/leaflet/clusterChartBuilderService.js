@@ -16,9 +16,8 @@ class ClusterChartBuilderService extends LeafletChartBuilderService {
 			shadowSize: [41, 41]
 		});
 
-		if (this.visibleLayers[options.indicadores[0]] == null || this.visibleLayers[options.indicadores[0]] == undefined) {
-			for (let indx in options.indicadores) {
-				let indicator = options.indicadores[indx];
+		if (options.visibleLayers[options.indicadores[0]] == null || options.visibleLayers[options.indicadores[0]] == undefined) {
+			for (let indicator in options.indicadores) {
 				
 				if(options.markerIcons && options.markerIcons[indicator]) {
 					options.markerIcons[indicator] = new this.L.Icon({
@@ -30,20 +29,14 @@ class ClusterChartBuilderService extends LeafletChartBuilderService {
 						shadowSize: [41, 41]
 					});
 				} 
-
-				if (options.show_all || (indx == 0 && (this.visibleLayers[indicator] == null || this.visibleLayers[indicator] == undefined))) {
-					this.visibleLayers[indicator] = true;
-				} else {
-					this.visibleLayers[indicator] = false;
-				}
 			}
 		}
-		
+
 		let mapLayer = this.L.markerClusterGroup();
 		let id_field = options.id_field ? options.id_field : 'cd_indicador';
 		
 		for (let each_row of dataset) {
-			if (this.visibleLayers[each_row[id_field]]) {
+			if (options.visibleLayers[each_row[id_field]]) {
 				mapLayer.addLayer(
 					this.L.marker(
 						[ each_row[options.lat], each_row[options.long] ],

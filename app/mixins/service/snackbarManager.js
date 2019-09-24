@@ -5,6 +5,12 @@ import axios from 'axios'
 const SnackbarManager = {
   install(Vue, options) {
     Vue.mixin({
+      data() {
+        return {
+          validCharts: ['MAP_TOPOJSON', 'LINE', 'STACKED', 'BAR', 'TREEMAP', 'SCATTERPLOT', 'BOXPLOT', 'CALENDAR', 'SANKEYD3', 'MAP_BUBBLES', 'MAP_HEAT', 'MAP_CLUSTER'],
+          leafletBasedCharts: ['MAP_BUBBLES', 'MAP_HEAT', 'MAP_CLUSTER']
+        }
+      },
       methods: {
         sendError(message) {
           this.$emit('showSnackbar', { color : 'error', text: message });
@@ -14,8 +20,7 @@ const SnackbarManager = {
         },
         
         chartGen(id, chartType, structure, chartOptions, dataset, metadata, sectionIndex = 0) {
-          let validCharts = ['MAP_TOPOJSON', 'LINE', 'STACKED', 'BAR', 'TREEMAP', 'SCATTERPLOT', 'BOXPLOT', 'CALENDAR', 'SANKEYD3', 'MAP_BUBBLES', 'MAP_HEAT', 'MAP_CLUSTER'];
-          if (structure && chartOptions && validCharts.includes(chartType)) {
+          if (structure && chartOptions && this.validCharts.includes(chartType)) {
             let additionalOptions = this.buildChartAdditionalOptions(id, chartType, structure, chartOptions, dataset, metadata, sectionIndex);
   
             return ChartBuilderService.generateChart(
@@ -28,8 +33,7 @@ const SnackbarManager = {
           }
         },
         chartRegen(chart, id, chartType, structure, chartOptions, dataset, metadata, sectionIndex = 0) {
-          let validCharts = ['MAP_TOPOJSON', 'LINE', 'STACKED', 'BAR', 'TREEMAP', 'SCATTERPLOT', 'BOXPLOT', 'CALENDAR', 'SANKEYD3', 'MAP_BUBBLES', 'MAP_HEAT', 'MAP_CLUSTER'];
-          if (structure && chartOptions && validCharts.includes(chartType)) {
+          if (structure && chartOptions && this.validCharts.includes(chartType)) {
             let additionalOptions = this.buildChartAdditionalOptions(id, chartType, structure, chartOptions, dataset, metadata, sectionIndex);
   
             return ChartBuilderService.regenerateChart(
@@ -69,7 +73,7 @@ const SnackbarManager = {
             tooltipFunction: chartOptions.tooltip_function ? this[chartOptions.tooltip_function] : TooltipBuildingService.defaultTooltip,
           }
           if (chartType == 'SANKEYD3') additionalOptions.metadata = metadata;
-          if (['MAP_BUBBLES', 'MAP_HEAT', 'MAP_CLUSTER'].includes(chartType)) {
+          if (this.leafletBasedCharts.includes(chartType)) {
               if (chartOptions.tooltip_function == null) additionalOptions.tooltipFunction = TooltipBuildingService.defaultLealfetTooltip; 
 
               if (this.customParams && this.customParams.limCoords) {
@@ -80,10 +84,14 @@ const SnackbarManager = {
               let visibleLayers = {}
               if (chartOptions.indicadores) {
                 for (const ident of chartOptions.indicadores) {
-                  if (visibleLayers[ident] == null || visibleLayers[ident] == undefined) visibleLayers[ident] = true;
+                  if (chartOptions.show_all || visibleLayers[ident] == null || visibleLayers[ident] == undefined) {
+                    visibleLayers[ident] = true;
+                  } else {
+                    visibleLayers[ident] = false;
+                  }
                 }
-                
               }
+
               this.visibleLayers = visibleLayers;
               additionalOptions.visibleLayers = visibleLayers;
           }

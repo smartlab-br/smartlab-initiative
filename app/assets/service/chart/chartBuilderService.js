@@ -78,6 +78,7 @@ class ChartBuilderService {
                             let chart = builder.generateChart(containerId, dataset, options, additionalOptions);
                             resolve(chart);
                         } catch (err) {
+                            console.log(err);
                             reject(err);
                         }
                     } else {
