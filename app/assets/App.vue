@@ -358,16 +358,16 @@
           />
           
         </v-flex>
-        <v-flex xs6 sm6 md2 lg3 xl3 class="text-xs-left text-sm-left text-md-center"
+        <v-flex xs6 sm6 md2 lg3 xl3 class="text-xs-left text-sm-left text-md-center subheading"
             :class="{'pt-5 pb-3': $vuetify.breakpoint.smAndDown }" >
               <a class="white--text mr-3" v-on:click="$navigationManager.constructor.pushRoute($router, 'https://github.com/smartlab-br', true)"><span v-html="renderIcon('fab','faGithub','GitHub')"/></a>
               <a class="white--text mr-3" v-on:click="$navigationManager.constructor.pushRoute($router, 'https://hub.docker.com/u/smartlab/', true)"><span v-html="renderIcon('fab','faDocker','Docker')"/></a>
               <a class="white--text mr-3" v-on:click="$navigationManager.constructor.pushRoute($router, '', true)"><span v-html="renderIcon('fab','faFacebook','Facebook')"/></a>
               <a class="white--text" v-on:click="$navigationManager.constructor.pushRoute($router, '', true)"><span v-html="renderIcon('fab','faTwitter','Twitter')"/></a>
         </v-flex>
-        <v-flex xs6 sm6 md2 lg2 xl3 class="text-xs-right" 
+        <v-flex xs6 sm6 md2 lg2 xl3 class="text-xs-right subheading" 
             :class="{'pt-5 pb-3': $vuetify.breakpoint.smAndDown }" >
-              <div class="caption mr-2 mb-1">Licenças</div>
+              <div class="caption mr-1 mb-1">Licenças</div>
               <a class="white--text mx-2" v-on:click="$navigationManager.constructor.pushRoute($router, 'https://creativecommons.org/licences/by-nc-sa/4.0/', true)"><span v-html="renderIcon('fab','faCreativeCommons','CC BY 4.0')"/></a>
               <a class="white--text" v-on:click="$navigationManager.constructor.pushRoute($router, 'https://opensource.org/licenses/MIT', true)"><span v-html="renderIcon('fab','faOsi','MIT - Open Source Initiative')"/></a>
         </v-flex>
@@ -955,7 +955,7 @@
           this.snackAlert({ color : 'error', text: err });
         }
       },
-      renderIcon(prefix,icon,icon_title="",icon_size="fa-2x") {
+      renderIcon(prefix,icon,icon_title="",icon_size="fa-lg") {
         if (prefix == "fab"){
           if (fa_brands[icon]){
             return fontawesome.icon(fa_brands[icon],{classes: [icon_size], title: icon_title}).html[0];
