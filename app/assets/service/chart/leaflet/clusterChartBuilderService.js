@@ -49,6 +49,7 @@ class ClusterChartBuilderService extends LeafletChartBuilderService {
 			}
 		}
 		
+		this.mapLayer = mapLayer;
 		this.chart.addLayer(mapLayer);
     }
 }

@@ -283,6 +283,14 @@
     },
     mounted() {
     },
+    watch: {
+      dataset: function (nuDS, oldDS) {
+        if (oldDS) {
+          console.log("triggered");
+          this.triggerChartUpdates();
+        }
+      }
+    },
     computed: {
       cmpStyle: function() {
         if (this.$vuetify.breakpoint.smAndDown || this.chartPosition == "bottom") {
