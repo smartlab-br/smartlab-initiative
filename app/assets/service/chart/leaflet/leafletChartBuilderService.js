@@ -82,10 +82,18 @@ class LeafletChartBuilderService extends GeneralChartBuilderService {
 		return leaflet_map;
     }
 
-    circleClick(e, options) {
-        let tooltip_function = options.tooltipFunction;
-        let tooltip_context = options.context ? options.context : null;
-        tooltip_function.apply(tooltip_context, [e.target, options.route, options.headers, options.removed_text_list, options]);
+    circleClick(e) {
+        let tooltip_function = e.target.options.customOptions.tooltipFunction;
+        let tooltip_context = e.target.options.customOptions.context ? e.target.options.customOptions.context : null;
+        tooltip_function.apply(
+            tooltip_context,
+            [ e.target,
+              e.target.options.customOptions.route,
+              e.target.options.customOptions.headers,
+              e.target.options.customOptions.removed_text_list,
+              e.target.options.customOptions
+            ]
+        );
     }
 
     createTileLayer(options) {

@@ -533,7 +533,7 @@ const ViewConfReader = {
 					  }
 				
 					  // Obtém coordenadas limítrofes (se mapa)
-					  if (structure.chart_type === 'MAP_LEAFLET') { // Só avalia as coordenadas caso o gráfico seja um mapa.
+					  if (['MAP_BUBBLES', 'MAP_HEAT', 'MAP_CLUSTER'].includes(structure.chart_type)) { // Só avalia as coordenadas caso o gráfico seja um mapa.
 						// Ignora os pontos 0x0
 						if (parseFloat(dataset[eachRow][options.long]) != 0 && 
 							parseFloat(dataset[eachRow][options.long]) != 0) {
@@ -559,12 +559,8 @@ const ViewConfReader = {
 							}
 						  }
 						}
+						this.customParams.limCoords = limCoords;
 					  }
-					}
-				
-					// Define as coordenadas apenas se for um mapa do leaflet
-					if (structure.chart_type === 'MAP_LEAFLET') {
-					  this.customParams.limCoords = limCoords;
 					}
 				
 					if (options.order_field !== null && options.order_field !== undefined) {
