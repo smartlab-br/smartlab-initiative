@@ -1,6 +1,7 @@
 <template>
   <v-flex :class="(rowClass ? rowClass : 'pl-4 pr-0 pb-3 pt-3') + ' ' + cardClass">
     <v-layout column :class="'minicard fill-height' + colorClass + ' ' + relevance">
+      <div v-if="errorMessage" :class="'minicard-comment ' + commentColorClass" v-html = "errorMessage"></div>
       <v-layout v-if="structure.desc_position == 'right'" row >
         <v-flex shrink class="minicard-value"  v-html = "value"></v-flex>
         <v-flex pl-1 v-if="structure.desc_position == 'right'" class="title-obs-desc minicard-description" v-html = "description != null ? description.toUpperCase() : ''"></v-flex>
@@ -36,7 +37,8 @@
         colorClass: '',
         commentColorClass: '',
         dataset: null,
-        metadata: null
+        metadata: null,
+        errorMessage: null
       }
     },
     props: ['rowClass', 'reactiveFilter', 'customFilters'],
@@ -57,6 +59,7 @@
     },
     watch: {
       reactiveFilter: function(newVal, oldVal) {
+        this.errorMessage = null;
         if (newVal != oldVal) {
           if (this.structure.reactive){
             this.updateReactiveDataStructure(this.customFilters.filterUrl);
@@ -213,7 +216,7 @@
             null,
             JSON.parse(result.data).metadata
           );
-        }).catch(error => { this.sendDataStructureError(error); });
+        }).catch(error => { this.sendDataStructureError("Erro ao carregar dados do componente."); });
       },
     }
   }

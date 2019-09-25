@@ -2,6 +2,7 @@
   <v-flex :class="cls ? cls : 'xs12'">
     <v-layout column wrap ml-2 mb-2>
       <v-flex x12 px-0 class="display-1-obs ranking-list-title pb-2"> {{ title}} </v-flex>
+      <v-flex v-if="errorMessage" x12 px-0 class="display-1-obs ranking-list-text pb-2"> {{ errorMessage }} </v-flex>
       <v-flex xs12 class="ranking-list pa-0" v-for="(item, itemIndx) in ranking" :key="itemIndx">      
         <div class="ranking-list-text"><span>{{item.rank? item.rank: itemIndx+1}}. </span>{{item.localidade + " " + item.vl_indicador}}</div>
       </v-flex>
@@ -31,7 +32,8 @@
       return {
           ranking: [],
           cls: "xs12",
-          title: null
+          title: null,
+          errorMessage: null
       }
     },
     props: ['id', 'structure', 'customParams', 'customFunctions', 'reactiveFilter', 'customFilters'],
@@ -48,6 +50,7 @@
       reactiveFilter: function(newVal, oldVal) {
         if (newVal != oldVal) {
           if (this.structure.reactive){
+            this.errorMessage = null;
             this.updateReactiveDataStructure(this.customFilters.filterUrl);
           } 
         }

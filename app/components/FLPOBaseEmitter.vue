@@ -3,7 +3,8 @@
     data() {
       return {
         items: [],
-        target: null
+        target: null,
+        errorMessage: null
       }
     },
     props: ['id', 'structure', 'customParams', 'customFunctions', 'immediate', 'reactiveFilter', 'reactiveParent'],
