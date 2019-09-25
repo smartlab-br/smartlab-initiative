@@ -56,7 +56,8 @@
                 :reactive-filter="reactiveFilter"
                 :active-group="activeGroup"
                 v-on:selection="triggerSelect"
-                v-on:default-selection="triggerDefaultSelect">
+                v-on:default-selection="triggerDefaultSelect"
+                @showSnackbar="snackAlert">
               </flpo-composite-text>
 
               <v-layout column wrap>
@@ -114,7 +115,8 @@
             :reactive-filter="reactiveFilter"
             :active-group="activeGroup"
             v-on:selection="triggerSelect"
-            v-on:default-selection="triggerDefaultSelect">
+            v-on:default-selection="triggerDefaultSelect"
+            @showSnackbar="snackAlert">
           </flpo-composite-text>
           <!--<v-layout px-4 v-if="customParams.filterText" v-html="'<b>Filtros:</b>' + customParams.filterText">
           </v-layout>-->

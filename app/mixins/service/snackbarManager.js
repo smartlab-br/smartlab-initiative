@@ -15,6 +15,11 @@ const SnackbarManager = {
         sendError(message) {
           this.$emit('showSnackbar', { color : 'error', text: message });
         },
+        
+        snackAlert(params) {
+          this.$emit('showSnackbar', params);
+        },
+
         openBugDialog(cardTitle){
           this.$emit('showBugDialog', cardTitle);
         },

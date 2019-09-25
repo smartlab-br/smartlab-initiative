@@ -78,7 +78,7 @@
 
         if (structReactive.api && structReactive.api.fixed){
           structReactive.api.fixed += filterUrl
-        } else if (structReactive.api && structReactive.api.template && !structReactive.api.template.toLowerCase().includes('limit') ){
+        } else if (structReactive.api && structReactive.api.template){
           structReactive.api.template += filterUrl
         }
         this.fillDataStructure(

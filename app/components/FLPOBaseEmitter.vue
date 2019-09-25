@@ -36,10 +36,6 @@
       }
     },
     methods: {
-      sendError(message) {
-        this.$emit('showSnackbar', { color : 'error', text: message });
-      },
-      
       toItems(dataset, rules, structure, addedParams, metadata) {
         for (var rowIndx in dataset) {
           this.toItem(dataset[rowIndx], rules);

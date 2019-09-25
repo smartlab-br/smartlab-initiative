@@ -92,9 +92,6 @@
         this.metadata = metadata;
         this.triggerChartUpdates();
       },
-      sendError(message) {
-        this.$emit('showSnackbar', { color : 'error', text: message });
-      },
       
       fillProp(base_object_list, args, preloaded, addedParams = null, metadata = null) {
           let rule = addedParams.rule;
@@ -216,7 +213,7 @@
             null,
             JSON.parse(result.data).metadata
           );
-        });
+        }).catch(error => { this.sendDataStructureError(error); });
       },
     }
   }

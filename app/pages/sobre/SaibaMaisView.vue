@@ -37,11 +37,6 @@
     },
     mounted: function() {
       this.$vuetify.theme = this.$observatories.getTheme('default');
-    },
-    methods: {
-      sendError(message) {
-        this.$emit('showSnackbar', { color : 'error', text: message });
-      }
     }
   }
 </script>

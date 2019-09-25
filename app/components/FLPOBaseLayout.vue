@@ -3,11 +3,7 @@
     props: ['structure', 'customParams', 'customFunctions', 'topology',
             'topologyUf', 'sectionIndex'],
     methods: {
-      sendError(message) {
-        this.$emit('showSnackbar', { color : 'error', text: message });
-        this.errorMessage = message;
-      },
-      
+    
       setComplexAttribute(base_object_list, rules, structure, addedParams = null, metadata = null) {
         if (typeof base_object_list == 'string') {
           this[addedParams.attribute] = base_object_list;

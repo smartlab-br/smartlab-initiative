@@ -139,7 +139,8 @@
                 :custom-functions="customFunctions"
                 :reactive-filter="reactiveFilter"
                 :custom-filters="customParams"
-                v-on:selection="triggerSelect">
+                v-on:selection="triggerSelect"
+                @showSnackbar="snackAlert">
               </flpo-composite-text>
 
               <v-layout column wrap pl-2>
@@ -164,6 +165,7 @@
                 :custom-params="customParams"
                 :custom-functions="customFunctions"
                 :custom-filters="customParams"
+                @showSnackbar="snackAlert"
                 >
               </flpo-composite-text>
 
@@ -232,7 +234,8 @@
             <v-layout v-if="observatorio && observatorio.ranking_cards" row wrap pb-2>
               <flpo-ranking-list v-for="(ranking, index) in observatorio.ranking_cards" :key="index"
                 :structure="ranking" :customFunctions="customFunctions"
-                :customParams="customParams">
+                :customParams="customParams"
+                @showSnackbar="snackAlert">
               </flpo-ranking-list>
             </v-layout>
             <flpo-composite-text
@@ -241,7 +244,8 @@
               :structure="observatorio.prevalencia.description_bottom"
               section-class = 'pa-0'
               :custom-params="customParams"
-              :custom-functions="customFunctions">
+              :custom-functions="customFunctions"
+              @showSnackbar="snackAlert">
             </flpo-composite-text>
           </v-flex>
         </v-flex>
@@ -253,7 +257,8 @@
             :id = "'story_home_prevalencia_desc_r_' + idObservatorio"
             :structure="observatorio.prevalencia.description_right"
             :custom-params="customParams"
-            :custom-functions="customFunctions">
+            :custom-functions="customFunctions"
+            @showSnackbar="snackAlert">
           </flpo-composite-text>
         </v-flex>
 

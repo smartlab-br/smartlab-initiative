@@ -109,7 +109,8 @@
                   <flpo-minicard v-for="(miniCardPrincipal, indexMinicardsPrincipal) in ind_principais"
                     :key="'minicard_principal_'+indexMinicardsPrincipal"
                     :structure="miniCardPrincipal" :customFunctions="custom_functions"
-                    :customParams="customParams" :row-class="miniCardPrincipal.rowClass">
+                    :customParams="customParams" :row-class="miniCardPrincipal.rowClass"
+                    @showSnackbar="snackAlert">
                   </flpo-minicard>
                 </v-layout>
               </v-flex>
@@ -145,7 +146,8 @@
                   <flpo-minicard v-for="(miniCardPrincipal, indexMinicardsPrincipal) in ind_principais_compare"
                     :key="'minicard_principal_'+indexMinicardsPrincipal"
                     :structure="miniCardPrincipal" :customFunctions="custom_functions"
-                    :customParams="customParams" :row-class="miniCardPrincipal.rowClass">
+                    :customParams="customParams" :row-class="miniCardPrincipal.rowClass"
+                    @showSnackbar="snackAlert">
                   </flpo-minicard>
                 </v-layout>
               </v-flex>
@@ -206,7 +208,8 @@
                           :structure="card.description"
                           :custom-params = "customParams"
                           :custom-functions = "custom_functions"
-                          :section-index="indexSecao">
+                          :section-index="indexSecao"
+                          @showSnackbar="snackAlert">
                         </flpo-composite-text>
                       </v-layout>
                     </v-layout>
@@ -221,7 +224,8 @@
                           :structure="card.description"
                           :custom-params = "customParams"
                           :custom-functions = "custom_functions"
-                          :section-index="indexSecao">
+                          :section-index="indexSecao"
+                          @showSnackbar="snackAlert">
                         </flpo-composite-text>
                       </v-layout>
                       <v-layout v-else-if="card.type && card.type == 'headline'"
@@ -236,7 +240,8 @@
                         :custom-functions = "custom_functions"
                         :topology = "topology"
                         :topology-uf = "topology_uf"
-                        :section-index="indexSecao">
+                        :section-index="indexSecao"
+                        @showSnackbar="snackAlert">
                       </flpo-story-card-autofill>
                       <flpo-story-card-multiple-charts
                         v-else-if="card.type && card.type == 'multiple-charts' && topologyUfLoaded  && topology && ((indexSecao*100) + cardIndex  <= visibleCardMaxIndex)"
@@ -247,7 +252,8 @@
                         :topology = "topology"
                         :topology-uf = "topology_uf"
                         :section-index="indexSecao"
-                        @showBugDialog="openBugDialog">
+                        @showBugDialog="openBugDialog"
+                        @showSnackbar="snackAlert">
                       </flpo-story-card-multiple-charts>
                       <flpo-story-card
                         v-else-if="topologyUfLoaded  && topology && ((indexSecao*100) + cardIndex  <= visibleCardMaxIndex)"
@@ -258,7 +264,8 @@
                         :topology = "topology"
                         :topology-uf = "topology_uf"
                         :section-index="indexSecao"
-                        @showBugDialog="openBugDialog">
+                        @showBugDialog="openBugDialog"
+                        @showSnackbar="snackAlert">
                       </flpo-story-card>
                     </v-layout>
                   </v-flex>
@@ -272,7 +279,8 @@
                           :structure="sections_compare[indexSecao].cards[cardIndex].description"
                           :custom-params = "customParams"
                           :custom-functions = "custom_functions"
-                          :section-index="indexSecao">
+                          :section-index="indexSecao"
+                          @showSnackbar="snackAlert">
                         </flpo-composite-text>
                       </v-layout>
                       <v-layout v-else-if="sections_compare[indexSecao].cards[cardIndex].type && sections_compare[indexSecao].cards[cardIndex].type == 'headline'"
@@ -287,7 +295,8 @@
                         :custom-functions = "custom_functions"
                         :topology = "topology_compare"
                         :topology-uf = "topology_uf_compare"
-                        :section-index="indexSecao">
+                        :section-index="indexSecao"
+                        @showSnackbar="snackAlert">
                       </flpo-story-card-autofill>
                       <flpo-story-card-multiple-charts
                         v-else-if="sections_compare[indexSecao].cards[cardIndex].type && sections_compare[indexSecao].cards[cardIndex].type == 'multiple-charts' && topologyUfLoaded_compare  && topology_compare && ((indexSecao*100) + cardIndex  <= visibleCardMaxIndex)"
@@ -299,7 +308,8 @@
                         :topology = "topology_compare"
                         :topology-uf = "topology_uf_compare"
                         :section-index="indexSecao"
-                        @showBugDialog="openBugDialog">
+                        @showBugDialog="openBugDialog"
+                        @showSnackbar="snackAlert">
                       </flpo-story-card-multiple-charts>
                       <flpo-story-card
                         v-else-if="topologyUfLoaded_compare  && topology_compare && ((indexSecao*100) + cardIndex  <= visibleCardMaxIndex)"
@@ -311,7 +321,8 @@
                         :topology = "topology_compare"
                         :topology-uf = "topology_uf_compare"
                         :section-index="indexSecao"
-                        @showBugDialog="openBugDialog">
+                        @showBugDialog="openBugDialog"
+                        @showSnackbar="snackAlert">
                       </flpo-story-card>
                     </v-layout>
                   </v-flex>

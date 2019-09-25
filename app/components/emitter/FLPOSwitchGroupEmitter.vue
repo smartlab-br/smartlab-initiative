@@ -13,7 +13,8 @@
           <flpo-minicard v-for="(miniCard, index) in eachSwitch.minicards" :key="index"
             :structure="miniCard" :customFunctions="customFunctions"
             :customParams="customParams"
-            :row-class="miniCard.rowClass ? miniCard.rowClass : 'pa-1'">
+            :row-class="miniCard.rowClass ? miniCard.rowClass : 'pa-1'"
+            @showSnackbar="snackAlert">
           </flpo-minicard>
         </template>
       </v-switch>

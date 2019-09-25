@@ -6,6 +6,7 @@ const ViewConfReader = {
 		Vue.mixin({
 			data() {
 				return {
+					errorMessage: null
 				}
 			},
 			methods: {
@@ -67,6 +68,11 @@ const ViewConfReader = {
 				fillDataStructure(structure, customParams, customFunctions,
 								  cbFunction, addedParams) {
 					if (structure !== null && structure !== undefined) {
+						let msgError = "Erro ao carregar dados do componente.";
+						if (addedParams && addedParams.msgError){
+							msgError = addedParams.msgError;
+						}
+
 						if (addedParams && addedParams.endpoint) {
 							// Endpoint que sobrescreve a definição do structure.api.
 							// Normalmente associado ao algum comportamento reativo,
@@ -88,7 +94,7 @@ const ViewConfReader = {
 										JSON.parse(result.data).metadata
 									);
 								}
-								);
+								).catch(error => { this.sendDataStructureError(msgError); });
 							} else {
 								// If the structure defines a single API call, execute the
 								// callback after all the axios calls are resolved.
@@ -108,7 +114,7 @@ const ViewConfReader = {
 														customFunctions
 													)
 												);
-											});
+											}).catch(error => { this.sendDataStructureError(msgError); });
 										}
 									);
 									// Adiciona o promise à lista da espera
@@ -130,7 +136,7 @@ const ViewConfReader = {
 											null // Sem metadata nesses casos
 										);
 									}
-								);
+								).catch(error => { this.sendDataStructureError(msgError); });
 							}
 
 						} else if (addedParams && addedParams.react &&
@@ -152,7 +158,7 @@ const ViewConfReader = {
 									addedParams,
 									JSON.parse(result.data).metadata
 								);
-							});
+							}).catch(error => { this.sendDataStructureError(msgError); });
 						} else if (structure.fixed !== null && structure.fixed !== undefined) {
 							// Apply callback on fixed value
 							cbFunction(structure.fixed, structure.args, structure, addedParams);
@@ -218,7 +224,7 @@ const ViewConfReader = {
 										addedParams,
 										JSON.parse(result.data).metadata
 									);
-								});
+								}).catch(error => { this.sendDataStructureError(msgError); });
 							} else {
 								// If the structure defines a single API call, execute the
 								// callback after all the axios calls are resolved.
@@ -238,7 +244,7 @@ const ViewConfReader = {
 														customFunctions
 													)
 												);
-											});
+											}).catch(error => { this.sendDataStructureError(msgError); });
 										}
 									);
 									// Adiciona o promise à lista da espera
@@ -260,7 +266,7 @@ const ViewConfReader = {
 											null // Sem metadata nesses casos
 										);
 									}
-								);
+								).catch(error => { this.sendDataStructureError(msgError); });
 							}
 						} else if (structure.chart_data) { // Estrutura obtida de uma chamada de API
 							cbFunction(
@@ -279,6 +285,11 @@ const ViewConfReader = {
 							cbFunction(structure.fixed, structure.args, structure, addedParams);
 						}
 					}
+				},
+
+				sendDataStructureError(error = "Erro ao carregar dados do componente."){
+					this.sendError(error);
+					this.errorMessage = error;
 				},
 
 				reformDataset(dataset, options, customFunctions) {
