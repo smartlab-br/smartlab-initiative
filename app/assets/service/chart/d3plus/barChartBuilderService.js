@@ -1,7 +1,4 @@
-import ColorsService from '../../singleton/colorsService'
-
 import D3PlusChartBuilderService from './d3plusChartBuilderService'
-import TooltipBuildingService from '../../singleton/tooltipBuildingService'
 
 import * as d3plus from 'd3plus'
 
@@ -19,7 +16,7 @@ class BarChartBuilderService extends D3PlusChartBuilderService {
         }
 
         if (options.colorScale && options.colorScale.name) {
-            colorArray = ColorsService.getColorScale(options.colorScale.name, options.colorScale.type, options.colorScale.order, options.colorScale.levels);
+            colorArray = additionalOptions.colorHandlers.getColorScale(options.colorScale.name, options.colorScale.type, options.colorScale.order, options.colorScale.levels);
         } else if (options.colorArray) {
             colorArray = options.colorArray;
         }
@@ -47,7 +44,7 @@ class BarChartBuilderService extends D3PlusChartBuilderService {
             .select(containerId)  // container DIV to hold the visualization
             .data(slicedDS)  // data to use with the visualization
             .label((d) => { //retira label se x < 0 - utilizado na pirâmide
-                return (d[options.x] < 0)? "" :  TooltipBuildingService.removeFromLabel(d[options.text], options.removed_text_list);
+                return (d[options.x] < 0)? "" :  additionalOptions.cleanLabel(d[options.text], options.removed_text_list);
             })
             .groupBy(options.id)
             .y(options.y)    // key to use for y-axis
@@ -87,7 +84,7 @@ class BarChartBuilderService extends D3PlusChartBuilderService {
                 shapeConfig:{
                     labelConfig: {
                         fontSize: 14,
-                        fontColor: ColorsService.assessZebraTitleColor(additionalOptions.sectionIndex, additionalOptions.theme)
+                        fontColor: additionalOptions.colorHandlers.assessZebraTitleColor(additionalOptions.sectionIndex, additionalOptions.theme)
                     }
                 }
             })
@@ -114,7 +111,7 @@ class BarChartBuilderService extends D3PlusChartBuilderService {
             viz = viz.color(function(d) { return (d.color !== null && d.color !== undefined) ? d.color : '#2196F3'; });
         } else {
             viz = viz.colorScaleConfig({
-                color: ColorsService.getColorScale(options.colorScale.name)
+                color: additionalOptions.colorHandlers.getColorScale(options.colorScale.name)
             });           
             viz = viz.color("color");
         } 

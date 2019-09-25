@@ -1,6 +1,7 @@
 import ChartBuilderService from '../../assets/service/chart/chartBuilderService'
 import TooltipBuildingService from '../../assets/service/singleton/tooltipBuildingService'
 import axios from 'axios'
+import ColorsService from '../../assets/service/singleton/colorsService';
 
 const SnackbarManager = {
   install(Vue, options) {
@@ -76,6 +77,11 @@ const SnackbarManager = {
               openingArgs: [this.$router]
             },
             tooltipFunction: chartOptions.tooltip_function ? this[chartOptions.tooltip_function] : TooltipBuildingService.defaultTooltip,
+            colorHandlers: {
+              getColorScale: ColorsService.getColorScale,
+              assessZebraTitleColor: ColorsService.assessZebraTitleColor
+            },
+            cleanLabel: TooltipBuildingService.removeFromLabel
           }
           if (chartType == 'SANKEYD3') additionalOptions.metadata = metadata;
           if (this.leafletBasedCharts.includes(chartType)) {
