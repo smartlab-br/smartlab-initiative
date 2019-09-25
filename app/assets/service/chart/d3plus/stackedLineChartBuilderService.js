@@ -1,5 +1,3 @@
-import ColorsService from '../../singleton/colorsService'
-
 import D3PlusChartBuilderService from './d3plusChartBuilderService'
 import TooltipBuildingService from '../../singleton/tooltipBuildingService'
 
@@ -46,7 +44,7 @@ class StackedLineChartBuilderService extends D3PlusChartBuilderService {
         };
         
         if (options.colorScale) {
-          areaConfig.stroke = ColorsService.getColorScale(options.colorScale.name);
+          areaConfig.stroke = additionalOptions.colorHandlers.getColorScale(options.colorScale.name);
         } else if (options.color !== null && options.color !== undefined) {
           areaConfig.stroke = options.color;
         } 
@@ -58,7 +56,7 @@ class StackedLineChartBuilderService extends D3PlusChartBuilderService {
           })
           .legendConfig({ 
             shapeConfig:{
-              labelConfig: { fontColor: ColorsService.assessZebraTitleColor(additionalOptions.sectionIndex, null, additionalOptions.theme) }
+              labelConfig: { fontColor: additionalOptions.colorHandlers.assessZebraTitleColor(additionalOptions.sectionIndex, null, additionalOptions.theme) }
             }
           })
           .xConfig(xConfig)  

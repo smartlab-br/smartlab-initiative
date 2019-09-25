@@ -1,5 +1,3 @@
-import ColorsService from '../../singleton/colorsService'
-
 import D3PlusChartBuilderService from './d3plusChartBuilderService'
 import TooltipBuildingService from '../../singleton/tooltipBuildingService'
 
@@ -19,7 +17,7 @@ class BarChartBuilderService extends D3PlusChartBuilderService {
         }
 
         if (options.colorScale && options.colorScale.name) {
-            colorArray = ColorsService.getColorScale(options.colorScale.name, options.colorScale.type, options.colorScale.order, options.colorScale.levels);
+            colorArray = additionalOptions.colorHandlers.getColorScale(options.colorScale.name, options.colorScale.type, options.colorScale.order, options.colorScale.levels);
         } else if (options.colorArray) {
             colorArray = options.colorArray;
         }
@@ -87,7 +85,7 @@ class BarChartBuilderService extends D3PlusChartBuilderService {
                 shapeConfig:{
                     labelConfig: {
                         fontSize: 14,
-                        fontColor: ColorsService.assessZebraTitleColor(additionalOptions.sectionIndex, additionalOptions.theme)
+                        fontColor: additionalOptions.colorHandlers.assessZebraTitleColor(additionalOptions.sectionIndex, additionalOptions.theme)
                     }
                 }
             })
@@ -114,7 +112,7 @@ class BarChartBuilderService extends D3PlusChartBuilderService {
             viz = viz.color(function(d) { return (d.color !== null && d.color !== undefined) ? d.color : '#2196F3'; });
         } else {
             viz = viz.colorScaleConfig({
-                color: ColorsService.getColorScale(options.colorScale.name)
+                color: additionalOptions.colorHandlers.getColorScale(options.colorScale.name)
             });           
             viz = viz.color("color");
         } 

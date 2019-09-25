@@ -1,7 +1,3 @@
-// import ColorsService from '../../singleton/colorsService'
-
-// import TooltipBuildingService from '../../singleton/tooltipBuildingService'
-
 import * as d3 from 'd3'
 
 class CalendarChartBuilderService {

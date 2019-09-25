@@ -1,5 +1,3 @@
-import ColorsService from '../../singleton/colorsService'
-
 import D3PlusChartBuilderService from './d3plusChartBuilderService'
 
 import * as d3plus from 'd3plus'

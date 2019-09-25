@@ -1,5 +1,3 @@
-import ColorsService from '../../singleton/colorsService'
-
 import D3PlusChartBuilderService from './d3plusChartBuilderService'
 
 import * as d3plus from 'd3plus'
@@ -44,7 +42,7 @@ class TopoJsonChartBuilderService extends D3PlusChartBuilderService {
                 }
             }).legend(false);
         } else {
-            let aColorScale = ColorsService.getColorScale(options.colorScale.name, options.colorScale.type, options.colorScale.order, 9);
+            let aColorScale = additionalOptions.colorHandlers.getColorScale(options.colorScale.name, options.colorScale.type, options.colorScale.order, 9);
 
             let distValues = [];
             for (let reg of slicedDS) {  
@@ -92,7 +90,7 @@ class TopoJsonChartBuilderService extends D3PlusChartBuilderService {
                 viz = viz.colorScaleConfig({
                     color: aColorScale,
                     axisConfig: objAxisConfig,            
-                    rectConfig: { stroke: ColorsService.assessZebraTitleColor(additionalOptions.sectionIndex, null, additionalOptions.theme) }
+                    rectConfig: { stroke: additionalOptions.colorHandlers.assessZebraTitleColor(additionalOptions.sectionIndex, null, additionalOptions.theme) }
                 });
                 viz = viz.colorScale(options.value_field);
             } else {

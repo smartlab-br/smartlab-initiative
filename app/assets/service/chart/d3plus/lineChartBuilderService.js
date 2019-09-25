@@ -1,5 +1,3 @@
-import ColorsService from '../../singleton/colorsService'
-
 import D3PlusChartBuilderService from './d3plusChartBuilderService'
 import TooltipBuildingService from '../../singleton/tooltipBuildingService'
 
@@ -14,7 +12,7 @@ class LineChartBuilderService extends D3PlusChartBuilderService {
         var colorCat = {};
         let colorArray = null;
         if (options.colorScale) {
-            colorArray = ColorsService.constructor.getColorScale(options.colorScale.name);
+            colorArray = additionalOptions.colorHandlers.getColorScale(options.colorScale.name);
         } else if (options.colorArray) {
             colorArray = options.colorArray;
         }
@@ -72,13 +70,13 @@ class LineChartBuilderService extends D3PlusChartBuilderService {
         let viz = new d3plus.LinePlot() 
             .legendConfig({ 
                 shapeConfig:{
-                    labelConfig: { fontColor: ColorsService.assessZebraTitleColor(additionalOptions.sectionIndex, null, additionalOptions.theme) }
+                    labelConfig: { fontColor: additionalOptions.colorHandlers.assessZebraTitleColor(additionalOptions.sectionIndex, null, additionalOptions.theme) }
                 }
             })
             .legendConfig({ 
                 label: function (d) { return options.legend_field ? d[options.legend_field] : d[options.id] },
                 shapeConfig:{
-                    labelConfig: { fontColor: ColorsService.assessZebraTitleColor(additionalOptions.sectionIndex, null, additionalOptions.theme) }
+                    labelConfig: { fontColor: additionalOptions.colorHandlers.assessZebraTitleColor(additionalOptions.sectionIndex, null, additionalOptions.theme) }
                 }
             })
             .legendPosition("top")
