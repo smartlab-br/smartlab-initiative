@@ -1,5 +1,4 @@
 import D3PlusChartBuilderService from './d3plusChartBuilderService'
-import TooltipBuildingService from '../../singleton/tooltipBuildingService'
 
 import * as d3plus from 'd3plus'
 
@@ -18,7 +17,7 @@ class StackedLineChartBuilderService extends D3PlusChartBuilderService {
         let grafico = viz
             .select(containerId)  // container DIV to hold the visualization
             .data(slicedDS)  // data to use with the visualization
-            .label((d) => { return TooltipBuildingService.removeFromLabel(d[options.text],options.removed_text_list); })
+            .label((d) => { return additionalOptions.cleanLabel(d[options.text],options.removed_text_list); })
             .groupBy(options.id)         // key for which our data is unique on
             .y(options.y)    // key to use for y-axis
             .x(options.x)         // key to use for x-axis

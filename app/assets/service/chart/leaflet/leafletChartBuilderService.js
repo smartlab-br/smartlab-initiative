@@ -2,8 +2,6 @@ import GeneralChartBuilderService from '../generalChartBuilderService'
 
 import * as d3chrom from 'd3-scale-chromatic'
 
-import TooltipBuildingService from '../../singleton/tooltipBuildingService'
-
 class LeafletChartBuilderService extends GeneralChartBuilderService {
     tiles = {
         url: 'http://{s}.tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png',

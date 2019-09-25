@@ -1,5 +1,4 @@
 import D3PlusChartBuilderService from './d3plusChartBuilderService'
-import TooltipBuildingService from '../../singleton/tooltipBuildingService'
 
 import * as d3plus from 'd3plus'
 
@@ -77,7 +76,7 @@ class TreemapChartBuilderService extends D3PlusChartBuilderService {
             .select(containerId)  // container DIV to hold the visualization
             .data(slicedDS)  // data to use with the visualization
             .label((d) => {
-                let label = TooltipBuildingService.removeFromLabel(d[options.text], options.removed_text_list);
+                let label = additionalOptions.cleanLabel(d[options.text], options.removed_text_list);
                 return (label == 'null' && options.null_value) ? options.null_value : label; 
             })
             .detectResize(true)

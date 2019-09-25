@@ -1,5 +1,4 @@
 import D3PlusChartBuilderService from './d3plusChartBuilderService'
-import TooltipBuildingService from '../../singleton/tooltipBuildingService'
 
 import * as d3plus from 'd3plus'
 
@@ -45,7 +44,7 @@ class BarChartBuilderService extends D3PlusChartBuilderService {
             .select(containerId)  // container DIV to hold the visualization
             .data(slicedDS)  // data to use with the visualization
             .label((d) => { //retira label se x < 0 - utilizado na pirâmide
-                return (d[options.x] < 0)? "" :  TooltipBuildingService.removeFromLabel(d[options.text], options.removed_text_list);
+                return (d[options.x] < 0)? "" :  additionalOptions.cleanLabel(d[options.text], options.removed_text_list);
             })
             .groupBy(options.id)
             .y(options.y)    // key to use for y-axis

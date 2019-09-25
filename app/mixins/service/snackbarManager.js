@@ -75,7 +75,8 @@ const SnackbarManager = {
             colorHandlers: {
               getColorScale: ColorsService.getColorScale,
               assessZebraTitleColor: ColorsService.assessZebraTitleColor
-            }
+            },
+            cleanLabel: TooltipBuildingService.removeFromLabel
           }
           if (chartType == 'SANKEYD3') additionalOptions.metadata = metadata;
           if (this.leafletBasedCharts.includes(chartType)) {
