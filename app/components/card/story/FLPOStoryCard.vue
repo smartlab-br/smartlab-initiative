@@ -63,7 +63,8 @@
                       :reactive-filter="reactiveFilter"
                       v-on:selection="triggerSelect"
                       v-on:default-selection="triggerDefaultSelect"
-                      v-on:resendInvalidInterpol="changeTextToInvalidInterpol">
+                      v-on:resendInvalidInterpol="changeTextToInvalidInterpol"
+                      @showSnackbar="snackAlert">
                     </flpo-composite-text>
                     <v-flex v-else
                       class="text-xs-justify body-obs d-inline-block"
@@ -170,7 +171,6 @@
       return {
         dataset: null,
         metadata: null,
-        errorDataset: false,
         dialog: false,
         errorMessage: null,
         cmpTitle: null,

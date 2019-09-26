@@ -202,7 +202,6 @@
         dataset: null,
         datasetsComplete: 0,
         metadata: null,
-        errorDataset: false,
         dialog: false,
         errorMessage: null,
         cmpTitle: null,

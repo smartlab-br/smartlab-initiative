@@ -51,6 +51,7 @@
         if (newVal != oldVal) {
           if (this.structure.reactive){
             this.errorMessage = null;
+            this.ranking= [];
             this.updateReactiveDataStructure(this.customFilters.filterUrl);
           } 
         }
