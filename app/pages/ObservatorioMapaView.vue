@@ -96,8 +96,7 @@
         </v-flex>
         <v-flex sm12 md12 lg3>
           <flpo-composite-text
-            v-if="observatorio && observatorio.prevalencia && observatorio.prevalencia.mapa_description_right && 
-                  (!hasOdometers || loadedOdometers)"
+            v-if="observatorio && observatorio.prevalencia && observatorio.prevalencia.mapa_description_right"
             :id = "'story_home_prevalencia_desc_map_r_' + idObservatorio"
             :structure="observatorio.prevalencia.mapa_description_right"
             :custom-params="customParams"
@@ -196,10 +195,8 @@
 
         if (payload.type && payload.type === 'switch-group') {
           this.customParams.enabled = payload.enabled;
-          if (this.$refs.chart){
-            this.$refs.chart.adjustVisibleLayers();
-          }
-          return;
+          if (this.chartHandler) this.chartHandler.adjustVisibleLayers(payload.enabled);
+          return false;
         } else if (payload.type && payload.type === 'slider') {
           let suffix_params = ""
           if (payload.rules.suffix_params){
@@ -281,9 +278,8 @@
             this.customParams.filterUrl = "";
             this.activeGroup = payload.item.value;
           }
-        } else {
-          return;
         }
+        return true;
 //        let endpoint = "";
 //        if (payload.rules && payload.rules.api.template){
 //          endpoint = this.$textTransformService.applyInterpol(payload.rules.api, this.customParams, this.customFunctions, this.customParams);          
@@ -293,17 +289,18 @@
       },
 
       triggerSelect(payload) {
-        this.setFilter(payload);
-        let endpoint = this.applyFilters();
-        let payload_item = payload.item ? payload.item : payload.value;
-        if (payload_item == undefined || payload_item == null){
-          let empty_item = {}
-          empty_item[payload.id] = 'empty';
-          this.reactiveFilter = empty_item;
-        } else {
-          this.reactiveFilter = payload_item;
+        if (this.setFilter(payload)){
+          let endpoint = this.applyFilters();
+          let payload_item = payload.item ? payload.item : payload.value;
+          if (payload_item == undefined || payload_item == null){
+            let empty_item = {}
+            empty_item[payload.id] = 'empty';
+            this.reactiveFilter = empty_item;
+          } else {
+            this.reactiveFilter = payload_item;
+          }
+          this.fetchMapData(endpoint);
         }
-        this.fetchMapData(endpoint);
       },
       
       triggerDefaultSelect(payload) {
