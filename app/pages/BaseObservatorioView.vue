@@ -88,7 +88,6 @@
     methods: {
       setGroupingAndFiltering(observatorio) {},
       setDimensionsArea() {},
-      disableMapTextLoadingInfo() {},
       
       setIdLocalidade(id){
         this.idLocalidade = id;
@@ -156,7 +155,6 @@
             { attribute: 'cmpTitleComment' }
           );
         }
-        this.disableMapTextLoadingInfo();
       },
       
       changeToGeoIP(parametro) {

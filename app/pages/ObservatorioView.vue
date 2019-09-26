@@ -71,17 +71,6 @@
     <v-container v-if="observatorio && observatorio.prevalencia" fluid ma-0 pa-0
       :style="'background-color:' + $colorsService.constructor.assessZebraBG(0, $vuetify.theme) + ';'">
       <v-layout row wrap>
-        <!--
-        <v-layout pa-3 row wrap justify-center v-show="mapTextLoading || !thematicLoaded">
-          <v-progress-circular
-            :size="120"
-            :width="8"
-            color="primary"
-            indeterminate>
-            Carregando prevalência nacional
-          </v-progress-circular>
-        </v-layout>
-        -->
         <v-flex pt-0 sm12 v-if="observatorio && observatorio.prevalencia && observatorio.prevalencia.odometers">
           <v-layout column>
             <v-flex pa-0 class="headline-obs text-xs-center"

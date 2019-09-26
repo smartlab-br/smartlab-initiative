@@ -160,7 +160,6 @@
         topologyUfLoaded: false,
 
         mapDataLoading: true,
-        mapTextLoading: true,
         cardLinks: []
       }
     },
