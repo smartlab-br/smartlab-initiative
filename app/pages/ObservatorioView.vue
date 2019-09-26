@@ -323,11 +323,6 @@
     beforeDestroy () {
       window.removeEventListener('scroll', this.assessPageBottom);
     },
-    watch: {
-      dataset: function (nuDS, oldDS) {
-        if (oldDS) this.triggerChartUpdates();
-      }
-    },
     computed: {
       currentParallaxFile: function() {
         return '/static/parallax/' + this.observatorio.imagem + '.jpg';
@@ -430,6 +425,7 @@
       },
 
       fetchMapData(endpoint = null) {
+        this.mapEnabled = true;
         this.fillDataStructure(
           this.observatorio.prevalencia,
           this.customParams, this.customFunctions,
@@ -471,7 +467,6 @@
       },
 
       sendChartLoaded(chartHandler) {
-        this.mapEnabled = true;
         this.chartHandler = chartHandler;
         this.dialogMapLoading = false;
       }
