@@ -61,11 +61,6 @@
       activeTab: function() {
         return this.$route.params.tab;
       }
-    },
-    methods: {
-      sendError(message) {
-        this.$emit('showSnackbar', { color : 'error', text: message });
-      }
     }
   }
 </script>

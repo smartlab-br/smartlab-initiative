@@ -3,7 +3,8 @@
     data() {
       return {
         items: [],
-        target: null
+        target: null,
+        errorMessage: null
       }
     },
     props: ['id', 'structure', 'customParams', 'customFunctions', 'immediate', 'reactiveFilter', 'reactiveParent'],
@@ -36,10 +37,6 @@
       }
     },
     methods: {
-      sendError(message) {
-        this.$emit('showSnackbar', { color : 'error', text: message });
-      },
-      
       toItems(dataset, rules, structure, addedParams, metadata) {
         for (var rowIndx in dataset) {
           this.toItem(dataset[rowIndx], rules);

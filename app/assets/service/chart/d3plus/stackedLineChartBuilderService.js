@@ -1,7 +1,4 @@
-import ColorsService from '../../singleton/colorsService'
-
 import D3PlusChartBuilderService from './d3plusChartBuilderService'
-import TooltipBuildingService from '../../singleton/tooltipBuildingService'
 
 import * as d3plus from 'd3plus'
 
@@ -20,7 +17,7 @@ class StackedLineChartBuilderService extends D3PlusChartBuilderService {
         let grafico = viz
             .select(containerId)  // container DIV to hold the visualization
             .data(slicedDS)  // data to use with the visualization
-            .label((d) => { return TooltipBuildingService.removeFromLabel(d[options.text],options.removed_text_list); })
+            .label((d) => { return additionalOptions.cleanLabel(d[options.text],options.removed_text_list); })
             .groupBy(options.id)         // key for which our data is unique on
             .y(options.y)    // key to use for y-axis
             .x(options.x)         // key to use for x-axis
@@ -30,7 +27,7 @@ class StackedLineChartBuilderService extends D3PlusChartBuilderService {
     }
         
     generateViz(options, additionalOptions) {
-        let tooltip_function = options.tooltip_function ? options.tooltip_function : TooltipBuildingService.defaultTooltip;
+        let tooltip_function = additionalOptions.tooltipFunction;
         let tooltip_context = additionalOptions.context ? additionalOptions.context : null;
         let removed_text_list = options.removed_text_list; 
         
@@ -46,7 +43,7 @@ class StackedLineChartBuilderService extends D3PlusChartBuilderService {
         };
         
         if (options.colorScale) {
-          areaConfig.stroke = ColorsService.getColorScale(options.colorScale.name);
+          areaConfig.stroke = additionalOptions.colorHandlers.getColorScale(options.colorScale.name);
         } else if (options.color !== null && options.color !== undefined) {
           areaConfig.stroke = options.color;
         } 
@@ -58,7 +55,7 @@ class StackedLineChartBuilderService extends D3PlusChartBuilderService {
           })
           .legendConfig({ 
             shapeConfig:{
-              labelConfig: { fontColor: ColorsService.assessZebraTitleColor(additionalOptions.sectionIndex, null, additionalOptions.theme) }
+              labelConfig: { fontColor: additionalOptions.colorHandlers.assessZebraTitleColor(additionalOptions.sectionIndex, null, additionalOptions.theme) }
             }
           })
           .xConfig(xConfig)  

@@ -56,7 +56,8 @@
                 :reactive-filter="reactiveFilter"
                 :active-group="activeGroup"
                 v-on:selection="triggerSelect"
-                v-on:default-selection="triggerDefaultSelect">
+                v-on:default-selection="triggerDefaultSelect"
+                @showSnackbar="snackAlert">
               </flpo-composite-text>
 
               <v-layout column wrap>
@@ -77,7 +78,7 @@
         </v-flex>
         <v-flex sm12 md8 lg6>
           <v-layout style="display:block;">
-            <v-layout fill-height>
+            <!-- <v-layout fill-height>
               <flpo-leaflet-map
                 v-if="dataset !== null && observatorio && observatorio.prevalencia &&
                       observatorio.prevalencia.chart_type == 'MAP_LEAFLET' &&
@@ -90,6 +91,15 @@
                 :customParams = "customParams"
                 :headers = "observatorio.prevalencia.headers">
               </flpo-leaflet-map>
+            </v-layout> -->
+            <v-layout fill-height>
+              <v-layout fill-height
+                v-if="dataset !== null && observatorio && observatorio.prevalencia &&
+                  observatorio.prevalencia.chart_type == 'MAP_BUBBLES' && observatorio.prevalencia.chart_options"
+                ref = "chartRef"
+                :class = "leafletBasedCharts.includes(observatorio.prevalencia.chart_type) ? 'map_geo' : ''"
+                id="observatorio_home_prevalencia_map">
+              </v-layout>
             </v-layout>
           </v-layout>
         </v-flex>
@@ -105,7 +115,8 @@
             :reactive-filter="reactiveFilter"
             :active-group="activeGroup"
             v-on:selection="triggerSelect"
-            v-on:default-selection="triggerDefaultSelect">
+            v-on:default-selection="triggerDefaultSelect"
+            @showSnackbar="snackAlert">
           </flpo-composite-text>
           <!--<v-layout px-4 v-if="customParams.filterText" v-html="'<b>Filtros:</b>' + customParams.filterText">
           </v-layout>-->
@@ -165,7 +176,8 @@
       return {
         mapDataLoading: true,
         mapTextLoading: true,
-        activeGroup: null
+        activeGroup: null,
+        chartHandler: null
       }
     },
     mounted: function() {
@@ -376,9 +388,45 @@
           this.customParams, this.customFunctions,
           this.setDataset,
           { "endpoint": endpoint,
-            "fnCallback": () => { this.mapDataLoading = false;  this.dialogMapLoading = false;}
+            "fnCallback": this.triggerChartUpdates
           },
         );
+      },
+
+      triggerChartUpdates() {
+        if (this.chartHandler) {
+          this.chartRegen(
+            this.chartHandler,
+            "observatorio_home_prevalencia_map",
+            this.observatorio.prevalencia.chart_type,
+            this.observatorio.prevalencia,
+            this.observatorio.prevalencia.chart_options,
+            this.dataset,
+            this.metadata,
+            this.sectionIndex
+          ).then(
+            (chartHandler) => { this.sendChartLoaded(chartHandler); },
+            (reject) => { this.sendError(reject); }
+          );
+        } else {
+          this.chartGen(
+            "observatorio_home_prevalencia_map",
+            this.observatorio.prevalencia.chart_type,
+            this.observatorio.prevalencia,
+            this.observatorio.prevalencia.chart_options,
+            this.dataset,
+            this.metadata
+          ).then(
+            (chartHandler) => { this.sendChartLoaded(chartHandler); },
+            (reject) => { this.sendError(reject); }
+          );
+        }
+      },
+
+      sendChartLoaded(chartHandler) {
+        this.chartHandler = chartHandler;
+        this.mapDataLoading = false;
+        this.dialogMapLoading = false;
       }
     }
   }

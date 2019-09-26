@@ -42,10 +42,6 @@
     mounted: function() {
     },
     methods: {
-      sendError(message) {
-        this.$emit('showSnackbar', { color : 'error', text: message });
-      },
-      
       setTotalSiblings(sectionType, type, scope) {
 
         var idLocalidade = this.customParams.idLocalidade;

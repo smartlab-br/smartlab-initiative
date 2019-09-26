@@ -10,7 +10,9 @@
       :step="step"
       :min="min" 
       :max="max"
-      @change="sendSelection">
+      @change="sendSelection"
+      :hint="errorMessage"
+      persistent-hint>
     </v-range-slider>
       
     <v-slider v-else
@@ -24,7 +26,9 @@
       :min="min" 
       :max="max"
       @change="sendSelection"
-      class="slider-no-tick-mark">
+      class="slider-no-tick-mark"
+      :hint="errorMessage"
+      persistent-hint>
     </v-slider>
   </v-flex>
 </template>

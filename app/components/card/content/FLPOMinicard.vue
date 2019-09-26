@@ -1,24 +1,16 @@
 <template>
   <v-flex :class="(rowClass ? rowClass : 'pl-4 pr-0 pb-3 pt-3') + ' ' + cardClass">
     <v-layout column :class="'minicard fill-height' + colorClass + ' ' + relevance">
+      <div v-if="errorMessage" :class="'minicard-comment ' + commentColorClass" v-html = "errorMessage"></div>
       <v-layout v-if="structure.desc_position == 'right'" row >
         <v-flex shrink class="minicard-value"  v-html = "value"></v-flex>
         <v-flex pl-1 v-if="structure.desc_position == 'right'" class="title-obs-desc minicard-description" v-html = "description != null ? description.toUpperCase() : ''"></v-flex>
       </v-layout>
       <div v-else class="minicard-value"  v-html = "value"></div>
       <div class="minicard-chart" v-if="dataset !== null && dataset.length > 1 && structure && structure.chart">
-        <!-- <flpo-line-chart
-          v-if="structure.chart.type == 'LINE'"
-          ref = "chart"
-          :id="chartId"
-          :dataset="dataset"
-          :options="structure.chart.options"
-          :headers="structure.chart.headers"
-          :section-index="sectionIndex">
-        </flpo-line-chart> -->
         <v-layout fill-height
-          v-if="structure && structure.chart && structure.chart.type &&
-                ['MAP_TOPOJSON', 'LINE', 'STACKED', 'BAR', 'TREEMAP', 'SCATTERPLOT', 'BOXPLOT', 'CALENDAR', 'SANKEYD3'].includes(structure.chart.type)"
+          v-if="structure && structure.chart && structure.chart.type && validCharts.includes(structure.chart.type)"
+          :class = "leafletBasedCharts.includes(structure.chart.type) ? 'map_geo' : ''"
           ref = "chart"
           :id="chartId">
         </v-layout>
@@ -45,7 +37,8 @@
         colorClass: '',
         commentColorClass: '',
         dataset: null,
-        metadata: null
+        metadata: null,
+        errorMessage: null
       }
     },
     props: ['rowClass', 'reactiveFilter', 'customFilters'],
@@ -67,6 +60,8 @@
     watch: {
       reactiveFilter: function(newVal, oldVal) {
         if (newVal != oldVal) {
+          this.errorMessage = null;
+          this.value='';
           if (this.structure.reactive){
             this.updateReactiveDataStructure(this.customFilters.filterUrl);
           } else if (this.structure.api_reactive){
@@ -100,9 +95,6 @@
         this.dataset = dataset;
         this.metadata = metadata;
         this.triggerChartUpdates();
-      },
-      sendError(message) {
-        this.$emit('showSnackbar', { color : 'error', text: message });
       },
       
       fillProp(base_object_list, args, preloaded, addedParams = null, metadata = null) {
@@ -225,7 +217,7 @@
             null,
             JSON.parse(result.data).metadata
           );
-        });
+        }).catch(error => { this.sendDataStructureError("Erro ao carregar dados do componente."); });
       },
     }
   }

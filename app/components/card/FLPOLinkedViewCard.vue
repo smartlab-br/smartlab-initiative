@@ -92,13 +92,6 @@
       cmpMedia: function() {
         return this.media;
       }
-    },
-    mounted: function() {
-    },
-    methods: {
-      sendError(message) {
-        this.$emit('showSnackbar', { color : 'error', text: message });
-      }
     }
   }
 </script>

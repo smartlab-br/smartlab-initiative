@@ -1,7 +1,4 @@
-import ColorsService from '../../singleton/colorsService'
-
 import D3PlusChartBuilderService from './d3plusChartBuilderService'
-import TooltipBuildingService from '../../singleton/tooltipBuildingService'
 
 import * as d3plus from 'd3plus'
 
@@ -45,7 +42,7 @@ class TopoJsonChartBuilderService extends D3PlusChartBuilderService {
                 }
             }).legend(false);
         } else {
-            let aColorScale = ColorsService.getColorScale(options.colorScale.name, options.colorScale.type, options.colorScale.order, 9);
+            let aColorScale = additionalOptions.colorHandlers.getColorScale(options.colorScale.name, options.colorScale.type, options.colorScale.order, 9);
 
             let distValues = [];
             for (let reg of slicedDS) {  
@@ -93,7 +90,7 @@ class TopoJsonChartBuilderService extends D3PlusChartBuilderService {
                 viz = viz.colorScaleConfig({
                     color: aColorScale,
                     axisConfig: objAxisConfig,            
-                    rectConfig: { stroke: ColorsService.assessZebraTitleColor(additionalOptions.sectionIndex, null, additionalOptions.theme) }
+                    rectConfig: { stroke: additionalOptions.colorHandlers.assessZebraTitleColor(additionalOptions.sectionIndex, null, additionalOptions.theme) }
                 });
                 viz = viz.colorScale(options.value_field);
             } else {
@@ -137,7 +134,7 @@ class TopoJsonChartBuilderService extends D3PlusChartBuilderService {
     }      
         
     generateViz(options, additionalOptions) {
-        let tooltip_function = options.tooltip_function ? options.tooltip_function : TooltipBuildingService.defaultTooltip;
+        let tooltip_function = additionalOptions.tooltipFunction;
         let tooltip_context = additionalOptions.context ? additionalOptions.context : null;
         options.clickable = options.clickable == true || options.clickable == undefined  ? true : false;
         let removed_text_list = options.removed_text_list;

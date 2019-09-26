@@ -6,18 +6,18 @@ import IndicatorsModel from '../../../model/singleton/indicatorsModel'
 
 class BubblesChartBuilderService extends LeafletChartBuilderService {
     radius = { multiplier: 1600000, base: 5000 };
-	fCircleSize = d3.scaleLog().range([1, 4001]);
+    fCircleSize = d3.scaleLog().range([1, 4001]);
 
     constructor() {
         super();
     }
 
-    fillLayers(map, dataset, options, boundsZoom = null) {
+    fillLayers(dataset, options, boundsZoom = null) {
         // Sets the bubbles size handlers
         if (options && options.radius && options.radius.multiplier) this.radius.multiplier = options.radius.multiplier;
         if (options && options.radius && options.radius.base) this.radius.base = options.radius.base;
         
-        if (boundsZoom == null) boundsZoom = map.getZoom();
+        if (boundsZoom == null) boundsZoom = this.chart.getZoom();
         let zoomIndex = boundsZoom > 5 ? Math.pow(boundsZoom/4,4) : 1;
           
         let multiplier = this.radius.multiplier / zoomIndex;
@@ -28,21 +28,15 @@ class BubblesChartBuilderService extends LeafletChartBuilderService {
         let id_field = options.id_field ? options.id_field : 'cd_indicador';
         let min_field = options.min_field ? options.min_field : 'calc_min_part';
 
-        // TODO - Analisar se é necessário getMinMaxEachIndicator
-        // // Prepares the dataset, if the layers have no range
+        // Prepares the dataset, if the layers have no range
         if (min_field == 'minVal' || !value_field.includes('api_calc_')) {  
             dataset = (new IndicatorsModel()).getMinMaxEachIndicator(dataset, value_field);
         }
           
-        // TODO - decouple
-        // Prepares the layers
         for (const ident of options.indicadores) {
             let group = L.layerGroup();
-            group.addTo(map);
+            group.addTo(this.chart);
             this.layers[ident] = group;
-            if (this.visibleLayers[ident] == null || this.visibleLayers[ident] == undefined) {
-              this.visibleLayers[ident] = true;
-            }
         }
 
         // Iterates over the dataset, to build each circle and apply to the respective layer
@@ -51,60 +45,54 @@ class BubblesChartBuilderService extends LeafletChartBuilderService {
                 each_row[options.lat] != 0 && each_row[options.long] != 0) {
                 // Iterates over the layers
                 for (const [pos, ident] of options.indicadores.entries()) {
-                // Checks if the row is for the layer (moves to next if different)
-                if (ident != each_row[id_field]) continue;
+                    // Checks if the row is for the layer (moves to next if different)
+                    if (ident != each_row[id_field]) continue;
 
-                // Gets the value for each layer
-                let value = each_row[value_field];
-                
-                // Builds the circle
-                let eachCircle = new circleDataPoint(
-                  	[each_row[options.lat], each_row[options.long]],
-					{ rowData: each_row,
-						color: options.color != null ? 
-								options.color : 
-								( options.colorArray != null ? 
-									options.colorArray[pos] :
-									( each_row.color != null ? each_row.color : '#4A148C' )
-								),
-						weight: options.weight != null ? options.weight : (each_row.weight != null ? each_row.weight : 0),
-						fillColor: options.fillColor != null ?
-									options.fillColor : 
-									( options.colorArray != null ?
-										options.colorArray[pos] :
-										( each_row.fillColor != null ? each_row.fillColor : '#4A148C' )
-									),
-						fillOpacity: options.fillOpacity != null ? 
-										options.fillOpacity : 
-										( each_row.fillOpacity != null ? each_row.fillOpacity : 0.5 ),
-						radius: value != null ? value > 0 ? value * multiplier + this.radius.base : this.radius.base : 0
-					}
-                ).on("click", this.circleClick);
+                    // Gets the value for each layer
+                    let value = each_row[value_field];
+                    
+                    // Builds the circle
+                    let eachCircle = new circleDataPoint(
+                        [each_row[options.lat], each_row[options.long]],
+                        { rowData: each_row,
+                            color: options.color != null ? 
+                                    options.color : 
+                                    ( options.colorArray != null ? 
+                                        options.colorArray[pos] :
+                                        ( each_row.color != null ? each_row.color : '#4A148C' )
+                                    ),
+                            weight: options.weight != null ? options.weight : (each_row.weight != null ? each_row.weight : 0),
+                            fillColor: options.fillColor != null ?
+                                        options.fillColor : 
+                                        ( options.colorArray != null ?
+                                            options.colorArray[pos] :
+                                            ( each_row.fillColor != null ? each_row.fillColor : '#4A148C' )
+                                        ),
+                            fillOpacity: options.fillOpacity != null ? 
+                                            options.fillOpacity : 
+                                            ( each_row.fillOpacity != null ? each_row.fillOpacity : 0.5 ),
+                            radius: value != null ? value > 0 ? value * multiplier + this.radius.base : this.radius.base : 0,
+                            customOptions: options
+                        }
+                    ).on("click", this.circleClick);
 
-                eachCircle.addTo(this.layers[ident]);
-              }
+                    eachCircle.addTo(this.layers[ident]);
+                }
             }
-          }
-          this.adjustVisibleLayers(additionalOptions);
-        
-        this.sendMapLoaded();
+        }
+
+        this.adjustVisibleLayers(options.visibleLayers);
     }
 
-	// TODO how to get options into this function
-    circleClick(e) {
-        let tooltip_function = this.options.tooltip_function ? this[this.options.tooltip_function] : this.defaultLeafletTooltip;
-        let tooltip_context = this.options.tooltip_function ? this : this.$tooltipBuildingService;
-        tooltip_function.apply(tooltip_context, [e.target, this.$route, this.headers, this.options.removed_text_list, this.options]);
-    }
-
-    adjustVisibleLayers(map, additionalOptions) {
-        for (let indx in additionalOptions.enabled) {
-            if (additionalOptions.enabled[indx]) {
-              map.addLayer(this.layers[indx]);
+    adjustVisibleLayers(enabled) {
+        this.additionalOptions.visibleLayers = enabled;
+        for (let indx in enabled) {
+            if (enabled[indx]) {
+                this.chart.addLayer(this.layers[indx]);
             } else {
-              map.removeLayer(this.layers[indx]);
+                this.chart.removeLayer(this.layers[indx]);
             }
-            this.visibleLayers[indx] = additionalOptions.enabled[indx];
+            // this.visibleLayers[indx] = options.enabled[indx];
         }
     }
       

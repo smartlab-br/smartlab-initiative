@@ -1,7 +1,4 @@
-import ColorsService from '../../singleton/colorsService'
-
 import D3PlusChartBuilderService from './d3plusChartBuilderService'
-import TooltipBuildingService from '../../singleton/tooltipBuildingService'
 
 import * as d3plus from 'd3plus'
 
@@ -14,7 +11,7 @@ class LineChartBuilderService extends D3PlusChartBuilderService {
         var colorCat = {};
         let colorArray = null;
         if (options.colorScale) {
-            colorArray = ColorsService.constructor.getColorScale(options.colorScale.name);
+            colorArray = additionalOptions.colorHandlers.getColorScale(options.colorScale.name);
         } else if (options.colorArray) {
             colorArray = options.colorArray;
         }
@@ -50,7 +47,7 @@ class LineChartBuilderService extends D3PlusChartBuilderService {
             .select(containerId)  // container DIV to hold the visualization
             .data(slicedDS)  // data to use with the visualization
             .groupBy(options.id)         // key for which our data is unique on
-            .label((d) => { return TooltipBuildingService.removeFromLabel(d[options.text],options.removed_text_list); })
+            .label((d) => { return additionalOptions.cleanLabel(d[options.text],options.removed_text_list); })
             .y(options.y)    // key to use for y-axis
             .x(options.x)         // key to use for x-axis
             .detectResize(true);
@@ -59,7 +56,7 @@ class LineChartBuilderService extends D3PlusChartBuilderService {
     }
         
     generateViz(options, additionalOptions) {
-        let tooltip_function = options.tooltip_function ? options.tooltip_function : TooltipBuildingService.defaultTooltip;
+        let tooltip_function = additionalOptions.tooltipFunction;
         let tooltip_context = additionalOptions.context ? additionalOptions.context : null;
         let removed_text_list = options.removed_text_list; 
         
@@ -72,13 +69,13 @@ class LineChartBuilderService extends D3PlusChartBuilderService {
         let viz = new d3plus.LinePlot() 
             .legendConfig({ 
                 shapeConfig:{
-                    labelConfig: { fontColor: ColorsService.assessZebraTitleColor(additionalOptions.sectionIndex, null, additionalOptions.theme) }
+                    labelConfig: { fontColor: additionalOptions.colorHandlers.assessZebraTitleColor(additionalOptions.sectionIndex, null, additionalOptions.theme) }
                 }
             })
             .legendConfig({ 
                 label: function (d) { return options.legend_field ? d[options.legend_field] : d[options.id] },
                 shapeConfig:{
-                    labelConfig: { fontColor: ColorsService.assessZebraTitleColor(additionalOptions.sectionIndex, null, additionalOptions.theme) }
+                    labelConfig: { fontColor: additionalOptions.colorHandlers.assessZebraTitleColor(additionalOptions.sectionIndex, null, additionalOptions.theme) }
                 }
             })
             .legendPosition("top")

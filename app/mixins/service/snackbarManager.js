@@ -1,43 +1,49 @@
 import ChartBuilderService from '../../assets/service/chart/chartBuilderService'
+import TooltipBuildingService from '../../assets/service/singleton/tooltipBuildingService'
+import axios from 'axios'
+import ColorsService from '../../assets/service/singleton/colorsService';
 
 const SnackbarManager = {
   install(Vue, options) {
     Vue.mixin({
+      data() {
+        return {
+          validCharts: ['MAP_TOPOJSON', 'LINE', 'STACKED', 'BAR', 'TREEMAP', 'SCATTERPLOT', 'BOXPLOT', 'CALENDAR', 'SANKEYD3', 'MAP_BUBBLES', 'MAP_HEAT', 'MAP_CLUSTER'],
+          leafletBasedCharts: ['MAP_BUBBLES', 'MAP_HEAT', 'MAP_CLUSTER']
+        }
+      },
       methods: {
         sendError(message) {
           this.$emit('showSnackbar', { color : 'error', text: message });
         },
+        
+        snackAlert(params) {
+          this.$emit('showSnackbar', params);
+        },
+
         openBugDialog(cardTitle){
           this.$emit('showBugDialog', cardTitle);
         },
+        
         chartGen(id, chartType, structure, chartOptions, dataset, metadata, sectionIndex = 0) {
-          let validCharts = ['MAP_TOPOJSON', 'LINE', 'STACKED', 'BAR', 'TREEMAP', 'SCATTERPLOT', 'BOXPLOT', 'CALENDAR', 'SANKEYD3', 'MAP_BUBBLES', 'MAP_HEAT', 'MAP_CLUSTER'];
-          if (structure && chartOptions && validCharts.includes(chartType)) {
-            let fnNavigation = this.$navigationManager.constructor.searchAnalysisUnit;
-            let fnSendError = this.sendError;    
-            let additionalOptions = { 
-              idAU: this.selectedPlace ? this.selectedPlace : this.customParams.idLocalidade,
-              theme: this.$vuetify.theme,
-              sectionIndex: sectionIndex,
-              topology: this.topology,
-              topologyUf: this.topologyUf,
-              headers: structure.headers,
-              route: this.$route,
-              context: this,
-              navigate: {
-                fnNav: (router, placeId) => {
-                  try {         
-                      fnNavigation(router, { id: placeId, to: '/localidade/' + placeId + '?' });
-                  } catch (err) {
-                      fnSendError(err);
-                  }
-                },
-                openingArgs: [this.$router]
-              }
-            }
-            if (chartType == 'SANKEYD3') additionalOptions.metadata = metadata;
+          if (structure && chartOptions && this.validCharts.includes(chartType)) {
+            let additionalOptions = this.buildChartAdditionalOptions(id, chartType, structure, chartOptions, dataset, metadata, sectionIndex);
   
-            ChartBuilderService.generateChart(
+            return ChartBuilderService.generateChart(
+              chartType, 
+              id,
+              dataset,
+              chartOptions,
+              additionalOptions
+            );
+          }
+        },
+        chartRegen(chartHandler, id, chartType, structure, chartOptions, dataset, metadata, sectionIndex = 0) {
+          if (structure && chartOptions && this.validCharts.includes(chartType)) {
+            let additionalOptions = this.buildChartAdditionalOptions(id, chartType, structure, chartOptions, dataset, metadata, sectionIndex);
+  
+            return ChartBuilderService.regenerateChart(
+              chartHandler,
               chartType, 
               id,
               dataset,
@@ -47,9 +53,69 @@ const SnackbarManager = {
           }
         },
 
+        buildChartAdditionalOptions(id, chartType, structure, chartOptions, dataset, metadata, sectionIndex = 0) {
+          let fnNavigation = this.$navigationManager.constructor.searchAnalysisUnit;
+          let fnSendError = this.sendError;    
+          let additionalOptions = { 
+            idAU: this.selectedPlace ? this.selectedPlace : this.customParams.idLocalidade,
+            au: this.$analysisUnitModel.findPlaceByID(this.selectedPlace ? this.selectedPlace : this.customParams.idLocalidade),
+            theme: this.$vuetify.theme,
+            sectionIndex: sectionIndex,
+            topology: this.topology,
+            topologyUf: this.topologyUf,
+            headers: structure.headers,
+            route: this.$route,
+            context: this,
+            navigate: {
+              fnNav: (router, placeId) => {
+                try {         
+                    fnNavigation(router, { id: placeId, to: '/localidade/' + placeId + '?' });
+                } catch (err) {
+                    fnSendError(err);
+                }
+              },
+              openingArgs: [this.$router]
+            },
+            tooltipFunction: chartOptions.tooltip_function ? this[chartOptions.tooltip_function] : TooltipBuildingService.defaultTooltip,
+            colorHandlers: {
+              getColorScale: ColorsService.getColorScale,
+              assessZebraTitleColor: ColorsService.assessZebraTitleColor
+            },
+            cleanLabel: TooltipBuildingService.removeFromLabel
+          }
+          if (chartType == 'SANKEYD3') additionalOptions.metadata = metadata;
+          if (this.leafletBasedCharts.includes(chartType)) {
+              if (chartOptions.tooltip_function == null) additionalOptions.tooltipFunction = TooltipBuildingService.defaultLealfetTooltip; 
+
+              if (this.customParams && this.customParams.limCoords) {
+                additionalOptions.limCoords = this.customParams.limCoords;
+              }
+              
+              // Prepares the layers
+              let visibleLayers = {}
+              if (this.customParams.enabled) {
+                visibleLayers = this.customParams.enabled;
+              } else {
+                if (chartOptions.indicadores) {
+                  for (const ident of chartOptions.indicadores) {
+                    if (chartOptions.show_all || visibleLayers[ident] == null || visibleLayers[ident] == undefined) {
+                      visibleLayers[ident] = true;
+                    } else {
+                      visibleLayers[ident] = false;
+                    }
+                  }
+                }
+              }
+
+              this.visibleLayers = visibleLayers;
+              additionalOptions.visibleLayers = visibleLayers;
+          }
+          return additionalOptions;
+        },
+        
         // TOOLTIPS - Temporarily stored here
-        changeCursor(image){
-          this.$refs[this.id].style.cursor = image;
+        changeCursor(containerId, image){
+          document.getElementById(containerId).style.cursor = image;
         },
         
         obsTETooltip(target, route, tooltip_list = [], removed_text_list = [], options = null){
@@ -64,7 +130,7 @@ const SnackbarManager = {
             url = url + this.customParams.filterUrl;
             text += "Considerados os seguintes filtros: " + this.customParams.filterText;
           }
-          this.changeCursor('wait');
+          this.changeCursor(target.options.customOptions.containerId, 'wait');
           axios.all([axios(this.$axiosCallSetupService.getAxiosOptions(url)),
                      axios(this.$axiosCallSetupService.getAxiosOptions(urlIndicadores))])
             .then(axios.spread((result, resultIndicadores) => {
@@ -177,9 +243,9 @@ const SnackbarManager = {
               }
               text += "</table>";
               target.bindPopup(text).openPopup();
-              this.changeCursor('');
+              this.changeCursor(target.options.customOptions.containerId, '');
             }, error => {
-              this.changeCursor('');
+              this.changeCursor(target.options.customOptions.containerId, '');
               console.error(error.toString());
               this.sendError("Erro ao carregar dataset tooltip");
             }));

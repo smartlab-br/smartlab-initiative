@@ -112,10 +112,6 @@
       }
     },
     methods: {
-      sendError(message) {
-        this.$emit('showSnackbar', { color : 'error', text: message });
-      },
-
       embedStacks() {
         let embeds = document.querySelectorAll("[data-stack-embed='true']");
 

@@ -43,9 +43,6 @@
       //window.removeEventListener('resize', this.redrawResize);
     },
     methods: {
-      sendError(message) {
-        this.$emit('showSnackbar', { color : 'error', text: message });
-      },
       // redrawResize() {
       //   this.redrawChart(this.dataset, this.options, this.id);
       // },

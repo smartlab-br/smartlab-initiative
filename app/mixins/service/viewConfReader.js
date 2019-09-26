@@ -6,6 +6,7 @@ const ViewConfReader = {
 		Vue.mixin({
 			data() {
 				return {
+					errorMessage: null
 				}
 			},
 			methods: {
@@ -67,6 +68,12 @@ const ViewConfReader = {
 				fillDataStructure(structure, customParams, customFunctions,
 								  cbFunction, addedParams) {
 					if (structure !== null && structure !== undefined) {
+						let msgError = "Erro ao carregar dados do componente.";
+						let fnSendDataStructureError = this.sendDataStructureError;
+						if (addedParams && addedParams.msgError){
+							msgError = addedParams.msgError;
+						}
+
 						if (addedParams && addedParams.endpoint) {
 							// Endpoint que sobrescreve a definição do structure.api.
 							// Normalmente associado ao algum comportamento reativo,
@@ -88,7 +95,7 @@ const ViewConfReader = {
 										JSON.parse(result.data).metadata
 									);
 								}
-								);
+								).catch(error => { fnSendDataStructureError(msgError); });
 							} else {
 								// If the structure defines a single API call, execute the
 								// callback after all the axios calls are resolved.
@@ -108,7 +115,7 @@ const ViewConfReader = {
 														customFunctions
 													)
 												);
-											});
+											}).catch(error => { fnSendDataStructureError(msgError); });
 										}
 									);
 									// Adiciona o promise à lista da espera
@@ -130,7 +137,7 @@ const ViewConfReader = {
 											null // Sem metadata nesses casos
 										);
 									}
-								);
+								).catch(error => { fnsendDataStructureError(msgError); });
 							}
 
 						} else if (addedParams && addedParams.react &&
@@ -152,7 +159,7 @@ const ViewConfReader = {
 									addedParams,
 									JSON.parse(result.data).metadata
 								);
-							});
+							}).catch(error => { fnSendDataStructureError(msgError); });
 						} else if (structure.fixed !== null && structure.fixed !== undefined) {
 							// Apply callback on fixed value
 							cbFunction(structure.fixed, structure.args, structure, addedParams);
@@ -218,7 +225,7 @@ const ViewConfReader = {
 										addedParams,
 										JSON.parse(result.data).metadata
 									);
-								});
+								}).catch(error => { fnSendDataStructureError(msgError); });
 							} else {
 								// If the structure defines a single API call, execute the
 								// callback after all the axios calls are resolved.
@@ -238,7 +245,7 @@ const ViewConfReader = {
 														customFunctions
 													)
 												);
-											});
+											}).catch(error => { fnSendDataStructureError(msgError); });
 										}
 									);
 									// Adiciona o promise à lista da espera
@@ -260,7 +267,7 @@ const ViewConfReader = {
 											null // Sem metadata nesses casos
 										);
 									}
-								);
+								).catch(error => { fnSendDataStructureError(msgError); });
 							}
 						} else if (structure.chart_data) { // Estrutura obtida de uma chamada de API
 							cbFunction(
@@ -279,6 +286,11 @@ const ViewConfReader = {
 							cbFunction(structure.fixed, structure.args, structure, addedParams);
 						}
 					}
+				},
+
+				sendDataStructureError(error = "Erro ao carregar dados do componente."){
+					this.sendError(error);
+					this.errorMessage = error;
 				},
 
 				reformDataset(dataset, options, customFunctions) {
@@ -533,7 +545,7 @@ const ViewConfReader = {
 					  }
 				
 					  // Obtém coordenadas limítrofes (se mapa)
-					  if (structure.chart_type === 'MAP_LEAFLET') { // Só avalia as coordenadas caso o gráfico seja um mapa.
+					  if (['MAP_BUBBLES', 'MAP_HEAT', 'MAP_CLUSTER'].includes(structure.chart_type)) { // Só avalia as coordenadas caso o gráfico seja um mapa.
 						// Ignora os pontos 0x0
 						if (parseFloat(dataset[eachRow][options.long]) != 0 && 
 							parseFloat(dataset[eachRow][options.long]) != 0) {
@@ -559,12 +571,8 @@ const ViewConfReader = {
 							}
 						  }
 						}
+						this.customParams.limCoords = limCoords;
 					  }
-					}
-				
-					// Define as coordenadas apenas se for um mapa do leaflet
-					if (structure.chart_type === 'MAP_LEAFLET') {
-					  this.customParams.limCoords = limCoords;
 					}
 				
 					if (options.order_field !== null && options.order_field !== undefined) {

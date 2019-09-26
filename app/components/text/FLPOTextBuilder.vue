@@ -90,10 +90,6 @@
       }
     },
     methods: {
-      sendError(message) {
-        this.$emit('showSnackbar', { color : 'error', text: message });
-      },
-
       sendInvalidInterpol() {
         this.$emit('invalidateInterpol', {});
       },

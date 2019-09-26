@@ -9,7 +9,8 @@
     data () {
       return {
         customFilters: {},
-        reactiveFilter: null
+        reactiveFilter: null,
+        errorMessage: null
       }
     },
     created () {
@@ -51,11 +52,7 @@
               { attribute: 'cmpTitleComment' }
             );
             this.fetchData();
-          }, error => {
-            console.error(error.toString());
-            this.sendError("Falha ao buscar dados de card");
-            reject({ code: 500 });
-          });
+          }).catch(error => { this.sendDataStructureError("Falha ao buscar dados de card"); });
       } else {
         this.completeStructure();
         this.fillDataStructure(
@@ -74,7 +71,7 @@
     },
     computed: {
       loadingStatusDataset: function() {
-        if (this.errorDataset) return 'ERROR';
+        if (this.errorMessage) return 'ERROR';
         if (this.dataset !== null && this.dataset !== undefined) {
           return 'SUCCESS';
         }
