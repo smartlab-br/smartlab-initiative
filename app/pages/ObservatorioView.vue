@@ -173,63 +173,31 @@
           </v-layout>
         </v-flex>
 
-        <v-flex sm12 md8 lg6 pt-4 style="position:relative">
-          <!--
-          <v-layout justify-end ma-0 pa-0>
-            <v-btn small flat
-              v-on:click="pushRoute('/observatoriomapa/'+idObservatorio)">
-              <span>SmartMap - Modo Avançado</span>
-              <v-icon right>public</v-icon>
-            </v-btn>
+        <v-flex sm12 md8 lg6 pt-4>
+        <v-layout style="position:relative">
+            <v-layout xs12 class="cursor-pointer" v-if="observatorio" v-on:mousedown="dialogMapLoading = true"
+              height="auto">
+                <v-img
+                :src="currentParallaxFile"
+                :aspect-ratio="observatorio.prevalencia.chart_options.height_proportion ? observatorio.prevalencia.chart_options.height_proportion : 1"
+                >
+                <v-layout class="bg-black-transparent pa-3 justify-end subheading fill-height" v-on:click="enableMap">
+                  Clique no mapa para ativá-lo
+                </v-layout>
+                </v-img>
+            </v-layout>
+            <v-layout v-show="mapEnabled" style="position:absolute;z-index:2;right:10px" class="cursor-pointer pa-3 justify-end subheading" v-on:click="$navigationManager.constructor.pushRoute($router,'/'+$observatories.constructor.identifyObservatoryById(idObservatorio)+'/smartmap')">
+              Clique para modo avançado - SmartMap
+            </v-layout>
+            <v-layout fill-height style="position: absolute"
+              v-if="dataset !== null && observatorio && observatorio.prevalencia &&
+                    observatorio.prevalencia.chart_type == 'MAP_BUBBLES' &&
+                    observatorio.prevalencia.chart_options"
+              ref = "chartRef"
+              :class = "leafletBasedCharts.includes(observatorio.prevalencia.chart_type) ? 'map_geo' : ''"
+              id="observatorio_home_prevalencia_map">
+            </v-layout>
           </v-layout>
-          -->
-          <v-layout xs12 class="cursor-pointer" v-if="observatorio" v-on:mousedown="dialogMapLoading = true"
-            height="auto" v-show="!mapEnabled">
-              <v-img
-              :src="currentParallaxFile"
-              :aspect-ratio="observatorio.prevalencia.chart_options.height_proportion ? observatorio.prevalencia.chart_options.height_proportion : 1"
-              >
-              <v-layout class="bg-black-transparent pa-3 justify-end subheading fill-height" v-on:click="enableMap">
-                Clique no mapa para ativá-lo
-              </v-layout>
-              </v-img>
-          </v-layout>
-          <v-layout v-show="mapEnabled" style="position:absolute;z-index:2;right:10px" class="cursor-pointer pa-3 justify-end subheading" v-on:click="$navigationManager.constructor.pushRoute($router,'/'+$observatories.constructor.identifyObservatoryById(idObservatorio)+'/smartmap')">
-            Clique para modo avançado - SmartMap
-          </v-layout>
-          <!-- <flpo-leaflet-map
-            v-if="dataset !== null && observatorio && observatorio.prevalencia &&
-                  observatorio.prevalencia.chart_type == 'MAP_LEAFLET' &&
-                  observatorio.prevalencia.chart_options &&  mapEnabled"
-            ref = "chart"
-            id = "observatorio_home_prevalencia_map"
-            :topology = "topology"
-            :dataset = "dataset"
-            :options = "observatorio.prevalencia.chart_options"
-            :customParams = "customParams"
-            :headers = "observatorio.prevalencia.headers"
-            v-on:chart-loaded="mapLoaded">
-          </flpo-leaflet-map> -->
-          <v-layout fill-height
-            v-if="dataset !== null && observatorio && observatorio.prevalencia &&
-                  observatorio.prevalencia.chart_type == 'MAP_BUBBLES' &&
-                  observatorio.prevalencia.chart_options && mapEnabled"
-            ref = "chartRef"
-            :class = "leafletBasedCharts.includes(observatorio.prevalencia.chart_type) ? 'map_geo' : ''"
-            id="observatorio_home_prevalencia_map">
-          </v-layout>
-          <!--
-          <v-layout pa-3 row wrap justify-center align-center fill-height
-            v-show="mapDataLoading">
-            <v-progress-circular
-              :size="120"
-              :width="8"
-              color="primary"
-              indeterminate>
-              Analisando municípios
-            </v-progress-circular>
-          </v-layout>
-          -->
           <v-flex xs12>
             <v-layout v-if="observatorio && observatorio.ranking_cards" row wrap pb-2>
               <flpo-ranking-list v-for="(ranking, index) in observatorio.ranking_cards" :key="index"
@@ -484,7 +452,6 @@
       },
 
       triggerChartUpdates() {
-        this.mapEnabled = true;
         if (this.chartHandler) {
           this.chartRegen(
             this.chartHandler,
@@ -515,6 +482,7 @@
       },
 
       sendChartLoaded(chartHandler) {
+        this.mapEnabled = true;
         this.chartHandler = chartHandler;
         this.dialogMapLoading = false;
       }
