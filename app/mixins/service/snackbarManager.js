@@ -1,7 +1,7 @@
-import ChartBuilderService from '../../assets/service/chart/chartBuilderService'
 import TooltipBuildingService from '../../assets/service/singleton/tooltipBuildingService'
 import axios from 'axios'
-import ColorsService from '../../assets/service/singleton/colorsService';
+import ColorsService from '../../assets/service/singleton/colorsService'
+import ChartBuilderService from '@smartlabbr/smartlab-charts'
 
 const SnackbarManager = {
   install(Vue, options) {
