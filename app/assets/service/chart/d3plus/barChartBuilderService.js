@@ -118,8 +118,8 @@ class BarChartBuilderService extends D3PlusChartBuilderService {
 
         if(options.stacked) viz = viz.stacked(true);
 
-        let xConfig = this.constructor.getDefaultXYConfig(additionalOptions.sectionIndex);
-        let yConfig = this.constructor.getDefaultXYConfig(additionalOptions.sectionIndex);
+        let xConfig = this.constructor.getDefaultXYConfig(additionalOptions.axesStrokeClass);
+        let yConfig = this.constructor.getDefaultXYConfig(additionalOptions.axesStrokeClass);
 
         if (options.show_x_axis !== undefined && options.show_x_axis !== null){ 
             if (!options.show_x_axis) xConfig= this.constructor.getTransparentXYConfig();

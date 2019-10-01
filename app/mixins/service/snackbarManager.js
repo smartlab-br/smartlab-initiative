@@ -81,7 +81,8 @@ const SnackbarManager = {
               getColorScale: ColorsService.getColorScale,
               assessZebraTitleColor: ColorsService.assessZebraTitleColor
             },
-            cleanLabel: TooltipBuildingService.removeFromLabel
+            cleanLabel: TooltipBuildingService.removeFromLabel,
+            axesStrokeClass: ColorsService.assessZebraAxesColor(sectionIndex, this.$vuetify.theme)
           }
           if (chartType == 'SANKEYD3') additionalOptions.metadata = metadata;
           if (this.leafletBasedCharts.includes(chartType)) {

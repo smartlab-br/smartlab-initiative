@@ -60,8 +60,8 @@ class LineChartBuilderService extends D3PlusChartBuilderService {
         let tooltip_context = additionalOptions.context ? additionalOptions.context : null;
         let removed_text_list = options.removed_text_list; 
         
-        let xConfig = this.constructor.getDefaultXYConfig(additionalOptions.sectionIndex);
-        let yConfig = this.constructor.getDefaultXYConfig(additionalOptions.sectionIndex);
+        let xConfig = this.constructor.getDefaultXYConfig(additionalOptions.axesStrokeClass);
+        let yConfig = this.constructor.getDefaultXYConfig(additionalOptions.axesStrokeClass);
 
         if (options.x_options && options.x_options.axis === false) xConfig= this.constructor.getTransparentXYConfig();
         if (options.y_options && options.y_options.axis === false) yConfig = this.constructor.getTransparentXYConfig();

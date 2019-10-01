@@ -1,5 +1,3 @@
-import ColorsService from '../singleton/colorsService'
-
 class GeneralChartBuilderService {
     _fontFamily = "titulos-observatorio";
 
@@ -16,15 +14,13 @@ class GeneralChartBuilderService {
     }
 
     // Helper functions ( TODO move to services)
-    static getDefaultXYConfig(sectionIndex, theme) { // TODO Deal with theme
+    static getDefaultXYConfig(axesStrokeClass) { // TODO Deal with theme
         return { 
             gridConfig: { stroke: "transparent" },
-            barConfig:   { stroke: ColorsService.assessZebraAxesColor(sectionIndex, theme)},
+            barConfig:   { stroke: axesStrokeClass },
             shapeConfig: {
-                labelConfig: {
-                    fontColor: ColorsService.assessZebraAxesColor(sectionIndex, theme)
-                },
-                stroke: ColorsService.assessZebraAxesColor(sectionIndex, theme)
+                labelConfig: { fontColor: axesStrokeClass },
+                stroke: axesStrokeClass
             }
         }
     }
