@@ -14,8 +14,8 @@
     "build:server": "cross-env webpack --config build/webpack.server.config.js --progress --hide-modules"
   },
   "engines": {
-    "node": ">=7.0",
-    "npm": ">=4.0"
+    "node": ">=12.11",
+    "npm": ">=6.11"
   },
   "jest": {
     "testResultsProcessor": "jest-sonar-reporter",
