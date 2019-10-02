@@ -2,7 +2,6 @@ import AppIcon from './AppIcon'
 
 // Charts
 // Based on d3plus
-import FLPOLinearGauge from './chart/FLPOLinearGauge'
 import FLPORankingBullet from './chart/FLPORankingBullet'
 import FLPORankingSlider from './chart/FLPORankingSlider'
 // Based on core d3
@@ -52,7 +51,7 @@ export default {
   'flpo-text-builder': FLPOTextBuilder,
   'flpo-minicard': FLPOMinicard,
   'flpo-odometer': FLPOOdometer,
-  'flpo-gauge-linear': FLPOLinearGauge,
+  
   'app-icon': AppIcon,
 
   'flpo-story-card': FLPOStoryCard,
