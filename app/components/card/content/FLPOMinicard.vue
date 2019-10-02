@@ -61,8 +61,8 @@
       reactiveFilter: function(newVal, oldVal) {
         if (newVal != oldVal) {
           this.errorMessage = null;
-          this.value='';
           if (this.structure.reactive){
+            this.value='';
             this.updateReactiveDataStructure(this.customFilters.filterUrl);
           } else if (this.structure.api_reactive){
             this.fillDataStructure(
