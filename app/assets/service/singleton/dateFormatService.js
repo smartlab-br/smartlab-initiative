@@ -21,7 +21,7 @@ class DateFormatService {
     return utfString;
   }
 
-  getWeekDay(abbrev) { return this.weekDay[abbrev]; }
+  getWeekDay(abbrev) { return this.weekDays[abbrev]; }
 }
 
 export default DateFormatService;

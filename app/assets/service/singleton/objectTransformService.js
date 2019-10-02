@@ -35,7 +35,7 @@ class ObjectTransformService {
       return localFunctions[struct.function].apply(null, args);
     }
     if (['formatDate', 'getWeekDay'].includes(struct.function)) {
-      return this.dateFormatService[struct.function].apply(null, args);
+      return this.dateFormatService[struct.function].apply(this.dateFormatService, args);
     }
     if (['calcClassIdh', 'getClassIdh', 'calcProportionSalary'].includes(struct.function)) {
       let model = new IndicatorsModel();
