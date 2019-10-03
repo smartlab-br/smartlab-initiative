@@ -69,20 +69,6 @@
         </v-flex>
         <v-flex sm12 md8 lg6>
           <v-layout style="display:block;">
-            <!-- <v-layout fill-height>
-              <flpo-leaflet-map
-                v-if="dataset !== null && observatorio && observatorio.prevalencia &&
-                      observatorio.prevalencia.chart_type == 'MAP_LEAFLET' &&
-                      observatorio.prevalencia.chart_options"
-                ref = "chart"
-                id = "observatorio_home_prevalencia_map"
-                :topology = "topology"
-                :dataset = "dataset"
-                :options = "observatorio.prevalencia.chart_options"
-                :customParams = "customParams"
-                :headers = "observatorio.prevalencia.headers">
-              </flpo-leaflet-map>
-            </v-layout> -->
             <v-layout fill-height>
               <v-layout fill-height
                 v-if="dataset !== null && observatorio && observatorio.prevalencia &&
