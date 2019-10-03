@@ -100,6 +100,17 @@
         
       </v-layout>
     </v-container>
+
+    <!-- Sparklines -->
+    <v-container v-if="observatorio && observatorio.sparklines" fluid ma-0 pa-0
+      :style="'background-color:' + $colorsService.constructor.assessZebraBG(0, $vuetify.theme) + ';'">
+      <flpo-sparklines
+        :dataset = "dataset"
+        :structure = "observatorio.sparklines">
+      </flpo-sparklines>
+    </v-container>
+
+    <!-- Dialogs -->
     <v-dialog :v-if="dialog" v-model="dialog">
       <v-card>
         <v-card-title class="headline-obs">Explicação</v-card-title>
