@@ -1,20 +1,30 @@
 <template>
   <v-layout v-if="dataset && structure.headers">
         <v-data-table
-        :headers="removeFormatItems(structure.headers)"
-        :items="dataset"
-        class="elevation-1">
+            @update:pagination="triggerChartUpdates()"
+            :headers="removeFormatItems(structure.headers)"
+            :items="dataset"
+            class="elevation-1"
+            style="width: 100%;">
             <template :headers="structure.headers" slot="items" slot-scope="props">
                 <!-- v-for SEM BIND, pois está restrito ao contexto do template do data-table -->
                 <td v-for="hdr in structure.headers">
-                <div v-if="typeof props.item[hdr.value] === 'string' && props.item[hdr.value].includes('</')"
-                    :class="hdr.item_class != null ? hdr.item_class : ''"
-                    v-html="props.item[hdr.value]">
-                </div>
-                <div v-else
-                    :class="hdr.item_class != null ? hdr.item_class : ''">
-                    {{ props.item[hdr.value] }}
-                </div>
+                    <div v-if="hdr.type && hdr.type == 'spark'">
+                        <v-layout fill-height
+                            v-if="structure && structure.chart_options !== null && validCharts.includes(structure.chart_type)"
+                            ref = "chartRef"
+                            :class = "leafletBasedCharts.includes(structure.chart_type) ? 'map_geo' : ''"
+                            :id="'spark_' + hdr.series + '_' + props.item.id">
+                        </v-layout>
+                    </div>
+                    <div v-else-if="typeof props.item[hdr.value] === 'string' && props.item[hdr.value].includes('</')"
+                        :class="hdr.item_class != null ? hdr.item_class : ''"
+                        v-html="props.item[hdr.value]">
+                    </div>
+                    <div v-else
+                        :class="hdr.item_class != null ? hdr.item_class : ''">
+                        {{ props.item[hdr.value] }}
+                    </div>
                 </td> 
             </template>
         </v-data-table>
@@ -31,15 +41,17 @@ export default {
             dataset: null
         }
     },
-    props: ['structure'],
     created () {
-      this.fillDataStructure(
-        this.structure, {}, {}, this.fillFromDataset, {}
-      );
+        this.fillDataStructure(this.structure, {}, {}, this.fillFromDataset, {});
     },
     computed: {
     },
     mounted: function() {
+    },
+    watch: {
+    //   dataset: function (nuDS, oldDS) {
+    //     this.triggerChartUpdates();
+    //   }
     },
     methods: {
         fillFromDataset(sourceDS, rules, sourceStructure, addedParams = null, metadata = null) {
@@ -75,6 +87,48 @@ export default {
             this.dataset = hierarchicalDS;
         },
 
+        triggerChartUpdates() {
+            // Transform color array into a dictionary
+            let colorDict = {};
+            if (this.structure.chart_options.colorArray && this.structure.chart_options.indicadores) {
+                for (let indx in this.structure.chart_options.indicadores) {
+                    colorDict[this.structure.chart_options.indicadores[indx]] = this.structure.chart_options.colorArray[indx];
+                }
+            }
+
+            // Generate charts
+            for (let row of this.dataset) {
+                for (let hdr of this.structure.headers) {
+                    if (hdr.type && hdr.type == 'spark' && row[hdr.series]) {
+                        let id = 'spark_' + hdr.series + '_' + row.id;
+
+                        // if (document.getElementById(id)) {
+                            let options = Object.assign({}, this.structure.chart_options);
+
+                            if (Object.keys(colorDict).length > 0) {
+                                delete options.colorArray;
+                                delete options.indicadores;
+                                options.color = colorDict[hdr.series].toString();
+                            }
+                            
+                            this.chartGen(
+                                id,
+                                this.structure.chart_type,
+                                this.structure,
+                                options,
+                                row[hdr.series],
+                                this.metadata,
+                                this.sectionIndex ? this.sectionIndex : 0
+                            ).then(
+                                (chartHandler) => {},
+                                (reject) => { this.sendError(reject); }
+                            );
+                        // }
+                    }
+                }
+            }
+        },
+        
         removeFormatItems(headers){
             let items = JSON.parse(JSON.stringify(headers));
             for(var item in items){
@@ -85,7 +139,3 @@ export default {
     }
 }
 </script>
-
-<style scoped>
-
-</style>

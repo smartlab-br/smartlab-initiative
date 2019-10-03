@@ -55,10 +55,10 @@ const SnackbarManager = {
 
         buildChartAdditionalOptions(id, chartType, structure, chartOptions, dataset, metadata, sectionIndex = 0) {
           let fnNavigation = this.$navigationManager.constructor.searchAnalysisUnit;
+          let idAnalysisUnit = this.selectedPlace ? this.selectedPlace : (this.customParams ? this.customParams.idLocalidade : null);
           let fnSendError = this.sendError;    
           let additionalOptions = { 
-            idAU: this.selectedPlace ? this.selectedPlace : this.customParams.idLocalidade,
-            au: this.$analysisUnitModel.findPlaceByID(this.selectedPlace ? this.selectedPlace : this.customParams.idLocalidade),
+            idAU: idAnalysisUnit,
             theme: this.$vuetify.theme,
             sectionIndex: sectionIndex,
             topology: this.topology,
@@ -84,6 +84,7 @@ const SnackbarManager = {
             cleanLabel: TooltipBuildingService.removeFromLabel,
             axesStrokeClass: ColorsService.assessZebraAxesColor(sectionIndex, this.$vuetify.theme)
           }
+          if (idAnalysisUnit) additionalOptions.au = this.$analysisUnitModel.findPlaceByID(idAnalysisUnit);
           if (chartType == 'SANKEYD3') additionalOptions.metadata = metadata;
           if (this.leafletBasedCharts.includes(chartType)) {
               if (chartOptions.tooltip_function == null) additionalOptions.tooltipFunction = TooltipBuildingService.defaultLealfetTooltip; 
