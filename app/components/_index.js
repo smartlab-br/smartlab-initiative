@@ -35,6 +35,9 @@ import FLPOSobreLayout from './FLPOSobreLayout'
 import FLPODotNav from './FLPODotNav'
 import FLPOOdometer from './FLPOOdometer'
 
+// Data Visualizations
+import FLPOSparklines from './viz/FLPOSparklines'
+
 export default {
   
   'flpo-composite-text': FLPOCompositeText,
@@ -61,5 +64,7 @@ export default {
   'flpo-ranking-list': FLPORankingList,
   'flpo-ranking-card': FLPORankingCard,
 
+  'flpo-sparklines': FLPOSparklines,
+  
   'flpo-articles-highlights': FLPOArticlesHighlights
 }
