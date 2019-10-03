@@ -61,7 +61,8 @@
     "reportFile": "report.xml"
   },
   "jest-junit": {
-    "output": "test/coverage/junit/junit.xml",
+    "outputDirectory": "./test/coverage/junit/",
+    "outputName": "junit.xml",
     "usePathForSuiteName": "true"
   },
   "dependencies": {
