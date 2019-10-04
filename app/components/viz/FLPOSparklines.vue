@@ -4,6 +4,7 @@
             @update:pagination="triggerChartUpdates()"
             :headers="removeFormatItems(structure.headers)"
             :items="dataset"
+            disable-initial-sort="true"
             class="elevation-1"
             style="width: 100%;">
             <template :headers="structure.headers" slot="items" slot-scope="props">
@@ -59,15 +60,6 @@ export default {
     created () {
         this.fillDataStructure(this.structure, {}, {}, this.fillFromDataset, {});
     },
-    computed: {
-    },
-    mounted: function() {
-    },
-    watch: {
-    //   dataset: function (nuDS, oldDS) {
-    //     this.triggerChartUpdates();
-    //   }
-    },
     methods: {
         fillFromDataset(sourceDS, rules, sourceStructure, addedParams = null, metadata = null) {
             let hierarchicalDS = [];
@@ -111,7 +103,9 @@ export default {
                                 eachInHierarchy['stats_' + row[sourceStructure.series_field]].deltaPerc = (eachInHierarchy['stats_' + row[sourceStructure.series_field]].finalValue - eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialValue) / eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialValue * 100;
                                 eachInHierarchy['deltaPerc_' + row[sourceStructure.series_field]] = (eachInHierarchy['stats_' + row[sourceStructure.series_field]].finalValue - eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialValue) / eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialValue * 100;
                                 // Delta % for sorter
-                                if (row[sourceStructure.series_field] == sourceStructure.sorter.indicador) eachInHierarchy.deltaPerc = (eachInHierarchy['stats_' + row[sourceStructure.series_field]].finalValue - eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialValue) / eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialValue * 100;
+                                if (row[sourceStructure.series_field] == sourceStructure.sorter.indicador) {
+                                    eachInHierarchy.deltaPerc = (eachInHierarchy['stats_' + row[sourceStructure.series_field]].finalValue - eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialValue) / eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialValue * 100;
+                                }
                                 // Delta % string formatters
                                 eachInHierarchy['str_deltaPerc_' + row[sourceStructure.series_field]] = this.$numberTransformService.constructor.formatNumber(eachInHierarchy['deltaPerc_' + row[sourceStructure.series_field]], 'porcentagem');
                             }
@@ -135,22 +129,12 @@ export default {
             }
 
             let fnSorter = (a, b) => {
-                //console.log('teste: ' + a.deltaPerc + ' vs. ' + b.deltaPerc + " >> " + - (a.deltaPerc - b.deltaPerc));
                 if (a.deltaPerc && b.deltaPerc) {
                     return - (a.deltaPerc - b.deltaPerc);
                 }
-                if (a.deltaPerc) return 1;
-                if (b.deltaPerc) return -1;
+                if (a.deltaPerc) return -1;
+                if (b.deltaPerc) return 1;
                 return 0;
-                // if (a['stats_' + this.structure.sorter.indicador] && b['stats_' + this.structure.sorter.indicador]) {
-                //     if (a['stats_' + this.structure.sorter.indicador].deltaPerc && b['stats_' + this.structure.sorter.indicador].deltaPerc) return - (a['stats_' + this.structure.sorter.indicador].deltaPerc - b['stats_' + this.structure.sorter.indicador].deltaPerc);
-                //     if (a['stats_' + this.structure.sorter.indicador].deltaPerc) return -1;
-                //     if (b['stats_' + this.structure.sorter.indicador].deltaPerc) return 1;
-                //     if (a['stats_' + this.structure.sorter.indicador].finalValue && b['stats_' + this.structure.sorter.indicador].finalValue) return - (a['stats_' + this.structure.sorter.indicador].finalValue - b['stats_' + this.structure.sorter.indicador].finalValue);
-                // }
-                // if (a['stats_' + this.structure.sorter.indicador]) return -1;
-                // if (b['stats_' + this.structure.sorter.indicador]) return 1;
-                // return 0;
             }
             hierarchicalDS.sort(fnSorter);
             
