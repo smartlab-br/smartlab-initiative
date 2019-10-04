@@ -8,14 +8,28 @@
             style="width: 100%;">
             <template :headers="structure.headers" slot="items" slot-scope="props">
                 <!-- v-for SEM BIND, pois está restrito ao contexto do template do data-table -->
-                <td v-for="hdr in structure.headers">
+                <td pa-0 v-for="hdr in structure.headers">
                     <div v-if="hdr.type && hdr.type == 'spark'">
-                        <v-layout fill-height
-                            v-if="structure && structure.chart_options !== null && validCharts.includes(structure.chart_type)"
-                            class="spark"
-                            ref = "chartRef"
-                            :class = "leafletBasedCharts.includes(structure.chart_type) ? 'map_geo' : ''"
-                            :id="'spark_' + hdr.series + '_' + props.item.id">
+                        <v-layout row fill-height>
+                            <v-layout xs-6 py-3 fill-height column text-xs-center class="sparkline"
+                                :style="'color: ' + hdr.color + '; background-color: ' + hdr.bgColor">
+                                <div :class="'sparkline-value ' + (hdr.item_class != null ? hdr.item_class : '')"
+                                    v-html="props.item[hdr.value]">
+                                </div>
+                                <div v-if="hdr.detail" 
+                                    :class="'sparkline-detail ' + (hdr.detail_class != null ? hdr.detail_class : '')"
+                                    v-html="props.item[hdr.detail]">
+                                </div>
+                            </v-layout>
+                            <v-layout xs-6 column>
+                                <v-layout fill-height
+                                    v-if="structure && structure.chart_options !== null && validCharts.includes(structure.chart_type)"
+                                    class="spark"
+                                    ref = "chartRef"
+                                    :class = "leafletBasedCharts.includes(structure.chart_type) ? 'map_geo' : ''"
+                                    :id="'spark_' + hdr.series + '_' + props.item.id">
+                                </v-layout>
+                            </v-layout>
                         </v-layout>
                     </div>
                     <div v-else-if="typeof props.item[hdr.value] === 'string' && props.item[hdr.value].includes('</')"
@@ -57,8 +71,11 @@ export default {
     methods: {
         fillFromDataset(sourceDS, rules, sourceStructure, addedParams = null, metadata = null) {
             let hierarchicalDS = [];
+            let allSeries = [];
 
             fromSource: for (let row of sourceDS) {
+                if (!allSeries.includes(row[sourceStructure.series_field])) allSeries.push(row[sourceStructure.series_field]);
+
                 let entryValue = row[sourceStructure.value_field] ? row[sourceStructure.value_field] : 0;
                 if (typeof entryValue !== "number") entryValue = parseFloat(entryValue);
 
@@ -69,9 +86,24 @@ export default {
                         if (eachInHierarchy[row[sourceStructure.series_field]] == null) { // new series
                             eachInHierarchy[row[sourceStructure.series_field]] = [entry];
                             eachInHierarchy['totals_' + row[sourceStructure.series_field]] = entry.value;
+                            eachInHierarchy['stats_' + row[sourceStructure.series_field]] = {
+                                initialValue: entry.value,
+                                finalValue: entry.value,
+                                initialCat: entry.cat_value,
+                                finalCat: entry.cat_value
+                            };
                         } else { // Existing instance and series
                             eachInHierarchy[row[sourceStructure.series_field]].push(entry);
                             eachInHierarchy['totals_' + row[sourceStructure.series_field]] = eachInHierarchy['totals_' + row[sourceStructure.series_field]] + entry.value;
+
+                            if (eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialCat > entry.cat_value) {
+                                eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialValue = entry.value;
+                                eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialCat = entry.cat_value;
+                            }
+                            if (eachInHierarchy['stats_' + row[sourceStructure.series_field]].finalCat < entry.cat_value) {
+                                eachInHierarchy['stats_' + row[sourceStructure.series_field]].finalValue = entry.value;
+                                eachInHierarchy['stats_' + row[sourceStructure.series_field]].finalCat = entry.cat_value;
+                            }
                         }
                         continue fromSource;
                     }    
@@ -82,9 +114,34 @@ export default {
                 nuInstance.id = row[sourceStructure.id_field];
                 nuInstance['totals_' + row[sourceStructure.series_field]] = entry.value;
                 nuInstance[row[sourceStructure.series_field]] = [entry];
+                nuInstance['stats_' + row[sourceStructure.series_field]] = {
+                    initialValue: entry.value,
+                    finalValue: entry.value,
+                    initialCat: entry.cat_value,
+                    finalCat: entry.cat_value
+                };
                 hierarchicalDS.push(nuInstance);
             }
 
+            // Final calculations (delta %, for instance)
+            for (let eachInHierarchy of hierarchicalDS) {
+                for (let series of allSeries) {
+                    if (eachInHierarchy[row[sourceStructure.series_field]].length > 1 &&
+                        eachInHierarchy['stats_' + row[sourceStructure.series_field]] &&
+                        eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialValue != 0)
+                    eachInHierarchy.deltaPerc = (eachInHierarchy['stats_' + row[sourceStructure.series_field]].finalValue - eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialValue) / eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialValue * 100;
+                }
+            }
+
+            let sorter = (a, b) => {
+                if (a.deltaPerc && b.deltaPerc) return - (a.deltaPerc - b.deltaPerc);
+                if (a.deltaPerc) return -1;
+                if (b.deltaPerc) return 1;
+                if (a.finalValue && b.finalValue) return - (a.finalValue - b.finalValue);
+                return 0;
+            }
+            hierarchicalDS.sort(sorter);
+            
             this.dataset = hierarchicalDS;
         },
 
@@ -139,7 +196,25 @@ export default {
                 items[item].value = String(items[item].value).replace("fmt_","");
             }
             return items;
-      },
+        },
     }
 }
 </script>
+
+<style scoped>
+  .sparkline-value {
+    font-family: Lato, Calibri, sans-serif !important;
+    font-weight: 300;
+    font-size: 2.2rem;
+    line-height: 2rem;
+  }
+  .sparkline-value span {
+    text-transform: uppercase;
+    font-size: 1.2rem;
+    line-height: 0;
+  } 
+  .sparkline .sparkline-detail {
+    font-size: 0.8rem;
+    font-weight: 400;
+  }
+</style>
