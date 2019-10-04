@@ -12,6 +12,7 @@
                     <div v-if="hdr.type && hdr.type == 'spark'">
                         <v-layout fill-height
                             v-if="structure && structure.chart_options !== null && validCharts.includes(structure.chart_type)"
+                            class="spark"
                             ref = "chartRef"
                             :class = "leafletBasedCharts.includes(structure.chart_type) ? 'map_geo' : ''"
                             :id="'spark_' + hdr.series + '_' + props.item.id">
@@ -97,36 +98,39 @@ export default {
             }
 
             // Generate charts
-            for (let row of this.dataset) {
-                for (let hdr of this.structure.headers) {
-                    if (hdr.type && hdr.type == 'spark' && row[hdr.series]) {
-                        let id = 'spark_' + hdr.series + '_' + row.id;
+            setTimeout(() => {
+                for (let sparkline of this.$el.getElementsByClassName("spark")) {
+                    let splitElementId = sparkline.id.split("_");
+                    let idFromElementId = splitElementId[splitElementId.length - 1];
+                    for (let row of this.dataset) {
+                        if (row.id == idFromElementId) { // Id from row matches element id on page
+                            let seriesFromElementId = splitElementId.slice(1, splitElementId.length -1).join('_');
+                            if (row[seriesFromElementId] == null) break; // Break if series dataset is non-existent
 
-                        // if (document.getElementById(id)) {
                             let options = Object.assign({}, this.structure.chart_options);
 
                             if (Object.keys(colorDict).length > 0) {
                                 delete options.colorArray;
                                 delete options.indicadores;
-                                options.color = colorDict[hdr.series].toString();
+                                options.color = colorDict[seriesFromElementId].toString();
                             }
                             
                             this.chartGen(
-                                id,
+                                sparkline.id,
                                 this.structure.chart_type,
                                 this.structure,
                                 options,
-                                row[hdr.series],
+                                row[seriesFromElementId],
                                 this.metadata,
                                 this.sectionIndex ? this.sectionIndex : 0
                             ).then(
                                 (chartHandler) => {},
                                 (reject) => { this.sendError(reject); }
                             );
-                        // }
+                        }
                     }
                 }
-            }
+            }, 0);
         },
         
         removeFormatItems(headers){
