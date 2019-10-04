@@ -18,7 +18,7 @@
                                 </div>
                                 <div v-if="hdr.detail" 
                                     :class="'sparkline-detail ' + (hdr.detail_class != null ? hdr.detail_class : '')"
-                                    v-html="props.item[hdr.detail]">
+                                    v-html="props.item['str_' + hdr.detail]">
                                 </div>
                             </v-layout>
                             <v-layout xs-6 column>
@@ -110,7 +110,10 @@ export default {
                                 eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialValue != 0) {
                                 eachInHierarchy['stats_' + row[sourceStructure.series_field]].deltaPerc = (eachInHierarchy['stats_' + row[sourceStructure.series_field]].finalValue - eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialValue) / eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialValue * 100;
                                 eachInHierarchy['deltaPerc_' + row[sourceStructure.series_field]] = (eachInHierarchy['stats_' + row[sourceStructure.series_field]].finalValue - eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialValue) / eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialValue * 100;
+                                // Delta % for sorter
                                 if (row[sourceStructure.series_field] == sourceStructure.sorter.indicador) eachInHierarchy.deltaPerc = (eachInHierarchy['stats_' + row[sourceStructure.series_field]].finalValue - eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialValue) / eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialValue * 100;
+                                // Delta % string formatters
+                                eachInHierarchy['str_deltaPerc_' + row[sourceStructure.series_field]] = this.$numberTransformService.constructor.formatNumber(eachInHierarchy['deltaPerc_' + row[sourceStructure.series_field]], 'porcentagem');
                             }
                         }
                         continue fromSource;
