@@ -4,15 +4,15 @@
             @update:pagination="triggerChartUpdates()"
             :headers="removeFormatItems(structure.headers)"
             :items="dataset"
-            disable-initial-sort="true"
-            class="elevation-1"
+            :disable-initial-sort="disableInitialSort"
+            class="sparklines-grid elevation-1"
             style="width: 100%;">
             <template :headers="structure.headers" slot="items" slot-scope="props">
                 <!-- v-for SEM BIND, pois está restrito ao contexto do template do data-table -->
                 <td pa-0 v-for="hdr in structure.headers">
                     <div v-if="hdr.type && hdr.type == 'spark'">
-                        <v-layout row fill-height>
-                            <v-layout xs-6 py-3 fill-height column text-xs-center class="sparkline"
+                        <v-layout row pa-0 fill-height>
+                            <v-layout py-3 px-1 fill-height column text-xs-center class="sparkline"
                                 :style="'color: ' + hdr.color + '; background-color: ' + hdr.bgColor">
                                 <div :class="'sparkline-value ' + (hdr.item_class != null ? hdr.item_class : '')"
                                     v-html="props.item[hdr.value]">
@@ -22,7 +22,7 @@
                                     v-html="props.item['str_' + hdr.detail]">
                                 </div>
                             </v-layout>
-                            <v-layout xs-6 column>
+                            <v-layout>
                                 <v-layout fill-height
                                     v-if="structure && structure.chart_options !== null && validCharts.includes(structure.chart_type)"
                                     class="spark"
@@ -54,7 +54,8 @@ export default {
     extends: FLPOBaseLayout,
     data() {
         return {
-            dataset: null
+            dataset: null,
+            disableInitialSort: true
         }
     },
     created () {
