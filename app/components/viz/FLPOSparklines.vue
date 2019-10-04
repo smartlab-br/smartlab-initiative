@@ -33,11 +33,11 @@
                         </v-layout>
                     </div>
                     <div v-else-if="typeof props.item[hdr.value] === 'string' && props.item[hdr.value].includes('</')"
-                        :class="hdr.item_class != null ? hdr.item_class : ''"
+                        :class="'sparkline-value ' + (hdr.item_class != null ? hdr.item_class : '')"
                         v-html="props.item[hdr.value]">
                     </div>
                     <div v-else
-                        :class="hdr.item_class != null ? hdr.item_class : ''">
+                        :class="'sparkline-value' + (hdr.item_class != null ? hdr.item_class : '')">
                         {{ props.item[hdr.value] }}
                     </div>
                 </td> 
@@ -104,6 +104,14 @@ export default {
                                 eachInHierarchy['stats_' + row[sourceStructure.series_field]].finalValue = entry.value;
                                 eachInHierarchy['stats_' + row[sourceStructure.series_field]].finalCat = entry.cat_value;
                             }
+
+                            if (eachInHierarchy[row[sourceStructure.series_field]].length > 1 &&
+                                eachInHierarchy['stats_' + row[sourceStructure.series_field]] &&
+                                eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialValue != 0) {
+                                eachInHierarchy['stats_' + row[sourceStructure.series_field]].deltaPerc = (eachInHierarchy['stats_' + row[sourceStructure.series_field]].finalValue - eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialValue) / eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialValue * 100;
+                                eachInHierarchy['deltaPerc_' + row[sourceStructure.series_field]] = (eachInHierarchy['stats_' + row[sourceStructure.series_field]].finalValue - eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialValue) / eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialValue * 100;
+                                if (row[sourceStructure.series_field] == sourceStructure.sorter.indicador) eachInHierarchy.deltaPerc = (eachInHierarchy['stats_' + row[sourceStructure.series_field]].finalValue - eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialValue) / eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialValue * 100;
+                            }
                         }
                         continue fromSource;
                     }    
@@ -123,24 +131,25 @@ export default {
                 hierarchicalDS.push(nuInstance);
             }
 
-            // Final calculations (delta %, for instance)
-            for (let eachInHierarchy of hierarchicalDS) {
-                for (let series of allSeries) {
-                    if (eachInHierarchy[row[sourceStructure.series_field]].length > 1 &&
-                        eachInHierarchy['stats_' + row[sourceStructure.series_field]] &&
-                        eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialValue != 0)
-                    eachInHierarchy.deltaPerc = (eachInHierarchy['stats_' + row[sourceStructure.series_field]].finalValue - eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialValue) / eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialValue * 100;
+            let fnSorter = (a, b) => {
+                //console.log('teste: ' + a.deltaPerc + ' vs. ' + b.deltaPerc + " >> " + - (a.deltaPerc - b.deltaPerc));
+                if (a.deltaPerc && b.deltaPerc) {
+                    return - (a.deltaPerc - b.deltaPerc);
                 }
-            }
-
-            let sorter = (a, b) => {
-                if (a.deltaPerc && b.deltaPerc) return - (a.deltaPerc - b.deltaPerc);
-                if (a.deltaPerc) return -1;
-                if (b.deltaPerc) return 1;
-                if (a.finalValue && b.finalValue) return - (a.finalValue - b.finalValue);
+                if (a.deltaPerc) return 1;
+                if (b.deltaPerc) return -1;
                 return 0;
+                // if (a['stats_' + this.structure.sorter.indicador] && b['stats_' + this.structure.sorter.indicador]) {
+                //     if (a['stats_' + this.structure.sorter.indicador].deltaPerc && b['stats_' + this.structure.sorter.indicador].deltaPerc) return - (a['stats_' + this.structure.sorter.indicador].deltaPerc - b['stats_' + this.structure.sorter.indicador].deltaPerc);
+                //     if (a['stats_' + this.structure.sorter.indicador].deltaPerc) return -1;
+                //     if (b['stats_' + this.structure.sorter.indicador].deltaPerc) return 1;
+                //     if (a['stats_' + this.structure.sorter.indicador].finalValue && b['stats_' + this.structure.sorter.indicador].finalValue) return - (a['stats_' + this.structure.sorter.indicador].finalValue - b['stats_' + this.structure.sorter.indicador].finalValue);
+                // }
+                // if (a['stats_' + this.structure.sorter.indicador]) return -1;
+                // if (b['stats_' + this.structure.sorter.indicador]) return 1;
+                // return 0;
             }
-            hierarchicalDS.sort(sorter);
+            hierarchicalDS.sort(fnSorter);
             
             this.dataset = hierarchicalDS;
         },
