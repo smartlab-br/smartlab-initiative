@@ -328,6 +328,8 @@
       },
 
       triggerChartUpdates() {
+        let fnSendError = this.sendError;
+        let chartTitle = this.cmpTitle;
         if (this.chartHandler) {
           this.chartRegen(
             this.chartHandler,
@@ -340,7 +342,10 @@
             this.sectionIndex
           ).then(
             (chartHandler) => { this.sendChartLoaded(chartHandler); },
-            (reject) => { this.sendError(reject); }
+            (reject) => { 
+              console.log(reject); 
+              fnSendError("Falha ao carregar gráfico '"+ chartTitle +"'.");
+            }
           );
         } else {
           this.chartGen(
@@ -353,7 +358,10 @@
             this.sectionIndex
           ).then(
             (chartHandler) => { this.sendChartLoaded(chartHandler); },
-            (reject) => { this.sendError(reject); }
+            (reject) => { 
+              console.log(reject); 
+              fnSendError("Falha ao carregar gráfico do card '"+ chartTitle +"'.");
+            }
           );
         }
         this.assessChartFooter();
