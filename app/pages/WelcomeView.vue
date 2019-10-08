@@ -1,6 +1,6 @@
 <template>
   <v-layout row wrap class="pa-0">
-    <v-flex fluid grid-list-lg xs12 class="first-section pa-0" :style="displayHeight" style="overflow: hidden;">
+    <v-flex fluid grid-list-lg xs12 overflow-hidden class="first-section pa-0" :style="displayHeight" style="overflow: hidden;">
       <!-- <v-parallax xs12 class="bg-parallax" height="auto" src="static/parallax/home.png"></v-parallax>-->
       <v-layout xs12 class="bg-zoom bg-parallax-home" height="auto" style="background-image:url('/static/parallax/td.jpg');background-position: center center; background-size: cover;"></v-layout> 
       <v-layout xs12 class="bg-parallax-home ma-0"></v-layout>
