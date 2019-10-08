@@ -1,7 +1,7 @@
 <template>
   <v-layout row wrap class="pa-0">
-    <v-flex v-if="observatorio" fluid grid-list-lg xs12 class="first-section pa-0" :style="displayHeight">
-      <v-layout xs12 class="bg-parallax"
+    <v-flex v-if="observatorio" fluid grid-list-lg xs12 overflow-hidden class="first-section pa-0" :style="displayHeight">
+      <v-layout xs12 class="bg-zoom bg-parallax"
         height="auto" :style="currentParallax"></v-layout>
       <v-layout xs12 class="bg-parallax ma-0"></v-layout>
       <v-layout row wrap px-3 justify-center class="parallax-content">
@@ -69,19 +69,8 @@
     </v-container>
     -->
     <v-container v-if="observatorio && observatorio.prevalencia" fluid ma-0 pa-0
-      :style="'background-color:' + $colorsService.assessZebraBG(0, $vuetify.theme) + ';'">
+      :style="'background-color:' + $colorsService.constructor.assessZebraBG(0, $vuetify.theme) + ';'">
       <v-layout row wrap>
-        <!--
-        <v-layout pa-3 row wrap justify-center v-show="mapTextLoading || !thematicLoaded">
-          <v-progress-circular
-            :size="120"
-            :width="8"
-            color="primary"
-            indeterminate>
-            Carregando prevalência nacional
-          </v-progress-circular>
-        </v-layout>
-        -->
         <v-flex pt-0 sm12 v-if="observatorio && observatorio.prevalencia && observatorio.prevalencia.odometers">
           <v-layout column>
             <v-flex pa-0 class="headline-obs text-xs-center"
@@ -137,7 +126,10 @@
                 :structure="observatorio.prevalencia.description"
                 :custom-params="customParams"
                 :custom-functions="customFunctions"
-                v-on:selection="triggerSelect">
+                :reactive-filter="reactiveFilter"
+                :custom-filters="customParams"
+                v-on:selection="triggerSelect"
+                @showSnackbar="snackAlert">
               </flpo-composite-text>
 
               <v-layout column wrap pl-2>
@@ -160,67 +152,47 @@
                 :id = "'story_home_prevalencia_footer_' + idObservatorio"
                 :structure="observatorio.prevalencia.footer"
                 :custom-params="customParams"
-                :custom-functions="customFunctions">
+                :custom-functions="customFunctions"
+                :custom-filters="customParams"
+                @showSnackbar="snackAlert"
+                >
               </flpo-composite-text>
 
             </v-layout>
           </v-layout>
         </v-flex>
 
-        <v-flex sm12 md8 lg6 pt-4 style="position:relative">
-          <!--
-          <v-layout justify-end ma-0 pa-0>
-            <v-btn small flat
-              v-on:click="pushRoute('/observatoriomapa/'+idObservatorio)">
-              <span>SmartMap - Modo Avançado</span>
-              <v-icon right>public</v-icon>
-            </v-btn>
+        <v-flex sm12 md8 lg6 pt-4>
+        <v-layout style="position:relative">
+            <v-layout xs12 class="cursor-pointer" v-if="observatorio" v-on:mousedown="dialogMapLoading = true"
+              height="auto">
+                <v-img
+                :src="currentParallaxFile"
+                :aspect-ratio="observatorio.prevalencia.chart_options.height_proportion ? observatorio.prevalencia.chart_options.height_proportion : 1"
+                >
+                <v-layout class="bg-black-transparent pa-3 justify-end subheading fill-height" v-on:click="enableMap">
+                  Clique no mapa para ativá-lo
+                </v-layout>
+                </v-img>
+            </v-layout>
+            <v-layout v-show="mapEnabled" style="position:absolute;z-index:2;right:10px" class="cursor-pointer pa-3 justify-end subheading" v-on:click="$navigationManager.constructor.pushRoute($router,'/'+$observatories.constructor.identifyObservatoryById(idObservatorio)+'/smartmap')">
+              Clique para modo avançado - SmartMap
+            </v-layout>
+            <v-layout fill-height style="position: absolute"
+              v-if="dataset !== null && observatorio && observatorio.prevalencia &&
+                    observatorio.prevalencia.chart_type == 'MAP_BUBBLES' &&
+                    observatorio.prevalencia.chart_options"
+              ref = "chartRef"
+              :class = "leafletBasedCharts.includes(observatorio.prevalencia.chart_type) ? 'map_geo' : ''"
+              id="observatorio_home_prevalencia_map">
+            </v-layout>
           </v-layout>
-          -->
-          <v-layout xs12 class="cursor-pointer" v-if="observatorio" v-on:mousedown="dialogMapLoading = true"
-            height="auto" v-show="!mapEnabled">
-              <v-img
-              :src="currentParallaxFile"
-              :aspect-ratio="observatorio.prevalencia.chart_options.height_proportion ? observatorio.prevalencia.chart_options.height_proportion : 1"
-              >
-              <v-layout class="bg-black-transparent pa-3 justify-end subheading fill-height" v-on:click="enableMap">
-                Clique no mapa para ativá-lo
-              </v-layout>
-              </v-img>
-          </v-layout>
-          <v-layout v-show="mapEnabled" style="position:absolute;z-index:2;right:10px" class="cursor-pointer pa-3 justify-end subheading" v-on:click="pushRoute('/'+$observatories.identifyObservatoryById(idObservatorio)+'/smartmap')">
-            Clique para modo avançado - SmartMap
-          </v-layout>
-          <flpo-leaflet-map
-            v-if="dataset !== null && observatorio && observatorio.prevalencia &&
-                  observatorio.prevalencia.chart_type == 'MAP_LEAFLET' &&
-                  observatorio.prevalencia.chart_options &&  mapEnabled"
-            ref = "chart"
-            id = "observatorio_home_prevalencia_map"
-            :topology = "topology"
-            :dataset = "dataset"
-            :options = "observatorio.prevalencia.chart_options"
-            :customParams = "customParams"
-            :headers = "observatorio.prevalencia.headers"
-            v-on:map-loaded="mapLoaded">
-          </flpo-leaflet-map>
-          <!--
-          <v-layout pa-3 row wrap justify-center align-center fill-height
-            v-show="mapDataLoading">
-            <v-progress-circular
-              :size="120"
-              :width="8"
-              color="primary"
-              indeterminate>
-              Analisando municípios
-            </v-progress-circular>
-          </v-layout>
-          -->
           <v-flex xs12>
             <v-layout v-if="observatorio && observatorio.ranking_cards" row wrap pb-2>
               <flpo-ranking-list v-for="(ranking, index) in observatorio.ranking_cards" :key="index"
                 :structure="ranking" :customFunctions="customFunctions"
-                :customParams="customParams">
+                :customParams="customParams"
+                @showSnackbar="snackAlert">
               </flpo-ranking-list>
             </v-layout>
             <flpo-composite-text
@@ -229,7 +201,8 @@
               :structure="observatorio.prevalencia.description_bottom"
               section-class = 'pa-0'
               :custom-params="customParams"
-              :custom-functions="customFunctions">
+              :custom-functions="customFunctions"
+              @showSnackbar="snackAlert">
             </flpo-composite-text>
           </v-flex>
         </v-flex>
@@ -241,7 +214,8 @@
             :id = "'story_home_prevalencia_desc_r_' + idObservatorio"
             :structure="observatorio.prevalencia.description_right"
             :custom-params="customParams"
-            :custom-functions="customFunctions">
+            :custom-functions="customFunctions"
+            @showSnackbar="snackAlert">
           </flpo-composite-text>
         </v-flex>
 
@@ -265,7 +239,7 @@
     </v-layout>
 
     <!--
-    <v-container fluid ma-0 pa-5 :style="'background-color:' + $colorsService.assessZebraBG(1, $vuetify.theme) + ';'">
+    <v-container fluid ma-0 pa-5 :style="'background-color:' + $colorsService.constructor.assessZebraBG(1, $vuetify.theme) + ';'">
       <v-layout row wrap text-xs-center pb-5>
         <div class="flex display-1-obs">Realização</div>
       </v-layout>
@@ -333,7 +307,8 @@
         displayHeight: "auto",
         dims: null,
         mapEnabled: false,
-        isPageBottom: true
+        isPageBottom: true,
+        chartHandler: null
       }
     },
     mounted: function() {
@@ -351,6 +326,7 @@
     computed: {
       currentParallaxFile: function() {
         return '/static/parallax/' + this.observatorio.imagem + '.jpg';
+
       }
     },
     methods: {
@@ -384,13 +360,7 @@
       },
 
       enableMap(){
-        if (!this.mapEnabled){
-          this.fetchMapData();        
-        }
-      },
-
-      mapLoaded(){
-        this.dialogMapLoading = false;
+        if (!this.mapEnabled) this.fetchMapData();        
       },
 
       setDimensionsArea() {
@@ -440,9 +410,7 @@
       triggerSelect(payload) {
         if (payload.type && payload.type === 'switch-group') {
           this.customParams.enabled = payload.enabled;
-          if (this.$refs.chart){
-            this.$refs.chart.adjustVisibleLayers();
-          }
+          if (this.chartHandler) this.chartHandler.adjustVisibleLayers(payload.enabled);
         } else if (payload.type && payload.type === 'radio') {
           if (payload.item == null || payload.item == undefined){
             this.customParams.radioApi = null;
@@ -458,14 +426,50 @@
       },
 
       fetchMapData(endpoint = null) {
+        this.mapEnabled = true;
         this.fillDataStructure(
           this.observatorio.prevalencia,
           this.customParams, this.customFunctions,
           this.setDataset,
           { "endpoint": endpoint,
-            "fnCallback": () => { this.mapEnabled = true}
+            "fnCallback": this.triggerChartUpdates
           },
         );
+      },
+
+      triggerChartUpdates() {
+        if (this.chartHandler) {
+          this.chartRegen(
+            this.chartHandler,
+            "observatorio_home_prevalencia_map",
+            this.observatorio.prevalencia.chart_type,
+            this.observatorio.prevalencia,
+            this.observatorio.prevalencia.chart_options,
+            this.dataset,
+            this.metadata,
+            this.sectionIndex
+          ).then(
+            (chartHandler) => { this.sendChartLoaded(chartHandler); },
+            (reject) => { this.sendError(reject); }
+          );
+        } else {
+          this.chartGen(
+            "observatorio_home_prevalencia_map",
+            this.observatorio.prevalencia.chart_type,
+            this.observatorio.prevalencia,
+            this.observatorio.prevalencia.chart_options,
+            this.dataset,
+            this.metadata
+          ).then(
+            (chartHandler) => { this.sendChartLoaded(chartHandler); },
+            (reject) => { this.sendError(reject); }
+          );
+        }
+      },
+
+      sendChartLoaded(chartHandler) {
+        this.chartHandler = chartHandler;
+        this.dialogMapLoading = false;
       }
     }
   }

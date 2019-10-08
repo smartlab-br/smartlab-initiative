@@ -8,7 +8,9 @@
     props: ['selectedPlace', 'chartPosition'],
     data () {
       return {
-        customFilters: {}
+        customFilters: {},
+        reactiveFilter: null,
+        errorMessage: null
       }
     },
     created () {
@@ -50,11 +52,7 @@
               { attribute: 'cmpTitleComment' }
             );
             this.fetchData();
-          }, error => {
-            console.error(error.toString());
-            this.sendError("Falha ao buscar dados de card");
-            reject({ code: 500 });
-          });
+          }).catch(error => { this.sendDataStructureError("Falha ao buscar dados de card"); });
       } else {
         this.completeStructure();
         this.fillDataStructure(
@@ -73,7 +71,7 @@
     },
     computed: {
       loadingStatusDataset: function() {
-        if (this.errorDataset) return 'ERROR';
+        if (this.errorMessage) return 'ERROR';
         if (this.dataset !== null && this.dataset !== undefined) {
           return 'SUCCESS';
         }
@@ -342,6 +340,7 @@
 
       triggerSelect(payload) {
         this.setFilter(payload);
+        this.reactiveFilter = payload.item ? payload.item : payload.value;
         this.updateDataStructure(payload);
       },
 
@@ -358,6 +357,10 @@
     font-weight: 200;
     line-height: 1rem;
     color: rgb(239,97,69);
+  }
+
+  .sankey-link:hover {
+    stroke-opacity: .5 !important;
   }
   
 </style>

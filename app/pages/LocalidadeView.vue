@@ -1,8 +1,8 @@
 <template>
   <v-layout row wrap class="pa-0">
     <!-- Nome do município + UF -->
-    <v-container fluid grid-list-lg xs12 class="first-section pa-0" :style="displayHeight">
-      <v-layout xs12 class="bg-parallax" height="auto" :style="currentParallax" v-if="customParams.cd_uf"></v-layout>
+    <v-container fluid grid-list-lg xs12 overflow-hidden class="first-section pa-0" :style="displayHeight">
+      <v-layout xs12 class="bg-zoom bg-parallax" height="auto" :style="currentParallax" v-if="customParams.cd_uf"></v-layout>
       <v-layout xs12 class="bg-parallax ma-0"></v-layout>
       <v-layout row wrap class="parallax-content" v-if="dimensao_ativa">
         <!-- Menu para cada dimensao -->
@@ -105,7 +105,8 @@
                   v-for="(miniCardPrincipal, indexMinicardsPrincipal) in ind_principais"
                   :key="'minicard_principal_'+indexMinicardsPrincipal"
                   :structure="miniCardPrincipal" :customFunctions="custom_functions"
-                  :customParams="customParams" :row-class="miniCardPrincipal.rowClass">
+                  :customParams="customParams" :row-class="miniCardPrincipal.rowClass"
+                  @showSnackbar="snackAlert">
                 </flpo-minicard>
               </v-layout>
             </v-flex>
@@ -133,10 +134,10 @@
         <v-layout v-for="(secao, indexSecao) in sections"  
           :key="secao.id"
           row wrap>
-          <v-layout column :id="secao.id" :style="'background-color:' + $colorsService.assessZebraBG(indexSecao, $vuetify.theme) + ';'">
+          <v-layout column :id="secao.id" :style="'background-color:' + $colorsService.constructor.assessZebraBG(indexSecao, $vuetify.theme) + ';'">
             <v-flex xs12>
               <div
-                :class="'display-2-obs pt-5 pb-3  ml-5 pl-3 font-weight-bold ' + $colorsService.assessZebraTitle(indexSecao, $vuetify.theme)">
+                :class="'display-2-obs pt-5 pb-3  ml-5 pl-3 font-weight-bold ' + $colorsService.constructor.assessZebraTitle(indexSecao, $vuetify.theme)">
                 {{ secao.name }}
               </div>
             </v-flex>
@@ -163,12 +164,13 @@
                         :structure="card.description"
                         :custom-params = "customParams"
                         :custom-functions = "custom_functions"
-                        :section-index="indexSecao">
+                        :section-index="indexSecao"
+                        @showSnackbar="snackAlert">
                       </flpo-composite-text>
                     </v-layout>
                     <v-layout v-else-if="card.type && card.type == 'headline'"
                       pt-5 pb-3 ml-5 pl-2
-                      :class="'display-2-obs font-weight-bold ' + $colorsService.assessZebraTitle(indexSecao, $vuetify.theme)"
+                      :class="'display-2-obs font-weight-bold ' + $colorsService.constructor.assessZebraTitle(indexSecao, $vuetify.theme)"
                       v-html="card.title.fixed">
                     </v-layout>
                     <flpo-story-card-autofill
@@ -178,7 +180,8 @@
                       :custom-functions = "custom_functions"
                       :topology = "topology"
                       :topology-uf = "topology_uf"
-                      :section-index="indexSecao">
+                      :section-index="indexSecao"
+                      @showSnackbar="snackAlert">
                     </flpo-story-card-autofill>
                     <flpo-story-card-multiple-charts
                       v-else-if="card.type && card.type == 'multiple-charts' && topologyUfLoaded  && topology && ((indexSecao*100) + cardIndex  <= visibleCardMaxIndex)"
@@ -188,7 +191,8 @@
                       :topology = "topology"
                       :topology-uf = "topology_uf"
                       :section-index="indexSecao"
-                      @showBugDialog="openBugDialog">
+                      @showBugDialog="openBugDialog"
+                      @showSnackbar="snackAlert">
                     </flpo-story-card-multiple-charts>
                     <flpo-story-card
                       v-else-if="topologyUfLoaded  && topology && ((indexSecao*100) + cardIndex  <= visibleCardMaxIndex)"
@@ -198,7 +202,8 @@
                       :topology = "topology"
                       :topology-uf = "topology_uf"
                       :section-index="indexSecao"
-                      @showBugDialog="openBugDialog">
+                      @showBugDialog="openBugDialog"
+                      @showSnackbar="snackAlert">
                     </flpo-story-card>
                   </v-layout>
                 </v-flex>
@@ -524,7 +529,7 @@
     },
    
     created () {
-      let tmpIdObs = this.$observatories.identifyObservatory(this.$route.path.split('/')[1]);
+      let tmpIdObs = this.$observatories.constructor.identifyObservatory(this.$route.path.split('/')[1]);
       this.$dimensions.getDimensions(tmpIdObs)
         .then((result) => this.setSiblingDimensions(result));
       this.idObservatorio = tmpIdObs;
@@ -535,11 +540,10 @@
           let auId = this.getIdLocalidadeFromRoute(this.$route.params.idLocalidade);
           let msgErro = this.getMensagemErro(this.$route.params.idLocalidade);
         
-          let compareScope, compareAuId, compareMsgErro;
+          let compareScope, compareAuId;
           if (this.$route.query.compare) {
             compareScope = this.getEscopo(this.$route.query.compare);
             compareAuId = this.getIdLocalidadeFromRoute(this.$route.query.compare);
-            compareMsgErro = this.getMensagemErro(this.$route.query.compare);
           }
 
           let thematicDatasets = ['centralindicadores'];
@@ -581,7 +585,7 @@
           } else {
             url = this.$route.fullPath.replace('/localidade/','/localidadecompare/') + '&compare=' + newVal.id;
           }
-          this.pushRoute(url);
+          this.$navigationManager.constructor.pushRoute(this.$router, url);
         }
       },
       localidade: function(){
@@ -694,11 +698,11 @@
       },
       
       keepLoading() {
-        let tmpIdObs = this.$observatories.identifyObservatory(this.$route.path.split('/')[1]);
+        let tmpIdObs = this.$observatories.constructor.identifyObservatory(this.$route.path.split('/')[1]);
         
         this.setActiveDim(this.$route.params.idLocalidade, tmpIdObs, this.$route.query.dimensao);
 
-        this.customParams.deck = this.loadYaml("br/autocard");
+        // this.$yamlFetcherService.loadYaml("br/autocard").then((result) => { this.customParams.deck = result; });
 
         // Carrega a topologia do município
         if (this.$route.params.idLocalidade == 0){ //Brasil
@@ -806,6 +810,7 @@
           { main: "br/" + observatorioDir + "localidade/" + escopo + "/base", alt: "br/" + observatorioDir + "localidade/default/base" },
           { main: "br/" + observatorioDir + "localidade/" + escopo + "/" + idDimensao, alt: "br/" + observatorioDir + "localidade/default/" + idDimensao }
         ];
+        
         this.loadYamlArray({}, baseStructYamls, this.setDimension);
       },
 
@@ -1076,7 +1081,7 @@
         let viewEndpoint = this.$route.query.compare ? 'localidadecompare' : 'localidade';
         if (idDimensao) urlComplemento = '&dimensao=' + idDimensao;
         if (this.$route.query.compare) urlComplemento += '&compare=' + this.idLocalidade_compare;
-        this.$router.push("/" + this.$observatories.identifyObservatoryById(idObservatorio) + "/" + viewEndpoint + "/" + idLocalidade + "?" + urlComplemento);
+        this.$router.push("/" + this.$observatories.constructor.identifyObservatoryById(idObservatorio) + "/" + viewEndpoint + "/" + idLocalidade + "?" + urlComplemento);
       },
 
       getLeadSlice(rowIndx) {

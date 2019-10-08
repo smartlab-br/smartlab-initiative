@@ -109,7 +109,7 @@
 
               let interval = 1 / pace;
               options.interval = interval;
-              options.str_interval = this.getLocalPaceString(interval);
+              options.str_interval = this.$numberTransformService.getPaceString(interval);
               
               let now = new Date();
               options.start = val + (now.getTime() - max.getTime()) * pace;
@@ -161,7 +161,7 @@
         this.commentData = "";
         if (comment.fixed !== undefined) {
           if (comment.format) {
-            this.commentData = this.$numberTransformService.formatNumber(comment.fixed, comment.format, comment.precision, comment.multiplier, comment.collapse, comment.signed, comment.uiTags);
+            this.commentData = this.$numberTransformService.constructor.formatNumber(comment.fixed, comment.format, comment.precision, comment.multiplier, comment.collapse, comment.signed, comment.uiTags);
           } else {
             this.commentData = comment.fixed;
           }
@@ -169,54 +169,6 @@
           this.setComplexAttribute(options, [comment], comment, {attribute: 'commentData'});
         }
         this.comment_items.push(this.commentData);
-      },
-
-      getLocalPaceString(interval) {
-        let days=Math.floor((interval/(1000*60*60*24)));
-        let tmpInterval = interval - days*1000*60*60*24;
-        let hours = Math.floor(tmpInterval/(1000*60*60));
-        tmpInterval -= hours*1000*60*60;
-        let minutes = Math.floor(tmpInterval/(1000*60));
-        tmpInterval -= minutes*1000*60;
-        let seconds = Math.floor(tmpInterval/(1000));
-        tmpInterval -= seconds*1000;
-        let milis = Math.floor(tmpInterval);
-
-        let strInterval = "";
-        let started = false;
-        if (days > 0) {
-          strInterval += " " + days + "d";
-          started = true;
-        }
-        if (started) {
-          strInterval += " " + hours + "h";
-        } else {
-          if (hours > 0) {
-            strInterval += " " + hours + "h";
-            started = true;
-          }
-        }
-        if (started) {
-          strInterval += " " + minutes + "m";
-        } else {
-          if (minutes > 0) {
-            strInterval += " " + minutes + "m";
-            started = true;
-          }
-        }
-        if (started) {
-          strInterval += " " + seconds + "s";
-        } else {
-          if (seconds > 0) {
-            strInterval += " " + seconds + "s";
-            started = true;
-          }
-        }
-        if (!started) {
-          strInterval += " " + milis + "ms";
-        }
-
-        return strInterval;
       }
     }
   };

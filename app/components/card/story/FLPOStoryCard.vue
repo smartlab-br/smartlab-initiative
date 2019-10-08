@@ -1,7 +1,7 @@
 <template>
   <v-layout row wrap>
     <v-flex xs12>
-      <v-card :id="structure.id" :class= "'mx-4 mb-5 bg-card ' + $colorsService.getClassIfIsDark(null, sectionIndex, this.$vuetify.theme)">
+      <v-card :id="structure.id" :class= "'mx-4 mb-5 bg-card ' + $colorsService.constructor.getClassIfIsDark(null, sectionIndex, this.$vuetify.theme)">
         <v-progress-linear
           height="5"
           :indeterminate="loadingStatusDataset == 'LOADING'"
@@ -35,13 +35,13 @@
                   <div v-if="cmpTitleComment != null" class="title-comment" v-html="cmpTitleComment"></div>
                 </v-flex>
                 <!-- <v-spacer></v-spacer> -->
-                <!-- <v-btn small fill-height class="mb-0" flat :color="$colorsService.assessZebraTitleColor(this.sectionIndex, this.$vuetify.theme)"
+                <!-- <v-btn small fill-height class="mb-0" flat :color="$colorsService.constructor.assessZebraTitleColor(this.sectionIndex, this.$vuetify.theme)"
                   @click.native="downloadChart">
                   <span class="hidden-sm-and-down body">Baixar gráfico</span>
                   <v-icon right>file_download</v-icon>
                 </v-btn> -->
                 <v-flex xs2 text-xs-right pr-4>
-                <v-btn small flat :color="$colorsService.assessZebraTitleColor(this.sectionIndex, this.$vuetify.theme)"
+                <v-btn small flat :color="$colorsService.constructor.assessZebraTitleColor(this.sectionIndex, this.$vuetify.theme)"
                   @click.native="dialog = true" style="margin: 0px;">
                   <span :class="chartPosition == 'bottom'?'hidden-md-and-down body': 'hidden-sm-and-down body'">Dados</span>
                   <v-icon right>view_list</v-icon> <!-- list -->
@@ -60,9 +60,11 @@
                       :custom-params="customParams"
                       :custom-functions="customFunctions"
                       :custom-filters="customFilters"
+                      :reactive-filter="reactiveFilter"
                       v-on:selection="triggerSelect"
                       v-on:default-selection="triggerDefaultSelect"
-                      v-on:resendInvalidInterpol="changeTextToInvalidInterpol">
+                      v-on:resendInvalidInterpol="changeTextToInvalidInterpol"
+                      @showSnackbar="snackAlert">
                     </flpo-composite-text>
                     <v-flex v-else
                       class="text-xs-justify body-obs d-inline-block"
@@ -88,102 +90,13 @@
                     <v-flex xs12 fill-height :style="cmpStyle"
                       :class="{'mx-0 px-3': (this.$vuetify.breakpoint.smAndDown || chartPosition == 'bottom'), 'mx-0 pt-2 pr-4 pb-0': (this.$vuetify.breakpoint.mdAndUp && chartPosition != 'bottom')}">
                       <!-- Definition of all possible charts -->
-                      <flpo-bar-chart
-                        v-if="dataset !== null && structure && structure.chart_type == 'BAR' && structure.chart_options !== null"
-                        ref = "chart"
-                        :id="chartId"
-                        :dataset="dataset"
-                        :options="structure.chart_options"
-                        :headers="structure.headers"
-                        :section-index="sectionIndex">
-                      </flpo-bar-chart>
-                      <flpo-boxplot-chart
-                        v-if="dataset !== null && structure && structure.chart_type == 'BOXPLOT' && structure.chart_options !== null"
-                        ref = "chart"
-                        :id="chartId"
-                        :dataset="dataset"
-                        :options="structure.chart_options">
-                      </flpo-boxplot-chart>
-                      <flpo-sankey
-                        v-if="dataset !== null && metadata && metadata.sankey_data && structure && structure.chart_type == 'SANKEYD3' && structure.chart_options !== null"
-                        ref = "chart"
-                        :id="chartId"
-                        :dataset="dataset"
-                        :metadata="metadata"
-                        :options="structure.chart_options"
-                        :headers="structure.headers">
-                      </flpo-sankey>
-                      <flpo-scatter-chart
-                        v-if="dataset !== null && structure && structure.chart_type == 'SCATTERPLOT' && structure.chart_options !== null"
-                        ref = "chart"
-                        :id="chartId"
-                        :dataset="dataset"
-                        :options="structure.chart_options"
-                        :headers="structure.headers">
-                      </flpo-scatter-chart>
-                      <flpo-treemap-chart
-                        v-if="dataset !== null && structure && structure.chart_type == 'TREEMAP' && structure.chart_options !== null"
-                        ref = "chart"
-                        :id="chartId"
-                        :dataset="dataset"
-                        :options="structure.chart_options"
-                        :headers="structure.headers"
-                        :section-index="sectionIndex">
-                      </flpo-treemap-chart>
-                      <flpo-leaflet-map
-                        v-if="dataset !== null && structure && structure.chart_type == 'MAP_LEAFLET' && structure.chart_options !== null &&
-                              ((structure.chart_options.type == 'topo' && cmpTopology) || (structure.chart_options.type !== 'topo'))"
-                        ref = "chart"
-                        :id = "chartId"
-                        :selected-place="selectedPlace"
-                        :topology = "cmpTopology"
-                        :topology-uf = "topologyUf"
-                        :dataset = "dataset"
-                        :options = "structure.chart_options"
-                        :customParams = "customParams"
-                        :headers = "structure.headers">
-                      </flpo-leaflet-map>
-                      <flpo-topojson-map
-                        v-if="dataset !== null && structure && structure.chart_type == 'MAP_TOPOJSON' && structure.chart_options !== null && cmpTopology"
-                        ref = "chart"
-                        :topology="cmpTopology"
-                        :topology-uf = "topologyUf"
-                        :id="chartId"
-                        :selected-place="selectedPlace"
-                        :dataset="dataset"
-                        :options="structure.chart_options"
-                        :customParams="customParams"
-                        :custom-functions="customFunctions"
-                        :headers="structure.headers"
-                        :section-index="sectionIndex">
-                      </flpo-topojson-map>
-                      <flpo-line-chart
-                        v-if="dataset !== null && structure && structure.chart_type == 'LINE' && structure.chart_options !== null"
-                        ref = "chart"
-                        :id="chartId"
-                        :dataset="dataset"
-                        :options="structure.chart_options"
-                        :headers="structure.headers"
-                        :section-index="sectionIndex">
-                      </flpo-line-chart>
-                      <flpo-stacked-line-chart
-                        v-if="dataset !== null && structure && structure.chart_type == 'STACKED' && structure.chart_options !== null"
-                        ref = "chart"
-                        :id="chartId"
-                        :dataset="dataset"
-                        :options="structure.chart_options"
-                        :headers="structure.headers"
-                        :section-index="sectionIndex">
-                      </flpo-stacked-line-chart>
-                      <flpo-calendar-chart
-                        v-if="dataset !== null && structure && structure.chart_type == 'CALENDAR' && structure.chart_options !== null"
-                        ref = "chart"
-                        :id="chartId"
-                        :dataset="dataset"
-                        :options="structure.chart_options"
-                        :headers="structure.headers"
-                        :section-index="sectionIndex">
-                      </flpo-calendar-chart>
+                      <v-layout fill-height
+                        v-if="structure && structure.chart_options !== null &&
+                              validCharts.includes(structure.chart_type)"
+                        ref = "chartRef"
+                        :class = "leafletBasedCharts.includes(structure.chart_type) ? 'map_geo' : ''"
+                        :id="chartId">
+                      </v-layout>
                     </v-flex>
                     <v-layout v-if="chartFooter" xs12 pt-0 justify-center chart-footer>
                       {{ chartFooter }}
@@ -258,7 +171,6 @@
       return {
         dataset: null,
         metadata: null,
-        errorDataset: false,
         dialog: false,
         errorMessage: null,
         cmpTitle: null,
@@ -266,11 +178,19 @@
         invalidInterpol: false,
         footnote: null,
         cmpTopology: null,
-        chartFooter: null
+        chartFooter: null,
+        chart: null
       }
     },
     created() {
       this.cmpTopology = this.topology;
+    },
+    mounted() {
+    },
+    watch: {
+      dataset: function (nuDS, oldDS) {
+        if (oldDS) this.triggerChartUpdates();
+      }
     },
     computed: {
       cmpStyle: function() {
@@ -328,15 +248,9 @@
       updateDataStructure(payload) {
         let endpoint = "";
 
-        if (payload.type && payload.type === 'switch-group') {
-          if (this.$refs.chart){
-            this.$refs.chart.adjustVisibleLayers();
-          }
-        } else if (payload.type && payload.type === 'radio') {
-          if (this.$refs.chart){
-            this.$refs.chart.adjustVisibleLayers();
-          }
-        } else if (payload.type && payload.type === 'slider' || payload.type && payload.type === 'check') {
+        if (payload.type && (payload.type === 'switch-group' || payload.type === 'radio')) {
+          if (this.chartHandler) this.chartHandler.adjustVisibleLayers(payload.enabled);
+        } else if (payload.type && (payload.type === 'slider' || payload.type === 'check')) {
           if (payload.rules.filter){
             let apiUrl = this.$textTransformService.applyInterpol(this.structure.api, this.customParams, this.customFunctions);
             if (this.structure.apiBase){
@@ -402,16 +316,60 @@
         }
       },
 
-
       fetchData(endpoint = null) {
         this.fillDataStructure(
           this.structure, this.customParams,
           this.customFunctions, this.setDataset,
           {
             "endpoint": endpoint,
-            "fnCallback": this.assessChartFooter
+            "fnCallback": this.triggerChartUpdates
           }
         );
+      },
+
+      triggerChartUpdates() {
+        let fnSendError = this.sendError;
+        let chartTitle = this.cmpTitle;
+        if (this.chartHandler) {
+          this.chartRegen(
+            this.chartHandler,
+            this.chartId,
+            this.structure.chart_type,
+            this.structure,
+            this.structure.chart_options,
+            this.dataset,
+            this.metadata,
+            this.sectionIndex
+          ).then(
+            (chartHandler) => { this.sendChartLoaded(chartHandler); },
+            (reject) => { 
+              console.log(reject); 
+              fnSendError("Falha ao carregar gráfico '"+ chartTitle +"'.");
+            }
+          );
+        } else {
+          this.chartGen(
+            this.chartId,
+            this.structure.chart_type,
+            this.structure,
+            this.structure.chart_options,
+            this.dataset,
+            this.metadata,
+            this.sectionIndex
+          ).then(
+            (chartHandler) => { this.sendChartLoaded(chartHandler); },
+            (reject) => { 
+              console.log(reject); 
+              fnSendError("Falha ao carregar gráfico do card '"+ chartTitle +"'.");
+            }
+          );
+        }
+        this.assessChartFooter();
+      },
+
+      sendChartLoaded(chartHandler) {
+        this.chartHandler = chartHandler;
+        this.$emit('chart-loaded'); 
       },
 
       assessChartFooter(dataset, rules, structure, addedParams, metadata) {
@@ -492,5 +450,4 @@
     color: rgba(0,0,0,0.87);
     font-family: titulos-observatorio, Calibri, sans-serif !important;
   }
-
 </style>

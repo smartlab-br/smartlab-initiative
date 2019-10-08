@@ -14,7 +14,8 @@
           <flpo-minicard v-for="(miniCard, index) in item.minicards" :key="index"
             :structure="miniCard" :customFunctions="customFunctions"
             :customParams="customParams"
-            rowClass="pa-1">
+            rowClass="pa-1"
+            @showSnackbar="snackAlert">
           </flpo-minicard>
         </template>
       </v-radio>

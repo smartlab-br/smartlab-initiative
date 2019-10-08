@@ -5,7 +5,7 @@
         <div style="width:100%">
           <v-layout row align-center>
             <v-flex class="ranking-card-text">{{ranking[0].localidade}}</v-flex>
-            <v-flex class="ranking-card-value">{{formatNumber(ranking[0].vl_indicador,"inteiro")}}</v-flex>
+            <v-flex class="ranking-card-value">{{$numberTransformService.constructor.formatNumber(ranking[0].vl_indicador,"inteiro")}}</v-flex>
           </v-layout>
           <div class="ranking-card-title pt-3" >{{title}}</div>
 
@@ -17,7 +17,7 @@
               <v-list-tile>
                 <!--<v-list-tile-avatar>{{item.rank? item.rank: itemIndx+2}}</v-list-tile-avatar>-->
                 <v-list-tile-content class="caption">{{item.localidade}}</v-list-tile-content>
-                <v-list-tile-action class="caption">{{formatNumber(item.vl_indicador,"inteiro")}}</v-list-tile-action>
+                <v-list-tile-action class="caption">{{$numberTransformService.constructor.formatNumber(item.vl_indicador,"inteiro")}}</v-list-tile-action>
               </v-list-tile>
               <v-divider></v-divider>
             </template>

@@ -27,11 +27,11 @@
         for(let item of this.structure.args){
           let value = item.fixed;
           if (item.format){
-            value = this.$numberTransformService.formatNumber(
+            value = this.$numberTransformService.constructor.formatNumber(
               value, item.format, item.precision, item.multiplier, item.collapse, item.signed, item.uiTags
             );
           }
-          if ((value == null || value == undefined) && item.default != null && item.default != undefined){
+          if ((value === null || value === undefined) && item.default != null && item.default != undefined){
             value = item.default;
           }
           this[item.prop] = value;

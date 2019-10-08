@@ -1,12 +1,10 @@
-import NumberTransformService from "./numberTransformService";
-import ObservatoriesModel from "../../model/singleton/observatoriesModel";
+import NumberTransformService from './numberTransformService'
+import ObservatoriesModel from '../../model/singleton/observatoriesModel'
 
 class TooltipBuildingService {
-  constructor() {
-    this.numberTransformService = new NumberTransformService();
-  }
+  constructor() {}
 
-  removeFromLabel(label,removed_text_list){
+  static removeFromLabel(label,removed_text_list){
     for(let indxText in removed_text_list){
       if (Array.isArray(label)){
         for(let label_item in label){
@@ -19,7 +17,7 @@ class TooltipBuildingService {
     return label;
   }
   
-  defaultTooltip(d, route, tooltip_list = [], removed_text_list = [], options = null) { 
+  static defaultTooltip(d, route, tooltip_list = [], removed_text_list = [], options = null) { 
     let text = "";
     let table = "";
     let value = "";
@@ -31,10 +29,10 @@ class TooltipBuildingService {
     }
     
     for(let item in tooltip_list){
-      value = this.removeFromLabel(d[tooltip_list[item].value],removed_text_list);
+      value = TooltipBuildingService.removeFromLabel(d[tooltip_list[item].value],removed_text_list);
       if (tooltip_list[item].format){
         let formatRules = tooltip_list[item];
-        value = this.numberTransformService.formatNumber(
+        value = NumberTransformService.formatNumber(
           value, formatRules.format, formatRules.precision, formatRules.multiplier, formatRules.collapse, formatRules.signed, formatRules.uiTags
         );
       }
@@ -49,7 +47,7 @@ class TooltipBuildingService {
       table = "<table width='100%'>";
       if(item == 0){ //Título
         if (options && options.clickable && options.type == "bubbles"){ // leaflet bubbles
-          text += "<p class='text-xs-right ma-0'><a href='" + this.getUrlByPlace(d.cd_mun_ibge, route) + "' class='primary--text font-weight-black'>IR PARA</a></p>";
+          text += "<p class='text-xs-right ma-0'><a href='" + TooltipBuildingService.getUrlByPlace(d.cd_mun_ibge, route) + "' class='primary--text font-weight-black'>IR PARA</a></p>";
         }
         text += "<p class='headline-obs'><b>" + value + "</b></p>";
         text += "<hr class='tooltip_divider'>";
@@ -77,12 +75,17 @@ class TooltipBuildingService {
     return text;
   }
 
-  getUrlByPlace(idLocalidade, route){
-    let observatoriesModel = new ObservatoriesModel();
-    let obsAtual = observatoriesModel.identifyObservatory(route.path.split('/')[1]);
+  defaultLeafletTooltip(target, route, tooltip_list = [], removed_text_list = [], options = null) { 
+    let d = target.options.rowData;
+    target.unbindPopup();
+    target.bindPopup(TooltipBuildingService.defaultTooltip(d, route, tooltip_list, removed_text_list, options)).openPopup();
+  }
+
+  static getUrlByPlace(idLocalidade, route){
+    let obsAtual = ObservatoriesModel.identifyObservatory(route.path.split('/')[1]);
     
     let url = '';
-    url = "/" + observatoriesModel.identifyObservatoryById(obsAtual) + '/localidade/' + idLocalidade + '?';  
+    url = "/" + ObservatoriesModel.identifyObservatoryById(obsAtual) + '/localidade/' + idLocalidade + '?';  
 
     if (route.query && route.query.dimensao) {
       url = url + '&dimensao=' + route.query.dimensao;

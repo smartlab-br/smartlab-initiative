@@ -15,7 +15,8 @@
             :custom-functions="customFunctions"
             :structure="descSection.content"
             :read-more-limit="descSection.read_more_limit"
-            v-on:invalidateInterpol="throwInvalidInterpol">
+            v-on:invalidateInterpol="throwInvalidInterpol"
+            @showSnackbar="snackAlert">
           </flpo-text-builder>
           <v-flex v-if="descSection.comment != undefined" pa-0 pb-4 class="red--text">{{ descSection.comment.fixed }}</v-flex>
         </v-layout>
@@ -39,8 +40,12 @@
           <v-flex pa-0 ml-2 class="headline-obs">{{ descSection.title }}</v-flex>
           <v-layout row wrap pb-2>
             <flpo-ranking-list v-for="(ranking, index) in descSection.rankings" :key="index"
+              v-if="ranking.group == undefined || ranking.group == null || ranking.group == activeGroup"  
               :structure="ranking" :customFunctions="customFunctions"
-              :customParams="customParams">
+              :reactive-filter="reactiveFilter"
+              :custom-filters="customFilters"
+              :customParams="customParams"
+              @showSnackbar="snackAlert">
             </flpo-ranking-list>
           </v-layout>
         </v-layout>
@@ -57,17 +62,19 @@
           <v-flex pa-0 class="headline-obs">{{ descSection.title }}</v-flex>
           <v-layout row wrap pb-4>
             <flpo-minicard v-for="(miniCard, index) in descSection.cards" :key="index"
+              v-if="miniCard.group == undefined || miniCard.group == null || miniCard.group == activeGroup" 
               :reactive-filter="reactiveFilter"
               :custom-filters="customFilters"
               :structure="miniCard" :customFunctions="customFunctions"
-              :customParams="customParams" :row-class="descSection.rowClass">
+              :customParams="customParams" :row-class="descSection.rowClass"
+              @showSnackbar="snackAlert">
             </flpo-minicard>
           </v-layout>
           <v-flex v-if="descSection.comment != undefined" pa-0 pb-4 class="red--text">{{ descSection.comment.fixed }}</v-flex>
         </v-layout>
         <!-- Seção de select -->
-        <v-layout column v-else-if="descSection.type && descSection.type == 'select'" 
-          v-show="descSection.group == undefined || descSection.group == null || descSection.group == activeGroup"  
+        <v-layout column v-else-if="descSection.type && descSection.type == 'select' &&
+                                    (descSection.group == undefined || descSection.group == null || descSection.group == activeGroup)"  
           :class="descSection.cls?descSection.cls:'pb-2'">
           <v-flex pa-0 class="headline-obs">{{ descSection.title }}</v-flex>
           <flpo-select-emitter
@@ -79,11 +86,12 @@
             :structure="descSection"
             :custom-functions="customFunctions"
             v-on:selection="triggerSelect"
-            v-on:default-selection="triggerDefaultSelect">
+            v-on:default-selection="triggerDefaultSelect"
+            @showSnackbar="snackAlert">
           </flpo-select-emitter>
         </v-layout>
-        <v-layout column v-else-if="descSection.type && descSection.type == 'switch-group'" 
-          v-show="descSection.group == undefined || descSection.group == null || descSection.group == activeGroup" 
+        <v-layout column v-else-if="descSection.type && descSection.type == 'switch-group'&&
+                                    (descSection.group == undefined || descSection.group == null || descSection.group == activeGroup)" 
           :class="descSection.cls?descSection.cls:'pb-2'">
           <v-flex pa-0 class="headline-obs">{{ descSection.title }}</v-flex>
           <flpo-switch-group-emitter
@@ -91,11 +99,12 @@
             :structure="descSection"
             :custom-functions="customFunctions"
             v-on:selection="triggerSelect"
-            v-on:default-selection="triggerDefaultSelect">
+            v-on:default-selection="triggerDefaultSelect"
+            @showSnackbar="snackAlert">
           </flpo-switch-group-emitter>
         </v-layout>
-        <v-layout column v-else-if="descSection.type && descSection.type == 'radio'" 
-          v-show="descSection.group == undefined || descSection.group == null || descSection.group == activeGroup" 
+        <v-layout column v-else-if="descSection.type && descSection.type == 'radio'&&
+                                    (descSection.group == undefined || descSection.group == null || descSection.group == activeGroup)" 
           :class="descSection.cls?descSection.cls:'pb-2'">
           <flpo-radio-emitter
             :id = "descSection.id + '_' + id" 
@@ -103,11 +112,12 @@
             :structure="descSection"
             :custom-functions="customFunctions"
             v-on:selection="triggerSelect"
-            v-on:default-selection="triggerDefaultSelect">
+            v-on:default-selection="triggerDefaultSelect"
+            @showSnackbar="snackAlert">
           </flpo-radio-emitter>
         </v-layout>
-        <v-layout column v-else-if="descSection.type && descSection.type == 'check'" 
-          v-show="descSection.group == undefined || descSection.group == null || descSection.group == activeGroup" 
+        <v-layout column v-else-if="descSection.type && descSection.type == 'check'&&
+                                    (descSection.group == undefined || descSection.group == null || descSection.group == activeGroup)" 
           :class="descSection.cls?descSection.cls:'pb-2'">
           <flpo-check-emitter
             :id = "descSection.id + '_' + id" 
@@ -115,11 +125,12 @@
             :structure="descSection"
             :custom-functions="customFunctions"
             v-on:selection="triggerSelect"
-            v-on:default-selection="triggerDefaultSelect">
+            v-on:default-selection="triggerDefaultSelect"
+            @showSnackbar="snackAlert">
           </flpo-check-emitter>
         </v-layout>
-        <v-layout column v-else-if="descSection.type && descSection.type == 'slider'" 
-          v-show="descSection.group == undefined || descSection.group == null || descSection.group == activeGroup" 
+        <v-layout column v-else-if="descSection.type && descSection.type == 'slider'&&
+                                    (descSection.group == undefined || descSection.group == null || descSection.group == activeGroup)" 
           :class="descSection.cls?descSection.cls:'pb-2'">
           <v-flex pa-0 class="headline-obs">{{ descSection.title }}</v-flex>
           <flpo-slider-emitter
@@ -128,7 +139,8 @@
             :structure="descSection"
             :custom-functions="customFunctions"
             v-on:selection="triggerSelect"
-            v-on:default-selection="triggerDefaultSelect">
+            v-on:default-selection="triggerDefaultSelect"
+            @showSnackbar="snackAlert">
           </flpo-slider-emitter>
         </v-layout>
         <!-- Seção de ligear gauge -->
@@ -151,30 +163,19 @@
             :odometer-items="descSection.odometer_items"
             :comment-title="descSection.comment_title"
             :title-font-color="descSection.title_font_color"
-            :bg-color="descSection.bg_color">
+            :bg-color="descSection.bg_color"
+            @showSnackbar="snackAlert">
           </flpo-odometer>
         </v-layout>
         <!-- Seção de gráfico -->
         <v-layout v-else-if="descSection.type && descSection.type == 'chart'" column pb-2>
           <v-flex pa-0 class="headline-obs">{{ descSection.title }}</v-flex>
-          <flpo-bar-chart
-            v-if="descSection.chartType == 'BAR'
-                  && descSection.options && dataset[descSection.id]"
+          <v-layout fill-height
+            v-if="descSection && descSection.chartType && validCharts.includes(descSection.chartType)"
+            :class = "leafletBasedCharts.includes(descSection.chartType) ? 'map_geo' : ''"
             :id="descSection.id"
-            :dataset="dataset[descSection.id]"
-            :options="descSection.options"
-            :headers="descSection.headers"
-            :section-index="descSection.index">
-          </flpo-bar-chart>
-          <flpo-treemap-chart
-            v-else-if="descSection.chartType == 'TREEMAP'
-                       && descSection.options && dataset[descSection.id]"
-            :id="descSection.id"
-            :dataset="dataset[descSection.id]"
-            :options="descSection.options"
-            :headers="descSection.headers"
-            :section-index="descSection.index">
-          </flpo-treemap-chart>
+            @showSnackbar="snackAlert">
+          </v-layout>
         </v-layout>
       </v-layout>
     </v-flex>
@@ -191,11 +192,10 @@
         dataset: [],
         metadata: [],
         datasetsComplete: 0,
-        reactiveFilter: null,
         reactiveParent: null
       }
     },
-    props: ['id','activeGroup', 'sectionClass', 'customFilters'],
+    props: ['id','activeGroup', 'reactiveFilter', 'sectionClass', 'customFilters'],
     created () {
       for (var indxDesc in this.structure) {
         if (this.structure[indxDesc].type === 'chart') {
@@ -216,7 +216,6 @@
     },
     methods: {
       triggerSelect(payload) {
-        this.reactiveFilter = payload.item;
         this.reactiveParent = payload.id;
         this.$emit('selection', payload);
       },
@@ -227,7 +226,26 @@
 
       throwInvalidInterpol(payload) {
         this.$emit('resendInvalidInterpol', payload);
+      },
+
+      triggerChartUpdates(id, dataset, metadata) {
+        for (let sectionIndex in this.structure) {
+          if (this.structure[sectionIndex].type == 'chart') {
+            let eachChart = this.structure[sectionIndex];
+            if (eachChart && eachChart.id == id) {
+              this.chartGen(
+                this.chartId[id],
+                eachChart.chartType,
+                eachChart,
+                eachChart.options,
+                dataset,
+                metadata,
+                sectionIndex);
+            }
+          }
+        }
       }
+
     }
   }
 </script>

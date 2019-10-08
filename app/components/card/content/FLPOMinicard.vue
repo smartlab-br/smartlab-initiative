@@ -1,23 +1,21 @@
 <template>
   <v-flex :class="(rowClass ? rowClass : 'pl-4 pr-0 pb-3 pt-3') + ' ' + cardClass">
     <v-layout column :class="'minicard fill-height' + colorClass + ' ' + relevance">
+      <div v-if="errorMessage" :class="'minicard-comment ' + commentColorClass" v-html = "errorMessage"></div>
       <v-layout v-if="structure.desc_position == 'right'" row >
         <v-flex shrink class="minicard-value"  v-html = "value"></v-flex>
         <v-flex pl-1 v-if="structure.desc_position == 'right'" class="title-obs-desc minicard-description" v-html = "description != null ? description.toUpperCase() : ''"></v-flex>
       </v-layout>
       <div v-else class="minicard-value"  v-html = "value"></div>
-      <div class="minicard-chart" v-if="dataset !== null && dataset.length > 1 && structure && structure.chart && structure.chart.options !== null">
-        <flpo-line-chart
-          v-if="structure.chart.type == 'LINE'"
+      <div class="minicard-chart" v-if="dataset !== null && dataset.length > 1 && structure && structure.chart">
+        <v-layout fill-height
+          v-if="structure && structure.chart && structure.chart.type && validCharts.includes(structure.chart.type)"
+          :class = "leafletBasedCharts.includes(structure.chart.type) ? 'map_geo' : ''"
           ref = "chart"
-          :id="chartId"
-          :dataset="dataset"
-          :options="structure.chart.options"
-          :headers="structure.chart.headers"
-          :section-index="sectionIndex">
-        </flpo-line-chart>
+          :id="chartId">
+        </v-layout>
       </div>
-      <div v-if="structure.desc_position != 'right'"class="title-obs-desc minicard-description" v-html = "description != null ? description.toUpperCase() : ''"></div>
+      <div v-if="structure.desc_position != 'right'" class="title-obs-desc minicard-description" v-html = "description != null ? description.toUpperCase() : ''"></div>
       <div :class="'minicard-comment ' + commentColorClass" v-html = "comment"></div>
     </v-layout>
   </v-flex>
@@ -38,7 +36,9 @@
         cardClass: '',
         colorClass: '',
         commentColorClass: '',
-        dataset: null
+        dataset: null,
+        metadata: null,
+        errorMessage: null
       }
     },
     props: ['rowClass', 'reactiveFilter', 'customFilters'],
@@ -59,8 +59,12 @@
     },
     watch: {
       reactiveFilter: function(newVal, oldVal) {
-        if (newVal != oldVal) { 
-          if (this.structure.api_reactive){
+        if (newVal != oldVal) {
+          this.errorMessage = null;
+          if (this.structure.reactive){
+            this.value='';
+            this.updateReactiveDataStructure(this.customFilters.filterUrl);
+          } else if (this.structure.api_reactive){
             this.fillDataStructure(
               this.structure, this.customParams,
               this.customFunctions, this.fillMinicard,
@@ -73,8 +77,6 @@
                 { "react": newVal }
               );
             }
-          } else if (this.structure.reactive){
-            this.updateReactiveDataStructure(this.customFilters.filterUrl);
           }
         }
       },
@@ -91,9 +93,8 @@
     methods: {
       setDataset(dataset, rules, structure, addedParams, metadata) {
         this.dataset = dataset;
-      },
-      sendError(message) {
-        this.$emit('showSnackbar', { color : 'error', text: message });
+        this.metadata = metadata;
+        this.triggerChartUpdates();
       },
       
       fillProp(base_object_list, args, preloaded, addedParams = null, metadata = null) {
@@ -102,7 +103,7 @@
           //caso o campo tenha um texto fixo, o valor é ajustado e o loop segue para a próxima iteração
           if (rule.fixed !== undefined) {
             if (rule.format) {
-              this[rule.prop] = this.$numberTransformService.formatNumber(rule.fixed, rule.format, rule.precision, rule.multiplier, rule.collapse, rule.signed, rule.uiTags);
+              this[rule.prop] = this.$numberTransformService.constructor.formatNumber(rule.fixed, rule.format, rule.precision, rule.multiplier, rule.collapse, rule.signed, rule.uiTags);
             } else {
               this[rule.prop] = rule.fixed;
             }
@@ -182,8 +183,26 @@
         }
       },
 
+      triggerChartUpdates() {
+        if (this.structure && this.structure.chart && this.structure.chart.options && this.structure.chart.type) {
+          this.chartGen(
+            this.chartId,
+            this.structure.chart.type,
+            this.structure.chart,
+            this.structure.chart.options,
+            this.dataset,
+            this.metadata,
+            this.sectionIndex);
+        }
+      },
+
       updateReactiveDataStructure(filterUrl){
-        let apiUrl = this.$textTransformService.applyInterpol(this.structure.api, this.customParams, this.customFunctions);
+        let apiUrl = ""
+        if (this.structure.api_reactive && this.customParams[this.structure.api_reactive.args[0].named_prop]) {
+          apiUrl = this.$textTransformService.applyInterpol(this.structure.api_reactive, this.customParams, this.customFunctions);
+        } else {
+          apiUrl = this.$textTransformService.applyInterpol(this.structure.api, this.customParams, this.customFunctions);
+        }
         apiUrl = apiUrl + filterUrl;
         axios(this.$axiosCallSetupService.getAxiosOptions(apiUrl))
         .then(result => {
@@ -195,10 +214,10 @@
             ),
             this.structure.args,
             this.structure,
-            {},
+            null,
             JSON.parse(result.data).metadata
           );
-        });
+        }).catch(error => { this.sendDataStructureError("Erro ao carregar dados do componente."); });
       },
     }
   }

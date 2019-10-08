@@ -6,20 +6,10 @@ const ViewConfReader = {
 		Vue.mixin({
 			data() {
 				return {
+					errorMessage: null
 				}
 			},
 			methods: {
-				async loadYaml(location, cbFunction) {
-					let basePath = "/static/smartlab-initiative-viewconf/";
-					if (this.$store && this.$store.state && this.$store.state.GIT_VIEWCONF_TAG_URL) {
-						basePath = this.$store.state.GIT_VIEWCONF_TAG_URL;
-					} else if (process.env.GIT_VIEWCONF_TAG_URL) {
-						basePath = process.env.GIT_VIEWCONF_TAG_URL;
-					}
-					let response = await axios.get(basePath + location + ".yaml");
-					if (cbFunction) cbFunction(yaml.safeLoad(response.data, { json: true }));
-				},
-
 				async loadYamlArray(currentStruct, yamlArray, finalCbFunction) {
 					let promises = [];
 					let promises_alt = [];
@@ -78,6 +68,12 @@ const ViewConfReader = {
 				fillDataStructure(structure, customParams, customFunctions,
 								  cbFunction, addedParams) {
 					if (structure !== null && structure !== undefined) {
+						let msgError = "Erro ao carregar dados do componente.";
+						let fnSendDataStructureError = this.sendDataStructureError;
+						if (addedParams && addedParams.msgError){
+							msgError = addedParams.msgError;
+						}
+
 						if (addedParams && addedParams.endpoint) {
 							// Endpoint que sobrescreve a definição do structure.api.
 							// Normalmente associado ao algum comportamento reativo,
@@ -99,7 +95,7 @@ const ViewConfReader = {
 										JSON.parse(result.data).metadata
 									);
 								}
-								);
+								).catch(error => { fnSendDataStructureError(msgError); });
 							} else {
 								// If the structure defines a single API call, execute the
 								// callback after all the axios calls are resolved.
@@ -119,7 +115,7 @@ const ViewConfReader = {
 														customFunctions
 													)
 												);
-											});
+											}).catch(error => { fnSendDataStructureError(msgError); });
 										}
 									);
 									// Adiciona o promise à lista da espera
@@ -141,7 +137,7 @@ const ViewConfReader = {
 											null // Sem metadata nesses casos
 										);
 									}
-								);
+								).catch(error => { fnsendDataStructureError(msgError); });
 							}
 
 						} else if (addedParams && addedParams.react &&
@@ -163,7 +159,7 @@ const ViewConfReader = {
 									addedParams,
 									JSON.parse(result.data).metadata
 								);
-							});
+							}).catch(error => { fnSendDataStructureError(msgError); });
 						} else if (structure.fixed !== null && structure.fixed !== undefined) {
 							// Apply callback on fixed value
 							cbFunction(structure.fixed, structure.args, structure, addedParams);
@@ -229,7 +225,7 @@ const ViewConfReader = {
 										addedParams,
 										JSON.parse(result.data).metadata
 									);
-								});
+								}).catch(error => { fnSendDataStructureError(msgError); });
 							} else {
 								// If the structure defines a single API call, execute the
 								// callback after all the axios calls are resolved.
@@ -249,7 +245,7 @@ const ViewConfReader = {
 														customFunctions
 													)
 												);
-											});
+											}).catch(error => { fnSendDataStructureError(msgError); });
 										}
 									);
 									// Adiciona o promise à lista da espera
@@ -271,7 +267,7 @@ const ViewConfReader = {
 											null // Sem metadata nesses casos
 										);
 									}
-								);
+								).catch(error => { fnSendDataStructureError(msgError); });
 							}
 						} else if (structure.chart_data) { // Estrutura obtida de uma chamada de API
 							cbFunction(
@@ -290,6 +286,11 @@ const ViewConfReader = {
 							cbFunction(structure.fixed, structure.args, structure, addedParams);
 						}
 					}
+				},
+
+				sendDataStructureError(error = "Erro ao carregar dados do componente."){
+					this.sendError(error);
+					this.errorMessage = error;
 				},
 
 				reformDataset(dataset, options, customFunctions) {
@@ -332,7 +333,7 @@ const ViewConfReader = {
 								}
 								
 								if(options.calcs[indx].format){
-									dataset[eachRow][nuField] = this.$numberTransformService.formatNumber(
+									dataset[eachRow][nuField] = this.$numberTransformService.constructor.formatNumber(
 										dataset[eachRow][nuField], options.calcs[indx].format,
 										options.calcs[indx].precision, options.calcs[indx].multiplier,
 										options.calcs[indx].collapse, options.calcs[indx].signed,
@@ -354,7 +355,7 @@ const ViewConfReader = {
 								if (formatRules.format == 'auto') {
 									formatRules = this.$textTransformService.getFormatRules(formatRules, dataset[eachRow]);
 								}
-								dataset[eachRow][nuField] = this.$numberTransformService.formatNumber(
+								dataset[eachRow][nuField] = this.$numberTransformService.constructor.formatNumber(
 									dataset[eachRow][options.formatters[indxFmts].id], 
 									formatRules.format, 
 									formatRules.precision, 
@@ -410,7 +411,7 @@ const ViewConfReader = {
 								if (rules[ruleIndx].format == 'auto') {
 									formatRules = this.$textTransformService.getFormatRules(rules[ruleIndx], base_object);
 								}
-								prop = this.$numberTransformService.formatNumber(
+								prop = this.$numberTransformService.constructor.formatNumber(
 									prop, formatRules.format, formatRules.precision,
 									formatRules.multiplier, formatRules.collapse, formatRules.signed,
 									formatRules.uiTags
@@ -428,7 +429,7 @@ const ViewConfReader = {
 
 				getApiUrl(scope, thematic = false, added_filters = null, agregacao = null) {
 					let url =  '/';
-					let obsAtual = this.$observatories.identifyObservatory(this.$route.path.split('/')[1]);
+					let obsAtual = this.$observatories.constructor.identifyObservatory(this.$route.path.split('/')[1]);
 					if (thematic && obsAtual && obsAtual != 'td') {
 					  url += obsAtual + '/';
 					}
@@ -544,7 +545,7 @@ const ViewConfReader = {
 					  }
 				
 					  // Obtém coordenadas limítrofes (se mapa)
-					  if (structure.chart_type === 'MAP_LEAFLET') { // Só avalia as coordenadas caso o gráfico seja um mapa.
+					  if (['MAP_BUBBLES', 'MAP_HEAT', 'MAP_CLUSTER'].includes(structure.chart_type)) { // Só avalia as coordenadas caso o gráfico seja um mapa.
 						// Ignora os pontos 0x0
 						if (parseFloat(dataset[eachRow][options.long]) != 0 && 
 							parseFloat(dataset[eachRow][options.long]) != 0) {
@@ -570,12 +571,8 @@ const ViewConfReader = {
 							}
 						  }
 						}
+						this.customParams.limCoords = limCoords;
 					  }
-					}
-				
-					// Define as coordenadas apenas se for um mapa do leaflet
-					if (structure.chart_type === 'MAP_LEAFLET') {
-					  this.customParams.limCoords = limCoords;
 					}
 				
 					if (options.order_field !== null && options.order_field !== undefined) {
@@ -586,6 +583,7 @@ const ViewConfReader = {
 					  // Múltiplos gráficos
 					  this.dataset[addedParams.id] = dataset;
 					  this.metadata[addedParams.id] = metadata;
+					  this.triggerChartUpdates(addedParams.id, dataset, metadata);
 					  this.datasetsComplete++;
 					} else if (addedParams && addedParams.props) {
 					  if (addedParams.props.dataset) this[addedParams.props.dataset] = dataset;

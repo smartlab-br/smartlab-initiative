@@ -1,6 +1,7 @@
 <template>
   <v-flex>
     <v-autocomplete :items="items"
+      :filter="ignoreSpecialCharFilter"
       :outline="isOutline"
       v-model="chosen"
       :label="structure.label" item-text="label"
@@ -8,7 +9,9 @@
       item-value="id" class="input-group--focused" return-object
       :color="structure.color !== null ? structure.color : 'primary'"
       :multiple="structure.multiple ? structure.multiple : false"
-      v-on:change="sendSelection()" :clearable="structure.clearable == null || structure.clearable == undefined || structure.clearable">
+      v-on:change="sendSelection()" :clearable="structure.clearable == null || structure.clearable == undefined || structure.clearable"
+      :hint="errorMessage"
+      persistent-hint>
     </v-autocomplete>
   </v-flex>
 </template>
@@ -61,7 +64,14 @@
           this.sendDefaultSelection();
         } 
 
+      },
+
+      ignoreSpecialCharFilter (item, queryText, itemText) {
+        queryText = this.$textTransformService.replaceSpecialCharacters(queryText).toLowerCase();
+        itemText = this.$textTransformService.replaceSpecialCharacters(itemText).toLowerCase();
+        return itemText.indexOf(queryText) > -1 
       }
+      
     }
 
   }

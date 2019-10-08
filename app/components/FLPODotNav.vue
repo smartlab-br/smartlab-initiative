@@ -49,9 +49,6 @@
       window.removeEventListener('scroll', this.assessVisibleCards);
     },
     methods: {
-      sendError(message) {
-        this.$emit('showSnackbar', { color : 'error', text: message });
-      },
       scrollTo(anchor) {
         var el = document.getElementById(anchor);
         el.scrollIntoView();

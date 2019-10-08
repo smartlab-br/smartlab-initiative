@@ -3,11 +3,7 @@
     props: ['structure', 'customParams', 'customFunctions', 'topology',
             'topologyUf', 'sectionIndex'],
     methods: {
-      sendError(message) {
-        this.$emit('showSnackbar', { color : 'error', text: message });
-        this.errorMessage = message;
-      },
-      
+    
       setComplexAttribute(base_object_list, rules, structure, addedParams = null, metadata = null) {
         if (typeof base_object_list == 'string') {
           this[addedParams.attribute] = base_object_list;
@@ -41,3 +37,15 @@
   }
 </script>
 
+<style>
+  @import "../node_modules/leaflet/dist/leaflet.css";
+  @import "../node_modules/leaflet.markercluster/dist/MarkerCluster.css";
+  @import "../node_modules/leaflet.markercluster/dist/MarkerCluster.Default.css";
+
+  .leaflet-container {
+        font-family: Palanquin !important;
+  }
+  .leaflet-interactive {
+    cursor: pointer;
+  }
+</style>

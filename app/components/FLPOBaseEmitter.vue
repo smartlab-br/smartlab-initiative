@@ -3,7 +3,8 @@
     data() {
       return {
         items: [],
-        target: null
+        target: null,
+        errorMessage: null
       }
     },
     props: ['id', 'structure', 'customParams', 'customFunctions', 'immediate', 'reactiveFilter', 'reactiveParent'],
@@ -19,19 +20,23 @@
     watch: {
       reactiveFilter: function(newVal, oldVal) {
         if (this.reactiveParent.includes(this.structure.parent) && newVal != oldVal) {
-          this.fillDataStructure(
-            this.structure, this.customParams,
-            this.customFunctions, this.toItems,
-            { "react": newVal }
-          );
+          if (newVal == null || newVal == undefined || Object.values(newVal)[0] == "empty"){
+            this.fillDataStructure(
+              this.structure, this.customParams,
+              this.customFunctions, this.toItems
+            );
+          } else {
+            this.fillDataStructure(
+              this.structure, this.customParams,
+              this.customFunctions, this.toItems,
+              { "react": newVal }
+            );
+          }
+
         }
       }
     },
     methods: {
-      sendError(message) {
-        this.$emit('showSnackbar', { color : 'error', text: message });
-      },
-      
       toItems(dataset, rules, structure, addedParams, metadata) {
         for (var rowIndx in dataset) {
           this.toItem(dataset[rowIndx], rules);

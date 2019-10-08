@@ -1,8 +1,8 @@
 <template>
   <v-layout row wrap class="pa-0">
     <!--   pt-5 px-0 pb-0 mt-2 map_geo_full
-    <v-flex fluid grid-list-lg xs12 class="first-section pa-0">
-      <v-layout xs12 class="bg-parallax" v-if="observatorio"
+    <v-flex fluid grid-list-lg xs12 overflow-hidden class="first-section pa-0">
+      <v-layout xs12 class="bg-zoom bg-parallax" v-if="observatorio"
         height="auto" :style="currentParallax"></v-layout>
       <v-layout xs12 class="bg-parallax ma-0"></v-layout>
       <v-layout row wrap px-3 class="parallax-content">
@@ -13,18 +13,9 @@
     </v-flex>
     -->
     <v-container v-if="observatorio && observatorio.prevalencia" fluid ma-0 pa-0
-      :style="'background-color:' + $colorsService.assessZebraBG(0, $vuetify.theme) + ';'">
+      :style="'background-color:' + $colorsService.constructor.assessZebraBG(0, $vuetify.theme) + ';'">
       <v-layout row wrap>
-        <v-layout pa-3 row wrap justify-center v-show="mapTextLoading || !thematicLoaded">
-          <v-progress-circular
-            :size="120"
-            :width="8"
-            color="primary"
-            indeterminate>
-            Carregando prevalência nacional
-          </v-progress-circular>
-        </v-layout>
-        <v-flex xs12 md3 v-if="!mapTextLoading && thematicLoaded">
+        <v-flex sm12 md4 lg3 >
           <v-layout column wrap>
             <v-layout row align-end fill-height wrap pl-3 pt-3 pr-4 class="subheading mb-0">
               <v-flex class="display-1-obs card-title pl-3">
@@ -52,8 +43,12 @@
                 :structure="observatorio.prevalencia.mapa_filtros"
                 :custom-params="customParams"
                 :custom-functions="customFunctions"
+                :custom-filters="customParams"
+                :reactive-filter="reactiveFilter"
                 :active-group="activeGroup"
-                v-on:selection="triggerSelect">
+                v-on:selection="triggerSelect"
+                v-on:default-selection="triggerDefaultSelect"
+                @showSnackbar="snackAlert">
               </flpo-composite-text>
 
               <v-layout column wrap>
@@ -72,48 +67,53 @@
             </v-layout>
           </v-layout>
         </v-flex>
-        <v-flex xs12 md9>
+        <v-flex sm12 md8 lg6>
           <v-layout style="display:block;">
             <v-layout fill-height>
-              <flpo-leaflet-map
+              <v-layout fill-height
                 v-if="dataset !== null && observatorio && observatorio.prevalencia &&
-                      observatorio.prevalencia.chart_type == 'MAP_LEAFLET' &&
-                      observatorio.prevalencia.chart_options"
-                ref = "chart"
-                id = "observatorio_home_prevalencia_map"
-                :topology = "topology"
-                :dataset = "dataset"
-                :options = "observatorio.prevalencia.chart_options"
-                :customParams = "customParams"
-                :headers = "observatorio.prevalencia.headers">
-              </flpo-leaflet-map>
-              <!--
-              <v-layout pa-3 row wrap justify-center align-center fill-height
-                v-show="mapDataLoading">
-                <v-progress-circular
-                  :size="120"
-                  :width="8"
-                  color="primary"
-                  indeterminate>
-                  Analisando municípios
-                </v-progress-circular>
+                  observatorio.prevalencia.chart_type == 'MAP_BUBBLES' && observatorio.prevalencia.chart_options"
+                ref = "chartRef"
+                :class = "leafletBasedCharts.includes(observatorio.prevalencia.chart_type) ? 'map_geo' : ''"
+                id="observatorio_home_prevalencia_map">
               </v-layout>
-              -->
             </v-layout>
           </v-layout>
-          <!--
-          <v-flex xs12>
-            <v-layout v-if="observatorio && observatorio.ranking_cards" row wrap pb-2>
-              <flpo-ranking-list v-for="(ranking, index) in observatorio.ranking_cards" :key="index"
-                :structure="ranking" :customFunctions="customFunctions"
-                :customParams="customParams">
-              </flpo-ranking-list>
-            </v-layout>
-          </v-flex>
-        -->
         </v-flex>
+        <v-flex sm12 md12 lg3>
+          <flpo-composite-text
+            v-if="observatorio && observatorio.prevalencia && observatorio.prevalencia.mapa_description_right"
+            :id = "'story_home_prevalencia_desc_map_r_' + idObservatorio"
+            :structure="observatorio.prevalencia.mapa_description_right"
+            :custom-params="customParams"
+            :custom-functions="customFunctions"
+            :custom-filters="customParams"
+            :reactive-filter="reactiveFilter"
+            :active-group="activeGroup"
+            v-on:selection="triggerSelect"
+            v-on:default-selection="triggerDefaultSelect"
+            @showSnackbar="snackAlert">
+          </flpo-composite-text>
+          <!--<v-layout px-4 v-if="customParams.filterText" v-html="'<b>Filtros:</b>' + customParams.filterText">
+          </v-layout>-->
+        </v-flex>
+        
       </v-layout>
     </v-container>
+
+    <!-- Sparklines -->
+    <v-container v-if="observatorio && observatorio.sparklines" fluid ma-0 pa-0
+      :style="'background-color:' + $colorsService.constructor.assessZebraBG(0, $vuetify.theme) + ';'">
+      <v-flex class="display-1-obs card-title pl-3">
+        Piores evoluções de prevalência
+      </v-flex>          
+      <flpo-sparklines
+        :dataset = "dataset"
+        :structure = "observatorio.sparklines">
+      </flpo-sparklines>
+    </v-container>
+
+    <!-- Dialogs -->
     <v-dialog :v-if="dialog" v-model="dialog">
       <v-card>
         <v-card-title class="headline-obs">Explicação</v-card-title>
@@ -165,8 +165,8 @@
     data () {
       return {
         mapDataLoading: true,
-        mapTextLoading: true,
-        activeGroup: null
+        activeGroup: null,
+        chartHandler: null
       }
     },
     mounted: function() {
@@ -184,17 +184,19 @@
         this.customParams.filterUrl = "";
       },
 
-      disableMapTextLoadingInfo() {
-        this.mapTextLoading = false;
-      },
+      setFilter(payload) {
 
-      triggerSelect(payload) {
+        //Limpa filtros dos selects que tem payload como pai (parent)
+        for (let item of this.observatorio.prevalencia.mapa_filtros) {
+          if (item.type &&  item.type == "select" && payload.id.includes(item.parent)){
+            this.customParams[item.selection.rules.api.args[0].named_prop] = null;
+          }
+        }
+
         if (payload.type && payload.type === 'switch-group') {
           this.customParams.enabled = payload.enabled;
-          if (this.$refs.chart){
-            this.$refs.chart.adjustVisibleLayers();
-          }
-          return;
+          if (this.chartHandler) this.chartHandler.adjustVisibleLayers(payload.enabled);
+          return false;
         } else if (payload.type && payload.type === 'slider') {
           let suffix_params = ""
           if (payload.rules.suffix_params){
@@ -208,32 +210,66 @@
           }
         } else if (payload.type && payload.type === 'select') {
 
-          //substitui a vírgula e hífen por '\,' '\-'
-          let itemValue = null;
-          if (payload.item){
-            itemValue = payload.item[payload.rules.api.args[0].named_prop];
-            if (typeof(itemValue) == "string"){
-              itemValue = itemValue.replace(/,/g,"\\,");
-              itemValue = itemValue.replace(/-/g,"\\-");
-            }
-          }
 
+          let item_value = "";
+          let value = "";
+          let value_label = "";
           if (payload.item == null || payload.item == undefined){
             this.customParams[payload.rules.api.args[0].named_prop] = null;
           } else {
-            if (payload.rules.filter) {
-              this.customParams[payload.rules.api.args[0].named_prop] = itemValue; //payloadItem[payload.rules.api.args[0].named_prop];
-              this.customParams[payload.rules.api.args[0].named_prop + "_label"] = payload.item.label;
-            }
-            else {
-              let item = {}
-              item[payload.rules.api.args[0].named_prop] = itemValue;
-              let grp = {}
-              grp[payload.rules.group] = true;
-              this.customParams.enabled = grp;
-              this.customParams['baseApi'] = this.$textTransformService.applyInterpol(payload.rules.api, item, this.customFunctions, this.customFilters);
+            if (Array.isArray(payload.item)){
+              let i = 0
+              for (let item of payload.item){
+                item_value = item[payload.rules.api.args[0].named_prop];
+                if(typeof item_value === 'string'){
+                  //substitui a vírgula e o hífen por '\,' e '\-'
+                  item_value = item_value.replace(/,/g,"\\,"); 
+                  item_value = item_value.replace(/-/g,"\\-"); 
+                
+                  if (i == 0) {
+                    value += "'" + item_value + "'";
+                    value_label += item.label;
+                  } else {
+                    value += "-'" + item_value + "'";
+                    value_label += ", " + item.label;
+                  }
+                } else {
+                  if (i == 0) {
+                    value += item_value;
+                    value_label += item.label;
+                  } else {
+                    value += "-" + item_value;
+                    value_label += ", " + item.label;
+                  }
+                }
+                i++;
+              }
+            } else {
+              item_value = payload.item[payload.rules.api.args[0].named_prop];
+              if(typeof item_value === 'string'){
+                //substitui a vírgula e o hífen por '\,' e '\-'
+                item_value = item_value.replace(/,/g,"\\,"); 
+                item_value = item_value.replace(/-/g,"\\-"); 
+              }
+              value = item_value;
+              value_label = payload.item.label;
             }
           }
+
+          if (payload.rules.filter) {
+              this.customParams[payload.rules.api.args[0].named_prop] = value;
+              this.customParams[payload.rules.api.args[0].named_prop + "_label"] = value_label;
+          }
+          else {
+            let item = {}
+            item[payload.rules.api.args[0].named_prop] = value;
+            this.customParams[payload.rules.api.args[0].named_prop] = value;
+            let grp = {}
+            grp[payload.rules.group] = true;
+            this.customParams.enabled = grp;
+            this.customParams.baseApi = this.$textTransformService.applyInterpol(payload.rules.api, item, this.customFunctions, this.customParams);
+          }
+
         } else if (payload.type && payload.type === 'radio') {
           if (payload.item == null || payload.item == undefined){
             this.customParams.baseApi = null;
@@ -242,17 +278,33 @@
             this.customParams.filterUrl = "";
             this.activeGroup = payload.item.value;
           }
-        } else {
-          return;
         }
+        return true;
 //        let endpoint = "";
 //        if (payload.rules && payload.rules.api.template){
-//          endpoint = this.$textTransformService.applyInterpol(payload.rules.api, this.customParams, this.customFunctions, this.customFilters);          
+//          endpoint = this.$textTransformService.applyInterpol(payload.rules.api, this.customParams, this.customFunctions, this.customParams);          
 //        } else {
 //          endpoint = this.applyFilters();
 //        }
-        let endpoint = this.applyFilters();
-        this.fetchMapData(endpoint);
+      },
+
+      triggerSelect(payload) {
+        if (this.setFilter(payload)){
+          let endpoint = this.applyFilters();
+          let payload_item = payload.item ? payload.item : payload.value;
+          if (payload_item == undefined || payload_item == null){
+            let empty_item = {}
+            empty_item[payload.id] = 'empty';
+            this.reactiveFilter = empty_item;
+          } else {
+            this.reactiveFilter = payload_item;
+          }
+          this.fetchMapData(endpoint);
+        }
+      },
+      
+      triggerDefaultSelect(payload) {
+        this.setFilter(payload);
       },
 
       applyFilters() {
@@ -281,6 +333,8 @@
                   if (filter.selection.rules.api.args.length > 1){
                     if (this.customParams[filter.selection.rules.api.args[0].named_prop] != this.customParams[filter.selection.rules.api.args[1].named_prop]) {
                       filterText += this.customParams[filter.selection.rules.api.args[0].named_prop] + " a " + this.customParams[filter.selection.rules.api.args[1].named_prop];
+                    } else {
+                      filterText += this.customParams[filter.selection.rules.api.args[0].named_prop];
                     }
                   } else {
                     filterText += this.customParams[filter.selection.rules.api.args[0].named_prop];
@@ -295,6 +349,7 @@
 
         this.customParams.filterUrl = apiUrl.replace(baseUrl,"");
         this.customParams.filterText = filterText;
+        // this.reactiveFilter = apiUrl + this.customParams.filterUrl;
 
 
         let aApiUrl = [apiUrl];
@@ -316,9 +371,45 @@
           this.customParams, this.customFunctions,
           this.setDataset,
           { "endpoint": endpoint,
-            "fnCallback": () => { this.mapDataLoading = false;  this.dialogMapLoading = false;}
+            "fnCallback": this.triggerChartUpdates
           },
         );
+      },
+
+      triggerChartUpdates() {
+        if (this.chartHandler) {
+          this.chartRegen(
+            this.chartHandler,
+            "observatorio_home_prevalencia_map",
+            this.observatorio.prevalencia.chart_type,
+            this.observatorio.prevalencia,
+            this.observatorio.prevalencia.chart_options,
+            this.dataset,
+            this.metadata,
+            this.sectionIndex
+          ).then(
+            (chartHandler) => { this.sendChartLoaded(chartHandler); },
+            (reject) => { this.sendError(reject); }
+          );
+        } else {
+          this.chartGen(
+            "observatorio_home_prevalencia_map",
+            this.observatorio.prevalencia.chart_type,
+            this.observatorio.prevalencia,
+            this.observatorio.prevalencia.chart_options,
+            this.dataset,
+            this.metadata
+          ).then(
+            (chartHandler) => { this.sendChartLoaded(chartHandler); },
+            (reject) => { this.sendError(reject); }
+          );
+        }
+      },
+
+      sendChartLoaded(chartHandler) {
+        this.chartHandler = chartHandler;
+        this.mapDataLoading = false;
+        this.dialogMapLoading = false;
       }
     }
   }

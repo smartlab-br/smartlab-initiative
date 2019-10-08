@@ -15,11 +15,11 @@ const NavigationManager = {
             return;
           }
 
-          let obsAtual = this.$observatories.identifyObservatory(this.$route.path.split('/')[1]);
+          let obsAtual = this.$observatories.constructor.identifyObservatory(this.$route.path.split('/')[1]);
           
           let url = '';
           if (idObservatorio != null) {
-            url = "/" + this.$observatories.identifyObservatoryById(idObservatorio) + searchItem.to;  
+            url = "/" + this.$observatories.constructor.identifyObservatoryById(idObservatorio) + searchItem.to;  
             if(obsAtual && idObservatorio == obsAtual){
               if (this.$route.query && this.$route.query.dimensao) {
                 url = url + '&dimensao=' + this.$route.query.dimensao;
@@ -35,7 +35,7 @@ const NavigationManager = {
               return;
             }
 
-            url = "/" + this.$observatories.identifyObservatoryById(obsAtual) + searchItem.to;  
+            url = "/" + this.$observatories.constructor.identifyObservatoryById(obsAtual) + searchItem.to;  
 
             if (this.$route.query && this.$route.query.dimensao) {
               url = url + '&dimensao=' + this.$route.query.dimensao;
@@ -45,7 +45,7 @@ const NavigationManager = {
           //   if(searchItem.exclude_from && searchItem.exclude_from.includes(obsDefault)){
           //     obsDefault = "te";
           //   }
-          //   url = "/" + this.$observatories.identifyObservatoryById(obsDefault) + searchItem.to;  
+          //   url = "/" + this.$observatories.constructor.identifyObservatoryById(obsDefault) + searchItem.to;  
           }
 
           this.$analysisUnitModel.setCurrentAnalysisUnit(searchItem.id);

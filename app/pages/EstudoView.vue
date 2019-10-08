@@ -49,10 +49,10 @@
           v-for="(secao, indexSecao) in estudo.secoes"  
           :key="secao.id"
           row wrap>
-          <v-layout column :id="secao.id" :style="'background-color:' + $colorsService.assessZebraBG(indexSecao, $vuetify.theme) + ';'">
+          <v-layout column :id="secao.id" :style="'background-color:' + $colorsService.constructor.assessZebraBG(indexSecao, $vuetify.theme) + ';'">
             <v-flex xs12 v-if="secao.name !== null && secao.name !== undefined">
               <div
-                :class="'display-2-obs text-xs-center pt-5 pb-3 font-weight-bold ' + $colorsService.assessZebraTitle(indexSecao, $vuetify.theme)">
+                :class="'display-2-obs text-xs-center pt-5 pb-3 font-weight-bold ' + $colorsService.constructor.assessZebraTitle(indexSecao, $vuetify.theme)">
                 {{ secao.name }}
               </div>
             </v-flex>
@@ -77,7 +77,7 @@
                   </v-layout>
                   <v-layout v-else-if="card.type && card.type == 'headline'"
                     justify-center pt-5 pb-3
-                    :class="'display-2-obs font-weight-bold ' + $colorsService.assessZebraTitle(indexSecao, $vuetify.theme)"
+                    :class="'display-2-obs font-weight-bold ' + $colorsService.constructor.assessZebraTitle(indexSecao, $vuetify.theme)"
                     v-html="card.title.fixed">
                   </v-layout>
                   <flpo-story-card-autofill
@@ -116,7 +116,7 @@
     </v-container>
     <!-- Navegação lateral em dots pelos dimensoes e seções -->
     <flpo-dot-nav :sections="estudo.secoes"></flpo-dot-nav>
-    <!-- <v-container fluid ma-0 pa-5 :style="'background-color:' + $colorsService.assessZebraBG(1, $vuetify.theme) + ';'">
+    <!-- <v-container fluid ma-0 pa-5 :style="'background-color:' + $colorsService.constructor.assessZebraBG(1, $vuetify.theme) + ';'">
       <v-layout row wrap text-xs-center pb-5>
         <div class="flex display-1-obs">Realização</div>
       </v-layout>
@@ -160,7 +160,6 @@
         topologyUfLoaded: false,
 
         mapDataLoading: true,
-        mapTextLoading: true,
         cardLinks: []
       }
     },
@@ -178,8 +177,7 @@
       // let auId = 0;
       
       if (this.idEstudo) {
-        let estudo = this.loadYaml("br/estudo/" + this.idEstudo);
-        this.estudo = estudo;
+        this.$yamlFetcherService.loadYaml("br/estudo/" + this.idEstudo).then((result) => { this.estudo = result; });
         //this.selectCoords("br", "uf", 0);
         this.selectCoords("uf", "municipio", 23);
       }
@@ -210,16 +208,17 @@
     },
     methods: {
       keepLoading() {
-        let estudo = this.loadYaml("br/estudo/" + this.idEstudo);
-        this.$emit('alterToolbar', estudo.theme.toolbar);
-        this.estudo = estudo;
+        this.$yamlFetcherService.loadYaml("br/estudo/" + this.idEstudo)
+          .then((result) => {
+            this.$emit('alterToolbar', result.theme.toolbar);
+            this.estudo = result;
+            this.fetchVizLinks(result.secoes);
+          });
 
 //        this.fillDataStructure(
 //          this.estudo.secoes, null,
 //          null, null
 //        );
-
-        this.fetchVizLinks(estudo.secoes);
       },
 
 //      triggerSelect(payload) {

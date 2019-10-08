@@ -26,18 +26,19 @@
         dialogMapLoading: false,
 
         hasOdometers: true,
-        loadedOdometers: false
+        loadedOdometers: false,
+        reactiveFilter: null
       }
     },
     created () {
       // fetch the data when the view is created and the data is
       // already being observed
       if (this.idObservatorio === null || this.idObservatorio === undefined) {
-        this.idObservatorio = this.$observatories.identifyObservatory(this.$route.path.split('/')[1]);
+        this.idObservatorio = this.$observatories.constructor.identifyObservatory(this.$route.path.split('/')[1]);
       }
 
       if (this.idObservatorio) {
-        this.loadYaml("br/observatorio/" + this.idObservatorio, this.setObservatorio);
+        this.$yamlFetcherService.loadYaml("br/observatorio/" + this.idObservatorio).then((result) => { this.setObservatorio(result); });
       } else {
         this.setDimensionsArea();
 
@@ -87,7 +88,6 @@
     methods: {
       setGroupingAndFiltering(observatorio) {},
       setDimensionsArea() {},
-      disableMapTextLoadingInfo() {},
       
       setIdLocalidade(id){
         this.idLocalidade = id;
@@ -155,7 +155,6 @@
             { attribute: 'cmpTitleComment' }
           );
         }
-        this.disableMapTextLoadingInfo();
       },
       
       changeToGeoIP(parametro) {
