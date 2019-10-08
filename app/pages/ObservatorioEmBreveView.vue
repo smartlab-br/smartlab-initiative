@@ -1,6 +1,6 @@
 <template>
   <v-layout row wrap class="pa-0">
-    <v-flex fluid grid-list-lg xs12 class="first-section pa-0" :style="displayHeight">
+    <v-flex fluid grid-list-lg xs12 overflow-hidden class="first-section pa-0" :style="displayHeight">
       <v-layout xs12 class="bg-zoom bg-parallax" v-if="observatorio"
         height="auto" :style="currentParallax"></v-layout>
       <v-layout xs12 class="bg-parallax ma-0"></v-layout>
