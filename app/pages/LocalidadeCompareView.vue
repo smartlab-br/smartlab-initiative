@@ -2,7 +2,7 @@
   <v-layout row wrap class="pa-0">
     <!-- Nome do município + UF -->
     <v-container fluid grid-list-lg xs12 class="first-section pa-0" :style="displayHeight">
-      <v-layout xs12 class="bg-parallax" height="auto" :style="currentParallax" v-if="customParams.cd_uf"></v-layout>
+      <v-layout xs12 class="bg-zoom bg-parallax" height="auto" :style="currentParallax" v-if="customParams.cd_uf"></v-layout>
       <v-layout xs12 class="bg-parallax ma-0"></v-layout>
       <v-layout row wrap class="parallax-content" v-if="dimensao_ativa">
         <!-- Menu para cada dimensao -->

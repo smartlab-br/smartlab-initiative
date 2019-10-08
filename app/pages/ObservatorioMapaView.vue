@@ -2,7 +2,7 @@
   <v-layout row wrap class="pa-0">
     <!--   pt-5 px-0 pb-0 mt-2 map_geo_full
     <v-flex fluid grid-list-lg xs12 class="first-section pa-0">
-      <v-layout xs12 class="bg-parallax" v-if="observatorio"
+      <v-layout xs12 class="bg-zoom bg-parallax" v-if="observatorio"
         height="auto" :style="currentParallax"></v-layout>
       <v-layout xs12 class="bg-parallax ma-0"></v-layout>
       <v-layout row wrap px-3 class="parallax-content">
