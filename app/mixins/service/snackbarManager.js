@@ -87,7 +87,7 @@ const SnackbarManager = {
           if (idAnalysisUnit) additionalOptions.au = this.$analysisUnitModel.findPlaceByID(idAnalysisUnit);
           if (chartType == 'SANKEYD3') additionalOptions.metadata = metadata;
           if (this.leafletBasedCharts.includes(chartType)) {
-              if (chartOptions.tooltip_function == null) additionalOptions.tooltipFunction = TooltipBuildingService.defaultLealfetTooltip; 
+              if (chartOptions.tooltip_function == null) additionalOptions.tooltipFunction = TooltipBuildingService.defaultLeafletTooltip; 
 
               if (this.customParams && this.customParams.limCoords) {
                 additionalOptions.limCoords = this.customParams.limCoords;
