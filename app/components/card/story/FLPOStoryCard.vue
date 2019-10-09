@@ -1,7 +1,7 @@
 <template>
-  <v-layout row wrap>
+  <v-layout row wrap v-if="renderComponent">
     <v-flex xs12>
-      <v-card :id="structure.id" :class= "'mx-4 mb-5 bg-card ' + $colorsService.constructor.getClassIfIsDark(null, sectionIndex, this.$vuetify.theme)">
+      <v-card :id="structure.id" :class= "'mx-4 mb-5 bg-card ' + $colorsService.constructor.getClassIfIsDark(null, sectionIndex, this.$vuetify.theme)" >
         <v-progress-linear
           height="5"
           :indeterminate="loadingStatusDataset == 'LOADING'"
@@ -11,6 +11,15 @@
         <v-flex xs12 row wrap red darken-1 text-xs-center class="error-in-card"
           v-show="loadingStatusDataset == 'ERROR'">
           {{ errorMessage }}
+          <v-tooltip bottom>
+            <v-btn flat icon @click="reloadComponent" slot="activator">
+                <v-icon color="white"
+                  class="pb-1">
+                  refresh
+                </v-icon>
+            </v-btn>
+            Recarregar              
+          </v-tooltip>
         </v-flex>
         <v-card-text v-if="dataset" v-show="loadingStatusDataset == 'SUCCESS'">
           <v-layout column>
@@ -179,7 +188,8 @@
         footnote: null,
         cmpTopology: null,
         chartFooter: null,
-        chart: null
+        chart: null,
+        renderComponent: true
       }
     },
     created() {
@@ -223,6 +233,14 @@
       // }
     },
     methods: {
+      reloadComponent(){
+        this.fetchData("/indicadoresmunicipais?categorias=cd_mun_ibge,nm_municipio,cd_dimensao,ds_indicador_radical,ds_indicador_curto,ds_indicador_prefixo,cd_indicador,nu_competencia,ds_fonte,vl_indicador,media_uf,pct_uf,rank_uf,rank_br,latitude,longitude&filtros=eq-cd_uf-24,and,eq-cd_indicador-'01_16_01_00',and,eq-nu_competencia-nu_competencia_max");
+        this.renderComponent = false;
+        this.$nextTick() .then(() => {
+          // Add the component back in
+          this.renderComponent = true;
+        });
+      },
       completeStructure() {
         this.setReferenceInStructure();
         
@@ -317,11 +335,13 @@
       },
 
       fetchData(endpoint = null) {
+
         this.fillDataStructure(
           this.structure, this.customParams,
           this.customFunctions, this.setDataset,
           {
             "endpoint": endpoint,
+            "msgError": "Erro ao carregar dados do gráfico do card " + this.cmpTitle,
             "fnCallback": this.triggerChartUpdates
           }
         );
