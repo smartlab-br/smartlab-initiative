@@ -8,19 +8,24 @@
           v-show="loadingStatusDataset != 'SUCCESS'"
           :color="loadingStatusDataset == 'ERROR' ? 'error' : 'info'">
         </v-progress-linear>
-        <v-flex xs12 row wrap red darken-1 text-xs-center class="error-in-card"
-          v-show="loadingStatusDataset == 'ERROR'">
-          {{ errorMessage }}
-          <v-tooltip bottom>
-            <v-btn flat icon @click="reloadComponent" slot="activator">
-                <v-icon color="white"
-                  class="pb-1">
-                  refresh
-                </v-icon>
-            </v-btn>
-            Recarregar              
-          </v-tooltip>
-        </v-flex>
+        <v-layout align-center row wrap v-show="loadingStatusDataset == 'ERROR'" style="min-height:500px;">
+          <v-flex xs12 >
+            <v-card dark ma-3 color="red darken-1">
+              <v-card-text class="text-xs-center" > 
+                {{ errorMessage }}
+                <v-tooltip bottom>
+                  <v-btn flat icon @click="reloadComponent" slot="activator">
+                      <v-icon color="white"
+                        class="pb-1">
+                        refresh
+                      </v-icon>
+                  </v-btn>
+                  Recarregar              
+                </v-tooltip>
+              </v-card-text>
+            </v-card>           
+          </v-flex>
+        </v-layout>
         <v-card-text v-if="dataset" v-show="loadingStatusDataset == 'SUCCESS'">
           <v-layout column>
             <v-flex pb-0>
@@ -234,12 +239,8 @@
     },
     methods: {
       reloadComponent(){
-        this.fetchData("/indicadoresmunicipais?categorias=cd_mun_ibge,nm_municipio,cd_dimensao,ds_indicador_radical,ds_indicador_curto,ds_indicador_prefixo,cd_indicador,nu_competencia,ds_fonte,vl_indicador,media_uf,pct_uf,rank_uf,rank_br,latitude,longitude&filtros=eq-cd_uf-24,and,eq-cd_indicador-'01_16_01_00',and,eq-nu_competencia-nu_competencia_max");
-        this.renderComponent = false;
-        this.$nextTick() .then(() => {
-          // Add the component back in
-          this.renderComponent = true;
-        });
+        this.errorMessage = null;
+        this.fetchData();
       },
       completeStructure() {
         this.setReferenceInStructure();
