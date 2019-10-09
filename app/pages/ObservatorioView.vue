@@ -170,7 +170,7 @@
                 :src="currentParallaxFile"
                 :aspect-ratio="observatorio.prevalencia.chart_options.height_proportion ? observatorio.prevalencia.chart_options.height_proportion : 1"
                 >
-                <v-layout class="bg-black-transparent pa-3 justify-end subheading fill-height" v-on:click="enableMap">
+                <v-layout v-show="!mapEnabled" class="bg-black-transparent pa-3 justify-end subheading fill-height" v-on:click="enableMap">
                   Clique no mapa para ativá-lo
                 </v-layout>
                 </v-img>
@@ -462,7 +462,12 @@
             this.metadata
           ).then(
             (chartHandler) => { this.sendChartLoaded(chartHandler); },
-            (reject) => { this.sendError(reject); }
+            (reject) => { 
+              console.log(reject);
+              this.mapEnabled = false;
+              this.dialogMapLoading = false;
+              this.sendError("Falha ao carregar mapa."); 
+            }
           );
         }
       },

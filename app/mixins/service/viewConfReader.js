@@ -95,8 +95,11 @@ const ViewConfReader = {
 										JSON.parse(result.data).metadata
 									);
 								}
-								).catch(error => { fnSendDataStructureError(msgError); });
-							} else {
+							 	).catch(error => { 
+									console.log(error);
+									fnSendDataStructureError(msgError); 
+								});
+						} else {
 								// If the structure defines a single API call, execute the
 								// callback after all the axios calls are resolved.
 								let promises = [];
@@ -115,7 +118,10 @@ const ViewConfReader = {
 														customFunctions
 													)
 												);
-											}).catch(error => { fnSendDataStructureError(msgError); });
+											}).catch(error => { 
+												console.log(error);
+												fnSendDataStructureError(msgError); 
+											});
 										}
 									);
 									// Adiciona o promise à lista da espera
@@ -137,7 +143,11 @@ const ViewConfReader = {
 											null // Sem metadata nesses casos
 										);
 									}
-								).catch(error => { fnsendDataStructureError(msgError); });
+								).catch(error => { 
+									console.log(error);
+									fnSendDataStructureError(msgError); 
+								});
+						
 							}
 
 						} else if (addedParams && addedParams.react &&
@@ -159,7 +169,10 @@ const ViewConfReader = {
 									addedParams,
 									JSON.parse(result.data).metadata
 								);
-							}).catch(error => { fnSendDataStructureError(msgError); });
+							}).catch(error => { 
+								console.log(error);
+								fnSendDataStructureError(msgError); 
+							});
 						} else if (structure.fixed !== null && structure.fixed !== undefined) {
 							// Apply callback on fixed value
 							cbFunction(structure.fixed, structure.args, structure, addedParams);
@@ -225,7 +238,10 @@ const ViewConfReader = {
 										addedParams,
 										JSON.parse(result.data).metadata
 									);
-								}).catch(error => { fnSendDataStructureError(msgError); });
+								}).catch(error => { 
+									console.log(error);
+									fnSendDataStructureError(msgError); 
+								});
 							} else {
 								// If the structure defines a single API call, execute the
 								// callback after all the axios calls are resolved.
@@ -245,7 +261,10 @@ const ViewConfReader = {
 														customFunctions
 													)
 												);
-											}).catch(error => { fnSendDataStructureError(msgError); });
+											}).catch(error => { 
+												console.log(error);
+												fnSendDataStructureError(msgError); 
+											});
 										}
 									);
 									// Adiciona o promise à lista da espera
@@ -267,7 +286,10 @@ const ViewConfReader = {
 											null // Sem metadata nesses casos
 										);
 									}
-								).catch(error => { fnSendDataStructureError(msgError); });
+								).catch(error => { 
+									console.log(error);
+									fnSendDataStructureError(msgError); 
+								});
 							}
 						} else if (structure.chart_data) { // Estrutura obtida de uma chamada de API
 							cbFunction(
