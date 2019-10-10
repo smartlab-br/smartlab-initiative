@@ -8,25 +8,7 @@
           v-show="loadingStatusDataset != 'SUCCESS'"
           :color="loadingStatusDataset == 'ERROR' ? 'error' : 'info'">
         </v-progress-linear>
-        <v-layout align-center row wrap v-show="loadingStatusDataset == 'ERROR'" style="min-height:500px;">
-          <v-flex xs12 >
-            <v-card dark ma-3 color="red darken-1">
-              <v-card-text class="text-xs-center" > 
-                {{ errorMessage }}
-                <v-tooltip bottom>
-                  <v-btn flat icon @click="reloadComponent" slot="activator">
-                      <v-icon color="white"
-                        class="pb-1">
-                        refresh
-                      </v-icon>
-                  </v-btn>
-                  Recarregar              
-                </v-tooltip>
-              </v-card-text>
-            </v-card>           
-          </v-flex>
-        </v-layout>
-        <v-card-text v-if="dataset" v-show="loadingStatusDataset == 'SUCCESS'">
+        <v-card-text>
           <v-layout column>
             <v-flex pb-0>
               <v-layout row fill-height wrap pl-3 pt-3 pb-0 pr-0 class="display-1-obs mb-0">
@@ -99,7 +81,27 @@
                     <a class="accent--text" v-on:click="openLinkAnalysis">{{ analysisDesc }}</a>
                   </div>
                 </v-flex>
-                <v-flex xs12 :class="chartPosition != 'bottom' ? 'md9': ''" py-3>
+                <v-flex x12 v-show="loadingStatusDataset == 'ERROR'" >
+                  <v-layout align-center row wrap style="min-height:500px;">
+                    <v-flex xs12 >
+                      <v-card dark ma-3 color="red darken-1">
+                        <v-card-text class="text-xs-center" > 
+                          {{ errorMessage }}
+                          <v-tooltip bottom>
+                            <v-btn flat icon @click="reloadComponent" slot="activator">
+                                <v-icon color="white"
+                                  class="pb-1">
+                                  refresh
+                                </v-icon>
+                            </v-btn>
+                            Recarregar              
+                          </v-tooltip>
+                        </v-card-text>
+                      </v-card>           
+                    </v-flex>
+                  </v-layout>
+                </v-flex>
+                <v-flex xs12 :class="chartPosition != 'bottom' ? 'md9': ''" py-3  v-show="loadingStatusDataset == 'SUCCESS'">
                   <v-layout fill-height row wrap>
                     <v-flex xs12 fill-height :style="cmpStyle"
                       :class="{'mx-0 px-3': (this.$vuetify.breakpoint.smAndDown || chartPosition == 'bottom'), 'mx-0 pt-2 pr-4 pb-0': (this.$vuetify.breakpoint.mdAndUp && chartPosition != 'bottom')}">
@@ -240,7 +242,7 @@
     methods: {
       reloadComponent(){
         this.errorMessage = null;
-        this.fetchData();
+        this.fetchData("/indicadoresmunicipais?categorias=cd_mun_ibge,nm_municipio,cd_dimensao,ds_indicador_radical,ds_indicador_curto,ds_indicador_prefixo,cd_indicador,nu_competencia,ds_fonte,vl_indicador,media_uf,pct_uf,rank_uf,rank_br,latitude,longitude&filtros=eq-cd_uf-24,and,eq-cd_indicador-'01_16_01_00',and,eq-nu_competencia-nu_competencia_max");
       },
       completeStructure() {
         this.setReferenceInStructure();
@@ -274,8 +276,7 @@
             let apiUrl = this.$textTransformService.applyInterpol(this.structure.api, this.customParams, this.customFunctions);
             if (this.structure.apiBase){
               apiUrl = this.$textTransformService.applyInterpol(this.structure.apiBase, this.customParams, this.customFunctions);// this.structure.apiBase;
-            }
-            // if (this.customFilters.radioApi){
+            }            // if (this.customFilters.radioApi){
             //   apiUrl = this.customFilters.radioApi;
             // }
             endpoint = apiUrl + this.getFilters();
@@ -336,13 +337,13 @@
       },
 
       fetchData(endpoint = null) {
-
+        this.assessChartFooter();
         this.fillDataStructure(
           this.structure, this.customParams,
           this.customFunctions, this.setDataset,
           {
             "endpoint": endpoint,
-            "msgError": "Erro ao carregar dados do gráfico do card " + this.cmpTitle,
+            "msgError": "Erro ao carregar dados do gráfico " + this.chartFooter,
             "fnCallback": this.triggerChartUpdates
           }
         );
@@ -350,7 +351,7 @@
 
       triggerChartUpdates() {
         let fnSendError = this.sendError;
-        let chartTitle = this.cmpTitle;
+        let chartTitle = this.chartFooter;
         if (this.chartHandler) {
           this.chartRegen(
             this.chartHandler,
@@ -385,7 +386,6 @@
             }
           );
         }
-        this.assessChartFooter();
       },
 
       sendChartLoaded(chartHandler) {
