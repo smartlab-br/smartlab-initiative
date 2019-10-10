@@ -1044,6 +1044,39 @@
     background-color: rgba(0,0,0,0.5);
     z-index: 1;
   }
+
+  @keyframes bg-zoom {
+    1% {
+      -ms-transform: translateY(0%) scale(1);
+      -moz-transform: translateY(0%) scale(1);
+      -webkit-transform: translateY(0%) scale(1);
+      -o-transform: translateY(0%) scale(1);
+      transform: translateY(0%) scale(1);
+    }
+    50% {
+      -ms-transform: translateY(25%) scale(1.5);
+      -moz-transform: translateY(25%) scale(1.5);
+      -webkit-transform: translateY(25%) scale(1.5);
+      -o-transform: translateY(25%) scale(1.5);
+      transform: translateY(25%) scale(1.5);
+    }
+    95%, 100% {
+      -ms-transform: translateY(0%) scale(1);
+      -moz-transform: translateY(0%) scale(1);
+      -webkit-transform: translateY(0%) scale(1);
+      -o-transform: translateY(0%) scale(1);
+      transform: translateY(0%) scale(1);
+    }
+  }
+
+  .bg-zoom {
+    position: relative;
+    -webkit-animation: bg-zoom 300s ease-out 0s infinite;
+    -moz-animation: bg-zoom 300s ease-out 0s infinite;
+    -o-animation: bg-zoom 300s ease-out 0s infinite;
+    animation: bg-zoom 300s ease-out 0s infinite;
+  }
+  
   a{
     text-decoration: none;
   }

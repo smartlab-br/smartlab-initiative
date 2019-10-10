@@ -75,7 +75,7 @@ class TooltipBuildingService {
     return text;
   }
 
-  defaultLeafletTooltip(target, route, tooltip_list = [], removed_text_list = [], options = null) { 
+  static defaultLeafletTooltip(target, route, tooltip_list = [], removed_text_list = [], options = null) { 
     let d = target.options.rowData;
     target.unbindPopup();
     target.bindPopup(TooltipBuildingService.defaultTooltip(d, route, tooltip_list, removed_text_list, options)).openPopup();

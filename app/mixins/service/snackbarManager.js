@@ -8,8 +8,8 @@ const SnackbarManager = {
     Vue.mixin({
       data() {
         return {
-          validCharts: ['MAP_TOPOJSON', 'LINE', 'STACKED', 'BAR', 'TREEMAP', 'SCATTERPLOT', 'BOXPLOT', 'CALENDAR', 'SANKEYD3', 'MAP_BUBBLES', 'MAP_HEAT', 'MAP_CLUSTER'],
-          leafletBasedCharts: ['MAP_BUBBLES', 'MAP_HEAT', 'MAP_CLUSTER']
+          validCharts: ['MAP_TOPOJSON', 'LINE', 'STACKED', 'BAR', 'TREEMAP', 'SCATTERPLOT', 'BOXPLOT', 'CALENDAR', 'SANKEYD3', 'MAP_BUBBLES', 'MAP_HEAT', 'MAP_CLUSTER', 'MAP_MIGRATION'],
+          leafletBasedCharts: ['MAP_BUBBLES', 'MAP_HEAT', 'MAP_CLUSTER', 'MAP_MIGRATION']
         }
       },
       methods: {
@@ -87,7 +87,7 @@ const SnackbarManager = {
           if (idAnalysisUnit) additionalOptions.au = this.$analysisUnitModel.findPlaceByID(idAnalysisUnit);
           if (chartType == 'SANKEYD3') additionalOptions.metadata = metadata;
           if (this.leafletBasedCharts.includes(chartType)) {
-              if (chartOptions.tooltip_function == null) additionalOptions.tooltipFunction = TooltipBuildingService.defaultLealfetTooltip; 
+              if (chartOptions.tooltip_function == null) additionalOptions.tooltipFunction = TooltipBuildingService.defaultLeafletTooltip; 
 
               if (this.customParams && this.customParams.limCoords) {
                 additionalOptions.limCoords = this.customParams.limCoords;

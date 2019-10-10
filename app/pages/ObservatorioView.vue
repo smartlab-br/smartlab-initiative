@@ -1,7 +1,7 @@
 <template>
   <v-layout row wrap class="pa-0">
-    <v-flex v-if="observatorio" fluid grid-list-lg xs12 class="first-section pa-0" :style="displayHeight">
-      <v-layout xs12 class="bg-parallax"
+    <v-flex v-if="observatorio" fluid grid-list-lg xs12 overflow-hidden class="first-section pa-0" :style="displayHeight">
+      <v-layout xs12 class="bg-zoom bg-parallax"
         height="auto" :style="currentParallax"></v-layout>
       <v-layout xs12 class="bg-parallax ma-0"></v-layout>
       <v-layout row wrap px-3 justify-center class="parallax-content">
@@ -170,7 +170,7 @@
                 :src="currentParallaxFile"
                 :aspect-ratio="observatorio.prevalencia.chart_options.height_proportion ? observatorio.prevalencia.chart_options.height_proportion : 1"
                 >
-                <v-layout class="bg-black-transparent pa-3 justify-end subheading fill-height" v-on:click="enableMap">
+                <v-layout v-show="!mapEnabled" class="bg-black-transparent pa-3 justify-end subheading fill-height" v-on:click="enableMap">
                   Clique no mapa para ativá-lo
                 </v-layout>
                 </v-img>
@@ -326,6 +326,7 @@
     computed: {
       currentParallaxFile: function() {
         return '/static/parallax/' + this.observatorio.imagem + '.jpg';
+
       }
     },
     methods: {
@@ -461,7 +462,12 @@
             this.metadata
           ).then(
             (chartHandler) => { this.sendChartLoaded(chartHandler); },
-            (reject) => { this.sendError(reject); }
+            (reject) => { 
+              console.log(reject);
+              this.mapEnabled = false;
+              this.dialogMapLoading = false;
+              this.sendError("Falha ao carregar mapa."); 
+            }
           );
         }
       },
