@@ -13,62 +13,12 @@
         errorMessage: null
       }
     },
-    created () {
 
-      let structure = this.structure;
-      if (structure.card_template) { // API Card
-        let url = this.$textTransformService.replaceArgs(
-          "/cardtemplate/{0}?datasource={1}&cd_indicador='{2}'&cd_analysis_unit={3}",
-          [ structure.card_template,
-            structure.datasource,
-            structure.cd_indicador,
-            this.selectedPlace ? this.selectedPlace : this.customParams.idLocalidade ]
-        );
-        if (structure.coefficient) url = url + "&coefficient=" + structure.coefficient;
-        if (structure.term) {
-          if (typeof structure.term == "string") {
-            url = url + "&term=" + structure.term;
-          } else if (structure.term.template){
-            url = url + "&term=" + this.$textTransformService.applyInterpol(
-                                                  structure.term,
-                                                  this.customParams,
-                                                  this.customFunctions,
-                                                  {});
-          }
-        }
-        axios(this.$axiosCallSetupService.getAxiosOptions(url))
-          .then(result => {
-            structure = Object.assign(structure, result.data);
-            this.structure = structure;
-            this.completeStructure();
-            this.fillDataStructure(
-              this.structure.title, this.customParams,
-              this.customFunctions, this.setComplexAttribute,
-              { attribute: 'cmpTitle' }
-            );
-            this.fillDataStructure(
-              this.structure.title_comment, this.customParams,
-              this.customFunctions, this.setComplexAttribute,
-              { attribute: 'cmpTitleComment' }
-            );
-            this.fetchData();
-          }).catch(error => { this.sendDataStructureError("Falha ao buscar dados de card"); });
-      } else {
-        this.completeStructure();
-        this.fillDataStructure(
-          this.structure.title, this.customParams,
-          this.customFunctions, this.setComplexAttribute,
-          { attribute: 'cmpTitle' }
-        );
-        this.fillDataStructure(
-          this.structure.title_comment, this.customParams,
-          this.customFunctions, this.setComplexAttribute,
-          { attribute: 'cmpTitleComment' }
-        );
-        this.fetchData();
-      }
-      
+
+    created () {
+      this.loadCardData();
     },
+
     computed: {
       loadingStatusDataset: function() {
         if (this.errorMessage) return 'ERROR';
@@ -82,6 +32,80 @@
       // this.fetchData();
     },
     methods: {
+      reloadComponent(){
+        this.errorMessage = null;
+        this.loadCardData();
+      },
+      loadCardData(){
+        let structure = this.structure;
+        if (structure.card_template) { // API Card
+          let url = this.$textTransformService.replaceArgs(
+            "/cardtemplate/{0}?datasource={1}&cd_indicador='{2}'&cd_analysis_unit={3}",
+            [ structure.card_template,
+              structure.datasource,
+              structure.cd_indicador,
+              this.selectedPlace ? this.selectedPlace : this.customParams.idLocalidade ]
+          );
+          if (structure.coefficient) url = url + "&coefficient=" + structure.coefficient;
+          if (structure.term) {
+            if (typeof structure.term == "string") {
+              url = url + "&term=" + structure.term;
+            } else if (structure.term.template){
+              url = url + "&term=" + this.$textTransformService.applyInterpol(
+                                                    structure.term,
+                                                    this.customParams,
+                                                    this.customFunctions,
+                                                    {});
+            }
+          }
+          
+          let cardTitle = "";
+          if (structure.title && structure.title.fixed){
+            cardTitle = structure.title.fixed;
+          }
+
+          axios(this.$axiosCallSetupService.getAxiosOptions(url))
+            .then(result => {
+              structure = Object.assign(structure, result.data);
+              this.structure = structure;
+              this.completeStructure();
+              this.fillDataStructure(
+                this.structure.title, this.customParams,
+                this.customFunctions, this.setComplexAttribute,
+                { attribute: 'cmpTitle',
+                  "msgError": "Falha ao carregar dados do título do card",
+                }
+              );
+              this.fillDataStructure(
+                this.structure.title_comment, this.customParams,
+                this.customFunctions, this.setComplexAttribute,
+                { attribute: 'cmpTitleComment',
+                  "msgError": "Falha ao carregar dados do card " + cardTitle,
+                 }
+              );
+              this.fetchData();
+            }).catch(error => { this.sendDataStructureError("Falha ao buscar dados do card " + cardTitle); });
+        } else {
+          this.completeStructure();
+          this.fillDataStructure(
+            this.structure.title, this.customParams,
+            this.customFunctions, this.setComplexAttribute,
+            { attribute: 'cmpTitle',
+              "msgError": "Falha ao carregar dados do título do card",
+            }
+          );
+          this.fillDataStructure(
+            this.structure.title_comment, this.customParams,
+            this.customFunctions, this.setComplexAttribute,
+            { attribute: 'cmpTitleComment',
+              "msgError": "Falha ao carregar dados do card " + this.cmpTitle,
+              }
+          );
+          this.fetchData();
+        }
+        
+      },
+      
       removeFormatItems(headers){
         let items = JSON.parse(JSON.stringify(headers));
         for(var item in items){

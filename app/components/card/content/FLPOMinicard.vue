@@ -217,7 +217,7 @@
             null,
             JSON.parse(result.data).metadata
           );
-        }).catch(error => { this.sendDataStructureError("Erro ao carregar dados do componente."); });
+        }).catch(error => { this.sendDataStructureError("Falha ao carregar dados do componente."); });
       },
     }
   }

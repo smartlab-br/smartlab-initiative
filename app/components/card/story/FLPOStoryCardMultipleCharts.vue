@@ -9,9 +9,25 @@
           v-show="loadingStatusDataset != 'SUCCESS'"
           :color="loadingStatusDataset == 'ERROR' ? 'error' : 'info'">
         </v-progress-linear>
-        <v-flex xs12 row wrap red darken-1 text-xs-center class="error-in-card"
-          v-show="loadingStatusDataset == 'ERROR'">
-          {{ errorMessage }}
+        <v-flex x12 v-show="loadingStatusDataset == 'ERROR'" >
+          <v-layout align-center row wrap style="min-height:500px;">
+            <v-flex xs12 >
+              <v-card dark ma-3 color="red darken-1">
+                <v-card-text class="text-xs-center" > 
+                  {{ errorMessage }}
+                  <v-tooltip bottom>
+                    <v-btn flat icon @click="reloadComponent" slot="activator">
+                        <v-icon color="white"
+                          class="pb-1">
+                          refresh
+                        </v-icon>
+                    </v-btn>
+                    Recarregar              
+                  </v-tooltip>
+                </v-card-text>
+              </v-card>           
+            </v-flex>
+          </v-layout>
         </v-flex>
         <v-card-text v-if="dataset" v-show="loadingStatusDataset == 'SUCCESS'">
           <v-layout column>
@@ -475,6 +491,7 @@
             this.structure.charts[eachChart], this.customParams,
             this.customFunctions, this.setDataset,
             { "endpoint": endpoint,
+              "msgError": "Falha ao carregar dados do gráfico " + this.chartFooter[this.structure.charts[eachChart].id],
               id: this.structure.charts[eachChart].id
             }
           );
