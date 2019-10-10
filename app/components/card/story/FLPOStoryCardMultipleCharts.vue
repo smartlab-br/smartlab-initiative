@@ -11,21 +11,17 @@
         </v-progress-linear>
         <v-flex x12 v-show="loadingStatusDataset == 'ERROR'" >
           <v-layout align-center row wrap style="min-height:500px;">
-            <v-flex xs12 >
-              <v-card dark ma-3 color="red darken-1">
-                <v-card-text class="text-xs-center" > 
+            <v-flex xs12 class="red--text darken-1 text-xs-center">
                   {{ errorMessage }}
                   <v-tooltip bottom>
-                    <v-btn flat icon @click="reloadComponent" slot="activator">
-                        <v-icon color="white"
+                    <v-btn fab dark small color="red darken-1" @click="reloadComponent" slot="activator">
+                        <v-icon dark
                           class="pb-1">
                           refresh
                         </v-icon>
                     </v-btn>
                     Recarregar              
                   </v-tooltip>
-                </v-card-text>
-              </v-card>           
             </v-flex>
           </v-layout>
         </v-flex>
