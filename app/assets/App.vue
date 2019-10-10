@@ -1130,6 +1130,22 @@
     top:0;
   }
 
+  .map_geo path {
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
+    animation: migration-path 1s linear forwards;
+    animation-iteration-count: infinite;
+    animation-duration: 5s;
+  }
+
+  @keyframes migration-path {
+    to {
+      stroke-dashoffset: 0;
+      iterations: Infinity;
+      easing: 'ease-in-out';
+    }
+  }
+
   /* @import url('https://fonts.googleapis.com/css?family=Palanquin');   */
   /* @import url('https://fonts.googleapis.com/css?family=Lato:300');   */
   /* @import url('https://fonts.googleapis.com/css?family=Roboto+Condensed'); */
