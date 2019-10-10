@@ -68,7 +68,7 @@ const ViewConfReader = {
 				fillDataStructure(structure, customParams, customFunctions,
 								  cbFunction, addedParams) {
 					if (structure !== null && structure !== undefined) {
-						let msgError = "Erro ao carregar dados do componente.";
+						let msgError = "Falha ao carregar dados do componente.";
 						let fnSendDataStructureError = this.sendDataStructureError;
 						if (addedParams && addedParams.msgError){
 							msgError = addedParams.msgError;
@@ -310,7 +310,7 @@ const ViewConfReader = {
 					}
 				},
 
-				sendDataStructureError(error = "Erro ao carregar dados do componente."){
+				sendDataStructureError(error = "Falha ao carregar dados do componente."){
 					this.sendError(error);
 					this.errorMessage = error;
 				},

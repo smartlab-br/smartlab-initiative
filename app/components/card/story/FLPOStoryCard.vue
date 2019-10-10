@@ -1,18 +1,30 @@
 <template>
-  <v-layout row wrap>
+  <v-layout row wrap v-if="renderComponent">
     <v-flex xs12>
-      <v-card :id="structure.id" :class= "'mx-4 mb-5 bg-card ' + $colorsService.constructor.getClassIfIsDark(null, sectionIndex, this.$vuetify.theme)">
+      <v-card :id="structure.id" :class= "'mx-4 mb-5 bg-card ' + $colorsService.constructor.getClassIfIsDark(null, sectionIndex, this.$vuetify.theme)" >
         <v-progress-linear
           height="5"
           :indeterminate="loadingStatusDataset == 'LOADING'"
           v-show="loadingStatusDataset != 'SUCCESS'"
           :color="loadingStatusDataset == 'ERROR' ? 'error' : 'info'">
         </v-progress-linear>
-        <v-flex xs12 row wrap red darken-1 text-xs-center class="error-in-card"
-          v-show="loadingStatusDataset == 'ERROR'">
-          {{ errorMessage }}
+        <v-flex x12 v-show="loadingStatusDataset == 'ERROR'" >
+          <v-layout align-center row wrap style="min-height:500px;">
+            <v-flex xs12 class="red--text darken-1 text-xs-center">
+                  {{ errorMessage }}
+                  <v-tooltip bottom>
+                    <v-btn fab dark small color="red darken-1" @click="reloadComponent" slot="activator">
+                        <v-icon dark
+                          class="pb-1">
+                          refresh
+                        </v-icon>
+                    </v-btn>
+                    Recarregar              
+                  </v-tooltip>
+            </v-flex>
+          </v-layout>
         </v-flex>
-        <v-card-text v-if="dataset" v-show="loadingStatusDataset == 'SUCCESS'">
+        <v-card-text v-if="dataset" v-show="loadingStatusDataset == 'SUCCESS'" >
           <v-layout column>
             <v-flex pb-0>
               <v-layout row fill-height wrap pl-3 pt-3 pb-0 pr-0 class="display-1-obs mb-0">
@@ -179,7 +191,8 @@
         footnote: null,
         cmpTopology: null,
         chartFooter: null,
-        chart: null
+        chart: null,
+        renderComponent: true
       }
     },
     created() {
@@ -255,8 +268,7 @@
             let apiUrl = this.$textTransformService.applyInterpol(this.structure.api, this.customParams, this.customFunctions);
             if (this.structure.apiBase){
               apiUrl = this.$textTransformService.applyInterpol(this.structure.apiBase, this.customParams, this.customFunctions);// this.structure.apiBase;
-            }
-            // if (this.customFilters.radioApi){
+            }            // if (this.customFilters.radioApi){
             //   apiUrl = this.customFilters.radioApi;
             // }
             endpoint = apiUrl + this.getFilters();
@@ -317,11 +329,13 @@
       },
 
       fetchData(endpoint = null) {
+        this.assessChartFooter();
         this.fillDataStructure(
           this.structure, this.customParams,
           this.customFunctions, this.setDataset,
           {
             "endpoint": endpoint,
+            "msgError": "Falha ao carregar dados do gráfico " + this.chartFooter,
             "fnCallback": this.triggerChartUpdates
           }
         );
@@ -329,7 +343,7 @@
 
       triggerChartUpdates() {
         let fnSendError = this.sendError;
-        let chartTitle = this.cmpTitle;
+        let chartTitle = this.chartFooter;
         if (this.chartHandler) {
           this.chartRegen(
             this.chartHandler,
@@ -364,7 +378,6 @@
             }
           );
         }
-        this.assessChartFooter();
       },
 
       sendChartLoaded(chartHandler) {

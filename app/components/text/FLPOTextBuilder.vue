@@ -1,5 +1,6 @@
 <template>
   <v-flex :class="structure.cls ? structure.cls : 'ma-0 pa-2'">
+    <div class="red--text" v-if="errorMessage" v-html = "errorMessage"></div>
     <v-layout v-if="structure.columns" pa-2>
       <v-layout column pl-0 py-0 pb-0 body-obs v-if="readMoreLimit && !maxedOut">
         <div v-if="collapsed" 
@@ -75,7 +76,9 @@
     mounted: function() {
       this.fillDataStructure(
         this.structure, this.customParams,
-        this.customFunctions, this.setTextContent
+        this.customFunctions, this.setTextContent,
+        { "msgError": "Falha ao carregar dados do componente texto"  }
+        
       );
     },
     watch: {
@@ -84,7 +87,9 @@
           this.fillDataStructure(
             this.structure, this.customParams,
             this.customFunctions, this.setTextContent,
-            { "react": newVal }
+            { "react": newVal,
+              "msgError": "Falha ao carregar dados do componente texto",
+              }
           );
         }
       }
