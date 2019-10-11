@@ -40,6 +40,22 @@ class ObservatoriesModel {
         return this.observatories;
     }
 
+    setBackgroundImages(content) {
+        this.background_images = content.background_images;
+        return this.background_images;
+    }
+
+    getBackgroundImages() {
+        if (this.background_images == null && this.background_images == undefined) { // Start loading only once
+            return this.yamlFetcher.loadYaml("br/observatorios")
+                .then((result) => { 
+                    return this.setBackgroundImages(result);
+                });
+        } else {
+            return this.background_images;
+        }
+    }
+
     getObservatories() {
         if (this.observatories == null && this.observatories == undefined) { // Start loading only once
             return this.yamlFetcher.loadYaml("br/observatorios")

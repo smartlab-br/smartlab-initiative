@@ -27,7 +27,11 @@
 
         hasOdometers: true,
         loadedOdometers: false,
-        reactiveFilter: null
+        reactiveFilter: null,
+
+        parallaxFile: null,
+        idParallaxfile: 0,
+        idInterval: null
       }
     },
     created () {
@@ -38,7 +42,10 @@
       }
 
       if (this.idObservatorio) {
-        this.$yamlFetcherService.loadYaml("br/observatorio/" + this.idObservatorio).then((result) => { this.setObservatorio(result); });
+        this.$yamlFetcherService.loadYaml("br/observatorio/" + this.idObservatorio).then((result) => { 
+          this.setObservatorio(result); 
+          this.parallaxFile = result.background_images[this.idParallaxfile];
+          });
       } else {
         this.setDimensionsArea();
 
@@ -48,13 +55,26 @@
           this.obsSliceSize = 1;
         }
       }
+
+      
     },
     beforeDestroy: function() {
       window.removeEventListener('resize', this.resizeFirstSection);
     },
+    watch: {
+      idObservatorio: function(newVal){
+        if (this.idInterval){
+          clearInterval(this.idInterval);
+        }
+        this.idInterval = setInterval(this.setParallaxFile,20000);
+      }
+    },
     computed: {
+      currentParallaxMapFile: function() {
+        return '/static/parallax/' + this.observatorio.map_image;
+      },
       currentParallax: function() {
-        return 'background-image:url("/static/parallax/' + this.observatorio.imagem + '.jpg"); background-position: center center; background-size: cover;';
+        return 'background-image:url("/static/parallax/' + this.parallaxFile + '"); background-position: center center; background-size: cover;';
       },
       sourceDesc: function() {
         return this.$indicatorsModel.getSourceDesc(this.observatorio.prevalencia, this.dataset, this.metadata);
@@ -86,9 +106,16 @@
       }
     },
     methods: {
+      setParallaxFile(){
+        this.idParallaxfile++;
+        if (this.idParallaxfile == this.observatorio.background_images.length){
+            this.idParallaxfile = 0;
+        }
+        this.parallaxFile = this.observatorio.background_images[this.idParallaxfile];
+      },
       setGroupingAndFiltering(observatorio) {},
       setDimensionsArea() {},
-      
+
       setIdLocalidade(id){
         this.idLocalidade = id;
       },

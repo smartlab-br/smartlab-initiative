@@ -2,7 +2,8 @@
   <v-layout row wrap class="pa-0">
     <v-flex fluid grid-list-lg xs12 overflow-hidden class="first-section pa-0" :style="displayHeight" style="overflow: hidden;">
       <!-- <v-parallax xs12 class="bg-parallax" height="auto" src="static/parallax/home.png"></v-parallax>-->
-      <v-layout xs12 class="bg-zoom bg-parallax-home" height="auto" style="background-image:url('/static/parallax/td.jpg');background-position: center center; background-size: cover;"></v-layout> 
+      <v-layout xs12 class="bg-zoom bg-parallax-home" height="auto" :style="currentParallax"></v-layout> 
+      <!-- style="background-image:url('/static/parallax/td.jpg');background-position: center center; background-size: cover;" -->
       <v-layout xs12 class="bg-parallax-home ma-0"></v-layout>
       <v-layout row wrap fill-height align-center justify-center pa-0 class="parallax-content-home" v-if="observatorios">
         <v-flex id="screenTitle" xs12 class="white--text text-xs-center" style="line-height: normal;">
@@ -80,7 +81,13 @@
         obsSlice: 0,
         obsSliceSize: 2,
         obsSliceClass: 'xs12 sm6 md4 xl2',
-        obsMaxSlice: 3
+        obsMaxSlice: 3,
+
+        parallaxFile: null,
+        idParallaxfile: 0,
+        idInterval: null,
+        background_images: []
+        
       }
     },
     created () {
@@ -96,6 +103,20 @@
         this.obsSlice = 0;
         this.obsSliceSize = 1;
       } 
+
+      let tmpBackgroundImages = this.$observatories.getBackgroundImages(); 
+      if ((tmpBackgroundImages instanceof Promise) || tmpBackgroundImages.then) {
+        tmpBackgroundImages.then((result) => { 
+          this.background_images = result 
+          this.parallaxFile = this.background_images[this.idParallaxfile];
+          });
+      } else {
+        this.background_images = tmpBackgroundImages;
+        this.parallaxFile = this.background_images[this.idParallaxfile];
+      }
+
+      this.idInterval = setInterval(this.setParallaxFile,20000);
+
     },
     mounted: function() {
       this.checkCurrentAnalysisUnit();
@@ -110,8 +131,19 @@
       window.removeEventListener('resize', this.resizeFirstSection);
     },
     computed: {
+      currentParallax: function() {
+        return 'background-image:url("/static/parallax/' + this.parallaxFile + '"); background-position: center center; background-size: cover;';
+      },
     },
     methods: {
+      setParallaxFile(){
+        this.idParallaxfile++;
+        if (this.idParallaxfile == this.background_images.length){
+            this.idParallaxfile = 0;
+        }
+        this.parallaxFile = this.background_images[this.idParallaxfile];
+      },
+      
       assessPageBottom() {
         this.isPageBottom = false;
         if (window && document) {
