@@ -85,12 +85,12 @@
 
         parallaxFile: null,
         idParallaxfile: 0,
-        idInterval: null,
         background_images: []
         
       }
     },
     created () {
+      
       let tmpObs = this.$observatories.getObservatories();
       if ((tmpObs instanceof Promise) || tmpObs.then) {
         tmpObs.then((result) => { this.observatorios = result });
@@ -104,18 +104,20 @@
         this.obsSliceSize = 1;
       } 
 
+
       let tmpBackgroundImages = this.$observatories.getBackgroundImages(); 
       if ((tmpBackgroundImages instanceof Promise) || tmpBackgroundImages.then) {
         tmpBackgroundImages.then((result) => { 
           this.background_images = result 
           this.parallaxFile = this.background_images[this.idParallaxfile];
+          setInterval(this.setParallaxFile,10000);
           });
       } else {
         this.background_images = tmpBackgroundImages;
         this.parallaxFile = this.background_images[this.idParallaxfile];
+        setInterval(this.setParallaxFile,10000);
       }
 
-      this.idInterval = setInterval(this.setParallaxFile,20000);
 
     },
     mounted: function() {

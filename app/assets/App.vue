@@ -1007,6 +1007,8 @@
     margin: 0 !important;
     width: 100%;
     min-height: 100% !important;
+    background-position: center center; 
+    background-size: cover;    
   }
 
   .bg-parallax img {
@@ -1054,11 +1056,11 @@
       transform: translateY(0%) scale(1);
     }
     50% {
-      -ms-transform: translateY(25%) scale(1.5);
-      -moz-transform: translateY(25%) scale(1.5);
-      -webkit-transform: translateY(25%) scale(1.5);
-      -o-transform: translateY(25%) scale(1.5);
-      transform: translateY(25%) scale(1.5);
+      -ms-transform: translateY(10%) scale(1.2);
+      -moz-transform: translateY(10%) scale(1.2);
+      -webkit-transform: translateY(10%) scale(1.2);
+      -o-transform: translateY(10%) scale(1.2);
+      transform: translateY(10%) scale(1.2);
     }
     95%, 100% {
       -ms-transform: translateY(0%) scale(1);
@@ -1071,10 +1073,14 @@
 
   .bg-zoom {
     position: relative;
-    -webkit-animation: bg-zoom 40s ease-out 0s infinite;
-    -moz-animation: bg-zoom 40s ease-out 0s infinite;
-    -o-animation: bg-zoom 40s ease-out 0s infinite;
-    animation: bg-zoom 40s ease-out 0s infinite;
+    -webkit-animation: bg-zoom 20s ease-out 0s infinite;
+    -moz-animation: bg-zoom 20s ease-out 0s infinite;
+    -o-animation: bg-zoom 20s ease-out 0s infinite;
+    animation: bg-zoom 20s ease-out 0s infinite;
+    -webkit-transition: background-image 2s ease-in-out;
+    -moz-transition: background-image 2s ease-in-out;
+    -o-transition: background-image 2s ease-in-out;
+    transition: background-image 2s ease-in-out;
   }
   
   a{

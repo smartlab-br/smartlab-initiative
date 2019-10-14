@@ -30,8 +30,7 @@
         reactiveFilter: null,
 
         parallaxFile: null,
-        idParallaxfile: 0,
-        idInterval: null
+        idParallaxfile: 0
       }
     },
     created () {
@@ -45,9 +44,11 @@
         this.$yamlFetcherService.loadYaml("br/observatorio/" + this.idObservatorio).then((result) => { 
           this.setObservatorio(result); 
           this.parallaxFile = result.background_images[this.idParallaxfile];
+          setInterval(this.setParallaxFile,10000);
           });
       } else {
         this.setDimensionsArea();
+        setInterval(this.setParallaxFile,10000);
 
         if (this.$vuetify.breakpoint.smAndDown) {
           this.obsMaxSlice = 11;
@@ -60,14 +61,6 @@
     },
     beforeDestroy: function() {
       window.removeEventListener('resize', this.resizeFirstSection);
-    },
-    watch: {
-      idObservatorio: function(newVal){
-        if (this.idInterval){
-          clearInterval(this.idInterval);
-        }
-        this.idInterval = setInterval(this.setParallaxFile,20000);
-      }
     },
     computed: {
       currentParallaxMapFile: function() {
@@ -108,10 +101,12 @@
     methods: {
       setParallaxFile(){
         this.idParallaxfile++;
-        if (this.idParallaxfile == this.observatorio.background_images.length){
+        if (this.observatorio) {
+          if (this.idParallaxfile == this.observatorio.background_images.length){
             this.idParallaxfile = 0;
+          }
+          this.parallaxFile = this.observatorio.background_images[this.idParallaxfile];
         }
-        this.parallaxFile = this.observatorio.background_images[this.idParallaxfile];
       },
       setGroupingAndFiltering(observatorio) {},
       setDimensionsArea() {},
