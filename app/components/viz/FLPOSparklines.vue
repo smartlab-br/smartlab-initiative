@@ -153,6 +153,14 @@ export default {
 
             // Generate charts
             setTimeout(() => {
+
+                let chart_headers = [
+                                        {"text": "", "value": "cat_value"},
+                                        {"text": "", "value": "value"}
+                                    ]
+                let structChart = Object.assign({}, this.structure);
+                structChart.headers = chart_headers;
+
                 for (let sparkline of this.$el.getElementsByClassName("spark")) {
                     let splitElementId = sparkline.id.split("_");
                     let idFromElementId = splitElementId[splitElementId.length - 1];
@@ -172,7 +180,7 @@ export default {
                             this.chartGen(
                                 sparkline.id,
                                 this.structure.chart_type,
-                                this.structure,
+                                structChart,
                                 options,
                                 row[seriesFromElementId],
                                 this.metadata,
