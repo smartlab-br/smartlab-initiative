@@ -105,7 +105,7 @@
     <v-container v-if="observatorio && observatorio.sparklines" fluid ma-0 pa-0
       :style="'background-color:' + $colorsService.constructor.assessZebraBG(0, $vuetify.theme) + ';'">
       <v-flex class="display-1-obs card-title pl-3">
-        Piores evoluções de prevalência
+        {{ observatorio.sparklines.title }} 
       </v-flex>          
       <flpo-sparklines
         :dataset = "dataset"

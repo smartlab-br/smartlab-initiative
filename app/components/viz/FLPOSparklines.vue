@@ -11,8 +11,8 @@
                 <!-- v-for SEM BIND, pois está restrito ao contexto do template do data-table -->
                 <td pa-0 v-for="hdr in structure.headers">
                     <div v-if="hdr.type && hdr.type == 'spark'">
-                        <v-layout row pa-0 fill-height>
-                            <v-layout py-3 px-1 fill-height column text-xs-center class="sparkline"
+                        <v-layout row nowrap pa-0 fill-height>
+                            <v-flex xs4 py-3 px-1 fill-height column text-xs-center class="sparkline"
                                 :style="'color: ' + hdr.color + '; background-color: ' + hdr.bgColor">
                                 <div :class="'sparkline-value ' + (hdr.item_class != null ? hdr.item_class : '')"
                                     v-html="props.item[hdr.value]">
@@ -21,8 +21,9 @@
                                     :class="'sparkline-detail ' + (hdr.detail_class != null ? hdr.detail_class : '')"
                                     v-html="props.item['str_' + hdr.detail]">
                                 </div>
-                            </v-layout>
-                            <v-layout>
+                            </v-flex>
+                            <v-flex xs8 class="sparkline">
+                        <!--
                                 <v-layout fill-height
                                     v-if="structure && structure.chart_options !== null && validCharts.includes(structure.chart_type)"
                                     class="spark"
@@ -30,15 +31,24 @@
                                     :class = "leafletBasedCharts.includes(structure.chart_type) ? 'map_geo' : ''"
                                     :id="'spark_' + hdr.series + '_' + props.item.id">
                                 </v-layout>
-                            </v-layout>
+
+                                :labels="props.item['sparkline_labels_' + hdr.series]"
+                        -->
+                                    <v-sparkline 
+                                        :value="props.item['sparkline_values_'+ hdr.series]"
+                                        :color="hdr.bgColor"
+                                        line-width="4"
+                                        padding="16"
+                                    ></v-sparkline>
+                            </v-flex>
                         </v-layout>
                     </div>
                     <div v-else-if="typeof props.item[hdr.value] === 'string' && props.item[hdr.value].includes('</')"
-                        :class="'sparkline-value ' + (hdr.item_class != null ? hdr.item_class : '')"
+                        :class="(hdr.item_class != null ? hdr.item_class : '')"
                         v-html="props.item[hdr.value]">
                     </div>
                     <div v-else
-                        :class="'sparkline-value' + (hdr.item_class != null ? hdr.item_class : '')">
+                        :class="(hdr.item_class != null ? hdr.item_class : '')">
                         {{ props.item[hdr.value] }}
                     </div>
                 </td> 
@@ -73,11 +83,17 @@ export default {
                 if (typeof entryValue !== "number") entryValue = parseFloat(entryValue);
 
                 let entry = { id: sourceStructure.series_field, cat_value: row[sourceStructure.category_field], value: entryValue };
+                let sparkline_labels = row[sourceStructure.category_field];
+                let sparkline_values = entryValue;
                 
                 for (let eachInHierarchy of hierarchicalDS) {
                     if (eachInHierarchy.id == row[sourceStructure.id_field]) { // found the instance
                         if (eachInHierarchy[row[sourceStructure.series_field]] == null) { // new series
+                            
                             eachInHierarchy[row[sourceStructure.series_field]] = [entry];
+                            eachInHierarchy['sparkline_labels_' + row[sourceStructure.series_field]] = [sparkline_labels];
+                            eachInHierarchy['sparkline_values_' + row[sourceStructure.series_field]] = [sparkline_values];
+
                             eachInHierarchy['totals_' + row[sourceStructure.series_field]] = entry.value;
                             eachInHierarchy['stats_' + row[sourceStructure.series_field]] = {
                                 initialValue: entry.value,
@@ -87,6 +103,9 @@ export default {
                             };
                         } else { // Existing instance and series
                             eachInHierarchy[row[sourceStructure.series_field]].push(entry);
+                            eachInHierarchy['sparkline_labels_' + row[sourceStructure.series_field]].push(sparkline_labels);
+                            eachInHierarchy['sparkline_values_' + row[sourceStructure.series_field]].push(sparkline_values);
+                            
                             eachInHierarchy['totals_' + row[sourceStructure.series_field]] = eachInHierarchy['totals_' + row[sourceStructure.series_field]] + entry.value;
 
                             if (eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialCat > entry.cat_value) {
@@ -119,6 +138,8 @@ export default {
                 let nuInstance = row;
                 nuInstance.id = row[sourceStructure.id_field];
                 nuInstance['totals_' + row[sourceStructure.series_field]] = entry.value;
+                nuInstance['sparkline_labels_' + row[sourceStructure.series_field]] = [sparkline_labels];
+                nuInstance['sparkline_values_' + row[sourceStructure.series_field]] = [sparkline_values];
                 nuInstance[row[sourceStructure.series_field]] = [entry];
                 nuInstance['stats_' + row[sourceStructure.series_field]] = {
                     initialValue: entry.value,
@@ -153,6 +174,14 @@ export default {
 
             // Generate charts
             setTimeout(() => {
+
+                let chart_headers = [
+                                        {"text": "", "value": "cat_value"},
+                                        {"text": "", "value": "value"}
+                                    ]
+                let structChart = Object.assign({}, this.structure);
+                structChart.headers = chart_headers;
+
                 for (let sparkline of this.$el.getElementsByClassName("spark")) {
                     let splitElementId = sparkline.id.split("_");
                     let idFromElementId = splitElementId[splitElementId.length - 1];
@@ -172,7 +201,7 @@ export default {
                             this.chartGen(
                                 sparkline.id,
                                 this.structure.chart_type,
-                                this.structure,
+                                structChart,
                                 options,
                                 row[seriesFromElementId],
                                 this.metadata,
@@ -213,5 +242,8 @@ export default {
   .sparkline .sparkline-detail {
     font-size: 0.8rem;
     font-weight: 400;
+  }
+  .sparkline svg {
+    height: 100%;
   }
 </style>
