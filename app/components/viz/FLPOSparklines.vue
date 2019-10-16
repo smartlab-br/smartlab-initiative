@@ -1,29 +1,36 @@
 <template>
-  <v-layout v-if="dataset && structure.headers">
-        <v-data-table
-            @update:pagination="triggerChartUpdates()"
+  <v-layout column pa-4>
+        <v-progress-linear v-if="!dataset"
+          height="5"
+          :indeterminate="!dataset"
+          color="info">
+        </v-progress-linear>
+        <!--@update:pagination="triggerChartUpdates()"-->
+        <v-data-table v-if="dataset && structure.headers"
             :headers="removeFormatItems(structure.headers)"
             :items="dataset"
             :disable-initial-sort="disableInitialSort"
             class="sparklines-grid elevation-1"
-            style="width: 100%;">
+            style="width: 100%;"
+            :rows-per-page-items='[10,50,100,200,500,{"text":"$vuetify.dataIterator.rowsPerPageAll","value":-1}]'
+            >
             <template :headers="structure.headers" slot="items" slot-scope="props">
                 <!-- v-for SEM BIND, pois está restrito ao contexto do template do data-table -->
                 <td pa-0 v-for="hdr in structure.headers">
                     <div v-if="hdr.type && hdr.type == 'spark'">
                         <v-layout row nowrap pa-0 fill-height>
-                            <v-flex xs4 py-3 px-1 fill-height column text-xs-center class="sparkline"
+                            <v-flex xs4 pa-1 fill-height column text-xs-center class="sparkline"
                                 :style="'color: ' + hdr.color + '; background-color: ' + hdr.bgColor">
                                 <div :class="'sparkline-value ' + (hdr.item_class != null ? hdr.item_class : '')"
-                                    v-html="props.item[hdr.value]">
+                                    v-html="props.item[hdr.value] ? props.item[hdr.value] : '&nbsp;'">
                                 </div>
-                                <div v-if="hdr.detail" 
+                                <div v-if="hdr.detail" title="Variação início/fim (%)"
                                     :class="'sparkline-detail ' + (hdr.detail_class != null ? hdr.detail_class : '')"
-                                    v-html="props.item['str_' + hdr.detail]">
+                                    v-html="props.item['str_' + hdr.detail] ? props.item['str_' + hdr.detail] : '&nbsp;'">
                                 </div>
                             </v-flex>
-                            <v-flex xs8 class="sparkline">
                         <!--
+                            <v-flex xs4 class="sparkline">
                                 <v-layout fill-height
                                     v-if="structure && structure.chart_options !== null && validCharts.includes(structure.chart_type)"
                                     class="spark"
@@ -31,14 +38,17 @@
                                     :class = "leafletBasedCharts.includes(structure.chart_type) ? 'map_geo' : ''"
                                     :id="'spark_' + hdr.series + '_' + props.item.id">
                                 </v-layout>
+                            </v-flex>
 
-                                :labels="props.item['sparkline_labels_' + hdr.series]"
+                                        :labels="props.item['sparkline_labels_' + hdr.series]"
                         -->
+                            <v-flex xs8 pl-2 class="sparkline">
                                     <v-sparkline 
                                         :value="props.item['sparkline_values_'+ hdr.series]"
                                         :color="hdr.bgColor"
-                                        line-width="4"
-                                        padding="16"
+                                        line-width="2"
+                                        padding="2"
+                                        height="45"
                                     ></v-sparkline>
                             </v-flex>
                         </v-layout>
