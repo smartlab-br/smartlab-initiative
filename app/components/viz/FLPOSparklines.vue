@@ -15,14 +15,17 @@
             :rows-per-page-items='[10,50,100,200,500,{"text":"$vuetify.dataIterator.rowsPerPageAll","value":-1}]'
             :custom-sort="customSort"
             >
+
             <template :headers="structure.headers" slot="items" slot-scope="props">
                 <!-- v-for SEM BIND, pois está restrito ao contexto do template do data-table -->
-                <td pa-0 v-for="hdr in structure.headers">
-                    <div v-if="hdr.type && hdr.type == 'spark'">
-                        <v-layout row nowrap pa-0 fill-height>
+                <td pa-0 v-for="hdr in structure.headers" :style="(hdr.width?'width:' + hdr.width + ';' :'') + (hdr.item_align?'text-align:'+hdr.item_align:'')">
+                        <!--
+                    <v-layout row nowrap pa-0 fill-height>
+
                             <v-flex xs4 xl5 text-xs-right>
                                 {{ props.item[hdr.value] }}
                             </v-flex>
+                        -->
                         <!--
                             <v-flex xs8 pa-1 fill-height column text-xs-center class="sparkline"
                                 :style="'color: ' + hdr.color + '; background-color: ' + hdr.bgColor">
@@ -46,10 +49,13 @@
 
                                         :labels="props.item['sparkline_labels_' + hdr.series]"
                         -->
+                        <!--
                             <v-flex xs2 text-xs-center>
                                 {{ (props.item['totals_'+ hdr.series]?props.item['totals_'+ hdr.series]: 0) }}
                             </v-flex>
                             <v-flex xs4 px-2 class="sparkline">
+                        -->
+                        <div px-2 class="sparkline" v-if="hdr.type && hdr.type == 'spark'">
                             <v-layout row nowrap> 
                                 <v-flex v-if="props.item['sparkline_values_' + hdr.series].length > 1" 
                                     xs2 xl1 caption text-xs-right :style="'color:'+hdr.bgColor">
@@ -59,7 +65,7 @@
                                     <v-sparkline 
                                         :value="props.item['sparkline_values_'+ hdr.series]"
                                         :color="hdr.bgColor"
-                                        line-width="3"
+                                        :line-width="hdr.stroke?hdr.stroke:3"
                                         padding="8"
                                         height="45"
                                     ></v-sparkline>
@@ -69,20 +75,26 @@
                                     {{ props.item['sparkline_values_' + hdr.series][props.item['sparkline_values_' + hdr.series].length-1] }}
                                 </v-flex>
                             </v-layout>
-                            </v-flex>
+                        </div>
+                        <!--
+                                                    
                             <v-flex xs2 text-xs-center caption>
                                 {{ (props.item['higher_value_'+ hdr.series] !== 0 ? props.item['higher_value_'+ hdr.series] + "(" + props.item['higher_cat_'+ hdr.series] + ")": "") }}
                             </v-flex>
-                        </v-layout>
-                    </div>
-                    <div v-else-if="typeof props.item[hdr.value] === 'string' && props.item[hdr.value].includes('</')"
-                        :class="(hdr.item_class != null ? hdr.item_class : '')"
-                        v-html="props.item[hdr.value]">
-                    </div>
-                    <div v-else
-                        :class="(hdr.item_class != null ? hdr.item_class : '')">
-                        {{ props.item[hdr.value] }}
-                    </div>
+                        -->
+                        <!--
+                        <div v-else-if="typeof props.item[hdr.value] === 'string' && props.item[hdr.value].includes('</')"
+                            :class="(hdr.item_class != null ? hdr.item_class : '')"
+                            v-html="props.item[hdr.value]">
+                        </div>
+                        -->
+                        <div v-else
+                            :class="(hdr.item_class != null ? hdr.item_class : '')">
+                            {{ props.item[hdr.value] }}
+                        </div>
+                    <!--
+                    </v-layout>
+                    -->
                 </td> 
             </template>
         </v-data-table>
@@ -105,30 +117,20 @@ export default {
     },
     methods: {
         customSort(items, index, isDesc) {
-            let isSpark = false;
-            let sort_field = "";
+            let sort_field = index;
             //for spark headers, sort by totals
             if (index){
                 for(let header of this.structure.headers){
-                    if (header.value == index && header.type == 'spark'){
-                        isSpark = true;
-                        sort_field = 'totals_' + header.series;
+                    if (header.value == index && header.sort_field){
+                        sort_field = header.sort_field;
                         break;
                     }
                 }
                 items.sort((a, b) => {
-                    if (isSpark) {
-                        if (!isDesc) {
-                            return (a[sort_field] > b[sort_field]) ? 1 : -1 ;
-                        } else {
-                            return (a[sort_field] < b[sort_field]) ? 1 : -1 ;
-                        }
+                    if (!isDesc) {
+                        return (a[sort_field] > b[sort_field]) ? 1 : -1 ;
                     } else {
-                        if (!isDesc) {
-                            return (a[index] > b[index]) ? 1 : -1 ;
-                        } else {
-                            return (a[index] < b[index]) ? 1 : -1 ;
-                        }
+                        return (a[sort_field] < b[sort_field]) ? 1 : -1 ;
                     }
                 });
             }
@@ -296,7 +298,7 @@ export default {
                     row['sparkline_values_' + series_value] = sparkline_values;
                     row['last_value_' + series_value] = sparkline_values[sparkline_values.length-1];
                     row['higher_value_' + series_value] = higher_value;
-                    row['higher_cat_' + series_value] = higher_cat;
+                    row['higher_value_str_' + series_value] = higher_value + "(" + higher_cat + ")";
 
                 }
             }
@@ -387,5 +389,8 @@ export default {
   }
   .sparkline svg {
     height: 100%;
+  }
+  table.v-table tbody td{
+    padding: 0 5px;
   }
 </style>

@@ -120,11 +120,16 @@
             @showSnackbar="snackAlert">
           </flpo-composite-text>
         </v-flex>
-        <v-flex px-4 py-0 v-for="(strSparklines, index) in observatorio.sparklines.tables" :key="index" :class="strSparklines.cls?strSparklines.cls:'xs12'">
-          <flpo-sparklines 
-            :dataset = "dataset"
-            :structure = "strSparklines">
-          </flpo-sparklines>
+        <v-flex px-4>
+          <v-layout row wrap>
+          <v-flex py-0 v-for="(strSparklines, index) in observatorio.sparklines.tables" :key="index" :class="strSparklines.cls?strSparklines.cls:'xs12'" text-xs-center>
+            {{ strSparklines.title }}
+            <flpo-sparklines 
+              :dataset = "dataset"
+              :structure = "strSparklines">
+            </flpo-sparklines>
+          </v-flex>
+          </v-layout>
         </v-flex>
       </v-layout>
     </v-container>
