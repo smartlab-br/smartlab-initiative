@@ -1,5 +1,5 @@
 <template>
-  <v-layout column pa-4>
+  <v-layout column pa-2>
         <v-progress-linear v-if="!dataset"
           height="5"
           :indeterminate="!dataset"
@@ -13,13 +13,18 @@
             class="sparklines-grid elevation-1"
             style="width: 100%;"
             :rows-per-page-items='[10,50,100,200,500,{"text":"$vuetify.dataIterator.rowsPerPageAll","value":-1}]'
+            :custom-sort="customSort"
             >
             <template :headers="structure.headers" slot="items" slot-scope="props">
                 <!-- v-for SEM BIND, pois está restrito ao contexto do template do data-table -->
                 <td pa-0 v-for="hdr in structure.headers">
                     <div v-if="hdr.type && hdr.type == 'spark'">
                         <v-layout row nowrap pa-0 fill-height>
-                            <v-flex xs4 pa-1 fill-height column text-xs-center class="sparkline"
+                            <v-flex xs4 xl5 text-xs-right>
+                                {{ props.item[hdr.value] }}
+                            </v-flex>
+                        <!--
+                            <v-flex xs8 pa-1 fill-height column text-xs-center class="sparkline"
                                 :style="'color: ' + hdr.color + '; background-color: ' + hdr.bgColor">
                                 <div :class="'sparkline-value ' + (hdr.item_class != null ? hdr.item_class : '')"
                                     v-html="props.item[hdr.value] ? props.item[hdr.value] : '&nbsp;'">
@@ -29,7 +34,6 @@
                                     v-html="props.item['str_' + hdr.detail] ? props.item['str_' + hdr.detail] : '&nbsp;'">
                                 </div>
                             </v-flex>
-                        <!--
                             <v-flex xs4 class="sparkline">
                                 <v-layout fill-height
                                     v-if="structure && structure.chart_options !== null && validCharts.includes(structure.chart_type)"
@@ -42,14 +46,32 @@
 
                                         :labels="props.item['sparkline_labels_' + hdr.series]"
                         -->
-                            <v-flex xs8 pl-2 class="sparkline">
+                            <v-flex xs2 text-xs-center>
+                                {{ (props.item['totals_'+ hdr.series]?props.item['totals_'+ hdr.series]: 0) }}
+                            </v-flex>
+                            <v-flex xs4 px-2 class="sparkline">
+                            <v-layout row nowrap> 
+                                <v-flex v-if="props.item['sparkline_values_' + hdr.series].length > 1" 
+                                    xs2 xl1 caption text-xs-right :style="'color:'+hdr.bgColor">
+                                    {{ props.item['sparkline_values_' + hdr.series][0] }}
+                                </v-flex>
+                                <v-flex xs8 xl10>
                                     <v-sparkline 
                                         :value="props.item['sparkline_values_'+ hdr.series]"
                                         :color="hdr.bgColor"
-                                        line-width="2"
-                                        padding="2"
+                                        line-width="3"
+                                        padding="8"
                                         height="45"
                                     ></v-sparkline>
+                                </v-flex>
+                                <v-flex v-if="props.item['sparkline_values_' + hdr.series].length > 1" 
+                                    xs2 xl1 caption :style="'color:'+hdr.bgColor">
+                                    {{ props.item['sparkline_values_' + hdr.series][props.item['sparkline_values_' + hdr.series].length-1] }}
+                                </v-flex>
+                            </v-layout>
+                            </v-flex>
+                            <v-flex xs2 text-xs-center caption>
+                                {{ (props.item['higher_value_'+ hdr.series] !== 0 ? props.item['higher_value_'+ hdr.series] + "(" + props.item['higher_cat_'+ hdr.series] + ")": "") }}
                             </v-flex>
                         </v-layout>
                     </div>
@@ -82,9 +104,42 @@ export default {
         this.fillDataStructure(this.structure, {}, {}, this.fillFromDataset, {});
     },
     methods: {
+        customSort(items, index, isDesc) {
+            let isSpark = false;
+            let sort_field = "";
+            //for spark headers, sort by totals
+            if (index){
+                for(let header of this.structure.headers){
+                    if (header.value == index && header.type == 'spark'){
+                        isSpark = true;
+                        sort_field = 'totals_' + header.series;
+                        break;
+                    }
+                }
+                items.sort((a, b) => {
+                    if (isSpark) {
+                        if (!isDesc) {
+                            return (a[sort_field] > b[sort_field]) ? 1 : -1 ;
+                        } else {
+                            return (a[sort_field] < b[sort_field]) ? 1 : -1 ;
+                        }
+                    } else {
+                        if (!isDesc) {
+                            return (a[index] > b[index]) ? 1 : -1 ;
+                        } else {
+                            return (a[index] < b[index]) ? 1 : -1 ;
+                        }
+                    }
+                });
+            }
+            return items;
+        },        
         fillFromDataset(sourceDS, rules, sourceStructure, addedParams = null, metadata = null) {
             let hierarchicalDS = [];
             let allSeries = [];
+
+            let firstCat = parseInt(sourceDS[0][sourceStructure.category_field_min]);
+            let lastCat = parseInt(sourceDS[0][sourceStructure.category_field_max]);
 
             fromSource: for (let row of sourceDS) {
                 if (!allSeries.includes(row[sourceStructure.series_field])) allSeries.push(row[sourceStructure.series_field]);
@@ -93,16 +148,12 @@ export default {
                 if (typeof entryValue !== "number") entryValue = parseFloat(entryValue);
 
                 let entry = { id: sourceStructure.series_field, cat_value: row[sourceStructure.category_field], value: entryValue };
-                let sparkline_labels = row[sourceStructure.category_field];
-                let sparkline_values = entryValue;
                 
                 for (let eachInHierarchy of hierarchicalDS) {
                     if (eachInHierarchy.id == row[sourceStructure.id_field]) { // found the instance
                         if (eachInHierarchy[row[sourceStructure.series_field]] == null) { // new series
                             
                             eachInHierarchy[row[sourceStructure.series_field]] = [entry];
-                            eachInHierarchy['sparkline_labels_' + row[sourceStructure.series_field]] = [sparkline_labels];
-                            eachInHierarchy['sparkline_values_' + row[sourceStructure.series_field]] = [sparkline_values];
 
                             eachInHierarchy['totals_' + row[sourceStructure.series_field]] = entry.value;
                             eachInHierarchy['stats_' + row[sourceStructure.series_field]] = {
@@ -113,9 +164,7 @@ export default {
                             };
                         } else { // Existing instance and series
                             eachInHierarchy[row[sourceStructure.series_field]].push(entry);
-                            eachInHierarchy['sparkline_labels_' + row[sourceStructure.series_field]].push(sparkline_labels);
-                            eachInHierarchy['sparkline_values_' + row[sourceStructure.series_field]].push(sparkline_values);
-                            
+
                             eachInHierarchy['totals_' + row[sourceStructure.series_field]] = eachInHierarchy['totals_' + row[sourceStructure.series_field]] + entry.value;
 
                             if (eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialCat > entry.cat_value) {
@@ -148,29 +197,112 @@ export default {
                 let nuInstance = row;
                 nuInstance.id = row[sourceStructure.id_field];
                 nuInstance['totals_' + row[sourceStructure.series_field]] = entry.value;
-                nuInstance['sparkline_labels_' + row[sourceStructure.series_field]] = [sparkline_labels];
-                nuInstance['sparkline_values_' + row[sourceStructure.series_field]] = [sparkline_values];
                 nuInstance[row[sourceStructure.series_field]] = [entry];
                 nuInstance['stats_' + row[sourceStructure.series_field]] = {
                     initialValue: entry.value,
                     finalValue: entry.value,
                     initialCat: entry.cat_value,
                     finalCat: entry.cat_value
-                };
+                };                
                 hierarchicalDS.push(nuInstance);
             }
 
-            let fnSorter = (a, b) => {
-                if (a.deltaPerc && b.deltaPerc) {
-                    return - (a.deltaPerc - b.deltaPerc);
-                }
-                if (a.deltaPerc) return -1;
-                if (b.deltaPerc) return 1;
-                return 0;
+            // let fnSorter = (a, b) => {
+            //     if (a.deltaPerc && b.deltaPerc) {
+            //         return - (a.deltaPerc - b.deltaPerc);
+            //     }
+            //     if (a.deltaPerc) return -1;
+            //     if (b.deltaPerc) return 1;
+            //     return 0;
+            // }
+          
+            this.createSparklineFields(hierarchicalDS, firstCat, lastCat, allSeries);
+
+            let order_field = 'last_value_' + allSeries[0];
+            if (sourceStructure.order_field){
+                order_field = sourceStructure.order_field;
             }
+            let fnSorter = (a, b) => {
+                return (a[order_field] < b[order_field]) ? 1 : -1 ;
+            }
+
             hierarchicalDS.sort(fnSorter);
             
             this.dataset = hierarchicalDS;
+
+        },
+
+        createSparklineFields(dataset, firstCat, lastCat, seriesList, fillZeros = true){
+            for (let row of dataset){
+
+                for (let series_value of seriesList){
+                    let series = row[series_value];
+
+                    series.sort(function(a,b){ 
+                        return (a.cat_value > b.cat_value) ? 1 : -1 ;
+                    });
+
+                    let sparkline_labels = [];
+                    let sparkline_values = [];
+                    let higher_value = 0;
+                    let higher_cat = firstCat;
+
+                    let firstSeries = series[0];
+                    
+                    if (fillZeros){
+                        if (firstSeries.cat_value > firstCat){
+                            for(let i = firstCat; i < firstSeries.cat_value; i++){
+                                sparkline_labels.push(i);
+                                sparkline_values.push(0);                                
+                            }
+                        }
+                    }
+
+                    sparkline_labels.push(firstSeries.cat_value);
+                    sparkline_values.push(firstSeries.value);  
+
+                    higher_value = firstSeries.value;
+                    higher_cat = firstSeries.cat_value;
+
+                    for(let k = 1; k < series.length; k++){
+                        let seriesPrev = series[k-1];
+                        if (series[k]){
+                            if (fillZeros){
+                                for(let j = seriesPrev.cat_value + 1; j < series[k].cat_value; j++){
+                                    sparkline_labels.push(j);
+                                    sparkline_values.push(0);                                
+                                }
+                            }
+                            sparkline_labels.push(series[k].cat_value);
+                            sparkline_values.push(series[k].value);    
+                            if (series[k].value > higher_value){
+                                higher_value = series[k].value;
+                                higher_cat = series[k].cat_value;
+                            }                            
+                        }
+                    }
+
+                    if (fillZeros){
+                        let lastSeries = series[series.length - 1];
+                        if (lastSeries.cat_value < lastCat){
+                            for(let i = lastSeries.cat_value + 1; i <= lastCat; i++){
+                                sparkline_labels.push(i);
+                                sparkline_values.push(0);                                
+                            }
+                        }
+                    }
+
+                    row['sparkline_labels_' + series_value] = sparkline_labels;
+                    row['sparkline_values_' + series_value] = sparkline_values;
+                    row['last_value_' + series_value] = sparkline_values[sparkline_values.length-1];
+                    row['higher_value_' + series_value] = higher_value;
+                    row['higher_cat_' + series_value] = higher_cat;
+
+                }
+            }
+
+            // return dataset;
+
         },
 
         triggerChartUpdates() {
