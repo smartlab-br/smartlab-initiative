@@ -240,65 +240,80 @@ export default {
                 for (let series_value of seriesList){
                     let series = row[series_value];
 
-                    series.sort(function(a,b){ 
-                        return (a.cat_value > b.cat_value) ? 1 : -1 ;
-                    });
-
                     let sparkline_labels = [];
                     let sparkline_values = [];
-                    let higher_value = 0;
-                    let higher_cat = firstCat;
-
-                    let firstSeries = series[0];
+                    let higher_value = null;
+                    let higher_cat = null;
                     
-                    if (fillZeros){
-                        if (firstSeries.cat_value > firstCat){
-                            for(let i = firstCat; i < firstSeries.cat_value; i++){
-                                sparkline_labels.push(i);
-                                sparkline_values.push(0);                                
-                            }
-                        }
-                    }
+                    if (series){
+                        higher_cat = firstCat;
+                        higher_value = 0;
 
-                    sparkline_labels.push(firstSeries.cat_value);
-                    sparkline_values.push(firstSeries.value);  
+                        series.sort(function(a,b){ 
+                            return (a.cat_value > b.cat_value) ? 1 : -1 ;
+                        });
 
-                    higher_value = firstSeries.value;
-                    higher_cat = firstSeries.cat_value;
 
-                    for(let k = 1; k < series.length; k++){
-                        let seriesPrev = series[k-1];
-                        if (series[k]){
-                            if (fillZeros){
-                                for(let j = seriesPrev.cat_value + 1; j < series[k].cat_value; j++){
-                                    sparkline_labels.push(j);
+                        let firstSeries = series[0];
+                        
+                        if (fillZeros){
+                            if (firstSeries.cat_value > firstCat){
+                                for(let i = firstCat; i < firstSeries.cat_value; i++){
+                                    sparkline_labels.push(i);
                                     sparkline_values.push(0);                                
                                 }
                             }
-                            sparkline_labels.push(series[k].cat_value);
-                            sparkline_values.push(series[k].value);    
-                            if (series[k].value > higher_value){
-                                higher_value = series[k].value;
-                                higher_cat = series[k].cat_value;
-                            }                            
                         }
-                    }
 
-                    if (fillZeros){
-                        let lastSeries = series[series.length - 1];
-                        if (lastSeries.cat_value < lastCat){
-                            for(let i = lastSeries.cat_value + 1; i <= lastCat; i++){
-                                sparkline_labels.push(i);
-                                sparkline_values.push(0);                                
+                        sparkline_labels.push(firstSeries.cat_value);
+                        sparkline_values.push(firstSeries.value);  
+
+                        higher_value = firstSeries.value;
+                        higher_cat = firstSeries.cat_value;
+
+                        for(let k = 1; k < series.length; k++){
+                            let seriesPrev = series[k-1];
+                            if (series[k]){
+                                if (fillZeros){
+                                    for(let j = seriesPrev.cat_value + 1; j < series[k].cat_value; j++){
+                                        sparkline_labels.push(j);
+                                        sparkline_values.push(0);                                
+                                    }
+                                }
+                                sparkline_labels.push(series[k].cat_value);
+                                sparkline_values.push(series[k].value);    
+                                if (series[k].value > higher_value){
+                                    higher_value = series[k].value;
+                                    higher_cat = series[k].cat_value;
+                                }                            
                             }
                         }
+
+                        if (fillZeros){
+                            let lastSeries = series[series.length - 1];
+                            if (lastSeries.cat_value < lastCat){
+                                for(let i = lastSeries.cat_value + 1; i <= lastCat; i++){
+                                    sparkline_labels.push(i);
+                                    sparkline_values.push(0);                                
+                                }
+                            }
+                        }
+                        
+                    } else {
+                        row[series_value] = [];
+                        row['totals_' + series_value] = 0;
                     }
 
                     row['sparkline_labels_' + series_value] = sparkline_labels;
                     row['sparkline_values_' + series_value] = sparkline_values;
-                    row['last_value_' + series_value] = sparkline_values[sparkline_values.length-1];
                     row['higher_value_' + series_value] = higher_value;
-                    row['higher_value_str_' + series_value] = higher_value + "(" + higher_cat + ")";
+                    if(higher_value){
+                        row['last_value_' + series_value] = sparkline_values[sparkline_values.length-1];
+                        row['higher_value_str_' + series_value] = higher_value + "(" + higher_cat + ")";
+                    } else {
+                        row['last_value_' + series_value] = 0;
+                        row['higher_value_str_' + series_value] = "";
+                    }
 
                 }
             }
