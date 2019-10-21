@@ -1,5 +1,5 @@
 <template>
-  <v-layout column pa-2>
+  <v-layout column pa-2 max-width="100%">
         <v-progress-linear v-if="!dataset"
           height="5"
           :indeterminate="!dataset"
@@ -18,7 +18,7 @@
 
             <template :headers="structure.headers" slot="items" slot-scope="props">
                 <!-- v-for SEM BIND, pois está restrito ao contexto do template do data-table -->
-                <td pa-0 v-for="hdr in structure.headers" :style="(hdr.width?'width:' + hdr.width + ';' :'') + (hdr.item_align?'text-align:'+hdr.item_align:'')">
+                <td pa-0 v-for="hdr in structure.headers" :style="(hdr.item_align?'text-align:'+hdr.item_align:'')">
                         <!--
                     <v-layout row nowrap pa-0 fill-height>
 
@@ -51,7 +51,7 @@
                         -->
                         <!--
                             <v-flex xs2 text-xs-center>
-                                {{ (props.item['totals_'+ hdr.series]?props.item['totals_'+ hdr.series]: 0) }}
+                                {{ (props.item['total_'+ hdr.series]?props.item['total_'+ hdr.series]: 0) }}
                             </v-flex>
                             <v-flex xs4 px-2 class="sparkline">
                         -->
@@ -88,8 +88,7 @@
                             v-html="props.item[hdr.value]">
                         </div>
                         -->
-                        <div v-else
-                            :class="(hdr.item_class != null ? hdr.item_class : '')">
+                        <div v-else>
                             {{ props.item[hdr.value] }}
                         </div>
                     <!--
@@ -118,7 +117,6 @@ export default {
     methods: {
         customSort(items, index, isDesc) {
             let sort_field = index;
-            //for spark headers, sort by totals
             if (index){
                 for(let header of this.structure.headers){
                     if (header.value == index && header.sort_field){
@@ -140,9 +138,6 @@ export default {
             let hierarchicalDS = [];
             let allSeries = [];
 
-            let firstCat = parseInt(sourceDS[0][sourceStructure.category_field_min]);
-            let lastCat = parseInt(sourceDS[0][sourceStructure.category_field_max]);
-
             fromSource: for (let row of sourceDS) {
                 if (!allSeries.includes(row[sourceStructure.series_field])) allSeries.push(row[sourceStructure.series_field]);
 
@@ -157,39 +152,39 @@ export default {
                             
                             eachInHierarchy[row[sourceStructure.series_field]] = [entry];
 
-                            eachInHierarchy['totals_' + row[sourceStructure.series_field]] = entry.value;
-                            eachInHierarchy['stats_' + row[sourceStructure.series_field]] = {
-                                initialValue: entry.value,
-                                finalValue: entry.value,
-                                initialCat: entry.cat_value,
-                                finalCat: entry.cat_value
-                            };
+                            // eachInHierarchy['total_' + row[sourceStructure.series_field]] = entry.value;
+                            // eachInHierarchy['stats_' + row[sourceStructure.series_field]] = {
+                            //     initialValue: entry.value,
+                            //     finalValue: entry.value,
+                            //     initialCat: entry.cat_value,
+                            //     finalCat: entry.cat_value
+                            // };
                         } else { // Existing instance and series
                             eachInHierarchy[row[sourceStructure.series_field]].push(entry);
 
-                            eachInHierarchy['totals_' + row[sourceStructure.series_field]] = eachInHierarchy['totals_' + row[sourceStructure.series_field]] + entry.value;
+                            // eachInHierarchy['total_' + row[sourceStructure.series_field]] = eachInHierarchy['total_' + row[sourceStructure.series_field]] + entry.value;
 
-                            if (eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialCat > entry.cat_value) {
-                                eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialValue = entry.value;
-                                eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialCat = entry.cat_value;
-                            }
-                            if (eachInHierarchy['stats_' + row[sourceStructure.series_field]].finalCat < entry.cat_value) {
-                                eachInHierarchy['stats_' + row[sourceStructure.series_field]].finalValue = entry.value;
-                                eachInHierarchy['stats_' + row[sourceStructure.series_field]].finalCat = entry.cat_value;
-                            }
+                            // if (eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialCat > entry.cat_value) {
+                            //     eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialValue = entry.value;
+                            //     eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialCat = entry.cat_value;
+                            // }
+                            // if (eachInHierarchy['stats_' + row[sourceStructure.series_field]].finalCat < entry.cat_value) {
+                            //     eachInHierarchy['stats_' + row[sourceStructure.series_field]].finalValue = entry.value;
+                            //     eachInHierarchy['stats_' + row[sourceStructure.series_field]].finalCat = entry.cat_value;
+                            // }
 
-                            if (eachInHierarchy[row[sourceStructure.series_field]].length > 1 &&
-                                eachInHierarchy['stats_' + row[sourceStructure.series_field]] &&
-                                eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialValue != 0) {
-                                eachInHierarchy['stats_' + row[sourceStructure.series_field]].deltaPerc = (eachInHierarchy['stats_' + row[sourceStructure.series_field]].finalValue - eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialValue) / eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialValue * 100;
-                                eachInHierarchy['deltaPerc_' + row[sourceStructure.series_field]] = (eachInHierarchy['stats_' + row[sourceStructure.series_field]].finalValue - eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialValue) / eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialValue * 100;
+                            // if (eachInHierarchy[row[sourceStructure.series_field]].length > 1 &&
+                            //     eachInHierarchy['stats_' + row[sourceStructure.series_field]] &&
+                            //     eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialValue != 0) {
+                            //     eachInHierarchy['stats_' + row[sourceStructure.series_field]].deltaPerc = (eachInHierarchy['stats_' + row[sourceStructure.series_field]].finalValue - eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialValue) / eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialValue * 100;
+                            //     eachInHierarchy['deltaPerc_' + row[sourceStructure.series_field]] = (eachInHierarchy['stats_' + row[sourceStructure.series_field]].finalValue - eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialValue) / eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialValue * 100;
                                 // Delta % for sorter
-                                if (row[sourceStructure.series_field] == sourceStructure.sorter.indicador) {
-                                    eachInHierarchy.deltaPerc = (eachInHierarchy['stats_' + row[sourceStructure.series_field]].finalValue - eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialValue) / eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialValue * 100;
-                                }
+                                // if (row[sourceStructure.series_field] == sourceStructure.sorter.indicador) {
+                                //     eachInHierarchy.deltaPerc = (eachInHierarchy['stats_' + row[sourceStructure.series_field]].finalValue - eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialValue) / eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialValue * 100;
+                                // }
                                 // Delta % string formatters
-                                eachInHierarchy['str_deltaPerc_' + row[sourceStructure.series_field]] = this.$numberTransformService.constructor.formatNumber(eachInHierarchy['deltaPerc_' + row[sourceStructure.series_field]], 'porcentagem');
-                            }
+                            //     eachInHierarchy['str_deltaPerc_' + row[sourceStructure.series_field]] = this.$numberTransformService.constructor.formatNumber(eachInHierarchy['deltaPerc_' + row[sourceStructure.series_field]], 'porcentagem');
+                            // }
                         }
                         continue fromSource;
                     }    
@@ -198,14 +193,16 @@ export default {
                 // If not found, create a new instance and push to the dataset
                 let nuInstance = row;
                 nuInstance.id = row[sourceStructure.id_field];
-                nuInstance['totals_' + row[sourceStructure.series_field]] = entry.value;
+                nuInstance.first_cat = row[sourceStructure.category_field_min];
+                nuInstance.last_cat = row[sourceStructure.category_field_max];
+                // nuInstance['total_' + row[sourceStructure.series_field]] = entry.value;
                 nuInstance[row[sourceStructure.series_field]] = [entry];
-                nuInstance['stats_' + row[sourceStructure.series_field]] = {
-                    initialValue: entry.value,
-                    finalValue: entry.value,
-                    initialCat: entry.cat_value,
-                    finalCat: entry.cat_value
-                };                
+                // nuInstance['stats_' + row[sourceStructure.series_field]] = {
+                //     initialValue: entry.value,
+                //     finalValue: entry.value,
+                //     initialCat: entry.cat_value,
+                //     finalCat: entry.cat_value
+                // };                
                 hierarchicalDS.push(nuInstance);
             }
 
@@ -218,8 +215,9 @@ export default {
             //     return 0;
             // }
           
-            this.createSparklineFields(hierarchicalDS, firstCat, lastCat, allSeries);
+            this.createSparklineFields(hierarchicalDS, allSeries);
 
+            //default order = last value in first series
             let order_field = 'last_value_' + allSeries[0];
             if (sourceStructure.order_field){
                 order_field = sourceStructure.order_field;
@@ -234,7 +232,7 @@ export default {
 
         },
 
-        createSparklineFields(dataset, firstCat, lastCat, seriesList, fillZeros = true){
+        createSparklineFields(dataset, seriesList, fillZeros = true){
             for (let row of dataset){
 
                 for (let series_value of seriesList){
@@ -242,12 +240,11 @@ export default {
 
                     let sparkline_labels = [];
                     let sparkline_values = [];
-                    let higher_value = null;
-                    let higher_cat = null;
+                    let higher_cat = row.first_cat;
+                    let higher_value = 0;
+                    let total = 0;
                     
                     if (series){
-                        higher_cat = firstCat;
-                        higher_value = 0;
 
                         series.sort(function(a,b){ 
                             return (a.cat_value > b.cat_value) ? 1 : -1 ;
@@ -257,8 +254,8 @@ export default {
                         let firstSeries = series[0];
                         
                         if (fillZeros){
-                            if (firstSeries.cat_value > firstCat){
-                                for(let i = firstCat; i < firstSeries.cat_value; i++){
+                            if (firstSeries.cat_value > row.first_cat){
+                                for(let i = row.first_cat; i < firstSeries.cat_value; i++){
                                     sparkline_labels.push(i);
                                     sparkline_values.push(0);                                
                                 }
@@ -270,44 +267,44 @@ export default {
 
                         higher_value = firstSeries.value;
                         higher_cat = firstSeries.cat_value;
+                        total = firstSeries.value;
 
                         for(let k = 1; k < series.length; k++){
                             let seriesPrev = series[k-1];
-                            if (series[k]){
-                                if (fillZeros){
-                                    for(let j = seriesPrev.cat_value + 1; j < series[k].cat_value; j++){
-                                        sparkline_labels.push(j);
-                                        sparkline_values.push(0);                                
-                                    }
+                            if (fillZeros){
+                                for(let j = seriesPrev.cat_value + 1; j < series[k].cat_value; j++){
+                                    sparkline_labels.push(j);
+                                    sparkline_values.push(0);                                
                                 }
-                                sparkline_labels.push(series[k].cat_value);
-                                sparkline_values.push(series[k].value);    
-                                if (series[k].value > higher_value){
-                                    higher_value = series[k].value;
-                                    higher_cat = series[k].cat_value;
-                                }                            
                             }
+                            sparkline_labels.push(series[k].cat_value);
+                            sparkline_values.push(series[k].value);    
+                            total += series[k].value;
+                            if (series[k].value > higher_value){
+                                higher_value = series[k].value;
+                                higher_cat = series[k].cat_value;
+                            }                            
                         }
 
                         if (fillZeros){
                             let lastSeries = series[series.length - 1];
-                            if (lastSeries.cat_value < lastCat){
-                                for(let i = lastSeries.cat_value + 1; i <= lastCat; i++){
+                            if (lastSeries.cat_value < row.last_cat){
+                                for(let i = lastSeries.cat_value + 1; i <= row.last_cat; i++){
                                     sparkline_labels.push(i);
                                     sparkline_values.push(0);                                
                                 }
                             }
                         }
                         
-                    } else {
+                    } else { //multi series and current series not exists
                         row[series_value] = [];
-                        row['totals_' + series_value] = 0;
                     }
 
                     row['sparkline_labels_' + series_value] = sparkline_labels;
                     row['sparkline_values_' + series_value] = sparkline_values;
+                    row['total_' + series_value] = total;
                     row['higher_value_' + series_value] = higher_value;
-                    if(higher_value){
+                    if(series){
                         row['last_value_' + series_value] = sparkline_values[sparkline_values.length-1];
                         row['higher_value_str_' + series_value] = higher_value + "(" + higher_cat + ")";
                     } else {
@@ -322,58 +319,58 @@ export default {
 
         },
 
-        triggerChartUpdates() {
-            // Transform color array into a dictionary
-            let colorDict = {};
-            if (this.structure.chart_options.colorArray && this.structure.chart_options.indicadores) {
-                for (let indx in this.structure.chart_options.indicadores) {
-                    colorDict[this.structure.chart_options.indicadores[indx]] = this.structure.chart_options.colorArray[indx];
-                }
-            }
+        // triggerChartUpdates() {
+        //     // Transform color array into a dictionary
+        //     let colorDict = {};
+        //     if (this.structure.chart_options.colorArray && this.structure.chart_options.indicadores) {
+        //         for (let indx in this.structure.chart_options.indicadores) {
+        //             colorDict[this.structure.chart_options.indicadores[indx]] = this.structure.chart_options.colorArray[indx];
+        //         }
+        //     }
 
-            // Generate charts
-            setTimeout(() => {
+        //     // Generate charts
+        //     setTimeout(() => {
 
-                let chart_headers = [
-                                        {"text": "", "value": "cat_value"},
-                                        {"text": "", "value": "value"}
-                                    ]
-                let structChart = Object.assign({}, this.structure);
-                structChart.headers = chart_headers;
+        //         let chart_headers = [
+        //                                 {"text": "", "value": "cat_value"},
+        //                                 {"text": "", "value": "value"}
+        //                             ]
+        //         let structChart = Object.assign({}, this.structure);
+        //         structChart.headers = chart_headers;
 
-                for (let sparkline of this.$el.getElementsByClassName("spark")) {
-                    let splitElementId = sparkline.id.split("_");
-                    let idFromElementId = splitElementId[splitElementId.length - 1];
-                    for (let row of this.dataset) {
-                        if (row.id == idFromElementId) { // Id from row matches element id on page
-                            let seriesFromElementId = splitElementId.slice(1, splitElementId.length -1).join('_');
-                            if (row[seriesFromElementId] == null) break; // Break if series dataset is non-existent
+        //         for (let sparkline of this.$el.getElementsByClassName("spark")) {
+        //             let splitElementId = sparkline.id.split("_");
+        //             let idFromElementId = splitElementId[splitElementId.length - 1];
+        //             for (let row of this.dataset) {
+        //                 if (row.id == idFromElementId) { // Id from row matches element id on page
+        //                     let seriesFromElementId = splitElementId.slice(1, splitElementId.length -1).join('_');
+        //                     if (row[seriesFromElementId] == null) break; // Break if series dataset is non-existent
 
-                            let options = Object.assign({}, this.structure.chart_options);
+        //                     let options = Object.assign({}, this.structure.chart_options);
 
-                            if (Object.keys(colorDict).length > 0) {
-                                delete options.colorArray;
-                                delete options.indicadores;
-                                options.color = colorDict[seriesFromElementId].toString();
-                            }
+        //                     if (Object.keys(colorDict).length > 0) {
+        //                         delete options.colorArray;
+        //                         delete options.indicadores;
+        //                         options.color = colorDict[seriesFromElementId].toString();
+        //                     }
                             
-                            this.chartGen(
-                                sparkline.id,
-                                this.structure.chart_type,
-                                structChart,
-                                options,
-                                row[seriesFromElementId],
-                                this.metadata,
-                                this.sectionIndex ? this.sectionIndex : 0
-                            ).then(
-                                (chartHandler) => {},
-                                (reject) => { this.sendError(reject); }
-                            );
-                        }
-                    }
-                }
-            }, 0);
-        },
+        //                     this.chartGen(
+        //                         sparkline.id,
+        //                         this.structure.chart_type,
+        //                         structChart,
+        //                         options,
+        //                         row[seriesFromElementId],
+        //                         this.metadata,
+        //                         this.sectionIndex ? this.sectionIndex : 0
+        //                     ).then(
+        //                         (chartHandler) => {},
+        //                         (reject) => { this.sendError(reject); }
+        //                     );
+        //                 }
+        //             }
+        //         }
+        //     }, 0);
+        // },
         
         removeFormatItems(headers){
             let items = JSON.parse(JSON.stringify(headers));
@@ -405,7 +402,7 @@ export default {
   .sparkline svg {
     height: 100%;
   }
-  table.v-table tbody td{
+  .sparklines-grid table.v-table tbody td{
     padding: 0 5px;
   }
 </style>
