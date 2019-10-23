@@ -14,8 +14,23 @@
             style="width: 100%;"
             :rows-per-page-items='[10,50,100,200,500,{"text":"$vuetify.dataIterator.rowsPerPageAll","value":-1}]'
             :custom-sort="customSort"
+            :pagination.sync="pagination"
             >
 
+            <template slot="headers" slot-scope="props">
+            <tr>
+                </th>
+                <th
+                v-for="header in props.headers"
+                :key="header.text"
+                :class="['column sortable', pagination.descending ? 'desc' : 'asc', header.value === pagination.sortBy ? 'active' : '']"
+                @click="changeSort(header.value)"
+                >
+                <v-icon small>arrow_upward</v-icon>
+                {{ header.type != 'spark' ? header.text : header.text + " (" + first_cat[header.series] + '-' + last_cat[header.series] + ')' }}
+                </th>
+            </tr>
+            </template>            
             <template :headers="structure.headers" slot="items" slot-scope="props">
                 <!-- v-for SEM BIND, pois está restrito ao contexto do template do data-table -->
                 <td pa-0 v-for="hdr in structure.headers" :style="(hdr.item_align?'text-align:'+hdr.item_align:'')">
@@ -58,10 +73,13 @@
                         <div px-2 class="sparkline" v-if="hdr.type && hdr.type == 'spark'">
                             <v-layout row nowrap> 
                                 <v-flex v-if="props.item['sparkline_values_' + hdr.series].length > 1" 
-                                    xs2 xl1 caption text-xs-right :style="'color:'+hdr.bgColor">
-                                    {{ props.item['sparkline_values_' + hdr.series][0] }}
+                                    xs2 xl2 micro-caption text-xs-right :style="'color:'+hdr.bgColor">
+                                    {{ hdr.format ? numberTransformService.formatNumber(
+                                                        props.item['sparkline_values_' + hdr.series][0], hdr.format, hdr.precision, hdr.multiplier, hdr.collapse, hdr.signed, hdr.uiTags ) 
+                                                  : props.item['sparkline_values_' + hdr.series][0] 
+                                    }}
                                 </v-flex>
-                                <v-flex xs8 xl10>
+                                <v-flex xs8 xl8>
                                     <v-sparkline 
                                         :value="props.item['sparkline_values_'+ hdr.series]"
                                         :color="hdr.bgColor"
@@ -71,8 +89,12 @@
                                     ></v-sparkline>
                                 </v-flex>
                                 <v-flex v-if="props.item['sparkline_values_' + hdr.series].length > 1" 
-                                    xs2 xl1 caption :style="'color:'+hdr.bgColor">
-                                    {{ props.item['sparkline_values_' + hdr.series][props.item['sparkline_values_' + hdr.series].length-1] }}
+                                    xs2 xl2 micro-caption text-xs-left :style="'color:'+hdr.bgColor">
+                                    {{ hdr.format ? numberTransformService.formatNumber(
+                                                        props.item['sparkline_values_' + hdr.series][props.item['sparkline_values_' + hdr.series].length-1], 
+                                                        hdr.format, hdr.precision, hdr.multiplier, hdr.collapse, hdr.signed, hdr.uiTags ) 
+                                                  : props.item['sparkline_values_' + hdr.series][props.item['sparkline_values_' + hdr.series].length-1]
+                                    }}
                                 </v-flex>
                             </v-layout>
                         </div>
@@ -89,7 +111,7 @@
                         </div>
                         -->
                         <div v-else>
-                            {{ props.item[hdr.value] }}
+                            {{ props.item['fmt_' + hdr.value] ? props.item['fmt_' + hdr.value]: props.item[hdr.value] }}
                         </div>
                     <!--
                     </v-layout>
@@ -102,13 +124,18 @@
 
 <script>
 import FLPOBaseLayout from '../FLPOBaseLayout.vue';
+import NumberTransformService from '../../assets/service/singleton/numberTransformService'
 
 export default {
     extends: FLPOBaseLayout,
     data() {
         return {
             dataset: null,
-            disableInitialSort: true
+            disableInitialSort: true,
+            numberTransformService: NumberTransformService,
+            pagination: {}, 
+            first_cat: {},
+            last_cat: {}        
         }
     },
     created () {
@@ -133,21 +160,44 @@ export default {
                 });
             }
             return items;
-        },        
+        },   
+        changeSort (column) {
+            if (this.pagination.sortBy === column) {
+            this.pagination.descending = !this.pagination.descending
+            } else {
+            this.pagination.sortBy = column
+            this.pagination.descending = false
+            }
+        },
         fillFromDataset(sourceDS, rules, sourceStructure, addedParams = null, metadata = null) {
             let hierarchicalDS = [];
             let allSeries = [];
+            let series_first_cat = {};
+            let series_last_cat = {};
 
             fromSource: for (let row of sourceDS) {
-                if (!allSeries.includes(row[sourceStructure.series_field])) allSeries.push(row[sourceStructure.series_field]);
+                if (!allSeries.includes(row[sourceStructure.series_field])){ //new series
+                  allSeries.push(row[sourceStructure.series_field]);
+                  series_first_cat[row[sourceStructure.series_field]] = parseInt(row[sourceStructure.category_field]);
+                  series_last_cat[row[sourceStructure.series_field]] = parseInt(row[sourceStructure.category_field]);
+                } else {
+                    if (parseInt(row[sourceStructure.category_field]) < series_first_cat[row[sourceStructure.series_field]]){
+                         series_first_cat[row[sourceStructure.series_field]] = parseInt(row[sourceStructure.category_field]);
+                    }
+
+                    if (parseInt(row[sourceStructure.category_field]) > series_last_cat[row[sourceStructure.series_field]]){
+                         series_last_cat[row[sourceStructure.series_field]] = parseInt(row[sourceStructure.category_field]);
+                    }
+                }
 
                 let entryValue = row[sourceStructure.value_field] ? row[sourceStructure.value_field] : 0;
                 if (typeof entryValue !== "number") entryValue = parseFloat(entryValue);
 
-                let entry = { id: sourceStructure.series_field, cat_value: row[sourceStructure.category_field], value: entryValue };
+                let entry = { id: sourceStructure.series_field, cat_value: parseInt(row[sourceStructure.category_field]), value: entryValue };
                 
                 for (let eachInHierarchy of hierarchicalDS) {
                     if (eachInHierarchy.id == row[sourceStructure.id_field]) { // found the instance
+
                         if (eachInHierarchy[row[sourceStructure.series_field]] == null) { // new series
                             
                             eachInHierarchy[row[sourceStructure.series_field]] = [entry];
@@ -193,8 +243,7 @@ export default {
                 // If not found, create a new instance and push to the dataset
                 let nuInstance = row;
                 nuInstance.id = row[sourceStructure.id_field];
-                nuInstance.first_cat = row[sourceStructure.category_field_min];
-                nuInstance.last_cat = row[sourceStructure.category_field_max];
+
                 // nuInstance['total_' + row[sourceStructure.series_field]] = entry.value;
                 nuInstance[row[sourceStructure.series_field]] = [entry];
                 // nuInstance['stats_' + row[sourceStructure.series_field]] = {
@@ -215,7 +264,9 @@ export default {
             //     return 0;
             // }
           
-            this.createSparklineFields(hierarchicalDS, allSeries);
+            this.createSparklineFields(hierarchicalDS, allSeries, series_first_cat, series_last_cat);
+            this.first_cat = series_first_cat;
+            this.last_cat = series_last_cat;
 
             //default order = last value in first series
             let order_field = 'last_value_' + allSeries[0];
@@ -232,7 +283,7 @@ export default {
 
         },
 
-        createSparklineFields(dataset, seriesList, fillZeros = true){
+        createSparklineFields(dataset, seriesList, series_first_cat, series_last_cat, fillZeros = true){
             for (let row of dataset){
 
                 for (let series_value of seriesList){
@@ -240,7 +291,7 @@ export default {
 
                     let sparkline_labels = [];
                     let sparkline_values = [];
-                    let higher_cat = row.first_cat;
+                    let higher_cat = series_first_cat[series_value];
                     let higher_value = 0;
                     let total = 0;
                     
@@ -254,8 +305,8 @@ export default {
                         let firstSeries = series[0];
                         
                         if (fillZeros){
-                            if (firstSeries.cat_value > row.first_cat){
-                                for(let i = row.first_cat; i < firstSeries.cat_value; i++){
+                            if (firstSeries.cat_value > series_first_cat[series_value]){
+                                for(let i = series_first_cat[series_value]; i < firstSeries.cat_value; i++){
                                     sparkline_labels.push(i);
                                     sparkline_values.push(0);                                
                                 }
@@ -288,8 +339,8 @@ export default {
 
                         if (fillZeros){
                             let lastSeries = series[series.length - 1];
-                            if (lastSeries.cat_value < row.last_cat){
-                                for(let i = lastSeries.cat_value + 1; i <= row.last_cat; i++){
+                            if (lastSeries.cat_value < series_last_cat[series_value]){
+                                for(let i = lastSeries.cat_value + 1; i <= series_last_cat[series_value]; i++){
                                     sparkline_labels.push(i);
                                     sparkline_values.push(0);                                
                                 }
@@ -312,7 +363,25 @@ export default {
                         row['higher_value_str_' + series_value] = "";
                     }
 
+                    for (let header of this.structure.headers){
+                        if (header.format){
+                            if (header.sort_field){
+                                row['fmt_'+ header.sort_field] = NumberTransformService.formatNumber(
+                                    row[header.sort_field], header.format, header.precision, header.multiplier, header.collapse, header.signed, header.uiTags );
+                            } else {
+                                row['fmt_'+ header.value] = NumberTransformService.formatNumber(
+                                    row[header.value], header.format, header.precision, header.multiplier, header.collapse, header.signed, header.uiTags );
+                            }
+                        }
+                    }
+
+                    if(series && row['fmt_higher_value_' + series_value]){
+                        row['higher_value_str_' + series_value] = row['fmt_higher_value_' + series_value] + "(" + higher_cat + ")";
+                    } 
+
+
                 }
+
             }
 
             // return dataset;

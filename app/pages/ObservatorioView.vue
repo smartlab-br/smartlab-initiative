@@ -16,19 +16,17 @@
           <v-flex id="screenTitle" xs12 class="pb-0 pt-0 my-0 display-title ubuntu screen-title white--text text-xs-center">
             {{ observatorio ? observatorio.title : '' }}
             -->
-              <!--
               <v-layout 
               :class="{'pa-1 ma-1': $vuetify.breakpoint.xsOnly, 
                        'pa-2 ma-2': $vuetify.breakpoint.smOnly, 
                        'pa-3 ma-3': $vuetify.breakpoint.mdOnly, 
                        'pa-4 ma-4': $vuetify.breakpoint.lgAndUp }">
               <img 
-                  :src="'/static/smartlab/' + (observatorio ? observatorio.map_image.concat('.svg') : '')"
+                  :src="'/static/smartlab/' + (observatorio ? idObservatorio.concat('.svg') : '')"
                   :alt="(observatorio ? observatorio.title : '')"
                   width="100%"
               />
             </v-layout>
-            -->
           </v-flex>
           <!--
           <v-flex id="screenTitleSub" xs12 class="pb-4 pt-0 mb-3 headline ubuntu white--text text-xs-right">
@@ -221,6 +219,35 @@
           </flpo-composite-text>
         </v-flex>
 
+      </v-layout>
+    </v-container>
+
+    <!-- Sparklines -->
+    <v-container v-if="observatorio && observatorio.sparklines" fluid ma-0 pa-0
+      :style="'background-color:' + $colorsService.constructor.assessZebraBG(0, $vuetify.theme) + ';'">
+      <v-layout row wrap>
+        <v-flex xs12 v-if="observatorio.sparklines.title" px-2 py-0>
+          <flpo-composite-text
+            :id = "'desc_sparkline_' + idObservatorio"
+            :structure="observatorio.sparklines.title"
+            :custom-params="customParams"
+            :custom-functions="customFunctions"
+            :custom-filters="customParams"
+            section-class="pa-0"
+            @showSnackbar="snackAlert">
+          </flpo-composite-text>
+        </v-flex>
+        <v-flex px-4>
+          <v-layout row wrap>
+          <v-flex py-0 v-for="(strSparklines, index) in observatorio.sparklines.tables" :key="index" :class="strSparklines.cls?strSparklines.cls:'xs12'" text-xs-center>
+            {{ strSparklines.title }}
+            <flpo-sparklines 
+              :dataset = "dataset"
+              :structure = "strSparklines">
+            </flpo-sparklines>
+          </v-flex>
+          </v-layout>
+        </v-flex>
       </v-layout>
     </v-container>
 
