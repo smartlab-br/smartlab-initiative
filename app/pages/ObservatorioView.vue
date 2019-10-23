@@ -16,19 +16,17 @@
           <v-flex id="screenTitle" xs12 class="pb-0 pt-0 my-0 display-title ubuntu screen-title white--text text-xs-center">
             {{ observatorio ? observatorio.title : '' }}
             -->
-              <!--
               <v-layout 
               :class="{'pa-1 ma-1': $vuetify.breakpoint.xsOnly, 
                        'pa-2 ma-2': $vuetify.breakpoint.smOnly, 
                        'pa-3 ma-3': $vuetify.breakpoint.mdOnly, 
                        'pa-4 ma-4': $vuetify.breakpoint.lgAndUp }">
               <img 
-                  :src="'/static/smartlab/' + (observatorio ? observatorio.map_image.concat('.svg') : '')"
+                  :src="'/static/smartlab/' + (observatorio ? idObservatorio.concat('.svg') : '')"
                   :alt="(observatorio ? observatorio.title : '')"
                   width="100%"
               />
             </v-layout>
-            -->
           </v-flex>
           <!--
           <v-flex id="screenTitleSub" xs12 class="pb-4 pt-0 mb-3 headline ubuntu white--text text-xs-right">
