@@ -224,6 +224,35 @@
       </v-layout>
     </v-container>
 
+    <!-- Sparklines -->
+    <v-container v-if="observatorio && observatorio.sparklines" fluid ma-0 pa-0
+      :style="'background-color:' + $colorsService.constructor.assessZebraBG(0, $vuetify.theme) + ';'">
+      <v-layout row wrap>
+        <v-flex xs12 v-if="observatorio.sparklines.title" px-2 py-0>
+          <flpo-composite-text
+            :id = "'desc_sparkline_' + idObservatorio"
+            :structure="observatorio.sparklines.title"
+            :custom-params="customParams"
+            :custom-functions="customFunctions"
+            :custom-filters="customParams"
+            section-class="pa-0"
+            @showSnackbar="snackAlert">
+          </flpo-composite-text>
+        </v-flex>
+        <v-flex px-4>
+          <v-layout row wrap>
+          <v-flex py-0 v-for="(strSparklines, index) in observatorio.sparklines.tables" :key="index" :class="strSparklines.cls?strSparklines.cls:'xs12'" text-xs-center>
+            {{ strSparklines.title }}
+            <flpo-sparklines 
+              :dataset = "dataset"
+              :structure = "strSparklines">
+            </flpo-sparklines>
+          </v-flex>
+          </v-layout>
+        </v-flex>
+      </v-layout>
+    </v-container>
+
     <v-layout text-xs-center pa-0 ma-0
       class="footer-nav white--text">
       <v-layout row wrap caption class="cursor-pointer">
