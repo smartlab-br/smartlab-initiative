@@ -71,7 +71,7 @@ def sonarScanner() {
 
 def buildAndRegisterImage() {
     docker.withRegistry("${DOCKER_REGISTRY}", 'docker-registry.mpt') {
-        def img = docker.build("${NOME_IMAGEM_DOCKER}", "--pull --build-arg ZOOKEEPER_HOST=${env.ZOOKEEPER_HOST} --build-arg ZOOKEEPER_PORT=${env.ZOOKEEPER_PORT} .")
+        def img = docker.build("${NOME_IMAGEM_DOCKER}", "--pull --build-arg ZOOKEEPER_HOST=${ZK_HOST} --build-arg ZOOKEEPER_PORT=${ZK_PORT} .")
         img.push("${VERSAO}")
     }
 }
