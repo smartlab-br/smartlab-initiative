@@ -79,11 +79,11 @@ module.exports = {
   },
   plugins: isProd
     ? [
-        // new UglifyJsPlugin({
-        //   uglifyOptions: {
-        //     compress: { warnings: false }
-        //   },
-        // }),
+        new UglifyJsPlugin({
+          uglifyOptions: {
+            compress: { warnings: false }
+          },
+        }),
 
         // new webpack.DefinePlugin({
         //   'process.env': {
