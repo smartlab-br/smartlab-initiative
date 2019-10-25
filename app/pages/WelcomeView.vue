@@ -2,7 +2,9 @@
   <v-layout row wrap class="pa-0">
     <v-flex fluid grid-list-lg xs12 overflow-hidden class="first-section pa-0" :style="displayHeight" style="overflow: hidden;">
       <!-- <v-parallax xs12 class="bg-parallax" height="auto" src="static/parallax/home.png"></v-parallax>-->
-      <v-layout xs12 class="bg-zoom bg-parallax-home" height="auto" :style="currentParallax"></v-layout> 
+      <transition name="fade">
+      <v-layout xs12 class="bg-zoom bg-parallax-home" height="auto" :style="currentParallax" v-show="backgroundVisible"></v-layout> 
+      </transition>
       <!-- style="background-image:url('/static/parallax/td.jpg');background-position: center center; background-size: cover;" -->
       <v-layout xs12 class="bg-parallax-home ma-0"></v-layout>
       <v-layout row wrap fill-height align-center justify-center pa-0 class="parallax-content-home" v-if="observatorios">
@@ -85,7 +87,8 @@
 
         parallaxFile: null,
         idParallaxfile: 0,
-        background_images: []
+        background_images: [],
+        backgroundVisible: true
         
       }
     },
@@ -110,12 +113,12 @@
         tmpBackgroundImages.then((result) => { 
           this.background_images = result 
           this.parallaxFile = this.background_images[this.idParallaxfile];
-          setInterval(this.setParallaxFile,10000);
+          setInterval(this.setParallaxFile,20000);
           });
       } else {
         this.background_images = tmpBackgroundImages;
         this.parallaxFile = this.background_images[this.idParallaxfile];
-        setInterval(this.setParallaxFile,10000);
+        setInterval(this.setParallaxFile,20000);
       }
 
 
@@ -140,10 +143,14 @@
     methods: {
       setParallaxFile(){
         this.idParallaxfile++;
+        this.backgroundVisible = false;
         if (this.idParallaxfile == this.background_images.length){
             this.idParallaxfile = 0;
         }
-        this.parallaxFile = this.background_images[this.idParallaxfile];
+        setTimeout(()=> { 
+          this.parallaxFile = this.background_images[this.idParallaxfile];
+          this.backgroundVisible = true;
+          }, 2000);
       },
       
       assessPageBottom() {
@@ -302,5 +309,6 @@
     border-radius: 0.3rem 0.3rem 0 0;
     background-color: rgba(0,0,0,0.6);
   }
+
 </style>
   

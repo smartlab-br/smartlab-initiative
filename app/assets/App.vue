@@ -1036,6 +1036,10 @@
     z-index: 1;
   }
 
+  .parallax-title-content >.flex {
+    z-index: 1;
+  }
+
   .parallax-content-home >.flex {
     z-index: 1;
   }
@@ -1079,12 +1083,16 @@
     -moz-animation: bg-zoom 40s ease-out 0s infinite;
     -o-animation: bg-zoom 40s ease-out 0s infinite;
     animation: bg-zoom 40s ease-out 0s infinite;
-    -webkit-transition: background-image 2s ease-in-out;
-    -moz-transition: background-image 2s ease-in-out;
-    -o-transition: background-image 2s ease-in-out;
-    transition: background-image 1s ease-in-out;
   }
   
+  .fade-enter-active, .fade-leave-active {
+    transition: opacity 2s;
+  }
+  .fade-enter, .fade-leave-to /* .fade-leave-active em versões anteriores a 2.1.8 */ {
+    opacity: 0;
+  }
+
+
   a{
     text-decoration: none;
   }

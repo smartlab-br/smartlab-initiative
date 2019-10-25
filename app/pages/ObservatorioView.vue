@@ -1,10 +1,11 @@
 <template>
   <v-layout row wrap class="pa-0">
     <v-flex v-if="observatorio" fluid grid-list-lg xs12 overflow-hidden class="first-section pa-0" :style="displayHeight">
-      <v-layout xs12 class="bg-zoom bg-parallax"
-        height="auto" :style="currentParallax"></v-layout>
+      <transition name="fade">
+        <v-layout xs12 class="bg-zoom bg-parallax" height="auto" :style="currentParallax" v-show="backgroundVisible"></v-layout>
+      </transition>
       <v-layout xs12 class="bg-parallax ma-0"></v-layout>
-      <v-layout row wrap px-3 justify-center class="parallax-content">
+      <v-layout row wrap px-3 justify-center class="parallax-title-content">
         <v-flex shrink>
           <v-flex id="screenTitle">
             <!--
@@ -337,9 +338,30 @@
         dims: null,
         mapEnabled: false,
         isPageBottom: true,
-        chartHandler: null
+        chartHandler: null,
+
+        parallaxFile: null,
+        idParallaxfile: 0,
+        backgroundVisible: true
       }
     },
+    created () {
+
+      if (this.observatorio && this.observatorio.background_images){
+        this.parallaxFile = this.observatorio.background_images[this.idParallaxfile];
+        if (this.observatorio.background_images.length > 1){
+          setInterval(this.setParallaxFile,20000);
+        }
+      } else if (this.idObservatorio ) {
+        this.$yamlFetcherService.loadYaml("br/observatorio/" + this.idObservatorio).then((result) => { 
+            this.parallaxFile = result.background_images[this.idParallaxfile];
+            if (result.background_images.length > 1){
+              setInterval(this.setParallaxFile,20000);
+            }
+          });
+      }
+
+    },  
     mounted: function() {
       this.resizeFirstSection();
       window.addEventListener('resize', this.resizeFirstSection);
@@ -358,6 +380,21 @@
       }
     },
     methods: {
+
+      setParallaxFile(){
+        this.idParallaxfile++;
+        if (this.observatorio) {
+          this.backgroundVisible = false;
+          if (this.idParallaxfile == this.observatorio.background_images.length){
+            this.idParallaxfile = 0;
+          }
+          setTimeout(()=> { 
+            this.parallaxFile = this.observatorio.background_images[this.idParallaxfile];
+            this.backgroundVisible = true;
+            }, 2000);
+        }
+      },
+      
       assessPageBottom() {
         this.isPageBottom = false;
         if (window && document) {
