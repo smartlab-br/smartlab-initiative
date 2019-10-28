@@ -240,7 +240,7 @@
         </v-flex>
         <v-flex px-4>
           <v-layout row wrap>
-          <v-flex py-0 v-for="(strSparklines, index) in observatorio.sparklines.tables" :key="index" :class="strSparklines.cls?strSparklines.cls:'xs12'" text-xs-center>
+          <v-flex pt-3 pb-0 v-for="(strSparklines, index) in observatorio.sparklines.tables" :key="index" :class="strSparklines.cls?strSparklines.cls:'xs12'" text-xs-center>
             {{ strSparklines.title }}
             <flpo-sparklines 
               :dataset = "dataset"

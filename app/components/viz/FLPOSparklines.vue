@@ -25,6 +25,7 @@
                 :key="header.text"
                 :class="['column sortable', pagination.descending ? 'desc' : 'asc', header.value === pagination.sortBy ? 'active' : '']"
                 @click="changeSort(header.value)"
+                :width="header.width"
                 >
                 <v-icon small>arrow_upward</v-icon>
                 {{ header.type != 'spark' ? header.text : header.text + " (" + first_cat[header.series] + '-' + last_cat[header.series] + ')' }}
@@ -357,7 +358,7 @@ export default {
                     row['higher_value_' + series_value] = higher_value;
                     if(series){
                         row['last_value_' + series_value] = sparkline_values[sparkline_values.length-1];
-                        row['higher_value_str_' + series_value] = higher_value + "(" + higher_cat + ")";
+                        row['higher_value_str_' + series_value] = higher_value + " (" + higher_cat + ")";
                     } else {
                         row['last_value_' + series_value] = 0;
                         row['higher_value_str_' + series_value] = "";
@@ -376,7 +377,7 @@ export default {
                     }
 
                     if(series && row['fmt_higher_value_' + series_value]){
-                        row['higher_value_str_' + series_value] = row['fmt_higher_value_' + series_value] + "(" + higher_cat + ")";
+                        row['higher_value_str_' + series_value] = row['fmt_higher_value_' + series_value] + " (" + higher_cat + ")";
                     } 
 
 
