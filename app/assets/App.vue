@@ -1146,19 +1146,20 @@
     top:0;
   }
 
-  .map_geo path {
-    stroke-dasharray: 1000;
-    stroke-dashoffset: 1000;
-    animation: migration-path 1s linear forwards;
+.migration-animate-path {
+    animation-name: migration-path;
+    animation-timing-function: linear;
     animation-iteration-count: infinite;
-    animation-duration: 5s;
+    animation-duration: 80s;
+    animation-direction: normal;
   }
 
   @keyframes migration-path {
-    to {
-      stroke-dashoffset: 0;
-      iterations: Infinity;
-      easing: 'ease-in-out';
+    from{
+      stroke-dashoffset: 100%
+    }
+    to{
+      stroke-dashoffset: 0%    
     }
   }
 
