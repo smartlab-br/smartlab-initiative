@@ -1146,7 +1146,7 @@
     top:0;
   }
 
-.migration-animate-path {
+  .migration-animate-path {
     animation-name: migration-path;
     animation-timing-function: linear;
     animation-iteration-count: infinite;
