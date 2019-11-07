@@ -33,7 +33,7 @@
         <v-flex xs12 class="justify-bottom pa-0 dim-menu">
           <v-tabs
             color="primary"
-            :v-if="dimensao_ativa"
+            v-if="dimensao_ativa"
             v-model="dimensao_ativa_id"
             show-arrows
             grow
@@ -93,7 +93,7 @@
             <div class="display-2-obs pt-3" v-html="dimensao_ativa != null ? (dimensao_ativa.title != null ? dimensao_ativa.title : dimensao_ativa.label) : ''">
             </div>
           </v-flex>
-          <!-- <div :v-if="localidade !== null && localidade.tipo !== null" class="display-1-obs white--text text-xs-center pb-5">
+          <!-- <div v-if="localidade !== null && localidade.tipo !== null" class="display-1-obs white--text text-xs-center pb-5">
             {{ currentContext }}
           </div> -->
           <v-layout row wrap justify-center pt-4>
@@ -825,7 +825,7 @@
           }
         }
 
-        this.thematicDatasets = thematicDatasets;
+        this.thematicDatasets = Object.assign(this.thematicDatasets, thematicDatasets);
 
         let datasetPromises = [];
         let indicadoresTematicos = this.$indicatorsModel.getMultipleGlobalDatasets(thematicDatasets, escopo, this.idLocalidade);
