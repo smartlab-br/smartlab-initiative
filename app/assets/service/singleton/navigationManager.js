@@ -4,7 +4,7 @@ class NavigationManager {
   
   constructor (){ }
 
-  static searchAnalysisUnit(router, searchItem, idObservatorio = null) {
+  static searchAnalysisUnit(router, searchItem, idObservatorio = null, observatorios = null) {
     let route = router.currentRoute;
 
     if (searchItem === null || searchItem === undefined) {
@@ -32,7 +32,7 @@ class NavigationManager {
         url = url + '&dimensao=' + route.query.dimensao;
       }
     } else {
-      for (let obs of observatories.observatoriesSearchOptions){
+      for (let obs of observatorios){
         if(searchItem.exclude_from && searchItem.exclude_from.includes(obs.id)){
           continue;
         } else {

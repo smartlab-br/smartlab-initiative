@@ -949,7 +949,7 @@
       },
       changeAnalysisUnit(router, searchItem, idObservatorio = null) {
         try {
-          this.$navigationManager.constructor.searchAnalysisUnit(router, searchItem, idObservatorio);
+          this.$navigationManager.constructor.searchAnalysisUnit(router, searchItem, idObservatorio, this.observatorios);
         }
         catch(err){
           this.snackAlert({ color : 'error', text: err });
