@@ -102,7 +102,7 @@
     </v-container>
 
     <!-- Dialogs -->
-    <v-dialog :v-if="dialog" v-model="dialog">
+    <v-dialog v-if="dialog" v-model="dialog">
       <v-card>
         <v-card-title class="headline-obs">Explicação</v-card-title>
         <v-card-text>

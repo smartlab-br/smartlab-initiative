@@ -30,7 +30,7 @@
               <v-layout row fill-height wrap pl-3 pt-3 pb-0 pr-0 class="display-1-obs mb-0">
                 <v-flex xs10 class="card-title">
                   {{ cmpTitle ? cmpTitle : '' }}
-                  <v-tooltip :v-if="structure && structure.info" bottom max-width="700px" close-delay="1000">
+                  <v-tooltip v-if="structure && structure.info" bottom max-width="700px" close-delay="1000">
                     <v-icon color="accent"
                       class="pb-1"
                       slot="activator">
@@ -122,7 +122,7 @@
       </v-card>
 
       <!-- Modal com o dataset -->
-      <v-dialog :v-if="dataset && structure && structure.headers && dialog" v-model="dialog">
+      <v-dialog v-if="dataset && structure && structure.headers && dialog" v-model="dialog">
         <v-card>
           <v-card-title class="headline-obs">Dataset</v-card-title>
           <v-card-text>

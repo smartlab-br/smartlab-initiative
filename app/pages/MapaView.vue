@@ -152,7 +152,7 @@
       <v-btn v-on:click="filter">Aplicar ></v-btn>
     </v-flex>
     <v-flex xs8 class="pa-0">
-      <div :v-if="indicator" class="map_container fill-height" id="map" ref="map">
+      <div v-if="indicator" class="map_container fill-height" id="map" ref="map">
       </div>
     </v-flex>
     <v-layout 

@@ -2,7 +2,7 @@
   <v-layout row wrap>
     <v-layout xs12 sm8 offset-xs0 offset-sm2 class="py-5" style="width:100%"> 
       <v-container grid-list-lg style="display:block;"> 
-        <flpo-sobre-layout :v-if="activeTab" :content="content" :active-tab="activeTab"></flpo-sobre-layout>
+        <flpo-sobre-layout v-if="activeTab" :content="content" :active-tab="activeTab"></flpo-sobre-layout>
       </v-container>
     </v-layout>
   </v-layout>

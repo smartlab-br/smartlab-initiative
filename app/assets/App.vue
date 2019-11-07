@@ -264,7 +264,7 @@
               return-object
               v-on:change="changeLocale()">
               <template slot="selection" slot-scope="data">
-                <span :v-if="data" class="text-xs-right">
+                <span v-if="data" class="text-xs-right">
                   <v-avatar size="24px" slot="activator" class="mr-2">
                     <img :src="data.item.flag" :alt="'Idioma ' + data.item.lbl">
                   </v-avatar>

@@ -2,7 +2,7 @@
   <v-layout secondary style="display: block;">
     <v-tabs
       color="secondary"
-      :v-if="content"
+      v-if="content"
       v-model="active"
       show-arrows
       class="elevation-1"
@@ -39,7 +39,7 @@
                 <template v-for="item in section.list">
                   <v-divider></v-divider>
                   <v-list-tile :key="item.name">
-                    <!-- <v-list-tile-avatar size="64" :v-if="item.avatar" class="mr-3 my-0">
+                    <!-- <v-list-tile-avatar size="64" v-if="item.avatar" class="mr-3 my-0">
                       <img :src="item.avatar" :alt="item.name">
                     </v-list-tile-avatar> -->
                     <v-list-tile-content>

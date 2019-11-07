@@ -1,9 +1,9 @@
 <template>
   <v-layout primary row wrap>
     <v-layout xs12 sm8 offset-xs0 offset-sm2 class="py-5" style="width:100%"> 
-      <v-container :v-if="sobre" grid-list-lg style="display:block;"> 
+      <v-container v-if="sobre" grid-list-lg style="display:block;"> 
         <flpo-sobre-layout :content="sobre" :active-tab="activeTab"
-          :v-if="sobre && activeTab">
+          v-if="sobre && activeTab">
         </flpo-sobre-layout>
       </v-container>
     </v-layout>

@@ -33,7 +33,7 @@
         <v-flex xs12 class="justify-bottom pa-0 dim-menu">
           <v-tabs
             color="primary"
-            :v-if="dimensao_ativa"
+            v-if="dimensao_ativa"
             v-model="dimensao_ativa_id"
             show-arrows
             grow
