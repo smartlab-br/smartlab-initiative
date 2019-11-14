@@ -39,7 +39,7 @@
         <v-layout v-else-if="descSection.type && descSection.type == 'ranking_list'" column pb-2>
           <v-flex pa-0 ml-2 class="headline-obs">{{ descSection.title }}</v-flex>
           <v-layout row wrap pb-2>
-            <flpo-ranking-list v-for="(ranking, index) in getActiveRankings" :key="index"
+            <flpo-ranking-list v-for="(ranking, index) in descSection.rankings.filter(filterGroup)" :key="(ranking.group ? ranking.group : 'group') + index"
               :structure="ranking" :customFunctions="customFunctions"
               :reactive-filter="reactiveFilter"
               :custom-filters="customFilters"
@@ -60,7 +60,7 @@
         <v-layout v-else-if="descSection.type && descSection.type == 'minicards'" column pb-2>
           <v-flex pa-0 class="headline-obs">{{ descSection.title }}</v-flex>
           <v-layout row wrap pb-4>
-            <flpo-minicard v-for="(miniCard, index) in getActiveCards" :key="index"
+            <flpo-minicard v-for="(miniCard, index) in descSection.cards.filter(filterGroup)" :key="(miniCard.group ? miniCard.group : 'group') + index"
               :reactive-filter="reactiveFilter"
               :custom-filters="customFilters"
               :structure="miniCard" :customFunctions="customFunctions"
@@ -205,27 +205,14 @@
         }
       }
     },
-    computed: {
-      getActiveCards: function(){
-        let activeCards = this.descSection.cards.filter( function (card){
-          if (card.group == undefined || card.group == null || card.group == this.activeGroup){
-            return card;
-          }
-        });
-        return activeCards;
-      },
-      getActiveRankings: function(){
-        let activeRankings = this.descSection.rankings.filter( function (ranking){
-          if (ranking.group == undefined || ranking.group == null || ranking.group == this.activeGroup){
-            return ranking;
-          }
-        });
-        return activeRankings;
-      }
-    },
     mounted: function() {
     },
     methods: {
+      filterGroup (card){
+        if (card.group == undefined || card.group == null || card.group == this.activeGroup){
+          return card;
+        }
+      },
       triggerSelect(payload) {
         this.reactiveParent = payload.id;
         this.$emit('selection', payload);
