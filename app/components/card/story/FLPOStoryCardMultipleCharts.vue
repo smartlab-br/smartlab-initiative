@@ -92,7 +92,7 @@
                         {{ cmpSrc.desc }}
                       </template>
                       <template v-else-if="cmpSrc.desc && cmpSrc.link">
-                        <a class="accent--text" v-on:click="openLinkFonte(cmpSrc.link)">{{ cmpSrc.desc }}</a>
+                        <a class="accent--text" v-on:click="openLinkFonte(cmpSrc.link)" :key="indxSrc">{{ cmpSrc.desc }}</a>
                       </template>
                     </template>
                   </v-flex>
@@ -107,7 +107,7 @@
                         {{ cmpAn.desc }}
                       </template>
                       <template v-else-if="cmpAn.desc && cmpAn.link">
-                        <a class="accent--text" v-on:click="openLinkFonte(cmpAn.link)">{{ cmpAn.desc }}</a>
+                        <a class="accent--text" v-on:click="openLinkFonte(cmpAn.link)" :key="indxAnalysis">{{ cmpAn.desc }}</a>
                       </template>
                     </template>
                   </v-flex>

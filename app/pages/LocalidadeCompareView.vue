@@ -41,7 +41,7 @@
             <v-tabs-slider></v-tabs-slider>
             <!-- Headers -->
             <v-tab 
-              v-for="(dimensao, dimIndx) in dimensoes" 
+              v-for="dimensao in dimensoes" 
               :key="dimensao.id" 
               :href="'#'+dimensao.id"
               v-on:click="changeDim(dimensao.id, idLocalidade, idObservatorio)"

@@ -133,7 +133,7 @@
                 class="elevation-1">
                 <template :headers="structure.headers" slot="items" slot-scope="props">
                   <!-- v-for SEM BIND, pois está restrito ao contexto do template do data-table -->
-                  <td v-for="hdr in structure.headers">
+                  <td v-for="(hdr, idxHdr) in structure.headers" :key="idxHdr">
                     <div v-if="typeof props.item[hdr.value] === 'string' && props.item[hdr.value].includes('</')"
                       :class="hdr.item_class != null ? hdr.item_class : ''"
                       v-html="props.item[hdr.value]">
