@@ -16,11 +16,11 @@
       </v-layout>
     </v-flex>
     <v-flex py-3 px-0 class="title-obs">{{ commentTitle ? commentTitle : "" }}</v-flex>
-    <v-flex xs12 v-if="comment_items.lenght == odometerItems.lenght" v-for="(comment, commentIndex) of this.comment_items " :key="'comment_'+commentIndex" class="pb-2">
-      <span 
-        v-if="comment"
+    <v-flex xs12 v-if="comment_items.lenght == odometerItems.lenght" class="pb-2">
+      <div 
+        v-for="(comment, commentIndex) of this.comment_items " :key="'comment_'+commentIndex" 
         v-html="(commentIndex + 1) + '. ' + comment">
-      </span>
+      </div>
     </v-flex>
   </v-layout>
 </template>

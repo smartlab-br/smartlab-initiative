@@ -9,22 +9,22 @@
       dark>
       <v-tabs-slider></v-tabs-slider>
       <!-- Headers -->
-      <v-tab v-for="(eachTab, eachKey, eachIndex) in content"
+      <v-tab v-for="(eachTab, eachKey) in content"
         :key="eachKey" :href="'#tab-'+eachKey" ripple
         class="accent--text headline-obs">
         {{ eachTab != null ? eachTab.tab : '' }}
       </v-tab>
       <!-- Conteúdos -->
       <v-tabs-items>
-        <v-tab-item v-for="(eachTabItem, eachKeyItem, eachIndexItem) in content"
+        <v-tab-item v-for="(eachTabItem, eachKeyItem) in content"
           :key="eachKeyItem" :value="'tab-'+eachKeyItem">
           <v-container pa-5 class="white--text">
             <div v-if='eachTabItem.title' class="display-2-obs py-2">{{ eachTabItem.title }}</div>
             <v-container pa-0 v-for="(section, index) in eachTabItem.sections" :key="index">
               <div class="headline-obs py-2">{{ section.title }}</div>
               <v-list dark v-if="section.type == 'list'" :class="'py-0 ' + section.list_height">
-                <template v-for="item in section.list">
-                  <v-divider></v-divider>
+                <template v-for="(item, idxItem) in section.list">
+                  <v-divider :key="idxItem"></v-divider>
                   <v-list-tile :key="item.name">
                     <v-list-tile-content>
                       <v-list-tile-title v-html="item.name"></v-list-tile-title>
@@ -36,8 +36,8 @@
                 </template>
               </v-list>
               <v-list dark v-if="section.type == 'list-avatar'" class="py-0" three-line>
-                <template v-for="item in section.list">
-                  <v-divider></v-divider>
+                <template v-for="(item, idxItem) in section.list">
+                  <v-divider :key="idxItem"></v-divider>
                   <v-list-tile :key="item.name">
                     <!-- <v-list-tile-avatar size="64" v-if="item.avatar" class="mr-3 my-0">
                       <img :src="item.avatar" :alt="item.name">

@@ -14,12 +14,12 @@
       <v-card-text class="pa-0 ranking-card-bottom">
           <v-list light class="pa-0">
             <template v-for="(item, itemIndx) in ranking.slice(1)">
-              <v-list-tile>
+              <v-list-tile :key="item.localidade">
                 <!--<v-list-tile-avatar>{{item.rank? item.rank: itemIndx+2}}</v-list-tile-avatar>-->
                 <v-list-tile-content class="caption">{{item.localidade}}</v-list-tile-content>
                 <v-list-tile-action class="caption">{{$numberTransformService.constructor.formatNumber(item.vl_indicador,"inteiro")}}</v-list-tile-action>
               </v-list-tile>
-              <v-divider></v-divider>
+              <v-divider :key="itemIndx"></v-divider>
             </template>
           </v-list>
       </v-card-text>

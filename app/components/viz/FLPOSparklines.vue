@@ -19,7 +19,6 @@
 
             <template slot="headers" slot-scope="props">
             <tr>
-                </th>
                 <th
                 v-for="header in props.headers"
                 :key="header.text"
@@ -34,7 +33,7 @@
             </template>            
             <template :headers="structure.headers" slot="items" slot-scope="props">
                 <!-- v-for SEM BIND, pois está restrito ao contexto do template do data-table -->
-                <td pa-0 v-for="hdr in structure.headers" :style="(hdr.item_align?'text-align:'+hdr.item_align:'')">
+                <td pa-0 v-for="(hdr, idxHdr) in structure.headers" :key="idxHdr" :style="(hdr.item_align?'text-align:'+hdr.item_align:'')">
                         <!--
                     <v-layout row nowrap pa-0 fill-height>
 
