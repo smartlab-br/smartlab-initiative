@@ -196,7 +196,7 @@
             </v-container> -->
             <v-container fluid grid-list-lg py-2 px-1>
               <v-layout row wrap
-                v-if="unlockLoading && secao.cards && secao.cards.length > 0" >
+                v-if="unlockLoading && secao.cards && secao.cards.length > 0 && customParams.localidade" >
                 <v-flex xs12>
                   <v-layout row wrap v-for="(card, cardIndex) in secao.cards"
                     :key="card.id">
