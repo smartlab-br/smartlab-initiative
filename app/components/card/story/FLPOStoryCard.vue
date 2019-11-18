@@ -197,6 +197,37 @@
     },
     created() {
       this.cmpTopology = this.topology;
+
+      // switch-group or radio - initialize customParams.enabled used in leaflet maps(visibleLayers)
+      let visibleLayers = {};
+      if (this.structure.description){
+        for (let struct of this.structure.description) {
+          if (struct.type == "switch-group"){
+            for (let swt of struct.switches){
+              if (swt.default) {
+                visibleLayers[swt.id] = true;
+              } else {
+                visibleLayers[swt.id] = false;
+              }
+            }
+            break;
+          }
+          if (struct.type == "radio"){
+            for (let idxRadio in struct.items){
+              if ( idxRadio == 0) {
+                visibleLayers[struct.items[idxRadio].id] = true;
+              } else {
+                visibleLayers[struct.items[idxRadio].id] = false;
+              }
+            }
+            break;
+          }
+        } 
+      }
+      if (visibleLayers !== {}){
+        this.customParams.enabled = visibleLayers;
+      }
+
     },
     mounted() {
     },

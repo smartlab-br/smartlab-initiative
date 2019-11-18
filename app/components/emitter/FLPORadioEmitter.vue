@@ -38,7 +38,6 @@
     },
     created () {
       this.chosen = this.structure.items[0].value;
-      this.toggleRadio(this.structure.items[0]);
     },
     methods: {
       toggleRadio(chosen) {
