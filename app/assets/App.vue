@@ -96,13 +96,13 @@
               tabindex = "20"
               @keyup.enter = "$navigationManager.constructor.pushRoute($router, '/', false)"
               v-on:click="$navigationManager.constructor.pushRoute($router, '/', false)" src="/static/icons/smartlab_labeled-30.png" class="cursor-pointer"
-              alt="Smartlab"></img> 
+              alt="Smartlab"/> 
           </v-flex>
           <v-flex pr-2 pt-2 hidden-sm-and-up>
             <img 
               tabindex = "20"
-              v-on:click="$navigationManager.constructor.pushRoute($router, '/', false)" src="/static/icons/smartlab-icon-30x30.png" class="cursor-pointer"
-              alt="Smartlab"></img> 
+              v-on:click="$navigationManager.constructor.pushRoute($router, '/', false)" src="/static/icons/smartlab-icon-30x30.png" class="cursor-pointer"
+              alt="Smartlab"/> 
           </v-flex>
           <v-divider v-show="computedTitle" vertical class="mx-2" style="background-color:rgba(255,255,255,0.7)"></v-divider>
           <v-flex text-xs-right class="line-height-1">
