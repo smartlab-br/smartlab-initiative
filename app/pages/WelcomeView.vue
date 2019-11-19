@@ -1,12 +1,10 @@
 <template>
   <v-layout row wrap class="pa-0">
-    <v-flex fluid grid-list-lg xs12 overflow-hidden class="first-section pa-0" :style="displayHeight" style="overflow: hidden;">
-      <!-- <v-parallax xs12 class="bg-parallax" height="auto" src="static/parallax/home.png"></v-parallax>-->
-      <transition  v-show="parallaxFile" name="fade">
-        <v-layout xs12 class="bg-zoom bg-parallax-home" height="auto" :style="currentParallax" v-show="backgroundVisible"></v-layout> 
+    <v-flex fluid grid-list-lg xs12 overflow-hidden class="first-section pa-0" :style="displayHeight">
+      <transition  v-if="parallaxFile" name="fade">
+        <v-layout xs12 class="bg-zoom" height="auto" :style="currentParallax" v-show="backgroundVisible"></v-layout> 
       </transition>
-      <!-- style="background-image:url('/static/parallax/td.jpg');background-position: center center; background-size: cover;" -->
-      <v-layout xs12 class="bg-parallax-home ma-0"></v-layout>
+      <v-layout xs12 class="bg-home-shadow ma-0"></v-layout>
       <v-layout row wrap fill-height align-center justify-center pa-0 class="parallax-content-home" v-if="observatorios">
         <v-flex id="screenTitle" xs12 class="white--text text-xs-center" style="line-height: normal;">
           <div class="display-4-obs ubuntu">Iniciativa SmartLab</div>

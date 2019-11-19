@@ -989,54 +989,29 @@
     position: relative;
   }
 
-  .parallax-content-home {
-    background-color:rgba(0,0,0,0.3) !important;
-    margin: 0 !important;
-    min-height: 700px;
-  }
-
-  .parallax-content {
-    background-color:rgba(0,0,0,0.3) !important;
-    margin: 0 !important;
-  }
-
-  .bg-parallax {
+  .bg-shadow {
     background-color:rgba(0,0,0,0.5) !important;
     position: absolute !important;
     top: 0;
     margin: 0 !important;
     width: 100%;
     min-height: 100% !important;
-    background-position: center center; 
-    background-size: cover;    
   }
 
-  .bg-parallax img {
-    opacity: 0.8 !important;
-  }
-
-  .bg-parallax-home {
+  .bg-home-shadow {
     background-color:rgba(0,0,0,0.3) !important;
     position: absolute !important;
     top: 0;
     margin: 0 !important;
     width: 100%;
     min-height: 100% !important;
-    background-position: center center; 
-    background-size: cover;    
   }
 
-  .parallax-content .container .parallax-content-home{
-    position: relative;
-    display: flex;
-    height: 100%;
+  .parallax-content-home {
+    min-height: 700px;
   }
 
   .parallax-content >.flex {
-    z-index: 1;
-  }
-
-  .parallax-title-content >.flex {
     z-index: 1;
   }
 
@@ -1048,6 +1023,7 @@
     align-self: center;
     color: white;
   }
+
   .bg-translucent {
     background-color: rgba(0,0,0,0.5);
     z-index: 1;
@@ -1078,7 +1054,14 @@
   }
 
   .bg-zoom {
-    position: relative;
+    position: absolute !important;
+    top: 0;
+    margin: 0 !important;
+    width: 100%;
+    min-height: 100% !important;
+    background-position: center center; 
+    background-size: cover;    
+
     -webkit-animation: bg-zoom 40s ease-out 0s infinite;
     -moz-animation: bg-zoom 40s ease-out 0s infinite;
     -o-animation: bg-zoom 40s ease-out 0s infinite;

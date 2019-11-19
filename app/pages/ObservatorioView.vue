@@ -2,10 +2,10 @@
   <v-layout row wrap class="pa-0">
     <v-flex v-if="observatorio" fluid grid-list-lg xs12 overflow-hidden class="first-section pa-0" :style="displayHeight">
       <transition name="fade">
-        <v-layout xs12 class="bg-zoom bg-parallax" height="auto" :style="currentParallax" v-show="backgroundVisible"></v-layout>
+        <v-layout xs12 class="bg-zoom" height="auto" :style="currentParallax" v-show="backgroundVisible"></v-layout>
       </transition>
-      <v-layout xs12 class="bg-parallax ma-0"></v-layout>
-      <v-layout row wrap px-3 justify-center class="parallax-title-content">
+      <v-layout xs12 class="bg-shadow ma-0"></v-layout>
+      <v-layout row wrap px-3 justify-center class="parallax-content">
         <v-flex shrink>
           <v-flex id="screenTitle">
             <!--
