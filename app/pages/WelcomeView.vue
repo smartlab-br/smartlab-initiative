@@ -1,11 +1,11 @@
 <template>
   <v-layout row wrap class="pa-0">
-    <v-flex fluid grid-list-lg xs12 overflow-hidden class="first-section pa-0" :style="displayHeight">
+    <v-flex v-if="observatorios" fluid grid-list-lg xs12 overflow-hidden class="first-section pa-0" :style="displayHeight">
       <transition  v-if="parallaxFile" name="fade">
         <v-layout xs12 class="bg-zoom" height="auto" :style="currentParallax" v-show="backgroundVisible"></v-layout> 
       </transition>
       <v-layout xs12 class="bg-home-shadow ma-0"></v-layout>
-      <v-layout row wrap fill-height align-center justify-center pa-0 class="parallax-content-home" v-if="observatorios">
+      <v-layout row wrap fill-height align-center justify-center pa-0 class="parallax-content-home">
         <v-flex id="screenTitle" xs12 class="white--text text-xs-center" style="line-height: normal;">
           <div class="display-4-obs ubuntu">Iniciativa SmartLab</div>
           <div class="display-1-obs ubuntu-condensed">Promoção do Trabalho Decente Guiada por Dados</div>
