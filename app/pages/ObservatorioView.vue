@@ -238,15 +238,15 @@
             @showSnackbar="snackAlert">
           </flpo-composite-text>
         </v-flex>
-        <v-flex px-4>
-          <v-layout row wrap>
-          <v-flex pt-3 pb-0 v-for="(strSparklines, index) in observatorio.sparklines.tables" :key="index" :class="strSparklines.cls?strSparklines.cls:'xs12'" text-xs-center>
-            {{ strSparklines.title }}
-            <flpo-sparklines 
-              :dataset = "dataset"
-              :structure = "strSparklines">
-            </flpo-sparklines>
-          </v-flex>
+        <v-flex px-4 id="sparklines">
+          <v-layout row wrap v-if="visibleSparklines" >
+            <v-flex pt-3 pb-0 v-for="(strSparklines, index) in observatorio.sparklines.tables" :key="index" :class="strSparklines.cls?strSparklines.cls:'xs12'" text-xs-center>
+              {{ strSparklines.title }}
+              <flpo-sparklines 
+                :dataset = "dataset"
+                :structure = "strSparklines">
+              </flpo-sparklines>
+            </v-flex>
           </v-layout>
         </v-flex>
       </v-layout>
@@ -342,7 +342,8 @@
 
         parallaxFile: null,
         idParallaxfile: 0,
-        backgroundVisible: true
+        backgroundVisible: true,
+        visibleSparklines: false
       }
     },
     created () {
@@ -366,6 +367,7 @@
       this.resizeFirstSection();
       window.addEventListener('resize', this.resizeFirstSection);
       window.addEventListener('scroll', this.assessPageBottom);
+      window.addEventListener('scroll', this.setVisibleSparklines);
       this.assessPageBottom();
       this.idLocalidade = this.$analysisUnitModel.getCurrentAnalysisUnit();
       this.mapEnabled = false;
@@ -373,6 +375,7 @@
     },
     beforeDestroy () {
       window.removeEventListener('scroll', this.assessPageBottom);
+      window.removeEventListener('scroll', this.setVisibleSparklines);
     },
     computed: {
       currentParallax: function() {
@@ -380,6 +383,18 @@
       }
     },
     methods: {
+
+      setVisibleSparklines(){
+        if (!this.visibleSparklines && this.observatorio.sparklines){
+          const vHeight = (window.innerHeight || document.documentElement.clientHeight);
+          if (document.getElementById('sparklines') != null) {
+            var { top, bottom } = document.getElementById('sparklines').getBoundingClientRect();
+            if ((top > 0 || bottom > 0) && (top < vHeight)) {  
+              this.visibleSparklines = true;
+            } 
+          } 
+        }
+      },
 
       setParallaxFile(){
         this.idParallaxfile++;
