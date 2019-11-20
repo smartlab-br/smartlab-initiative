@@ -407,7 +407,7 @@
     methods: {
 
       setVisibleSparklines(){
-        if (!this.visibleSparklines && this.observatorio.sparklines){
+        if (this.observatorio &&  this.observatorio.sparklines && !this.visibleSparklines){
           const vHeight = (window.innerHeight || document.documentElement.clientHeight);
           if (document.getElementById('sparklines') != null) {
             var { top, bottom } = document.getElementById('sparklines').getBoundingClientRect();
