@@ -18,10 +18,10 @@
             {{ observatorio ? observatorio.title : '' }}
             -->
               <v-layout 
-              :class="{'pa-1 ma-1': $vuetify.breakpoint.xsOnly, 
-                       'pa-2 ma-2': $vuetify.breakpoint.smOnly, 
-                       'pa-3 ma-3': $vuetify.breakpoint.mdOnly, 
-                       'pa-4 ma-4': $vuetify.breakpoint.lgAndUp }">
+              :class="{'px-1 pt-1 mx-1 mt-1': $vuetify.breakpoint.xsOnly, 
+                       'px-2 pt-2 mx-2 mt-2': $vuetify.breakpoint.smOnly, 
+                       'px-3 pt-3 mx-3 mt-3': $vuetify.breakpoint.mdOnly, 
+                       'px-4 pt-4 mx-4 mt-4': $vuetify.breakpoint.lgAndUp }">
               <img 
                   :src="'/static/smartlab/' + (observatorio ? idObservatorio.concat('.svg') : '')"
                   :alt="(observatorio ? observatorio.title : '')"
@@ -34,6 +34,28 @@
             {{ observatorio ? observatorio.title_sub : '' }}
           </v-flex>
           -->
+        </v-flex>
+        <v-flex xs12 text-xs-right px-5 mx-5 style="min-height:48px">
+          <v-btn
+            v-if="observatorio.prevalencia"
+            icon class="ml-0"
+            aria-label="Smartmap"
+            @click="scrollTo('smartmap')">
+            <v-tooltip bottom>
+              <v-icon color="white" slot="activator">public</v-icon>
+              Smartmap
+            </v-tooltip>
+          </v-btn>
+          <v-btn
+            v-if="observatorio.sparklines"
+            icon class="ml-0"
+            aria-label="Smartlines"
+            @click="scrollTo('sparklines')">
+            <v-tooltip bottom>
+              <v-icon color="white" slot="activator">show_chart</v-icon>
+              Smartlines
+            </v-tooltip>
+          </v-btn>
         </v-flex>
       </v-layout>
       <v-layout px-5 pb-5 mb-5
@@ -69,7 +91,7 @@
       </flpo-articles-highlights>
     </v-container>
     -->
-    <v-container v-if="observatorio && observatorio.prevalencia" fluid ma-0 pa-0
+    <v-container id="smartmap" v-if="observatorio && observatorio.prevalencia" fluid ma-0 pa-0
       :style="'background-color:' + $colorsService.constructor.assessZebraBG(0, $vuetify.theme) + ';'">
       <v-layout row wrap>
         <v-flex pt-0 sm12 v-if="observatorio && observatorio.prevalencia && observatorio.prevalencia.odometers">
@@ -238,7 +260,7 @@
             @showSnackbar="snackAlert">
           </flpo-composite-text>
         </v-flex>
-        <v-flex px-4 id="sparklines">
+        <v-flex px-4 id="sparklines" style="min-height:630px">
           <v-layout row wrap v-if="visibleSparklines" >
             <v-flex pt-3 pb-0 v-for="(strSparklines, index) in observatorio.sparklines.tables" :key="index" :class="strSparklines.cls?strSparklines.cls:'xs12'" text-xs-center>
               {{ strSparklines.title }}
@@ -428,6 +450,12 @@
 
       scrollTop(){
         window.scrollTo(0,0);
+      },
+
+      scrollTo(anchor) {
+        var el = this.$el.querySelector("#" + anchor);
+        el.scrollIntoView();
+        window.scrollBy(0,-120);
       },
 
       resizeFirstSection(){
