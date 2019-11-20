@@ -39,21 +39,21 @@
           <v-btn
             v-if="observatorio.prevalencia"
             icon class="ml-0"
-            aria-label="Smartmap"
+            aria-label="SmartMap"
             @click="scrollTo('smartmap')">
             <v-tooltip bottom>
               <v-icon color="white" slot="activator">public</v-icon>
-              Smartmap
+              SmartMap
             </v-tooltip>
           </v-btn>
           <v-btn
             v-if="observatorio.sparklines"
             icon class="ml-0"
-            aria-label="Smartlines"
+            aria-label="SmartLines"
             @click="scrollTo('sparklines')">
             <v-tooltip bottom>
               <v-icon color="white" slot="activator">show_chart</v-icon>
-              Smartlines
+              SmartLines
             </v-tooltip>
           </v-btn>
         </v-flex>
