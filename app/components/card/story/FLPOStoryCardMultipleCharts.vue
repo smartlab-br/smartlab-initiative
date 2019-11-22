@@ -114,7 +114,6 @@
                 </v-flex>
                 <v-flex xs12 :class="chartPosition != 'bottom' ? 'md9': ''" py-2>
                   <v-layout row wrap
-                    v-if="datasetsComplete == structure.charts.length"
                     :class="$vuetify.breakpoint.mdAndUp ? ' fill-height' : ''">
                     <v-flex
                       v-for="chart in structure.charts"
