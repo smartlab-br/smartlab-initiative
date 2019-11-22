@@ -46,7 +46,7 @@ class TooltipBuildingService {
 
       table = "<table width='100%'>";
       if(item == 0){ //Título
-        if (options && options.clickable && options.type == "bubbles"){ // leaflet bubbles
+        if (options && options.clickable && options.visibleLayers){ // leaflet
           text += "<p class='text-xs-right ma-0'><a href='" + TooltipBuildingService.getUrlByPlace(d.cd_mun_ibge, route) + "' class='primary--text font-weight-black'>IR PARA</a></p>";
         }
         text += "<p class='headline-obs'><b>" + value + "</b></p>";
@@ -68,7 +68,7 @@ class TooltipBuildingService {
   
     if (text == '') text = 'Tooltip!';
     text += filter; 
-    if (options && options.clickable && options.type != "bubbles"){ //topojson
+    if (options && options.clickable && options.visibleLayers == undefined){ //topojson
       text += "<br/><hr class='tooltip_divider'>";
       text += "<br/><em>Clique na unidade geográfica para carregá-la</em>";
     }
