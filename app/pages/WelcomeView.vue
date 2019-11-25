@@ -1,7 +1,7 @@
 <template>
   <v-layout row wrap class="pa-0">
     <v-flex fluid grid-list-lg xs12 overflow-hidden class="first-section pa-0" :style="displayHeight">
-      <transition  v-if="parallaxFile" name="fade">
+      <transition  v-show="parallaxFile" name="fade">
         <v-layout xs12 class="bg-zoom" height="auto" :style="currentParallax" v-show="backgroundVisible"></v-layout> 
       </transition>
       <v-layout xs12 class="bg-home-shadow ma-0"></v-layout>
