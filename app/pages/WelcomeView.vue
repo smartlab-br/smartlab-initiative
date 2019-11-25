@@ -5,12 +5,12 @@
         <v-layout xs12 class="bg-zoom" height="auto" :style="currentParallax" v-show="backgroundVisible"></v-layout> 
       </transition>
       <v-layout xs12 class="bg-home-shadow ma-0"></v-layout>
-      <v-layout row wrap fill-height align-center justify-center pa-0 class="parallax-content-home" v-show="observatorios" >
+      <v-layout row wrap fill-height align-center justify-center pa-0 class="parallax-content-home">
         <v-flex id="screenTitle" xs12 class="white--text text-xs-center" style="line-height: normal;">
           <div class="display-4-obs ubuntu">Iniciativa SmartLab</div>
           <div class="display-1-obs ubuntu-condensed">Promoção do Trabalho Decente Guiada por Dados</div>
         </v-flex>
-        <v-layout px-5 row wrap>
+        <v-layout px-5 row wrap v-show="observatorios">
           <v-flex 
             v-for="(observatorio, indxObs) in observatorios"
             :key="'linked_card_obs_' + indxObs"
