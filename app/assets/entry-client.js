@@ -5,6 +5,26 @@ import { createApp } from './app'
 import VueWorker from 'vue-worker'
 Vue.use(VueWorker)
 
+import VueAxios from 'vue-axios'
+import VueAuthenticate from 'vue-authenticate'
+import axios from 'axios';
+
+Vue.use(VueAxios, axios)
+Vue.use(VueAuthenticate, {
+  baseUrl: 'http://localhost:3000', // Your API domain
+  
+  providers: {
+    google: {
+      clientId: '339072383340-rrtqtc3jeluq9cdh9qeoo331e84ad0cd.apps.googleusercontent.com',
+      clientSecret: 'GRwN0ZUhUQ1SlhziQOFutMva'
+    },
+    facebook: {
+      clientId: '60f70019f4ec083cc70563446aa424c7'
+    }
+  }
+})
+
+
 const { app, router, store } = createApp()
 
 // prime the store with server-initialized state.

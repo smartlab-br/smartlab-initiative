@@ -203,13 +203,23 @@
       </div>
       
       <v-btn
-          tabindex = "22"
+        tabindex = "22"
         icon class="ml-0"
         aria-label="Alterar Localidade"
         @click="seen = !seen">
         <v-tooltip bottom>
           <v-icon color="white" slot="activator">place</v-icon>
           Alterar Localidade
+        </v-tooltip>
+      </v-btn>
+      <v-btn
+        tabindex = "23"
+        icon class="ml-0"
+        aria-label="Identifique-se"
+        @click="$navigationManager.constructor.pushRoute($router, '/login', false)">
+        <v-tooltip bottom>
+          <v-icon color="white" slot="activator">perm_identity</v-icon>
+          Identifique-se
         </v-tooltip>
       </v-btn>
       <!--
