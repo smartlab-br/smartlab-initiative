@@ -20,8 +20,8 @@ class AxiosCallSetupService {
     // }
 
     return Object.assign(
-      { 'Content-Type': "application/json",
-        "X-Gravitee-Api-Key": this.envFromKey(key + '_APP_KEY')
+      { 'Content-Type': "application/json"
+        // "X-Gravitee-Api-Key": this.envFromKey(key + '_APP_KEY')
         // 'Authorization': token
       },
       customHeaders
@@ -29,9 +29,14 @@ class AxiosCallSetupService {
   }
 
   getAxiosOptions(endpoint, key = 'DATAHUB') {
+    const urlMap = {
+      DATAHUB : '/api-proxy/datahub'
+    }
     return {
       method: "GET",
-      "url": this.envFromKey(key + '_API_BASE_URL') + endpoint,
+      // "url": this.envFromKey(key + '_API_BASE_URL') + endpoint,
+      "url": urlMap[key] + endpoint,
+
       headers: this.getHeaders(key)
     };
   }
