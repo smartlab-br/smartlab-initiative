@@ -7,6 +7,7 @@ const compression = require('compression')
 const resolve = file => path.resolve(__dirname, file)
 const { createBundleRenderer } = require('vue-server-renderer')
 const redirects = require('./router/301.json')
+const axios = require('axios');
 
 const isProd = (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'staging')
 const useMicroCache = process.env.MICRO_CACHE !== 'false'
@@ -144,6 +145,41 @@ function render (req, res) {
     }
   })
 }
+
+app.get('/api-proxy/*', (req, res) => {
+  
+  const apiDataMap = { 
+    datahub: [process.env.DATAHUB_API_BASE_URL, 
+              process.env.DATAHUB_APP_KEY] 
+  }
+
+  const splitArray = req.url.split("/")
+  const resourceUrl = splitArray.slice(3).join('/')
+  const apiUrl = apiDataMap[splitArray[2]][0] + "/" + resourceUrl
+
+  axios({
+    method: 'get',
+    url: apiUrl,
+    responseType: 'json',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Gravitee-Api-Key': apiDataMap[splitArray[2]][1]
+    }
+  })
+    .then(function(response) {
+      // handle success
+      res.json(response.data);
+    })
+    .catch(function(error) {
+      // handle error
+      if (error.response) {
+        res.status(error.response.status).send(error.response.data)
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        res.status(400).send(error)
+      }
+    })
+});
 
 app.get('*', isProd ? render : (req, res) => {
   readyPromise.then(() => render(req, res))
