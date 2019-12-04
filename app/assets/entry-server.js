@@ -71,6 +71,11 @@ export default context => {
         store.state.ACIDENTOMETROS_API_BASE_URL = process.env.ACIDENTOMETROS_API_BASE_URL;     
         store.state.ACIDENTOMETROS_APP_KEY = process.env.ACIDENTOMETROS_APP_KEY;
 
+        store.state.GOOGLE_CLIENTID = process.env.GOOGLE_CLIENTID;     
+        store.state.GOOGLE_CLIENTSECRET = process.env.GOOGLE_CLIENTSECRET;
+
+        store.state.FACEBOOK_CLIENTID = process.env.FACEBOOK_CLIENTID;     
+
         context.state = store.state                
         resolve(app)
       }).catch(reject)

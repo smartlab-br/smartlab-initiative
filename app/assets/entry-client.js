@@ -5,6 +5,14 @@ import { createApp } from './app'
 import VueWorker from 'vue-worker'
 Vue.use(VueWorker)
 
+const { app, router, store } = createApp()
+
+// prime the store with server-initialized state.
+// the state is determined during SSR and inlined in the page markup.
+if (window.__INITIAL_STATE__) {
+  store.replaceState(window.__INITIAL_STATE__)
+}
+
 import VueAxios from 'vue-axios'
 import VueAuthenticate from 'vue-authenticate'
 import axios from 'axios';
@@ -15,23 +23,14 @@ Vue.use(VueAuthenticate, {
   
   providers: {
     google: {
-      clientId: '339072383340-rrtqtc3jeluq9cdh9qeoo331e84ad0cd.apps.googleusercontent.com',
-      clientSecret: 'GRwN0ZUhUQ1SlhziQOFutMva'
+      clientId: store.state.GOOGLE_CLIENTID,
+      clientSecret: store.state.GOOGLE_CLIENTSECRET
     },
     facebook: {
-      clientId: '60f70019f4ec083cc70563446aa424c7'
+      clientId: store.state.FACEBOOK_CLIENTID
     }
   }
 })
-
-
-const { app, router, store } = createApp()
-
-// prime the store with server-initialized state.
-// the state is determined during SSR and inlined in the page markup.
-if (window.__INITIAL_STATE__) {
-  store.replaceState(window.__INITIAL_STATE__)
-}
 
 let nuLnkPreConn = document.createElement('link');
 nuLnkPreConn.name = "datahub_lnk";
