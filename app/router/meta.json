@@ -83,5 +83,10 @@
     "title": "Smartlab - Sobre",
     "description": "Sobre",
     "keywords": "saibamais"
+  },
+  "login": {
+    "title": "Smartlab - Login",
+    "description": "Login",
+    "keywords": "login"
   }
 }
