@@ -2,10 +2,12 @@
   <v-layout primary row wrap>
     <v-flex xs12 secondary text-xs-center white--text> 
       <div class="display-3-obs text-xs-center white--text pa-5">Identifique-se</div>
+      <!--
       <div class="authentication-status text-xs-center" v-if="isAuthenticated">
         Autenticação realizada com sucesso!
         <div class="authentication-status__token">{{$auth.getToken()}}</div>
       </div>
+      -->
       Acesse com :
       <v-btn icon class="white--text" @click="auth('google')">
         <v-tooltip bottom>
@@ -31,6 +33,20 @@
       <v-btn @click="authRegister()">Register</v-btn>
       <v-btn @click="authLogout()">Logout</v-btn>
       -->
+    <v-flex xs12 secondary text-xs-center white--text pa-5 v-if="isAuthenticated"> 
+      <v-avatar>
+        <img
+          :src="user.picture"
+          :alt="user.name"
+        >
+      </v-avatar><br/>
+      {{ user.name }}<br/>
+      {{ user.email }}<br/>
+      Google:{{ user.google }}<br/>
+      Facebook:{{ user.facebook }}<br/>
+      Twitter:{{ user.twitter }}
+      
+    </v-flex>
 
       <pre class="response" v-if="response !== null">{{JSON.stringify(response, null, 2)}}</pre>
     </v-flex>
@@ -43,7 +59,9 @@
       return {
         isAuthenticated: null,
         access_token: null,
-        response: null
+        response: null,
+        user: {}
+
       }
     },
     created () {
@@ -106,7 +124,6 @@
         if (this.$auth.isAuthenticated()) {
           this.$auth.logout()
         }
-
         this.response = null
 
         var this_ = this;
@@ -124,7 +141,11 @@
               this_.response = response
             })
           } else if (provider === 'google') {
-            this_.$http.get('https://www.googleapis.com/plus/v1/people/me/openIdConnect').then(function (response) {
+            this_.$http.get('https://www.googleapis.com/oauth2/v3/userinfo').then(function (response) {
+              this_.user.name = response.data.name;
+              this_.user.email = response.data.email;
+              this_.user.picture = response.data.picture;
+              this_.user.google = response.data.sub;
               this_.response = response
             })
           } else if (provider === 'twitter') {
@@ -167,7 +188,6 @@
       color: #fff;
       left: 0;
       padding: 16px 32px;
-      position: fixed;
       right: 0;
       text-align: center;
       top: 0;
