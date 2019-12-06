@@ -172,6 +172,7 @@ app.get('/api-proxy/*', (req, res) => {
     })
     .catch(function(error) {
       // handle error
+      console.log(error)
       if (error.response) {
         res.status(error.response.status).send(error.response.data)
       } else {
