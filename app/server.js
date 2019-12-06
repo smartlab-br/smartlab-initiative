@@ -307,10 +307,9 @@ app.post('/auth/facebook', function(req, res) {
       redirect_uri: req.body.redirectUri,
     }),
     headers: {
-      'content-type': 'application/json'
+      'content-type': 'application/x-www-form-urlencoded'
     }
   }).then(function (response) {
-      console.log(response);
       res.json(response.data);
     })
   .catch(function(error) {
