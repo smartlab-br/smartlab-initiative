@@ -45,7 +45,7 @@ class AxiosCallSetupService {
     return {
       method: "GET",
       "url": this.envFromKey(key + '_API_BASE_URL') + endpoint,
-      headers: this.getHeaders(key, { 'Cache-Control': 'no-cache' })
+      headers: this.getHeaders(key, { 'Cache-Control': 'no-cache' , "X-Gravitee-Api-Key": this.envFromKey(key + '_APP_KEY')})
     };
   }
 }
