@@ -42,7 +42,7 @@
     },
     mounted() {
 
-      axios(this.$axiosCallSetupService.getAxiosOdometrosOptions("/sst", 'ACIDENTOMETROS'))
+      axios(this.$axiosCallSetupService.getAxiosOptions("/sst", 'ACIDENTOMETROS'))
         .then(result => {
           let dtOdometros = JSON.parse(result.data);
 
