@@ -9,9 +9,9 @@ npm_run () {
 if [ $NODE_ENV != 'development' ]; then
   npm_run "build"
   if [ $NODE_ENV = 'production' ]; then
-    npm run start
+    npm_run start
   else
-    npm run stg
+    npm_run stg
   fi
 else
   npm_run "dev"
