@@ -19,15 +19,14 @@ import axios from 'axios';
 
 Vue.use(VueAxios, axios)
 Vue.use(VueAuthenticate, {
-  baseUrl: 'http://localhost:3000', // Your API domain
-  
   providers: {
     google: {
       clientId: store.state.GOOGLE_CLIENTID,
       clientSecret: store.state.GOOGLE_CLIENTSECRET
     },
     facebook: {
-      clientId: store.state.FACEBOOK_CLIENTID
+      clientId: store.state.FACEBOOK_CLIENTID,
+      clientSecret: store.state.FACEBOOK_CLIENTSECRET
     }
   }
 })
