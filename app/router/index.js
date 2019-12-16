@@ -68,6 +68,8 @@ export function createRouter () {
         route('/trabalhoescravo/embreve', 'ObservatorioEmBreve'),
         route('/trabalhoinfantil/embreve', 'ObservatorioEmBreve'),
 
+        route('/login', 'Login'),
+
         // Provisórias
         route('/mapa/:nmIndicador', 'Mapa'),
         // Global redirect for 404

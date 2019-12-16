@@ -7,6 +7,7 @@ const compression = require('compression')
 const resolve = file => path.resolve(__dirname, file)
 const { createBundleRenderer } = require('vue-server-renderer')
 const redirects = require('./router/301.json')
+const axios = require('axios');
 
 const isProd = (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'staging')
 const useMicroCache = process.env.MICRO_CACHE !== 'false'
@@ -144,6 +145,185 @@ function render (req, res) {
     }
   })
 }
+
+app.get('/api-proxy/*', (req, res) => {
+  
+  const apiDataMap = { 
+    datahub: [process.env.DATAHUB_API_BASE_URL, 
+              process.env.DATAHUB_APP_KEY] 
+  }
+
+  const splitArray = req.url.split("/")
+  const resourceUrl = splitArray.slice(3).join('/')
+  const apiUrl = apiDataMap[splitArray[2]][0] + "/" + resourceUrl
+
+  axios({
+    method: 'get',
+    url: apiUrl,
+    responseType: 'json',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Gravitee-Api-Key': apiDataMap[splitArray[2]][1]
+    }
+  })
+    .then(function(response) {
+      // handle success
+      res.json(response.data);
+    })
+    .catch(function(error) {
+      // handle error
+      console.log(error)
+      if (error.response) {
+        res.status(error.response.status).send(error.response.data)
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        res.status(400).send(error)
+      }
+    })
+});
+
+/*
+ |--------------------------------------------------------------------------
+ | Authentication
+ |--------------------------------------------------------------------------
+ */
+
+const bodyParser = require('body-parser');
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+const querystring = require('querystring');
+
+/*
+ |--------------------------------------------------------------------------
+ | Login with Google
+ |--------------------------------------------------------------------------
+ */
+app.post('/auth/google', function(req, res) {
+  axios({
+    method: 'post',
+    url: 'https://accounts.google.com/o/oauth2/token',
+    data: querystring.stringify({
+      code: req.body.code,
+      client_id: process.env.GOOGLE_CLIENTID,
+      client_secret: process.env.GOOGLE_CLIENTSECRET,
+      redirect_uri: req.body.redirectUri,
+      grant_type: 'authorization_code'
+    }),
+    headers: {
+      'content-type': 'application/x-www-form-urlencoded'
+    }
+  }).then(function (response) {
+      res.json(response.data);
+    })
+  .catch(function(error) {
+      console.log(error);
+      // handle error
+      if (error.response) {
+        res.status(error.response.status).send(error.response.data)
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        res.status(500).json(error)
+      }
+    })
+  // let accessTokenUrl = 'https://accounts.google.com/o/oauth2/token';
+  // let peopleApiUrl = 'https://www.googleapis.com/plus/v1/people/me/openIdConnect';
+  // let params = {
+  //   code: req.body.code,
+  //   client_id: req.body.clientId,
+  //   client_secret: process.env.GOOGLE_CLIENTSECRET,
+  //   redirect_uri: req.body.redirectUri,
+  //   grant_type: 'authorization_code'
+  // };
+
+  // // Step 1. Exchange authorization code for access token.
+  // axios.post(accessTokenUrl, { json: true, form: params }, function(err, response, token) {
+  //   let accessToken = token.access_token;
+  //   let headers = { Authorization: 'Bearer ' + accessToken };
+  //   console.log(response);
+
+    // Step 2. Retrieve profile information about the current user.
+    // axios.get({ url: peopleApiUrl, headers: headers, json: true }, function(err, response, profile) {
+    //   if (profile.error) {
+    //     return res.status(500).send({message: profile.error.message});
+    //   } else {
+    //     let token = createJWT(profile);
+    //     console.log(token);
+    //     res.send({ token: token });
+    //   }
+      // // Step 3a. Link user accounts.
+      // if (req.header('Authorization')) {
+      //   User.findOne({ google: profile.sub }, function(err, existingUser) {
+      //     if (existingUser) {
+      //       return res.status(409).send({ message: 'There is already a Google account that belongs to you' });
+      //     }
+      //     var token = req.header('Authorization').split(' ')[1];
+      //     var payload = jwt.decode(token, config.TOKEN_SECRET);
+      //     User.findById(payload.sub, function(err, user) {
+      //       if (!user) {
+      //         return res.status(400).send({ message: 'User not found' });
+      //       }
+      //       user.google = profile.sub;
+      //       user.picture = user.picture || profile.picture.replace('sz=50', 'sz=200');
+      //       user.displayName = user.displayName || profile.name;
+      //       user.save(function() {
+      //         var token = createJWT(user);
+      //         res.send({ token: token });
+      //       });
+      //     });
+      //   });
+      // } else {
+      //   // Step 3b. Create a new user account or return an existing one.
+      //   User.findOne({ google: profile.sub }, function(err, existingUser) {
+      //     if (existingUser) {
+      //       return res.send({ token: createJWT(existingUser) });
+      //     }
+      //     var user = new User();
+      //     user.google = profile.sub;
+      //     user.picture = profile.picture.replace('sz=50', 'sz=200');
+      //     user.displayName = profile.name;
+      //     user.save(function(err) {
+      //       var token = createJWT(user);
+      //       res.send({ token: token });
+      //     });
+      //   });
+      // }
+    // });
+  // });
+});
+
+/*
+ |--------------------------------------------------------------------------
+ | Login with Facebook
+ |--------------------------------------------------------------------------
+ */
+app.post('/auth/facebook', function(req, res) {
+  axios({
+    method: 'post',
+    url: 'https://graph.facebook.com/v2.4/oauth/access_token',
+    data: querystring.stringify({
+      code: req.body.code,
+      client_id: process.env.FACEBOOK_CLIENTID,
+      client_secret: process.env.FACEBOOK_CLIENTSECRET,
+      redirect_uri: req.body.redirectUri,
+    }),
+    headers: {
+      'content-type': 'application/x-www-form-urlencoded'
+    }
+  }).then(function (response) {
+      res.json(response.data);
+    })
+  .catch(function(error) {
+      console.log(error);
+      // handle error
+      if (error.response) {
+        res.status(error.response.status).send(error.response.data)
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        res.status(500).json(error)
+      }
+    })
+});
 
 app.get('*', isProd ? render : (req, res) => {
   readyPromise.then(() => render(req, res))

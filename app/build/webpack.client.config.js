@@ -16,12 +16,17 @@ const config = merge(base, {
       'process.env.GA_ID_DV': JSON.stringify(process.env.GA_ID_DV),
       'process.env.GIT_VIEWCONF_TAG_URL': JSON.stringify(process.env.GIT_VIEWCONF_TAG_URL),
       'process.env.VUE_ENV': '"client"',
-      'process.env.DATAHUB_API_BASE_URL': JSON.stringify(process.env.DATAHUB_API_BASE_URL || 'http://localhost:8080'),
-      'process.env.DATAHUB_APP_KEY': JSON.stringify(process.env.DATAHUB_APP_KEY || 'key'),
+      // 'process.env.DATAHUB_API_BASE_URL': JSON.stringify(process.env.DATAHUB_API_BASE_URL || 'http://localhost:8080'),
+      // 'process.env.DATAHUB_APP_KEY': JSON.stringify(process.env.DATAHUB_APP_KEY || 'key'),
       'process.env.MAILER_API_BASE_URL': JSON.stringify(process.env.MAILER_API_BASE_URL || 'http://localhost:8080'),
       'process.env.MAILER_APP_KEY': JSON.stringify(process.env.MAILER_APP_KEY || 'key'),
       'process.env.ACIDENTOMETROS_API_BASE_URL': JSON.stringify(process.env.ACIDENTOMETROS_API_BASE_URL || 'http://localhost:8080'),
-      'process.env.ACIDENTOMETROS_APP_KEY': JSON.stringify(process.env.ACIDENTOMETROS_APP_KEY || 'key')
+      'process.env.ACIDENTOMETROS_APP_KEY': JSON.stringify(process.env.ACIDENTOMETROS_APP_KEY || 'key'),
+      'process.env.GOOGLE_CLIENTID': JSON.stringify(process.env.GOOGLE_CLIENTID | 'key'),
+      'process.env.GOOGLE_CLIENTSECRET': JSON.stringify(process.env.GOOGLE_CLIENTSECRET || 'key'),
+      'process.env.FACEBOOK_CLIENTID': JSON.stringify(process.env.FACEBOOK_CLIENTID || 'key'),
+      'process.env.FACEBOOK_CLIENTSECRET': JSON.stringify(process.env.FACEBOOK_CLIENTSECRET || 'key')
+      
     }),
     // extract vendor chunks for better caching
     new webpack.optimize.CommonsChunkPlugin({

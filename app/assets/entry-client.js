@@ -13,6 +13,24 @@ if (window.__INITIAL_STATE__) {
   store.replaceState(window.__INITIAL_STATE__)
 }
 
+import VueAxios from 'vue-axios'
+import VueAuthenticate from 'vue-authenticate'
+import axios from 'axios';
+
+Vue.use(VueAxios, axios)
+Vue.use(VueAuthenticate, {
+  providers: {
+    google: {
+      clientId: store.state.GOOGLE_CLIENTID,
+      clientSecret: store.state.GOOGLE_CLIENTSECRET
+    },
+    facebook: {
+      clientId: store.state.FACEBOOK_CLIENTID,
+      clientSecret: store.state.FACEBOOK_CLIENTSECRET
+    }
+  }
+})
+
 let nuLnkPreConn = document.createElement('link');
 nuLnkPreConn.name = "datahub_lnk";
 nuLnkPreConn.rel = "preconnect";
