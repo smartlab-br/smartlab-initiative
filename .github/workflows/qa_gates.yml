@@ -34,7 +34,6 @@ jobs:
         cd ./app
         npm run build --if-present
         npm test
-        ls -l ./test/coverage/*
       env:
         CI: true
     - name: SonarCloud Scan
