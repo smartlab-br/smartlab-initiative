@@ -33,7 +33,8 @@ module.exports = merge(base, {
       // 'process.env.ACIDENTOMETROS_APP_KEY': JSON.stringify(process.env.ACIDENTOMETROS_APP_KEY || 'key'),
       'process.env.GOOGLE_CLIENTID': JSON.stringify(process.env.GOOGLE_CLIENTID),
       'process.env.GOOGLE_CLIENTSECRET': JSON.stringify(process.env.GOOGLE_CLIENTSECRET),
-      'process.env.FACEBOOK_CLIENTID': JSON.stringify(process.env.FACEBOOK_CLIENTID)
+      'process.env.FACEBOOK_CLIENTID': JSON.stringify(process.env.FACEBOOK_CLIENTID),
+      'process.env.FACEBOOK_CLIENTSECRET': JSON.stringify(process.env.FACEBOOK_CLIENTSECRET || 'key')
     }),
     new VueSSRServerPlugin()
   ]

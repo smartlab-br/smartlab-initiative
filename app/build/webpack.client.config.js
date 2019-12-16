@@ -24,7 +24,9 @@ const config = merge(base, {
       // 'process.env.ACIDENTOMETROS_APP_KEY': JSON.stringify(process.env.ACIDENTOMETROS_APP_KEY || 'key'),
       'process.env.GOOGLE_CLIENTID': JSON.stringify(process.env.GOOGLE_CLIENTID | 'key'),
       'process.env.GOOGLE_CLIENTSECRET': JSON.stringify(process.env.GOOGLE_CLIENTSECRET || 'key'),
-      'process.env.FACEBOOK_CLIENTID': JSON.stringify(process.env.FACEBOOK_CLIENTID || 'key')
+      'process.env.FACEBOOK_CLIENTID': JSON.stringify(process.env.FACEBOOK_CLIENTID || 'key'),
+      'process.env.FACEBOOK_CLIENTSECRET': JSON.stringify(process.env.FACEBOOK_CLIENTSECRET || 'key')
+      
     }),
     // extract vendor chunks for better caching
     new webpack.optimize.CommonsChunkPlugin({

@@ -75,6 +75,7 @@ export default context => {
         store.state.GOOGLE_CLIENTSECRET = process.env.GOOGLE_CLIENTSECRET;
 
         store.state.FACEBOOK_CLIENTID = process.env.FACEBOOK_CLIENTID;     
+        store.state.FACEBOOK_CLIENTSECRET = process.env.FACEBOOK_CLIENTSECRET;
 
         context.state = store.state                
         resolve(app)
