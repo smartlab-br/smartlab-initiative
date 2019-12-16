@@ -8,7 +8,6 @@
     "dev": "cross-env node server",
     "test": "jest",
     "lint": "eslint --output-file=../lint/report.json --format=json --config=../lint/.eslintrc.js \"**/*.{js,vue}\"",
-    
     "stg": "cross-env node server",
     "start": "cross-env node server",
     "build": "rimraf dist && npm run build:client && npm run build:server",
