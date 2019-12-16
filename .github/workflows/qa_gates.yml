@@ -24,11 +24,11 @@ jobs:
       run: |
         cd ./app
         npm install
-    - name: Linting (pylint)
+    - name: Linting (eslint)
       run: |
         cd ./app
         npm install --save-dev eslint eslint-plugin-vue
-        ./node_modules/.bin/eslint --config=../lint/.eslintrc.js --output-file=../lint/report.json --format=json "**/*.{js,vue}"
+        npm run lint
     - name: Unit testing
       run: |
         cd ./app
