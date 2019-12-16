@@ -23,15 +23,19 @@ jobs:
     - name: Installing dependencies
       run: |
         cd ./app
-        npm install
-    # - name: Linting (pylint)
+        npm install --save-dev
+    # - name: Linting (eslint)
     #   run: |
-    #     npm install --save-dev eslint eslint-config-strongloop    
+    #     cd ./app
+    #     npm install --save-dev eslint eslint-plugin-vue
+    #     npm run lint
     - name: Unit testing
       run: |
         cd ./app
         npm run build --if-present
-        npm test
+        npm run test
+        sed -n 's/smartlab-initiative\/smartlab-initiative/smartlab-initiative/' ./test/coverage/lcov.info
+        sed -n 's/smartlab-initiative\/smartlab-initiative/smartlab-initiative/' ./test/report.xml
       env:
         CI: true
     - name: SonarCloud Scan
