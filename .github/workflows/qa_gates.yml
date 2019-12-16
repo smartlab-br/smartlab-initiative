@@ -1,0 +1,40 @@
+name: Node CI
+
+on: 
+  push:
+    - master
+    - staging
+    - development
+    - contrib
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [8.x, 10.x, 12.x]
+    steps:
+    - uses: actions/checkout@master
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: Installing dependencies
+      run: |
+        cd app
+        npm install
+    # - name: Linting (pylint)
+    #   run: |
+    #     npm install --save-dev eslint eslint-config-strongloop    
+    - name: Unit testing
+      run: |
+        npm run build --if-present
+        npm test
+        cd ..
+      env:
+        CI: true
+    - name: SonarCloud Scan
+      uses: sonarsource/sonarcloud-github-action@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
