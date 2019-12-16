@@ -2,10 +2,11 @@ name: Node CI
 
 on: 
   push:
-    - master
-    - staging
-    - development
-    - contrib
+    refs/heads:
+      - master
+      - staging
+      - development
+      - contrib
 
 jobs:
   test:
