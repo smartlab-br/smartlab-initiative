@@ -34,8 +34,8 @@ jobs:
         cd ./app
         npm run build --if-present
         npm run test
-        sed 's/smartlab-initiative\/smartlab-initiative/smartlab-initiative/' ./test/coverage/lcov.info
-        sed 's/home\/runner\/work\/smartlab-initiative\/smartlab-initiative/github\/workspace/' ./test/report.xml
+        sed -n 's/home\/runner\/work\/smartlab-initiative\/smartlab-initiative/github\/workspace/' ./test/coverage/lcov.info
+        sed -n 's/home\/runner\/work\/smartlab-initiative\/smartlab-initiative/github\/workspace/' ./test/report.xml
         pwd
       env:
         CI: true
