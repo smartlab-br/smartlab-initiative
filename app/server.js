@@ -150,21 +150,29 @@ app.get('/api-proxy/*', (req, res) => {
   
   const apiDataMap = { 
     datahub: [process.env.DATAHUB_API_BASE_URL, 
-              process.env.DATAHUB_APP_KEY] 
+              process.env.DATAHUB_APP_KEY],
+    odometros: [process.env.ACIDENTOMETROS_API_BASE_URL, 
+              process.env.ACIDENTOMETROS_APP_KEY] 
   }
 
   const splitArray = req.url.split("/")
   const resourceUrl = splitArray.slice(3).join('/')
   const apiUrl = apiDataMap[splitArray[2]][0] + "/" + resourceUrl
 
+  var header = {
+    'Content-Type': 'application/json',
+    'X-Gravitee-Api-Key': apiDataMap[splitArray[2]][1]
+  }
+
+  if (req.headers['cache-control']) {
+    header['cache-control'] = 'no-cache'
+  }
+
   axios({
     method: 'get',
     url: apiUrl,
     responseType: 'json',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-Gravitee-Api-Key': apiDataMap[splitArray[2]][1]
-    }
+    headers: header
   })
     .then(function(response) {
       // handle success
