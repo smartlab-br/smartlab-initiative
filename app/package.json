@@ -33,10 +33,10 @@
     "collectCoverage": true,
     "coverageDirectory": "test/coverage",
     "collectCoverageFrom": [
-      "assets/**/*.{js,jsx,vue}",
-      "components/**/*.{js,jsx,vue}",
-      "pages/**/*.{js,jsx,vue}",
-      "mixins/**/*.{js,jsx,vue}",
+      "**/assets/**/*.{js,jsx,vue}",
+      "**/components/**/*.{js,jsx,vue}",
+      "**/pages/**/*.{js,jsx,vue}",
+      "**/mixins/**/*.{js,jsx,vue}",
       "!**/node_modules/**",
       "!**/vendor/**",
       "!**/test/**"

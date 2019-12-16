@@ -24,11 +24,11 @@ jobs:
       run: |
         cd ./app
         npm install --save-dev
-    - name: Linting (eslint)
-      run: |
-        cd ./app
-        npm install --save-dev eslint eslint-plugin-vue
-        npm run lint; exit 0
+    # - name: Linting (eslint)
+    #   run: |
+    #     cd ./app
+    #     npm install --save-dev eslint eslint-plugin-vue
+    #     npm run lint
     - name: Unit testing
       run: |
         cd ./app
