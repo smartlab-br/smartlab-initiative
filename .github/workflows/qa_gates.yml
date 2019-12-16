@@ -34,8 +34,8 @@ jobs:
         cd ./app
         npm run build --if-present
         npm run test
-        sed -n 's/smartlabinitiative\/smartlabinitiative/smartlabinitiative/' ./test/coverage/lcov.info
-        sed -n 's/smartlabinitiative\/smartlabinitiative/smartlabinitiative/' ./test/report.xml
+        sed -n 's/smartlab-initiative\/smartlab-initiative/smartlab-initiative/' ./test/coverage/lcov.info
+        sed -n 's/smartlab-initiative\/smartlab-initiative/smartlab-initiative/' ./test/report.xml
       env:
         CI: true
     - name: SonarCloud Scan
