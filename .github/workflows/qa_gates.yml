@@ -33,6 +33,7 @@ jobs:
       run: |
         cd ./app
         npm run test
+        ls -la
       # env:
       #   CI: true
     - name: SonarCloud Scan
