@@ -38,11 +38,11 @@ jobs:
       #   CI: true
     - name: Transform paths in reports
       run: |
-        sed -i 's/\/home\/runner\/work\/smartlab-initiative\/smartlab-initiative/./g' ./app/test/coverage/lcov.info
-        sed -i 's/\/home\/runner\/work\/smartlab-initiative\/smartlab-initiative/./g' ./app/test/coverage/cobertura-coverage.xml
-        sed -i 's/\/home\/runner\/work\/smartlab-initiative\/smartlab-initiative/./g' ./app/test/report.xml
+        sed -i 's/\/home\/runner\/work\/smartlab-initiative\/smartlab-initiative/./' ./app/test/coverage/lcov.info
+        sed -i 's/\/home\/runner\/work\/smartlab-initiative\/smartlab-initiative/./' ./app/test/coverage/cobertura-coverage.xml
+        sed -i 's/\/home\/runner\/work\/smartlab-initiative\/smartlab-initiative/./' ./app/test/report.xml
         echo '====='
-        head -20 ./app/test/report.xml
+        head -40 ./app/test/report.xml
         pwd
     - name: SonarCloud Scan
       uses: sonarsource/sonarcloud-github-action@master
