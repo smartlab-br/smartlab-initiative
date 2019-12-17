@@ -24,11 +24,11 @@ jobs:
       run: |
         cd ./app
         npm install --save-dev
-    # - name: Linting (eslint)
-    #   run: |
-    #     cd ./app
-    #     npm install --save-dev eslint eslint-plugin-vue
-    #     npm run lint
+    - name: Linting (eslint)
+      run: |
+        cd ./app
+        npm install --save-dev eslint eslint-plugin-vue
+        npm run lint || true
     - name: Unit tests
       run: |
         cd ./app
@@ -41,6 +41,7 @@ jobs:
         sed -i 's/\/home\/runner\/work\/smartlab-initiative\/smartlab-initiative/./' ./app/test/coverage/lcov.info
         sed -i 's/\/home\/runner\/work\/smartlab-initiative\/smartlab-initiative/./' ./app/test/coverage/cobertura-coverage.xml
         sed -i 's/\/home\/runner\/work\/smartlab-initiative\/smartlab-initiative/./' ./app/test/report.xml
+        sed -i 's/\/home\/runner\/work\/smartlab-initiative\/smartlab-initiative/./' ./lint/report.json
     - name: SonarCloud Scan
       uses: sonarsource/sonarcloud-github-action@master
       env:
