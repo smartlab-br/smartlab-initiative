@@ -36,6 +36,11 @@ jobs:
         ls -la
       # env:
       #   CI: true
+    - name: Transform paths in reports
+      run: |
+        ls -l /home/runner/work/smartlab-initiative/smartlab-initiative/*
+        echo '====='
+        ls -l /github/workspace/*
     - name: SonarCloud Scan
       uses: sonarsource/sonarcloud-github-action@master
       with:
