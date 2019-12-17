@@ -41,9 +41,7 @@ jobs:
         sed -i 's/\/home\/runner\/work\/smartlab-initiative\/smartlab-initiative/./' ./app/test/coverage/lcov.info
         sed -i 's/\/home\/runner\/work\/smartlab-initiative\/smartlab-initiative/./' ./app/test/coverage/cobertura-coverage.xml
         sed -i 's/\/home\/runner\/work\/smartlab-initiative\/smartlab-initiative/./' ./app/test/report.xml
-        head -20 ./lint/report.json
         sed -i 's/\/home\/runner\/work\/smartlab-initiative\/smartlab-initiative/./' ./lint/report.json
-        head -20 ./lint/report.json
     - name: SonarCloud Scan
       uses: sonarsource/sonarcloud-github-action@master
       env:
