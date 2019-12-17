@@ -20,7 +20,7 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-    - name: Installing dependencies
+    - name: Install dependencies
       run: |
         cd ./app
         npm install --save-dev
@@ -29,15 +29,18 @@ jobs:
     #     cd ./app
     #     npm install --save-dev eslint eslint-plugin-vue
     #     npm run lint
-    - name: Unit testing
+    - name: Unit tests
       run: |
         cd ./app
-        npm run build --if-present
         npm run test
-        sed -n 's/smartlab-initiative\/smartlab-initiative/smartlab-initiative/' ./test/coverage/lcov.info
-        sed -n 's/smartlab-initiative\/smartlab-initiative/smartlab-initiative/' ./test/report.xml
-      env:
-        CI: true
+        ls -la
+      # env:
+      #   CI: true
+    - name: Transform paths in reports
+      run: |
+        sed -i 's/\/home\/runner\/work\/smartlab-initiative\/smartlab-initiative/./' ./app/test/coverage/lcov.info
+        sed -i 's/\/home\/runner\/work\/smartlab-initiative\/smartlab-initiative/./' ./app/test/coverage/cobertura-coverage.xml
+        sed -i 's/\/home\/runner\/work\/smartlab-initiative\/smartlab-initiative/./' ./app/test/report.xml
     - name: SonarCloud Scan
       uses: sonarsource/sonarcloud-github-action@master
       env:
