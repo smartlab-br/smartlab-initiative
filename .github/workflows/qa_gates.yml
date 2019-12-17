@@ -41,11 +41,13 @@ jobs:
         ls -l /home/runner/work/smartlab-initiative/smartlab-initiative/app/assets/*
         echo '====='
         ls -l /home/runner/work/smartlab-initiative/smartlab-initiative/app/test/*
+        echo '====='
         sed -i -n 's/\/home\/runner\/work\/smartlab-initiative\/smartlab-initiative/./g' ./app/test/coverage/lcov.info
         sed -i -n 's/\/home\/runner\/work\/smartlab-initiative\/smartlab-initiative/./g' ./app/test/coverage/cobertura-coverage.xml
-        sed -i -n 's/\/home\/runner\/work\/smartlab-initiative\/smartlab-initiative/./g' ./app/test/report.xml
+        sed -i 's/\/home\/runner\/work\/smartlab-initiative\/smartlab-initiative/./g' ./app/test/report.xml
         echo '====='
         head -20 ./app/test/coverage/lcov.info
+        pwd
     - name: SonarCloud Scan
       uses: sonarsource/sonarcloud-github-action@master
       env:
