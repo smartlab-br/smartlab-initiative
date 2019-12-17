@@ -20,7 +20,7 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-    - name: Installing dependencies
+    - name: Install dependencies
       run: |
         cd ./app
         npm install --save-dev
@@ -29,7 +29,7 @@ jobs:
     #     cd ./app
     #     npm install --save-dev eslint eslint-plugin-vue
     #     npm run lint
-    - name: Unit testing
+    - name: Unit tests
       run: |
         cd ./app
         npm run test
@@ -38,15 +38,11 @@ jobs:
       #   CI: true
     - name: Transform paths in reports
       run: |
-        ls -l /home/runner/work/smartlab-initiative/smartlab-initiative/app/assets/*
-        echo '====='
-        ls -l /home/runner/work/smartlab-initiative/smartlab-initiative/app/test/*
-        echo '====='
-        sed -i -n 's/\/home\/runner\/work\/smartlab-initiative\/smartlab-initiative/./g' ./app/test/coverage/lcov.info
-        sed -i -n 's/\/home\/runner\/work\/smartlab-initiative\/smartlab-initiative/./g' ./app/test/coverage/cobertura-coverage.xml
+        sed -i 's/\/home\/runner\/work\/smartlab-initiative\/smartlab-initiative/./g' ./app/test/coverage/lcov.info
+        sed -i 's/\/home\/runner\/work\/smartlab-initiative\/smartlab-initiative/./g' ./app/test/coverage/cobertura-coverage.xml
         sed -i 's/\/home\/runner\/work\/smartlab-initiative\/smartlab-initiative/./g' ./app/test/report.xml
         echo '====='
-        head -20 ./app/test/coverage/lcov.info
+        head -20 ./app/test/report.xml
         pwd
     - name: SonarCloud Scan
       uses: sonarsource/sonarcloud-github-action@master
