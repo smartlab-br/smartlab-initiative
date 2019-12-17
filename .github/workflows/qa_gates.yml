@@ -29,6 +29,7 @@ jobs:
         cd ./app
         npm install --save-dev eslint eslint-plugin-vue
         npm run lint
+        if [ $? -eq 1 ] then exit 0
     - name: Unit tests
       run: |
         cd ./app
