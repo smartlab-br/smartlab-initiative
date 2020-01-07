@@ -259,11 +259,20 @@
           }
 
         } else if (payload.type && payload.type === 'radio') {
+
           if (payload.item == null || payload.item == undefined){
             this.customParams.baseApi = null;
           } else {
+            //Limpa filtros dos selects do grupo
+            for (let item of this.observatorio.prevalencia.mapa_filtros) {
+              if (item.type &&  item.type == "select" && item.group && this.customParams[item.selection.rules.api.args[0].named_prop]){
+                delete this.customParams[item.selection.rules.api.args[0].named_prop];
+                delete this.customParams[item.selection.rules.api.args[0].named_prop + '_label'];
+              }
+            }
             this.customParams.baseApi = payload.item.api;
             this.customParams.filterUrl = "";
+            this.customParams.filterText = "";
             this.activeGroup = payload.item.value;
           }
         }
