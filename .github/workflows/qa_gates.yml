@@ -1,0 +1,49 @@
+name: Node CI
+
+on: 
+  push:
+    refs/heads:
+      - master
+      - staging
+      - development
+      - contrib
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [12.11.0]
+    steps:
+    - uses: actions/checkout@master
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: Install dependencies
+      run: |
+        cd ./app
+        npm install --save-dev
+    - name: Linting (eslint)
+      run: |
+        cd ./app
+        npm install --save-dev eslint eslint-plugin-vue
+        npm run lint || true
+    - name: Unit tests
+      run: |
+        cd ./app
+        npm run test
+        ls -la
+      # env:
+      #   CI: true
+    - name: Transform paths in reports
+      run: |
+        sed -i 's/\/home\/runner\/work\/smartlab-initiative\/smartlab-initiative/./' ./app/test/coverage/lcov.info
+        sed -i 's/\/home\/runner\/work\/smartlab-initiative\/smartlab-initiative/./' ./app/test/coverage/cobertura-coverage.xml
+        sed -i 's/\/home\/runner\/work\/smartlab-initiative\/smartlab-initiative/./' ./app/test/report.xml
+        sed -i 's/\/home\/runner\/work\/smartlab-initiative\/smartlab-initiative/./' ./lint/report.json
+    - name: SonarCloud Scan
+      uses: sonarsource/sonarcloud-github-action@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
