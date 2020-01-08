@@ -9,15 +9,15 @@
       </div>
       -->
       Acesse com :
-      <v-btn icon class="white--text" @click="auth('google')">
+      <v-btn icon @click="auth('google')">
         <v-tooltip bottom>
-          <v-icon small slot="activator">fab fa-google</v-icon>
+          <v-icon color="white" small slot="activator">fab fa-google</v-icon>
           Google
         </v-tooltip>
       </v-btn>
-      <v-btn icon class="white--text" @click="auth('facebook')"> 
+      <v-btn icon @click="auth('facebook')"> 
         <v-tooltip bottom>
-          <v-icon small slot="activator">fab fa-facebook</v-icon>
+          <v-icon color="white" small slot="activator">fab fa-facebook</v-icon>
           Facebook
         </v-tooltip>
       </v-btn>
@@ -74,7 +74,7 @@
     mounted: function() {
       this.$vuetify.theme = this.$observatories.getTheme('default');
       this.isAuthenticated = this.$auth.isAuthenticated();
-      this.user = window.localStorage.getItem('user') ? JSON.parse(window.localStorage.getItem('user')) : {name:"", email:"", picture:""};
+      this.user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : {name:"", email:"", picture:""};
     },
     methods: {
 
@@ -116,12 +116,13 @@
       authLogout: function () {
         let this_ = this;
         let options = {
-          url: window.localStorage.getItem('logoutUrl'),
+          url: localStorage.getItem('logoutUrl'),
         }
         this.$auth.logout(options).then(function () {
           if (!this_.$auth.isAuthenticated()) {
             this_.clearStorageUser();
             this_.user = {name:"", email:"", picture:""};
+            this_.$emit('userChanged',this_.user);
             this_.response = null
           }
 
@@ -154,8 +155,9 @@
               this_.user.picture = response.data.picture.data.url;
               this_.user.facebook = response.data.id;
               this_.response = response
-              window.localStorage.setItem('logoutUrl', logoutUrl);
-              window.localStorage.setItem('user', JSON.stringify(this_.user));
+              localStorage.setItem('logoutUrl', logoutUrl);
+              localStorage.setItem('user', JSON.stringify(this_.user));
+              this_.$emit('userChanged',this_.user);
             })
           } else if (provider === 'google') {
             this_.$http.get('https://www.googleapis.com/oauth2/v3/userinfo').then(function (response) {
@@ -165,8 +167,9 @@
               this_.user.google = response.data.sub;
               this_.response = response
               let logoutUrl = "https://accounts.google.com/o/oauth2/revoke?token=" + this_.$auth.getToken();
-              window.localStorage.setItem('logoutUrl', logoutUrl);
-              window.localStorage.setItem('user', JSON.stringify(this_.user));
+              localStorage.setItem('logoutUrl', logoutUrl);
+              localStorage.setItem('user', JSON.stringify(this_.user));
+              this_.$emit('userChanged',this_.user);
             })
           } else if (provider === 'twitter') {
             this_.response = authResponse.body.profile
@@ -187,8 +190,8 @@
         })
       },
       clearStorageUser(){
-        window.localStorage.removeItem('user');
-        window.localStorage.removeItem('logoutUrl');
+        localStorage.removeItem('user');
+        localStorage.removeItem('logoutUrl');
       }
 
       

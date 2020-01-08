@@ -218,8 +218,16 @@
         aria-label="Identifique-se"
         @click="$navigationManager.constructor.pushRoute($router, '/login', false)">
         <v-tooltip bottom>
-          <v-icon color="white" slot="activator">perm_identity</v-icon>
-          Identifique-se
+              <v-avatar
+                size="36px"
+              slot="activator">
+                <img
+                  v-if="user && user.picture"
+                  :src="user.picture"
+                >
+                <v-icon v-else color="white" slot="activator">perm_identity</v-icon>
+              </v-avatar>
+          {{ loginLabel }}
         </v-tooltip>
       </v-btn>
       <!--
@@ -235,7 +243,7 @@
     </v-toolbar>
     <v-content>
       <v-container fluid class="pa-0 fill-height">
-        <router-view :key="reRenderPath" @showSnackbar="snackAlert"
+        <router-view :key="reRenderPath" @userChanged="updateUser" @showSnackbar="snackAlert"
           @showLocationDialog="showLocationDialog" @showBugDialog="showBugDialog" @alterToolbar="changeToolbar" @alterMiddleToolbar="changeMiddleToolbar" ref="currentRoute"></router-view>
         <v-slide-y-transition mode="out-in">
         </v-slide-y-transition>
@@ -609,7 +617,8 @@
         currentAnalysisUnit: null,
         currentPlaceType: null,
         observatorios: null,
-        dim: { label: null }
+        dim: { label: null },
+        user: null
       }
     },
     created () {    
@@ -649,6 +658,13 @@
       this.themeEval();
     },
     computed: {
+      loginLabel: function(){
+        if (this.user && this.user.name){
+          return this.user.name;
+        } else {
+          return "Identifique-se"
+        }
+      },
       toolbarColor: function() {
         return this.$vuetify.theme.toolbar;
       },
@@ -755,6 +771,8 @@
         this.snackbarCookies = true;
       }
 
+      this.user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null;
+
       let findLoc = this.$analysisUnitModel.findCurrentPlace();
       if (findLoc && (findLoc instanceof Promise || findLoc.then)) {
         findLoc.then(response => {
@@ -775,6 +793,9 @@
       window.addEventListener('scroll', this.assessVisibleLeftDrawerTitle);
     },
     watch: {
+      user(newVal){
+        this.loginLabel = user.name ? user.name : 'Identifique-se';
+      },
       '$route.fullPath': function(newVal, oldVal) {
         this.dim = { label: null }
         let observ = this.$observatories.constructor.identifyObservatory(this.$route.path.split('/')[1]);
@@ -982,6 +1003,10 @@
         console.log("Icon not found: " + icon);
         return null;
         
+      },
+
+      updateUser(user){
+        this.user = user;
       }
       
     }
