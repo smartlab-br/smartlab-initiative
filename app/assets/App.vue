@@ -212,6 +212,7 @@
           Alterar Localidade
         </v-tooltip>
       </v-btn>
+      <!--
       <v-btn
         tabindex = "23"
         icon class="ml-0"
@@ -230,7 +231,6 @@
           {{ loginLabel }}
         </v-tooltip>
       </v-btn>
-      <!--
       <v-btn
         icon class="ml-0"
         @click.native.stop="rightDrawer = !rightDrawer">
