@@ -932,40 +932,22 @@
           let closeBugDialog = () => { this.bugDialog = false; };
           let mailer_key = this.$store.state.MAILER_APP_KEY;
 
-          var requestOptions = {
+          axios({
             method: "POST",
-            url: "/mail-proxy",
+            "url": mailerUrl,
             data: {
               mail: {
                 sistema: "smartlab",
-                recipients: ['paulo.araujo@mpt.mp.br'],
+                recipients: ['atena@mpt.mp.br'],
                 subject: "Smartlab - Relate um problema",
                 "content": content
               }
             },
-            headers : {
-              'Content-Type': "application/json"
+            headers: {
+              'Content-Type': "application/json",
+              "X-Gravitee-Api-Key": mailer_key
             }
-          }
-
-
-          axios(requestOptions).then(function (response) {
-          // axios({
-          //   method: "POST",
-          //   "url": mailerUrl,
-          //   data: {
-          //     mail: {
-          //       sistema: "smartlab",
-          //       recipients: ['atena@mpt.mp.br'],
-          //       subject: "Smartlab - Relate um problema",
-          //       "content": content
-          //     }
-          //   },
-          //   headers: {
-          //     'Content-Type': "application/json",
-          //     "X-Gravitee-Api-Key": mailer_key
-          //   }
-          // }).then(function (response) {
+          }).then(function (response) {
             finishMailSend();
             snackAlert({ color : 'success', text: "Formulário enviado com sucesso." });
             closeBugDialog();
