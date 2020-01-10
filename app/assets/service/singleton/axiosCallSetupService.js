@@ -31,7 +31,8 @@ class AxiosCallSetupService {
   getAxiosOptions(endpoint, key = 'DATAHUB') {
     const urlMap = {
       DATAHUB : '/api-proxy/datahub',
-      ACIDENTOMETROS : '/api-proxy/odometros'
+      ACIDENTOMETROS : '/api-proxy/odometros',
+      MAIL : '/api-proxy/mail'
     }
 
     var options = {
@@ -45,6 +46,9 @@ class AxiosCallSetupService {
 
     if (key == 'ACIDENTOMETROS') {
       headers['Cache-Control'] = 'no-cache'
+    }
+    if (key == 'MAIL') {
+      options.method = 'POST'
     }
 
     return Object.assign(
