@@ -924,30 +924,23 @@
                         "\nDescrição do problema: " + this.$refs.bugText.value +
                         "\nE-mail contato: " + this.$refs.bugEmail.value;
           
-          let mailerUrl = this.$store.state.MAILER_API_BASE_URL ? this.$store.state.MAILER_API_BASE_URL : process.env.MAILER_API_BASE_URL;
-          //mailerUrl += '/mail';
-
+          
           let snackAlert = this.snackAlert;
           let finishMailSend = () => { this.sendingMail = false; };
           let closeBugDialog = () => { this.bugDialog = false; };
-          let mailer_key = this.$store.state.MAILER_APP_KEY;
 
-          axios({
-            method: "POST",
-            "url": mailerUrl,
-            data: {
-              mail: {
-                sistema: "smartlab",
-                recipients: ['atena@mpt.mp.br'],
-                subject: "Smartlab - Relate um problema",
-                "content": content
-              }
-            },
-            headers: {
-              'Content-Type': "application/json",
-              "X-Gravitee-Api-Key": mailer_key
+          var requestOptions = this.$axiosCallSetupService.getAxiosOptions('/mail', 'MAIL');
+          
+          requestOptions.data = {
+            mail: {
+              sistema: "smartlab",
+              recipients: ['atena@mpt.mp.br'],
+              subject: "Smartlab - Relate um problema",
+              "content": content
             }
-          }).then(function (response) {
+          }
+          
+          axios(requestOptions).then(function (response) {
             finishMailSend();
             snackAlert({ color : 'success', text: "Formulário enviado com sucesso." });
             closeBugDialog();
