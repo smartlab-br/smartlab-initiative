@@ -146,42 +146,6 @@ function render (req, res) {
   })
 }
 
-app.post('/mail-proxy', (req, res) => {
-
-  var mailer_key = "dcc14201-839a-4745-a971-895cb32bad0c"
-
-  axios({
-      method: "POST",
-      "url": process.env.MAILER_API_BASE_URL,
-      data: {
-        mail: {
-          sistema: "smartlab",
-          recipients: ['paulo.araujo@mpt.mp.br'],
-          subject: "Smartlab - Relate um problema",
-          // "content": content
-          "content": "Teste de email. Favor desconsiderar. Conteúdo fixo."
-        }
-      },
-      headers: {
-        'Content-Type': "application/json",
-        "X-Gravitee-Api-Key": mailer_key
-      }
-    }).then(function (response) {
-      res.json(response.data);
-      // snackAlert({ color : 'success', text: "Formulário enviado com sucesso." });
-      // closeBugDialog();
-    }).catch(function(error) {
-      // handle error
-      console.log(error)
-      if (error.response) {
-        res.status(error.response.status).send(error.response.data)
-      } else {
-        // Something happened in setting up the request that triggered an Error
-        res.status(400).send(error)
-      }
-    });
-})
-
 app.get('/api-proxy/*', (req, res) => {
   
   const apiDataMap = { 
