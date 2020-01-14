@@ -153,13 +153,13 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.post('/api-proxy/*', (req, res) => {
 
   const apiDataMap = { 
-    mail: [process.env.MAILER_API_BASE_URL, 
+    mercurio: [process.env.MAILER_API_BASE_URL, 
               process.env.MAILER_APP_KEY]
   }
 
   const splitArray = req.url.split("/")
   const resourceUrl = splitArray.slice(3).join('/')
-  const apiUrl = apiDataMap[splitArray[2]][0] + resourceUrl
+  const apiUrl = apiDataMap[splitArray[2]][0] + '/' + resourceUrl
 
   var header = {
     'Content-Type': 'application/json',

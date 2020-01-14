@@ -929,7 +929,7 @@
           let finishMailSend = () => { this.sendingMail = false; };
           let closeBugDialog = () => { this.bugDialog = false; };
 
-          var requestOptions = this.$axiosCallSetupService.getAxiosOptions('/mail', 'MAIL');
+          var requestOptions = this.$axiosCallSetupService.getAxiosOptions('/mail', 'MERCURIO');
           
           requestOptions.data = {
             mail: {
