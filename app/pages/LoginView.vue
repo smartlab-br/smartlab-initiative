@@ -124,9 +124,15 @@
             this_.user = {name:"", email:"", picture:""};
             this_.$emit('userChanged',this_.user);
             this_.response = null
+            this_.isAuthenticated = this_.$auth.isAuthenticated();
           }
-
-          this_.isAuthenticated = this_.$auth.isAuthenticated();
+        }).catch(function (err) {
+            this_.$auth.logout();
+            this_.clearStorageUser();
+            this_.user = {name:"", email:"", picture:""};
+            this_.$emit('userChanged',this_.user);
+            this_.response = null
+            this_.isAuthenticated = this_.$auth.isAuthenticated();
         })
       },
 

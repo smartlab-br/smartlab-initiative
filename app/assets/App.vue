@@ -212,7 +212,6 @@
           Alterar Localidade
         </v-tooltip>
       </v-btn>
-      <!--
       <v-btn
         tabindex = "23"
         icon class="ml-0"
@@ -228,9 +227,10 @@
                 >
                 <v-icon v-else color="white" slot="activator">perm_identity</v-icon>
               </v-avatar>
-          {{ loginLabel }}
+          {{ computedLoginLabel }}
         </v-tooltip>
       </v-btn>
+      <!--
       <v-btn
         icon class="ml-0"
         @click.native.stop="rightDrawer = !rightDrawer">
@@ -658,7 +658,7 @@
       this.themeEval();
     },
     computed: {
-      loginLabel: function(){
+      computedLoginLabel: function(){
         if (this.user && this.user.name){
           return this.user.name;
         } else {
@@ -793,9 +793,6 @@
       window.addEventListener('scroll', this.assessVisibleLeftDrawerTitle);
     },
     watch: {
-      user(newVal){
-        this.loginLabel = user.name ? user.name : 'Identifique-se';
-      },
       '$route.fullPath': function(newVal, oldVal) {
         this.dim = { label: null }
         let observ = this.$observatories.constructor.identifyObservatory(this.$route.path.split('/')[1]);
