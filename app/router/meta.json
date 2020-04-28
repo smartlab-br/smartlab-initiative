@@ -64,6 +64,16 @@
     "description": "Observatório da Diversidade e da Igualdade de Oportunidades no Trabalho",
     "keywords": "observatorio"
   },
+  "cov": {
+    "title": "Smartlab - Observatório do COVID-19",
+    "description": "Observatório do COVID-19",
+    "keywords": "covid"
+  },
+  "covid": {
+    "title": "Smartlab - Observatório do COVID-19",
+    "description": "Observatório do COVID-19",
+    "keywords": "covid"
+  },
   "smartmap": {
     "title": "Smartlab - SmartMap - Modo Avançado ",
     "description": "SmartMap - Modo Avançado",

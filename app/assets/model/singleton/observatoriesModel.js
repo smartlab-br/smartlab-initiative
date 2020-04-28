@@ -23,7 +23,11 @@ class ObservatoriesModel {
         { id: 'des', app_icon: 'coord-06', title: 'Diversidade<br/>no Trabalho',
             to: '/diversidade', external: false,
             rippleColor: 'deep-purple--text darken-2',
-            color: colors.deepPurple.darken4, textColor: "deep-purple--text darken-4" }
+            color: colors.deepPurple.darken4, textColor: "deep-purple--text darken-4" },
+        { id: 'cov', app_icon: 'covid', title: 'COVID-19',
+            to: '/covid', external: false,
+            rippleColor: 'deep-orange--text darken-2',
+            color: colors.deepOrange.darken4, textColor: "deep-orange--text darken-4" }
     ];
 
     constructor() {
@@ -82,6 +86,7 @@ class ObservatoriesModel {
         if (route.includes('trabalhoescravo')) return 'te';
         if (route.includes('trabalhoinfantil')) return 'ti';
         if (route.includes('sst')) return 'sst';
+        if (route.includes('covid')) return 'cov';
         return;
     }
 
@@ -98,6 +103,8 @@ class ObservatoriesModel {
             return 'trabalhoinfantil';
             case 'sst':
             return 'sst';
+            case 'cov':
+            return 'covid';
         }
     } 
 
