@@ -27,7 +27,7 @@
                 :width="header.width"
                 >
                 <v-icon small>arrow_upward</v-icon>
-                {{ header.type != 'spark' ? header.text : header.text + " (" + first_cat[header.series] + '-' + last_cat[header.series] + ')' }}
+                {{ header.type != 'spark' ? header.text : header.text + " (" + first_cat[header.series] + ' a ' + last_cat[header.series] + ')' }}
                 </th>
             </tr>
             </template>            
@@ -263,11 +263,20 @@ export default {
             //     if (b.deltaPerc) return 1;
             //     return 0;
             // }
-          
-            this.createSparklineFields(hierarchicalDS, allSeries, series_first_cat, series_last_cat);
-            this.first_cat = series_first_cat;
-            this.last_cat = series_last_cat;
+            let fillZeros = sourceStructure.fillZeros == undefined ? true : sourceStructure.fillZeros;
+            this.createSparklineFields(hierarchicalDS, allSeries, series_first_cat, series_last_cat, fillZeros, sourceStructure);
 
+            if (sourceStructure.category_type == "timestamp"){
+                for(let serie of allSeries){
+                    series_first_cat[serie] = new Date(series_first_cat[serie]).toISOString().substring(0,10)
+                }
+                for(let serie of allSeries){
+                    series_last_cat[serie] = new Date(series_last_cat[serie]).toISOString().substring(0,10)
+                }
+            }
+            this.first_cat = series_first_cat
+            this.last_cat = series_last_cat
+            
             //default order = last value in first series
             let order_field = 'last_value_' + allSeries[0];
             if (sourceStructure.order_field){
@@ -283,7 +292,7 @@ export default {
 
         },
 
-        createSparklineFields(dataset, seriesList, series_first_cat, series_last_cat, fillZeros = true){
+        createSparklineFields(dataset, seriesList, series_first_cat, series_last_cat, fillZeros = true, sourceStructure){
             for (let row of dataset){
 
                 for (let series_value of seriesList){
@@ -355,6 +364,10 @@ export default {
                     row['sparkline_values_' + series_value] = sparkline_values;
                     row['total_' + series_value] = total;
                     row['higher_value_' + series_value] = higher_value;
+                    if (sourceStructure.category_type == "timestamp"){
+                        higher_cat = new Date(higher_cat).toISOString().substring(0,10)
+                    }
+
                     if(series){
                         row['last_value_' + series_value] = sparkline_values[sparkline_values.length-1];
                         row['higher_value_str_' + series_value] = higher_value + " (" + higher_cat + ")";
