@@ -71,8 +71,8 @@
           <v-layout style="display:block;">
             <v-layout fill-height>
               <v-layout fill-height
-                v-if="dataset !== null && observatorio && observatorio.prevalencia &&
-                  observatorio.prevalencia.chart_type == 'MAP_BUBBLES' && observatorio.prevalencia.chart_options"
+                v-if="dataset !== null && observatorio && observatorio.prevalencia 
+                 && observatorio.prevalencia.chart_options"
                 ref = "chartRef"
                 :class = "leafletBasedCharts.includes(observatorio.prevalencia.chart_type) ? 'map_geo' : ''"
                 id="observatorio_home_prevalencia_map">

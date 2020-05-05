@@ -146,6 +146,45 @@ function render (req, res) {
   })
 }
 
+const bodyParser = require('body-parser');
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+app.post('/api-proxy/*', (req, res) => {
+
+  const apiDataMap = { 
+    mercurio: [process.env.MAILER_API_BASE_URL, 
+              process.env.MAILER_APP_KEY]
+  }
+
+  const splitArray = req.url.split("/")
+  const resourceUrl = splitArray.slice(3).join('/')
+  const apiUrl = apiDataMap[splitArray[2]][0] + '/' + resourceUrl
+
+  var header = {
+    'Content-Type': 'application/json',
+    'X-Gravitee-Api-Key': apiDataMap[splitArray[2]][1]
+  }
+  
+  axios({
+      method: "POST",
+      url: apiUrl,
+      data: req.body,
+      headers: header
+    }).then(function (response) {
+      res.json(response.data);
+    }).catch(function(error) {
+      // handle error
+      console.log(error)
+      if (error.response) {
+        res.status(error.response.status).send(error.response.data)
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        res.status(400).send(error)
+      }
+    });
+})
+
 app.get('/api-proxy/*', (req, res) => {
   
   const apiDataMap = { 
@@ -196,9 +235,7 @@ app.get('/api-proxy/*', (req, res) => {
  |--------------------------------------------------------------------------
  */
 
-const bodyParser = require('body-parser');
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+
 
 const querystring = require('querystring');
 
