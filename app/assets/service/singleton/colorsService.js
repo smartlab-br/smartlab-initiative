@@ -81,6 +81,19 @@ class ColorsService {
       background: "#EFEFEF",
       background2: colors.grey.lighten2
     },
+    cov: {
+      primary: colors.deepOrange.darken4,
+      secondary: colors.deepOrange.lighten4,
+      accent: colors.teal.accent4,
+      error: colors.red.base,
+      warning: colors.amber.base,
+      info: colors.blue.base,
+      success: colors.green.base,
+      // Custom
+      toolbar: colors.deepOrange.darken4,
+      background: "#EFEFEF",
+      background2: colors.grey.lighten2
+    },    
     est: {
       primary: colors.blueGrey.darken4,
       secondary: colors.blueGrey.lighten4,

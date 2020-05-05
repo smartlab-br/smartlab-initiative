@@ -34,6 +34,7 @@
               :blocked = "observatorio.status == 'EM BREVE'">
             </flpo-linked-view-card>
           </v-flex>
+          <!--
           <v-flex :class="obsSliceClass" pa-3>
             <flpo-linked-view-card
               :index-tab = "40"
@@ -45,6 +46,7 @@
               title-color = "white">
             </flpo-linked-view-card>
           </v-flex>
+          -->
         </v-layout>
       </v-layout>
     </v-flex>

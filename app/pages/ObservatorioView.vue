@@ -203,7 +203,6 @@
             </v-layout>
             <v-layout fill-height style="position: absolute"
               v-if="dataset !== null && observatorio && observatorio.prevalencia &&
-                    observatorio.prevalencia.chart_type == 'MAP_BUBBLES' &&
                     observatorio.prevalencia.chart_options"
               ref = "chartRef"
               :class = "leafletBasedCharts.includes(observatorio.prevalencia.chart_type) ? 'map_geo' : ''"

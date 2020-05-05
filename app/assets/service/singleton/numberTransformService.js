@@ -9,6 +9,16 @@ class NumberTransformService {
       return valor;
     }
 
+    if (formato == 'dataDMY'){ //timestamp to dd/MM/yyyy
+      valor = new Date(valor).toISOString().substring(0,10);
+      valor = valor.substring(8,10) + '/' + valor.substring(5,7) + '/' + valor.substring(0,4)
+      return valor;
+    }
+
+    if (formato == 'dataYMD'){ //timestamp to yyyy-MM-dd
+      valor = new Date(valor).toISOString().substring(0,10);
+      return valor;
+    }
 
     if (multiplier === null || multiplier === undefined) {
       multiplier = 1;
