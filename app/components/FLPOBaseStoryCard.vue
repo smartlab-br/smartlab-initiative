@@ -252,11 +252,11 @@
         }
 
         if (payload.type && payload.type === 'switch-group') {
-          this.customParams.enabled = payload.enabled;
+          this.customFilters.enabled = payload.enabled;
         } else if (payload.type && payload.type === 'check') {
           this.customFilters[payload.id] = payload.value;
         } else if (payload.type && payload.type === 'radio') {
-          this.customParams.enabled = payload.enabled;
+          this.customFilters.enabled = payload.enabled;
           if (payload.item == null || payload.item == undefined){
             this.customFilters.radioApi = null;
           } else {
