@@ -470,7 +470,7 @@
 
       // triggerSelect(payload) {
       //   if (payload.type && payload.type === 'switch-group') {
-      //     this.customParams.enabled = payload.enabled;
+      //     this.customFilters.enabled = payload.enabled;
       //     this.$refs.chart.reloadMap();
       //   } else {
       //     //var endpoint = this.$textTransformService.applyInterpol(payload.rules.api, this.customParams, this.customFunctions, payload.item);

@@ -95,7 +95,9 @@ const SnackbarManager = {
               
               // Prepares the layers
               let visibleLayers = {}
-              if (this.customParams.enabled) {
+              if (this.customFilters && this.customFilters.enabled) {
+                visibleLayers = this.customFilters.enabled;
+              } else if (this.customParams.enabled) {
                 visibleLayers = this.customParams.enabled;
               } else {
                 if (chartOptions.indicadores) {

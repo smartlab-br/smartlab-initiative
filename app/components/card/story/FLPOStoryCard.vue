@@ -225,7 +225,7 @@
         } 
       }
       if (Object.keys(visibleLayers).length > 0){
-        this.customParams.enabled = visibleLayers;
+        this.customFilters.enabled = visibleLayers;
       }
 
     },
