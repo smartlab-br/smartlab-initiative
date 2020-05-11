@@ -93,6 +93,9 @@ const SnackbarManager = {
                 additionalOptions.limCoords = this.customParams.limCoords;
               }
               
+              if (chartType == "MAP_MIGRATION"){
+                additionalOptions.targetTooltipFunction = chartOptions.target.tooltip_function ? this[chartOptions.target.tooltip_function] : TooltipBuildingService.defaultLeafletTooltip;
+              }
               // Prepares the layers
               let visibleLayers = {}
               if (this.customFilters && this.customFilters.enabled) {
