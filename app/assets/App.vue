@@ -569,7 +569,7 @@
             blocked: false,
             rippleColor: 'deep-purple--text darken-2' },
           { app_icon: 'covid', title: 'COVID-19',
-            to: '/codiv', external: false,
+            to: '/covid', external: false,
             blocked: false,
             rippleColor: 'deep-orange--text darken-2' },
           // { icon: 'flight_takeoff', title: 'Migrações e Trabalho',
