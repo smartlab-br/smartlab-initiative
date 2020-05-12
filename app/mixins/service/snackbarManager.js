@@ -488,6 +488,49 @@ const SnackbarManager = {
           target.unbindPopup();
           target.bindPopup(text).openPopup();
         },
+
+        obsCovidRegicTooltip(target, route, tooltip_list = [], removed_text_list = [], options = null) { 
+          let urlRegic = "/thematic/arranjoregic?categorias=nm_arranjo_alta_complex,nm_municipio_uf_origem,estimated_population&ordenacao=nm_municipio_uf_origem&filtros=eq-cd_municipio_ibge_arranjo_alta_complex-"+ target.options.rowData.target_cd_mun;
+          axios.all([axios(this.$axiosCallSetupService.getAxiosOptions(urlRegic))])
+          .then(axios.spread((resultRegic) => {
+            let dtRegic = JSON.parse(resultRegic.data).dataset;
+            // let tooltip_list = [
+            //   {text: 'Pólo Alta Complexidade',
+            //     value: 'nm_arranjo_alta_complex'},
+            //   {text: 'Origem',
+            //     value: 'nm_municipio_uf_origem'},
+            //   {text: 'População Estimada',
+            //     value: 'estimated_population'}
+            // ]
+            // let d = dtRegic[0];
+            // text = this.$tooltipBuildingService.constructor.defaultTooltip(d, route, tooltip_list, [], options);
+            let pop = 0;
+            let municipios = "";
+            let total_mun = dtRegic.length;
+            for (let item of dtRegic){
+              municipios += item.nm_municipio_uf_origem + ", ";
+              pop += item.estimated_population;
+            }
+            municipios = municipios.substring(0,municipios.length-2);
+            let text = "";
+            text += "<p class='headline-obs'>Pólo de Alta Complexidade<br/> <b>" + dtRegic[0].nm_arranjo_alta_complex + "</b></p>";
+            text += "<table width='100%'>";
+            text += "<tr><td style='vertical-align: top;' class='font-weight-bold'>População atendida:</td>";
+            text += "<td>"+ this.$numberTransformService.constructor.formatNumber(pop,"inteiro") +"</td>";
+            text += "<tr><td style='vertical-align: top;' class='font-weight-bold'>Municípios Atendidos:</td>";
+            text += "<td>"+ total_mun +" municípios<br/>"+ municipios +"</td></tr>";
+            text += "</tr>";
+            text += "</table>";
+            target.unbindPopup();
+            target.bindPopup(text, {maxHeight: 300}).openPopup();
+
+          }, error => {
+            console.error(error.toString());
+            this.sendError("Erro ao carregar dataset tooltip");
+          }));
+
+        },
+
       }
     })
   }
