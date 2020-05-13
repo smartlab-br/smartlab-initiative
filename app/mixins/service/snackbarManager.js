@@ -491,7 +491,7 @@ const SnackbarManager = {
 
         obsCovidRegicTooltip(target, route, tooltip_list = [], removed_text_list = [], options = null) { 
           let urlRegic = "/thematic/arranjoregic?categorias=nm_municipio_uf_origem,populacao_estimada_mun_origem&ordenacao=nm_municipio_uf_origem&filtros=eq-cd_municipio_ibge_alta_complex-"+ target.options.rowData.target_cd_mun;
-          let urlArranjo = "/thematic/arranjoregic?categorias=nm_municipio_alta_complex,qt_leitos_uti_arranjo, qt_leitos_outros_arranjo,qt_respiradores_arranjo,qt_respiradores_uso_arranjo,qt_estabelecimentos_arranjo,qt_casos_covid_arranjo,qt_mortes_covid_arranjo,populacao_aglomerados_subnormais_arranjo,proporcao_leitos_uti_10k_arranjo,proporcao_respiradores_uso_10k_arranjo,proporcao_respiradores_uso_arranjo&limit=1&filtros=eq-cd_municipio_ibge_alta_complex-"+ target.options.rowData.target_cd_mun;
+          let urlArranjo = "/thematic/arranjoregic?categorias=nm_municipio_uf_alta_complex,qt_leitos_uti_arranjo, qt_leitos_outros_arranjo,qt_respiradores_arranjo,qt_respiradores_uso_arranjo,qt_estabelecimentos_arranjo,qt_casos_covid_arranjo,qt_mortes_covid_arranjo,populacao_aglomerados_subnormais_arranjo,proporcao_leitos_uti_10k_arranjo,proporcao_respiradores_uso_10k_arranjo,proporcao_respiradores_uso_arranjo&limit=1&filtros=eq-cd_municipio_ibge_alta_complex-"+ target.options.rowData.target_cd_mun;
           axios.all([axios(this.$axiosCallSetupService.getAxiosOptions(urlRegic)),
                     axios(this.$axiosCallSetupService.getAxiosOptions(urlArranjo))])
           .then(axios.spread((resultRegic, resultArranjo) => {
@@ -519,7 +519,8 @@ const SnackbarManager = {
             
             // ,qt_mortes_covid_arranjo
             let text = "";
-            text += "<p class='headline-obs text-xs-center'>Pólo de Alta Complexidade<br/> <b>" + dtArranjo.nm_municipio_alta_complex + "</b></p>";
+            text += "<p class='headline-obs text-xs-center'>Pólo de Alta Complexidade<br/>" + 
+                    "<b>Arranjo Populacional de " + dtArranjo.nm_municipio_uf_alta_complex + "</b></p>";
             text += "<table width='100%'>";
             text += "<tr><td class='font-weight-bold'>Municípios Atendidos:</td>";
             text += "<td>"+ total_mun +"</td></tr>";
@@ -531,7 +532,7 @@ const SnackbarManager = {
             text += "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.qt_casos_covid_arranjo,"inteiro") +"</td></tr>";
             text += "<tr><td nowrap class='font-weight-bold'>COVID-19 - Óbitos confirmados:</td>";
             text += "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.qt_mortes_covid_arranjo,"inteiro") +"</td></tr>";
-            text += "<tr><td class='font-weight-bold'>Qt estabelecimentos de saúde:</td>";
+            text += "<tr><td class='font-weight-bold'>Qt hospitais:</td>";
             text += "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.qt_estabelecimentos_arranjo,"inteiro") +"</td></tr>";
             text += "<tr><td class='font-weight-bold'>Qt leitos UTI:</td>";
             text += "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.qt_leitos_uti_arranjo,"inteiro") +"</td></tr>";
