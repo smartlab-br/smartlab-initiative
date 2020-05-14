@@ -257,12 +257,8 @@
           this.customFilters[payload.id] = payload.value;
         } else if (payload.type && payload.type === 'radio') {
           this.customFilters.enabled = payload.enabled;
-          if (payload.item == null || payload.item == undefined){
-            this.customFilters.radioApi = null;
-          } else {
-            this.customFilters.radioApi = payload.item.api;
-            this.customFilters.filterUrl = "";
-          }
+          this.customFilters[payload.id] = payload.item.value;
+          this.customFilters[payload.id + "_label"] = payload.item.label;
         } else if (payload.type && payload.type === 'slider') {
           if (Array.isArray(payload.value)){
             this.customFilters.value_min = payload.value[0];
@@ -350,7 +346,13 @@
                 filterUrl = filterUrl + filter.selection.rules.filter;
                 filterText += "<br/>" + filter.selection.rules.filter_text;
               }
+            } else if (filter.type == "radio"){
+              if (this.customFilters[filter.id]){
+                filterUrl = filterUrl + filter.selection.rules.filter;
+                filterText += "<br/>" + filter.selection.rules.filter_text;
+              }
             }
+
           }
         }
         this.customFilters.filterUrl = filterUrl;
