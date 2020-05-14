@@ -292,46 +292,48 @@
       updateDataStructure(payload) {
         let endpoint = "";
 
-        if (payload.type && (payload.type === 'switch-group' || payload.type === 'radio')) {
-          if (this.chartHandler) this.chartHandler.adjustVisibleLayers(payload.enabled);
-        } else if (payload.type && (payload.type === 'slider' || payload.type === 'check')) {
-          if (payload.rules.filter){
-            let apiUrl = this.$textTransformService.applyInterpol(this.structure.api, this.customParams, this.customFunctions);
-            if (this.structure.apiBase){
-              apiUrl = this.$textTransformService.applyInterpol(this.structure.apiBase, this.customParams, this.customFunctions);// this.structure.apiBase;
-            }            // if (this.customFilters.radioApi){
-            //   apiUrl = this.customFilters.radioApi;
+        if (payload.type && this.chartHandler && (payload.type === 'switch-group' || payload.type === 'radio')) {
+          this.chartHandler.adjustVisibleLayers(payload.enabled);
+        } 
+        
+        if (payload.rules){
+          if (payload.type && (payload.type === 'slider' || payload.type === 'check'|| payload.type === 'radio')) {
+            if (payload.rules.filter){
+              let apiUrl = this.$textTransformService.applyInterpol(this.structure.api, this.customParams, this.customFunctions);
+              if (this.structure.apiBase){
+                apiUrl = this.$textTransformService.applyInterpol(this.structure.apiBase, this.customParams, this.customFunctions);// this.structure.apiBase;
+              }            
+              endpoint = apiUrl + this.getFilters();
+              this.structure.chart_options.filterText = this.customFilters.filterText;
+            } else {
+              endpoint = this.$textTransformService.applyInterpol(payload.rules.api, this.customParams, this.customFunctions, this.customFilters);
+            }
+            this.fetchData(endpoint);
+          } else if (payload.type && (payload.type !== 'switch-group')) {
+            //substitui a vírgula por '\,'
+            // let payloadItem = Object.assign({}, payload.item);
+            // for (let indexItem in payloadItem){
+            //   let itemValue = payloadItem[indexItem];
+            //   if (typeof(itemValue) == "string"){
+            //     payloadItem[indexItem] = itemValue.replace(/,/g,"\\,");
+            //     payloadItem[indexItem] = itemValue.replace(/-/g,"\\-");
+            //   }
             // }
-            endpoint = apiUrl + this.getFilters();
-            this.structure.chart_options.filterText = this.customFilters.filterText;
-          } else {
-            endpoint = this.$textTransformService.applyInterpol(payload.rules.api, this.customParams, this.customFunctions, this.customFilters);
-          }
-          this.fetchData(endpoint);
-        } else {
-          //substitui a vírgula por '\,'
-          // let payloadItem = Object.assign({}, payload.item);
-          // for (let indexItem in payloadItem){
-          //   let itemValue = payloadItem[indexItem];
-          //   if (typeof(itemValue) == "string"){
-          //     payloadItem[indexItem] = itemValue.replace(/,/g,"\\,");
-          //     payloadItem[indexItem] = itemValue.replace(/-/g,"\\-");
-          //   }
-          // }
 
-          // Troca a topologia se for um select de uf
-          if (payload.target && payload.target.scope && payload.target.range) {
-            let range = payload.target.range;
-            let scope = payload.target.scope;
-            let id = payload.item.id;
-            let topoFile = "/static/topojson/" + scope + "/" + range + "/" + id + ".json";
-            axios.get(topoFile)
-              .then(response => {
-                this.cmpTopology = response.data;
-                this.handleDataStructure(payload);
-              });
-          } else {
-            this.handleDataStructure(payload);
+            // Troca a topologia se for um select de uf
+            if (payload.target && payload.target.scope && payload.target.range) {
+              let range = payload.target.range;
+              let scope = payload.target.scope;
+              let id = payload.item.id;
+              let topoFile = "/static/topojson/" + scope + "/" + range + "/" + id + ".json";
+              axios.get(topoFile)
+                .then(response => {
+                  this.cmpTopology = response.data;
+                  this.handleDataStructure(payload);
+                });
+            } else {
+              this.handleDataStructure(payload);
+            }
           }
         }
       },
