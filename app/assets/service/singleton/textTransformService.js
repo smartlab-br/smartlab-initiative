@@ -8,61 +8,77 @@ class TextTransformService {
     this.objectTransformService = new ObjectTransformService();
   }
 
-  applyInterpol(struct, customParams = {}, customFunctions = [], base_object = null, cbInvalidate = null) {
-    if (struct !== null && struct !== undefined) {
-      if (struct.fixed !== null && struct.fixed !== undefined) {
-        return struct.fixed;
+  applyInterpol(structure, customParams = {}, customFunctions = [], base_object = null, cbInvalidate = null) {
+    if (structure !== null && structure !== undefined) {
+      let arrayStruct = [];
+      let returnStruct = [];
+      if (!Array.isArray(structure)){
+        arrayStruct[0] = structure;
+      } else {
+        arrayStruct = structure;
       }
-      var tmplt = struct.template;
-      var args = [];
-      for (var indx in struct.args) {
-        var iterArg = null;
-        if (struct.args[indx].function) {
-          iterArg = this.objectTransformService.runNamedFunction(struct.args[indx], base_object, customFunctions);
-        } else if (struct.args[indx].value) {
-          iterArg = struct.args[indx].value;
-        } else if (struct.args[indx].fixed) {
-          iterArg = struct.args[indx].fixed;
-        } else if (Array.isArray(base_object) && struct.args[indx].id){
-          iterArg = (new IndicatorsModel()).getIndicatorValueFromStructure(struct.args[indx], null, base_object);
-          args.push(iterArg);
-          continue;
-        } else if (struct.args[indx].named_prop) {
-          if (base_object){
-            iterArg = base_object[struct.args[indx].named_prop];
-          }
-          if (iterArg === null || iterArg === undefined){
-            if(struct.args[indx].base_object){
-              iterArg = customParams[struct.args[indx].base_object][struct.args[indx].named_prop];
-            } else {
-              iterArg = customParams[struct.args[indx].named_prop];
-            }
-          } 
-        } else if (struct.args[indx].link) {
-          iterArg = "<a href='" + struct.args[indx].link + "'>" + struct.args[indx].text + "</a>";
-        }
 
-        if (iterArg != null) {
-          if (struct.args[indx].format) {
-            let formatRules = struct.args[indx];
-            if (struct.args[indx].format == 'auto') {
-              formatRules = this.getFormatRules(struct.args[indx], iterArg);
-            }
-            iterArg = NumberTransformService.formatNumber(
-              iterArg, formatRules.format, formatRules.precision,
-              formatRules.multiplier, formatRules.collapse, formatRules.signed, 
-              formatRules.uiTags
-            );
+      for (let struct of arrayStruct){
+          if (struct.fixed !== null && struct.fixed !== undefined) {
+            returnStruct.push(struct.fixed);
+            continue;
           }
-          args.push(iterArg);
-        } else if (struct.args[indx].required && cbInvalidate !== null) {
-          cbInvalidate.apply(null);
-        } else {
-          args.push(struct.args[indx].default);
-        }
+          var tmplt = struct.template;
+          var args = [];
+          for (var indx in struct.args) {
+            var iterArg = null;
+            if (struct.args[indx].function) {
+              iterArg = this.objectTransformService.runNamedFunction(struct.args[indx], base_object, customFunctions);
+            } else if (struct.args[indx].value) {
+              iterArg = struct.args[indx].value;
+            } else if (struct.args[indx].fixed) {
+              iterArg = struct.args[indx].fixed;
+            } else if (Array.isArray(base_object) && struct.args[indx].id){
+              iterArg = (new IndicatorsModel()).getIndicatorValueFromStructure(struct.args[indx], null, base_object);
+              args.push(iterArg);
+              continue;
+            } else if (struct.args[indx].named_prop) {
+              if (base_object){
+                iterArg = base_object[struct.args[indx].named_prop];
+              }
+              if (iterArg === null || iterArg === undefined){
+                if(struct.args[indx].base_object){
+                  iterArg = customParams[struct.args[indx].base_object][struct.args[indx].named_prop];
+                } else {
+                  iterArg = customParams[struct.args[indx].named_prop];
+                }
+              } 
+            } else if (struct.args[indx].link) {
+              iterArg = "<a href='" + struct.args[indx].link + "'>" + struct.args[indx].text + "</a>";
+            }
+
+            if (iterArg != null) {
+              if (struct.args[indx].format) {
+                let formatRules = struct.args[indx];
+                if (struct.args[indx].format == 'auto') {
+                  formatRules = this.getFormatRules(struct.args[indx], iterArg);
+                }
+                iterArg = NumberTransformService.formatNumber(
+                  iterArg, formatRules.format, formatRules.precision,
+                  formatRules.multiplier, formatRules.collapse, formatRules.signed, 
+                  formatRules.uiTags
+                );
+              }
+              args.push(iterArg);
+            } else if (struct.args[indx].required && cbInvalidate !== null) {
+              cbInvalidate.apply(null);
+            } else {
+              args.push(struct.args[indx].default);
+            }
+          }
+        returnStruct.push(this.replaceArgs(tmplt, args, cbInvalidate));
       }
-      return this.replaceArgs(tmplt, args, cbInvalidate);
-    }
+      if (returnStruct.length == 1){
+        return returnStruct[0];
+      } else {
+        return returnStruct;
+      }
+    } 
     return '';
   }
 

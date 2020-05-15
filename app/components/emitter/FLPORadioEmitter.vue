@@ -48,7 +48,11 @@
             this.selection[item.value] = false;
           }
         }
-        this.$emit(this.structure.event, { id: this.id, type: 'radio', enabled: this.selection, item: chosen});
+        this.$emit(this.structure.event ? this.structure.event : this.structure.selection.event, 
+                  { id: this.structure.id, type: 'radio', enabled: this.selection, 
+                    item: chosen,
+                    rules: this.structure.selection ? this.structure.selection.rules : null}
+                  );
       },
     }
   }
