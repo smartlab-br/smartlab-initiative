@@ -86,6 +86,11 @@ const SnackbarManager = {
           }
           if (idAnalysisUnit) additionalOptions.au = this.$analysisUnitModel.findPlaceByID(idAnalysisUnit);
           if (chartType == 'SANKEYD3') additionalOptions.metadata = metadata;
+          if (chartOptions.colorScale && chartOptions.colorScale.scale_name_value && chartOptions.colorScale.color_array){
+            if (this.customFilters && this.customFilters[chartOptions.colorScale.scale_name_value]){
+              additionalOptions.colorScaleSelectedName = chartOptions.colorScale.color_array[this.customFilters[chartOptions.colorScale.scale_name_value]];
+            }
+          }
           if (this.leafletBasedCharts.includes(chartType)) {
               if (chartOptions.tooltip_function == null) additionalOptions.tooltipFunction = TooltipBuildingService.defaultLeafletTooltip; 
 

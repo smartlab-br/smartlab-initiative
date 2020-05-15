@@ -130,6 +130,13 @@ class ColorsService {
     }
 
     let scl = d3chrom["scheme" + scale];
+    if (scl === null || scl === undefined) {
+      if (type == 'categorical') scale = 'Set3';
+      if (type == 'singleHue') scale = 'Blues';
+      if (type == 'divergent') scale = 'RdYlBu';
+      scl = d3chrom["scheme" + scale];
+    }
+
     if (size) scl = scl[size];
     if (order == 'desc') {
       let scl2 = [];
