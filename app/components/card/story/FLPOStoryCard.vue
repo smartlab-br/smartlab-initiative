@@ -220,6 +220,7 @@
                 visibleLayers[struct.items[idxRadio].id] = false;
               }
             }
+            this.customFilters[struct.id] = struct.items[0].value;
             break;
           }
         } 
