@@ -189,15 +189,12 @@
         cmpTitleComment: null,
         invalidInterpol: false,
         footnote: null,
-        cmpTopology: null,
         chartFooter: null,
         chart: null,
         renderComponent: true
       }
     },
     created() {
-      this.cmpTopology = this.topology;
-
       // switch-group or radio - initialize customParams.enabled used in leaflet maps(visibleLayers)
       let visibleLayers = {};
       if (this.structure.description){
@@ -227,6 +224,18 @@
       }
       if (Object.keys(visibleLayers).length > 0){
         this.customFilters.enabled = visibleLayers;
+      }
+
+      if (this.structure.chart_type ==  "MAP_TOPOJSON" && this.structure.chart_options.default_topology){
+        let defaultTopology = this.structure.chart_options.default_topology;
+        let range = defaultTopology.range;
+        let scope = defaultTopology.scope;
+        let id = defaultTopology.id;
+        let topoFile = "/static/topojson/" + scope + "/" + range + "/" + id + ".json";
+        axios.get(topoFile)
+          .then(response => {
+            this.selectedTopology = response.data;
+          });
       }
 
     },
@@ -329,7 +338,7 @@
               let topoFile = "/static/topojson/" + scope + "/" + range + "/" + id + ".json";
               axios.get(topoFile)
                 .then(response => {
-                  this.cmpTopology = response.data;
+                  this.selectedTopology = response.data;
                   this.handleDataStructure(payload);
                 });
             } else {

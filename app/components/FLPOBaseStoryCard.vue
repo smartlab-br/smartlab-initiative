@@ -10,7 +10,8 @@
       return {
         customFilters: {},
         reactiveFilter: null,
-        errorMessage: null
+        errorMessage: null,
+        selectedTopology: this.topology
       }
     },
 

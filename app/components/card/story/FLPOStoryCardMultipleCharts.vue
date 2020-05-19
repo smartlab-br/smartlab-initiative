@@ -446,7 +446,7 @@
               let topoFile = "/static/topojson/" + scope + "/" + range + "/" + id + ".json";
               axios.get(topoFile)
                 .then(response => {
-                  this.cmpTopology = response.data;
+                  this.selectedTopology = response.data;
                   this.fillDataStructure(
                     eachChart, this.customParams,
                     this.customFunctions, this.setDataset,

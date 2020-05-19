@@ -7,6 +7,7 @@
       :custom-functions = "customFunctions"
       :topology = "topology"
       :topology-uf = "topologyUf"
+      :topology-br = "topology_br"
       :section-index="sectionIndex">
     </flpo-story-card-multiple-charts>
     <flpo-story-card
@@ -16,6 +17,7 @@
       :custom-functions = "customFunctions"
       :topology = "topology"
       :topology-uf = "topologyUf"
+      :topology-br = "topology_br"
       :section-index="sectionIndex">
     </flpo-story-card>
   </v-layout>

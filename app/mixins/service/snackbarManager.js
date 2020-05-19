@@ -61,8 +61,6 @@ const SnackbarManager = {
             idAU: idAnalysisUnit,
             theme: this.$vuetify.theme,
             sectionIndex: sectionIndex,
-            topology: this.topology,
-            topologyUf: this.topologyUf,
             headers: structure.headers,
             route: this.$route,
             context: this,
@@ -84,6 +82,19 @@ const SnackbarManager = {
             cleanLabel: TooltipBuildingService.removeFromLabel,
             axesStrokeClass: ColorsService.assessZebraAxesColor(sectionIndex, this.$vuetify.theme)
           }
+          if (chartOptions.topology){
+            if (chartOptions.topology == 'uf'){
+              additionalOptions.topology = this.topologyUf;
+            } else if (chartOptions.topology == 'br'){
+              additionalOptions.topology = this.topologyBr;
+            } else {
+              additionalOptions.topology = this.selectedTopology;
+            }
+          } else {
+            additionalOptions.topology = this.selectedTopology;
+          }
+
+
           if (idAnalysisUnit) additionalOptions.au = this.$analysisUnitModel.findPlaceByID(idAnalysisUnit);
           if (chartType == 'SANKEYD3') additionalOptions.metadata = metadata;
           if (chartOptions.colorScale && chartOptions.colorScale.scale_name_value && chartOptions.colorScale.color_array){

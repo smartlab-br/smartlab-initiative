@@ -234,12 +234,13 @@
                         v-html="card.title.fixed">
                       </v-layout>
                       <flpo-story-card-autofill
-                        v-else-if="card.autoFill && topologyUfLoaded  && topology && ((indexSecao*100) + cardIndex <= visibleCardMaxIndex)"
+                        v-else-if="card.autoFill && topologyBrLoaded  && topologyUfLoaded  && topology && ((indexSecao*100) + cardIndex <= visibleCardMaxIndex)"
                         :structure="card"
                         :custom-params = "customParams"
                         :custom-functions = "custom_functions"
                         :topology = "topology"
                         :topology-uf = "topology_uf"
+                        :topology-br = "topology_br"
                         :section-index="indexSecao"
                         @showSnackbar="snackAlert">
                       </flpo-story-card-autofill>
@@ -251,18 +252,20 @@
                         :custom-functions = "custom_functions"
                         :topology = "topology"
                         :topology-uf = "topology_uf"
+                        :topology-br = "topology_br"
                         :section-index="indexSecao"
                         @showBugDialog="openBugDialog"
                         @showSnackbar="snackAlert">
                       </flpo-story-card-multiple-charts>
                       <flpo-story-card
-                        v-else-if="topologyUfLoaded  && topology && ((indexSecao*100) + cardIndex  <= visibleCardMaxIndex)"
+                        v-else-if="topologyUfLoaded  && topologyBrLoaded  && topology && ((indexSecao*100) + cardIndex  <= visibleCardMaxIndex)"
                         :structure="card"
                         chart-position= "bottom"
                         :custom-params = "customParams"
                         :custom-functions = "custom_functions"
                         :topology = "topology"
                         :topology-uf = "topology_uf"
+                        :topology-br = "topology_br"
                         :section-index="indexSecao"
                         @showBugDialog="openBugDialog"
                         @showSnackbar="snackAlert">
@@ -289,17 +292,18 @@
                         v-html="sections_compare[indexSecao].cards[cardIndex].title.fixed">
                       </v-layout>
                       <flpo-story-card-autofill
-                        v-else-if="sections_compare[indexSecao].cards[cardIndex].autoFill && topologyUfLoaded_compare  && topology_compare && ((indexSecao*100) + cardIndex <= visibleCardMaxIndex)"
+                        v-else-if="sections_compare[indexSecao].cards[cardIndex].autoFill && topologyBrLoaded_compare && topologyUfLoaded_compare  && topology_compare && ((indexSecao*100) + cardIndex <= visibleCardMaxIndex)"
                         :structure="sections_compare[indexSecao].cards[cardIndex]"
                         :custom-params = "customParams"
                         :custom-functions = "custom_functions"
                         :topology = "topology_compare"
                         :topology-uf = "topology_uf_compare"
+                        :topology-br = "topology_br_compare"
                         :section-index="indexSecao"
                         @showSnackbar="snackAlert">
                       </flpo-story-card-autofill>
                       <flpo-story-card-multiple-charts
-                        v-else-if="sections_compare[indexSecao].cards[cardIndex].type && sections_compare[indexSecao].cards[cardIndex].type == 'multiple-charts' && topologyUfLoaded_compare  && topology_compare && ((indexSecao*100) + cardIndex  <= visibleCardMaxIndex)"
+                        v-else-if="sections_compare[indexSecao].cards[cardIndex].type && sections_compare[indexSecao].cards[cardIndex].type == 'multiple-charts' && topologyUfLoaded_compare && topologyBrLoaded_compare   && topology_compare && ((indexSecao*100) + cardIndex  <= visibleCardMaxIndex)"
                         :structure="sections_compare[indexSecao].cards[cardIndex]"
                         chart-position= "bottom"
                         :selected-place="customParams.idLocalidade_compare"
@@ -307,12 +311,13 @@
                         :custom-functions = "custom_functions"
                         :topology = "topology_compare"
                         :topology-uf = "topology_uf_compare"
+                        :topology-br = "topology_br_compare"
                         :section-index="indexSecao"
                         @showBugDialog="openBugDialog"
                         @showSnackbar="snackAlert">
                       </flpo-story-card-multiple-charts>
                       <flpo-story-card
-                        v-else-if="topologyUfLoaded_compare  && topology_compare && ((indexSecao*100) + cardIndex  <= visibleCardMaxIndex)"
+                        v-else-if="topologyBrLoaded_compare  && topologyUfLoaded_compare  && topology_compare && ((indexSecao*100) + cardIndex  <= visibleCardMaxIndex)"
                         :structure="sections_compare[indexSecao].cards[cardIndex]"
                         chart-position= "bottom"
                         :selected-place="customParams.idLocalidade_compare"
@@ -320,6 +325,7 @@
                         :custom-functions = "custom_functions"
                         :topology = "topology_compare"
                         :topology-uf = "topology_uf_compare"
+                        :topology-br = "topology_br_compare"
                         :section-index="indexSecao"
                         @showBugDialog="openBugDialog"
                         @showSnackbar="snackAlert">
