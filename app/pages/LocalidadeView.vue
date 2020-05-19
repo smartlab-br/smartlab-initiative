@@ -174,33 +174,36 @@
                       v-html="card.title.fixed">
                     </v-layout>
                     <flpo-story-card-autofill
-                      v-else-if="card.autoFill && topologyUfLoaded  && topology && ((indexSecao*100) + cardIndex <= visibleCardMaxIndex)"
+                      v-else-if="card.autoFill && topologyUfLoaded  && topologyBrLoaded  && topology && ((indexSecao*100) + cardIndex <= visibleCardMaxIndex)"
                       :structure="card"
                       :custom-params = "customParams"
                       :custom-functions = "custom_functions"
                       :topology = "topology"
                       :topology-uf = "topology_uf"
+                      :topology-br = "topology_br"
                       :section-index="indexSecao"
                       @showSnackbar="snackAlert">
                     </flpo-story-card-autofill>
                     <flpo-story-card-multiple-charts
-                      v-else-if="card.type && card.type == 'multiple-charts' && topologyUfLoaded  && topology && ((indexSecao*100) + cardIndex  <= visibleCardMaxIndex)"
+                      v-else-if="card.type && card.type == 'multiple-charts' && topologyUfLoaded  && topologyBrLoaded && topology && ((indexSecao*100) + cardIndex  <= visibleCardMaxIndex)"
                       :structure="card"
                       :custom-params = "customParams"
                       :custom-functions = "custom_functions"
                       :topology = "topology"
                       :topology-uf = "topology_uf"
+                      :topology-br = "topology_br"
                       :section-index="indexSecao"
                       @showBugDialog="openBugDialog"
                       @showSnackbar="snackAlert">
                     </flpo-story-card-multiple-charts>
                     <flpo-story-card
-                      v-else-if="topologyUfLoaded  && topology && ((indexSecao*100) + cardIndex  <= visibleCardMaxIndex)"
+                      v-else-if="topologyUfLoaded && topologyBrLoaded && topology && ((indexSecao*100) + cardIndex  <= visibleCardMaxIndex)"
                       :structure="card"
                       :custom-params = "customParams"
                       :custom-functions = "custom_functions"
                       :topology = "topology"
                       :topology-uf = "topology_uf"
+                      :topology-br = "topology_br"
                       :section-index="indexSecao"
                       @showBugDialog="openBugDialog"
                       @showSnackbar="snackAlert">
@@ -338,6 +341,8 @@
         topology: null,
         topology_uf: null,
         topologyUfLoaded: false,
+        topology_br: null,
+        topologyBrLoaded: false,
         isPageBottom: true,
         cardLinks: [],
         totalLinksSections: 0,
@@ -359,6 +364,8 @@
         topology_compare: null,
         topology_uf_compare: null,
         topologyUfLoaded_compare: false,
+        topology_br_compare: null,
+        topologyBrLoaded_compare: false,
         thematicDatasets: [],
 
         // Functions
@@ -484,6 +491,11 @@
             if (d.vl_indicador < 0.8) return 4; // Alto
             return 5;
           },
+          get_uti_level: (d, value) => {
+            if (value < 1) return "Abaixo"; 
+            if (value <= 3) return "Dentro"; 
+            if (value > 3) return "Acima"; 
+          },          
           remove_year: function(d){ return String(d.ds_indicador_radical).replace(d.nu_competencia,"").replace("  "," ")},
           absolute: function(d, campo="vl_indicador") { return Math.abs(d[campo]); },
           concat_descriptions: function(d) {
