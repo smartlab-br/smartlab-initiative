@@ -10,7 +10,8 @@
       return {
         customFilters: {},
         reactiveFilter: null,
-        errorMessage: null
+        errorMessage: null,
+        selectedTopology: this.topology
       }
     },
 
@@ -333,32 +334,35 @@
       getFilters() {
         let filterText = "";
         let filterUrl = "";
+        let filterApiArgs = "";
         for (let filter of this.structure.description) {
           if (filter.group == null || filter.group == undefined || filter.group == this.activeGroup){
 
-            if (!Array.isArray(filter.selection.rules.api)){
-              filterApiArgs = filter.selection.rules.api.args;
-            } else {
-              filterApiArgs = filter.selection.rules.api[0].args;
-            }
-
             if (filter.type == "slider" || filter.type == "select"){
-              if (this.customFilters[filterApiArgs[0].named_prop]){
-                filter.selection.rules.api.template = filterUrl + filter.selection.rules.filter
-                filterUrl = this.$textTransformService.applyInterpol(filter.selection.rules.api, {}, this.customFunctions, this.customFilters);
-                filterText += "<br/>" + (filter.title ? filter.title + ": " : filter.label ? filter.label+ ": " : "");
-                if (filter.type == "slider"){
-                  if (filterApiArgs.length > 1){
-                    if (this.customFilters[filterApiArgs[0].named_prop] != this.customFilters[filterApiArgs[1].named_prop]) {
-                      filterText += this.customFilters[filterApiArgs[0].named_prop] + " a " + this.customFilters[filterApiArgs[1].named_prop];
+              if (filter.selection && filter.selection.rules && filter.selection.rules.api){
+                if (!Array.isArray(filter.selection.rules.api)){
+                  filterApiArgs = filter.selection.rules.api.args;
+                } else {
+                  filterApiArgs = filter.selection.rules.api[0].args;
+                }
+
+                if (this.customFilters[filterApiArgs[0].named_prop]){
+                  filter.selection.rules.api.template = filterUrl + filter.selection.rules.filter
+                  filterUrl = this.$textTransformService.applyInterpol(filter.selection.rules.api, {}, this.customFunctions, this.customFilters);
+                  filterText += "<br/>" + (filter.title ? filter.title + ": " : filter.label ? filter.label+ ": " : "");
+                  if (filter.type == "slider"){
+                    if (filterApiArgs.length > 1){
+                      if (this.customFilters[filterApiArgs[0].named_prop] != this.customFilters[filterApiArgs[1].named_prop]) {
+                        filterText += this.customFilters[filterApiArgs[0].named_prop] + " a " + this.customFilters[filterApiArgs[1].named_prop];
+                      } else {
+                        filterText += this.customFilters[filterApiArgs[0].named_prop];
+                      }
                     } else {
                       filterText += this.customFilters[filterApiArgs[0].named_prop];
                     }
                   } else {
-                    filterText += this.customFilters[filterApiArgs[0].named_prop];
+                    filterText += this.customFilters[filterApiArgs[0].named_prop + "_label"];
                   }
-                } else {
-                  filterText += this.customFilters[filterApiArgs[0].named_prop + "_label"];
                 }
               }
             } else if (filter.type == "check"){
