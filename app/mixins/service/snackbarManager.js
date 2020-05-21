@@ -82,18 +82,8 @@ const SnackbarManager = {
             cleanLabel: TooltipBuildingService.removeFromLabel,
             axesStrokeClass: ColorsService.assessZebraAxesColor(sectionIndex, this.$vuetify.theme)
           }
-          if (chartOptions.topology){
-            if (chartOptions.topology == 'uf'){
-              additionalOptions.topology = this.topologyUf;
-            } else if (chartOptions.topology == 'br'){
-              additionalOptions.topology = this.topologyBr;
-            } else {
-              additionalOptions.topology = this.selectedTopology;
-            }
-          } else {
-            additionalOptions.topology = this.selectedTopology;
-          }
 
+          additionalOptions.topology = this.selectedTopology;
 
           if (idAnalysisUnit) additionalOptions.au = this.$analysisUnitModel.findPlaceByID(idAnalysisUnit);
           if (chartType == 'SANKEYD3') additionalOptions.metadata = metadata;

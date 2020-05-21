@@ -174,36 +174,30 @@
                       v-html="card.title.fixed">
                     </v-layout>
                     <flpo-story-card-autofill
-                      v-else-if="card.autoFill && topologyUfLoaded  && topologyBrLoaded  && topology && ((indexSecao*100) + cardIndex <= visibleCardMaxIndex)"
+                      v-else-if="card.autoFill && topology && ((indexSecao*100) + cardIndex <= visibleCardMaxIndex)"
                       :structure="card"
                       :custom-params = "customParams"
                       :custom-functions = "custom_functions"
                       :topology = "topology"
-                      :topology-uf = "topology_uf"
-                      :topology-br = "topology_br"
                       :section-index="indexSecao"
                       @showSnackbar="snackAlert">
                     </flpo-story-card-autofill>
                     <flpo-story-card-multiple-charts
-                      v-else-if="card.type && card.type == 'multiple-charts' && topologyUfLoaded  && topologyBrLoaded && topology && ((indexSecao*100) + cardIndex  <= visibleCardMaxIndex)"
+                      v-else-if="card.type && card.type == 'multiple-charts' && topology && ((indexSecao*100) + cardIndex  <= visibleCardMaxIndex)"
                       :structure="card"
                       :custom-params = "customParams"
                       :custom-functions = "custom_functions"
                       :topology = "topology"
-                      :topology-uf = "topology_uf"
-                      :topology-br = "topology_br"
                       :section-index="indexSecao"
                       @showBugDialog="openBugDialog"
                       @showSnackbar="snackAlert">
                     </flpo-story-card-multiple-charts>
                     <flpo-story-card
-                      v-else-if="topologyUfLoaded && topologyBrLoaded && topology && ((indexSecao*100) + cardIndex  <= visibleCardMaxIndex)"
+                      v-else-if="topology && ((indexSecao*100) + cardIndex  <= visibleCardMaxIndex)"
                       :structure="card"
                       :custom-params = "customParams"
                       :custom-functions = "custom_functions"
                       :topology = "topology"
-                      :topology-uf = "topology_uf"
-                      :topology-br = "topology_br"
                       :section-index="indexSecao"
                       @showBugDialog="openBugDialog"
                       @showSnackbar="snackAlert">
@@ -339,10 +333,6 @@
         dimensoes: [],
         customParams: {},
         topology: null,
-        topology_uf: null,
-        topologyUfLoaded: false,
-        topology_br: null,
-        topologyBrLoaded: false,
         isPageBottom: true,
         cardLinks: [],
         totalLinksSections: 0,
@@ -362,10 +352,6 @@
         presentation_compare: null,
         ind_principais_compare:[],
         topology_compare: null,
-        topology_uf_compare: null,
-        topologyUfLoaded_compare: false,
-        topology_br_compare: null,
-        topologyBrLoaded_compare: false,
         thematicDatasets: [],
 
         // Functions

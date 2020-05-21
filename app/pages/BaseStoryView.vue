@@ -8,26 +8,6 @@
     methods: {
       selectCoords(range, scope, id, suffix = "") {
         let topoFile = "/static/topojson/" + scope + "/" + range + "/" + id + ".json";
-        if (scope == 'uf') {
-          topoFile = "/static/topojson/uf.json";
-          this['topologyUfLoaded'+ suffix] = true;
-        } else {
-          axios.get("/static/topojson/uf.json")
-          .then(response => {
-            this['topology_uf' + suffix] = response.data;
-            this['topologyUfLoaded'+ suffix] = true;
-          });
-        }
-        if (id == 0) { //Brasil
-          axios.get("/static/topojson/br-municipio.json")
-          .then(response => {
-            this['topology_br' + suffix] = response.data;
-            this['topologyBrLoaded'+ suffix] = true;
-          });
-        } else {
-            this['topology_br' + suffix] = null;
-            this['topologyBrLoaded'+ suffix] = true;
-        }
         axios.get(topoFile)
           .then(response => {
             this['topology' + suffix] = response.data;

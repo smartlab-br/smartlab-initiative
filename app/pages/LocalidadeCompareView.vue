@@ -234,38 +234,32 @@
                         v-html="card.title.fixed">
                       </v-layout>
                       <flpo-story-card-autofill
-                        v-else-if="card.autoFill && topologyBrLoaded  && topologyUfLoaded  && topology && ((indexSecao*100) + cardIndex <= visibleCardMaxIndex)"
+                        v-else-if="card.autoFill && topology && ((indexSecao*100) + cardIndex <= visibleCardMaxIndex)"
                         :structure="card"
                         :custom-params = "customParams"
                         :custom-functions = "custom_functions"
                         :topology = "topology"
-                        :topology-uf = "topology_uf"
-                        :topology-br = "topology_br"
                         :section-index="indexSecao"
                         @showSnackbar="snackAlert">
                       </flpo-story-card-autofill>
                       <flpo-story-card-multiple-charts
-                        v-else-if="card.type && card.type == 'multiple-charts' && topologyUfLoaded  && topology && ((indexSecao*100) + cardIndex  <= visibleCardMaxIndex)"
+                        v-else-if="card.type && card.type == 'multiple-charts' && topology && ((indexSecao*100) + cardIndex  <= visibleCardMaxIndex)"
                         :structure="card"
                         chart-position= "bottom"
                         :custom-params = "customParams"
                         :custom-functions = "custom_functions"
                         :topology = "topology"
-                        :topology-uf = "topology_uf"
-                        :topology-br = "topology_br"
                         :section-index="indexSecao"
                         @showBugDialog="openBugDialog"
                         @showSnackbar="snackAlert">
                       </flpo-story-card-multiple-charts>
                       <flpo-story-card
-                        v-else-if="topologyUfLoaded  && topologyBrLoaded  && topology && ((indexSecao*100) + cardIndex  <= visibleCardMaxIndex)"
+                        v-else-if="topology && ((indexSecao*100) + cardIndex  <= visibleCardMaxIndex)"
                         :structure="card"
                         chart-position= "bottom"
                         :custom-params = "customParams"
                         :custom-functions = "custom_functions"
                         :topology = "topology"
-                        :topology-uf = "topology_uf"
-                        :topology-br = "topology_br"
                         :section-index="indexSecao"
                         @showBugDialog="openBugDialog"
                         @showSnackbar="snackAlert">
@@ -292,40 +286,34 @@
                         v-html="sections_compare[indexSecao].cards[cardIndex].title.fixed">
                       </v-layout>
                       <flpo-story-card-autofill
-                        v-else-if="sections_compare[indexSecao].cards[cardIndex].autoFill && topologyBrLoaded_compare && topologyUfLoaded_compare  && topology_compare && ((indexSecao*100) + cardIndex <= visibleCardMaxIndex)"
+                        v-else-if="sections_compare[indexSecao].cards[cardIndex].autoFill && topology_compare && ((indexSecao*100) + cardIndex <= visibleCardMaxIndex)"
                         :structure="sections_compare[indexSecao].cards[cardIndex]"
                         :custom-params = "customParams"
                         :custom-functions = "custom_functions"
                         :topology = "topology_compare"
-                        :topology-uf = "topology_uf_compare"
-                        :topology-br = "topology_br_compare"
                         :section-index="indexSecao"
                         @showSnackbar="snackAlert">
                       </flpo-story-card-autofill>
                       <flpo-story-card-multiple-charts
-                        v-else-if="sections_compare[indexSecao].cards[cardIndex].type && sections_compare[indexSecao].cards[cardIndex].type == 'multiple-charts' && topologyUfLoaded_compare && topologyBrLoaded_compare   && topology_compare && ((indexSecao*100) + cardIndex  <= visibleCardMaxIndex)"
+                        v-else-if="sections_compare[indexSecao].cards[cardIndex].type && sections_compare[indexSecao].cards[cardIndex].type == 'multiple-charts' && topology_compare && ((indexSecao*100) + cardIndex  <= visibleCardMaxIndex)"
                         :structure="sections_compare[indexSecao].cards[cardIndex]"
                         chart-position= "bottom"
                         :selected-place="customParams.idLocalidade_compare"
                         :custom-params = "customParams"
                         :custom-functions = "custom_functions"
                         :topology = "topology_compare"
-                        :topology-uf = "topology_uf_compare"
-                        :topology-br = "topology_br_compare"
                         :section-index="indexSecao"
                         @showBugDialog="openBugDialog"
                         @showSnackbar="snackAlert">
                       </flpo-story-card-multiple-charts>
                       <flpo-story-card
-                        v-else-if="topologyBrLoaded_compare  && topologyUfLoaded_compare  && topology_compare && ((indexSecao*100) + cardIndex  <= visibleCardMaxIndex)"
+                        v-else-if="topology_compare && ((indexSecao*100) + cardIndex  <= visibleCardMaxIndex)"
                         :structure="sections_compare[indexSecao].cards[cardIndex]"
                         chart-position= "bottom"
                         :selected-place="customParams.idLocalidade_compare"
                         :custom-params = "customParams"
                         :custom-functions = "custom_functions"
                         :topology = "topology_compare"
-                        :topology-uf = "topology_uf_compare"
-                        :topology-br = "topology_br_compare"
                         :section-index="indexSecao"
                         @showBugDialog="openBugDialog"
                         @showSnackbar="snackAlert">
@@ -447,7 +435,7 @@
               }
               if (card.description){
                 for (let itemDesc of card.description){
-                  if (itemDesc.type == "select" && itemDesc.selection){
+                  if ((itemDesc.type == "select" || itemDesc.type == "radio") && itemDesc.selection){
                     if (itemDesc.selection.rules.api && itemDesc.selection.rules.api.template){
                       for (let argApiSelect of itemDesc.selection.rules.api.args){
                         if (argApiSelect.named_prop == "cd_uf"){
