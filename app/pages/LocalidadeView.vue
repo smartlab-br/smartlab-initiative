@@ -447,7 +447,7 @@
               return Math.log(val / d.maxVal + 1.0001);
             }
             if (val < 0) {
-              return -Math.log(Math.abs(val) / Math.abs(d.minVal) + 1.0001);
+               return d.minVal == 0 ? -Math.log(Math.abs(val) + 1.0001) : -Math.log(Math.abs(val) / Math.abs(d.minVal) + 1.0001);
             }
             return 0;
           },
@@ -726,14 +726,14 @@
                    this.$route.params.idLocalidade.includes("ptm") || this.$route.params.idLocalidade.includes("PTM")) {
           this.selectCoords("uf", "municipio", this.$analysisUnitModel.getUFFromPlace(this.$route.params.idLocalidade));
         } else if (this.$route.params.idLocalidade.length == 1){ //Região
-          this.selectCoords("br", "uf", 0);
+          this.selectCoords("regiao", "uf",this.$route.params.idLocalidade);
           // this.selectCoords("/static/topojson/regiao.json");
         } else if (this.$route.params.idLocalidade.length == 2){ //Estado
-          this.selectCoords("uf", "municipio", this.$route.params.idLocalidade.substring(0, 2));
+          this.selectCoords("uf", "municipio", this.$route.params.idLocalidade);
         } else if (this.$route.params.idLocalidade.length == 4){ //Mesorregião
-          this.selectCoords("uf", "uf", this.$route.params.idLocalidade);
+          this.selectCoords("uf", "mesorregiao", this.$route.params.idLocalidade.substring(0, 2));
         } else if (this.$route.params.idLocalidade.length == 5){ //Microrregião
-          this.selectCoords("mesorregiao", "uf", this.$route.params.idLocalidade);
+          this.selectCoords("uf", "microrregiao", this.$route.params.idLocalidade.substring(0, 2));
         } else {
           this.selectCoords("uf", "municipio", this.$route.params.idLocalidade.substring(0, 2));
         }
@@ -749,14 +749,14 @@
                     this.$route.query.compare.includes("ptm") || this.$route.query.compare.includes("PTM")) {
             this.selectCoords("uf", "municipio", this.getUFFromPlace(this.$route.query.compare), "_compare");
           } else if (this.$route.query.compare.length == 1){ //Região
-            this.selectCoords("br", "uf", 0, "_compare");
+            this.selectCoords("regiao", "uf",this.$route.params.idLocalidade, "_compare");
             // this.selectCoords("/static/topojson/regiao.json");
           } else if (this.$route.query.compare.length == 2){ //Estado
-            this.selectCoords("uf", "municipio", this.$route.query.compare.substring(0, 2), "_compare");
+            this.selectCoords("uf", "municipio", this.$route.query.compare, "_compare");
           } else if (this.$route.query.compare.length == 4){ //Mesorregião
-            this.selectCoords("uf", "uf", this.$route.query.compare, "_compare");
+            this.selectCoords("uf", "mesorregiao", this.$route.query.compare.substring(0, 2), "_compare");
           } else if (this.$route.query.compare.length == 5){ //Microrregião
-            this.selectCoords("mesorregiao", "uf", this.$route.query.compare, "_compare");
+            this.selectCoords("uf", "microrregiao", this.$route.query.compare.substring(0, 2), "_compare");
           } else {
             this.selectCoords("uf", "municipio", this.$route.query.compare.substring(0, 2), "_compare");
           }
