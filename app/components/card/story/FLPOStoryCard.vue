@@ -241,6 +241,9 @@
           axios.get(topoFile)
             .then(response => {
               this.selectedTopology = response.data;
+              if (this.loadingStatusDataset == 'SUCCESS'){
+                this.triggerChartUpdates();
+              }
             });
         }
     },
