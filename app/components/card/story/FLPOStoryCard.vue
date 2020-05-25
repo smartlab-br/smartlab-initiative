@@ -226,18 +226,28 @@
         this.customFilters.enabled = visibleLayers;
       }
 
-      if (this.structure.chart_type ==  "MAP_TOPOJSON" && this.structure.chart_options.default_topology){
-        let defaultTopology = this.structure.chart_options.default_topology;
-        let range = defaultTopology.range;
-        let scope = defaultTopology.scope;
-        let id = defaultTopology.id;
-        let topoFile = "/static/topojson/" + scope + "/" + range + "/" + id + ".json";
-        axios.get(topoFile)
-          .then(response => {
-            this.selectedTopology = response.data;
-          });
-      }
-
+      if ((this.structure.chart_type ==  "MAP_TOPOJSON" 
+            || this.structure.chart_type ==  "MAP_POLYGON") 
+            && this.structure.chart_options.topology ){
+          let scope = this.structure.chart_options.topology.scope;
+          let range = this.structure.chart_options.topology.range;
+          let id = this.structure.chart_options.topology.id;
+          if (id == undefined){
+            if (range == "uf"){
+              id = this.selectedPlace ? this.selectedPlace.substring(0, 2) : this.customParams.idLocalidade.substring(0, 2);
+            } else {
+              id = 0;
+            }
+          }
+          let topoFile = "/static/topojson/" + scope + "/" + range + "/" + id + ".json";
+          axios.get(topoFile)
+            .then(response => {
+              this.selectedTopology = response.data;
+              if (this.loadingStatusDataset == 'SUCCESS'){
+                this.triggerChartUpdates();
+              }
+            });
+        }
     },
     mounted() {
     },
