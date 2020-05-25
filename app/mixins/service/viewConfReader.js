@@ -567,7 +567,7 @@ const ViewConfReader = {
 					  }
 				
 					  // Obtém coordenadas limítrofes (se mapa)
-						if (['MAP_BUBBLES', 'MAP_HEAT', 'MAP_CLUSTER', 'MAP_MIGRATION'].includes(structure.chart_type)) { // Só avalia as coordenadas caso o gráfico seja um mapa.
+						if (['MAP_BUBBLES', 'MAP_HEAT', 'MAP_CLUSTER', 'MAP_MIGRATION', 'MAP_POLYGON'].includes(structure.chart_type)) { // Só avalia as coordenadas caso o gráfico seja um mapa.
 							let lat = 0
 							let long = 0
 							let lat_source = 0
