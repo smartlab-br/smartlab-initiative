@@ -226,7 +226,9 @@
         this.customFilters.enabled = visibleLayers;
       }
 
-      if (this.structure.chart_type ==  "MAP_TOPOJSON" && this.structure.chart_options.topology ){
+      if ((this.structure.chart_type ==  "MAP_TOPOJSON" 
+            || this.structure.chart_type ==  "MAP_POLYGON") 
+            && this.structure.chart_options.topology ){
           let scope = this.structure.chart_options.topology.scope;
           let range = this.structure.chart_options.topology.range;
           let id = this.structure.chart_options.topology.id;
