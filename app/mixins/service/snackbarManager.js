@@ -64,6 +64,7 @@ const SnackbarManager = {
             headers: structure.headers,
             route: this.$route,
             context: this,
+            fnSendError: this.sendError,
             navigate: {
               fnNav: (router, placeId) => {
                 try {         
