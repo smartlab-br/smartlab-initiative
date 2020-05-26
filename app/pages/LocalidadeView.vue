@@ -428,6 +428,7 @@
           get_proportional_indicator_uf: function(d,campo='vl_indicador', media="media_uf") { return Math.log(((d[campo] - d[media]) / d[media]) + 1.01); },
           get_log: function(d,campo='vl_indicador') { return Math.log(d[campo] + 0.01); },
           get_bipolar_scale: function(d, prop, origin = 0) {
+            if (d[prop] == null) return null;
             let val = d[prop] - origin;
             if (val > 0) {
               return Math.log(val / d.maxVal + 1.0001);
@@ -478,9 +479,10 @@
             return 5;
           },
           get_uti_level: (d, value) => {
-            if (value < 1) return "Abaixo"; 
-            if (value <= 3) return "Dentro"; 
-            if (value > 3) return "Acima"; 
+            if (value == null) return "Não informado";
+            if (value < 1) return "Abaixo do recomendado"; 
+            if (value <= 3) return "Dentro do recomendado"; 
+            if (value > 3) return "Acima do recomendado"; 
           },          
           remove_year: function(d){ return String(d.ds_indicador_radical).replace(d.nu_competencia,"").replace("  "," ")},
           absolute: function(d, campo="vl_indicador") { return Math.abs(d[campo]); },
