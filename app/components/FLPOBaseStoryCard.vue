@@ -84,6 +84,7 @@
                   "msgError": "Falha ao carregar dados do card " + cardTitle,
                  }
               );
+              this.updateTopology();
               this.fetchData();
             }).catch(error => { this.sendDataStructureError("Falha ao buscar dados do card " + cardTitle); });
         } else {
