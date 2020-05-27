@@ -292,7 +292,7 @@
       updateDataStructure(payload) {
         let endpoint = "";
 
-        if (payload.type && this.chartHandler && (payload.type === 'switch-group' || payload.type === 'radio')) {
+        if (payload.type && this.chartHandler && !this.chartHandler.topojson && (payload.type === 'switch-group' || payload.type === 'radio')) {
           this.chartHandler.adjustVisibleLayers(payload.enabled);
         } 
         
