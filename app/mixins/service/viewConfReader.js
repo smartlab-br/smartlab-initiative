@@ -626,6 +626,14 @@ const ViewConfReader = {
 							}							
 					  }
 					}
+					// caso o gráfico seja um mapa - zoom out para coordenadas de um único ponto
+					if (['MAP_BUBBLES', 'MAP_HEAT', 'MAP_CLUSTER', 'MAP_MIGRATION', 'MAP_POLYGON'].includes(structure.chart_type)
+						&& (limCoords.xmin == limCoords.xmax) && (limCoords.ymin == limCoords.ymax)){
+							limCoords.xmin = limCoords.xmin - 3
+							limCoords.xmax = limCoords.xmax + 3
+							limCoords.ymin = limCoords.ymin - 3
+							limCoords.ymax = limCoords.ymax + 3
+					}
 					this.customParams.limCoords = limCoords;
 				
 					if (options.order_field !== null && options.order_field !== undefined) {
