@@ -11,7 +11,8 @@
         customFilters: {},
         reactiveFilter: null,
         errorMessage: null,
-        selectedTopology: this.topology
+        selectedTopology: this.topology,
+        limCoords: { xmin: null, ymin: null, xmax: null, ymax: null }
       }
     },
 
