@@ -6,7 +6,8 @@ const ViewConfReader = {
 		Vue.mixin({
 			data() {
 				return {
-					errorMessage: null
+					errorMessage: null,
+					leafletBasedCharts: ['MAP_BUBBLES', 'MAP_HEAT', 'MAP_CLUSTER', 'MAP_MIGRATION', 'MAP_POLYGON']
 				}
 			},
 			methods: {
@@ -566,8 +567,8 @@ const ViewConfReader = {
 						}
 					  }
 				
-					  // Obtém coordenadas limítrofes (se mapa)
-						if (['MAP_BUBBLES', 'MAP_HEAT', 'MAP_CLUSTER', 'MAP_MIGRATION', 'MAP_POLYGON'].includes(structure.chart_type)) { // Só avalia as coordenadas caso o gráfico seja um mapa.
+					  // Obtém coordenadas limítrofes (se mapa leaflet)
+					  if (this.leafletBasedCharts.includes(structure.chart_type)) { 
 							let lat = 0
 							let long = 0
 							let lat_source = 0
@@ -626,15 +627,21 @@ const ViewConfReader = {
 							}							
 					  }
 					}
-					// caso o gráfico seja um mapa - zoom out para coordenadas de um único ponto
-					if (['MAP_BUBBLES', 'MAP_HEAT', 'MAP_CLUSTER', 'MAP_MIGRATION', 'MAP_POLYGON'].includes(structure.chart_type)
-						&& (limCoords.xmin == limCoords.xmax) && (limCoords.ymin == limCoords.ymax)){
+					// caso o gráfico seja um mapa leaflet 
+					if (this.leafletBasedCharts.includes(structure.chart_type)) {
+						//zoom out se coordenadas de um único ponto
+						if ((limCoords.xmin == limCoords.xmax) && (limCoords.ymin == limCoords.ymax)){
 							limCoords.xmin = limCoords.xmin - 3
 							limCoords.xmax = limCoords.xmax + 3
 							limCoords.ymin = limCoords.ymin - 3
 							limCoords.ymax = limCoords.ymax + 3
+						}
+						if (this.limCoords){
+							this.limCoords = limCoords;
+						} else {
+							this.customParams.limCoords = limCoords;
+						}
 					}
-					this.customParams.limCoords = limCoords;
 				
 					if (options.order_field !== null && options.order_field !== undefined) {
 					  dataset = this.$indicatorsModel.sortObject(dataset, options.order_field);
