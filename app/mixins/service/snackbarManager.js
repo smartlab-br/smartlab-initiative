@@ -100,7 +100,9 @@ const SnackbarManager = {
           if (this.leafletBasedCharts.includes(chartType)) {
               if (chartOptions.tooltip_function == null) additionalOptions.tooltipFunction = TooltipBuildingService.defaultLeafletTooltip; 
 
-              if (this.customParams && this.customParams.limCoords) {
+              if (this.limCoords){
+                additionalOptions.limCoords = this.limCoords;
+              } else if (this.customParams && this.customParams.limCoords) {
                 additionalOptions.limCoords = this.customParams.limCoords;
               }
               

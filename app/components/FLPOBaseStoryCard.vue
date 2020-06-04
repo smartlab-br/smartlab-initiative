@@ -11,7 +11,8 @@
         customFilters: {},
         reactiveFilter: null,
         errorMessage: null,
-        selectedTopology: this.topology
+        selectedTopology: this.topology,
+        limCoords: { xmin: null, ymin: null, xmax: null, ymax: null }
       }
     },
 
@@ -69,6 +70,7 @@
             .then(result => {
               structure = Object.assign(structure, result.data);
               this.structure = structure;
+              this.updateTopology();
               this.completeStructure();
               this.fillDataStructure(
                 this.structure.title, this.customParams,
@@ -84,10 +86,10 @@
                   "msgError": "Falha ao carregar dados do card " + cardTitle,
                  }
               );
-              this.updateTopology();
               this.fetchData();
             }).catch(error => { this.sendDataStructureError("Falha ao buscar dados do card " + cardTitle); });
         } else {
+          this.updateTopology();
           this.completeStructure();
           this.fillDataStructure(
             this.structure.title, this.customParams,
@@ -394,6 +396,31 @@
         this.reactiveFilter = payload.item ? payload.item : payload.value;
         this.updateDataStructure(payload);
       },
+
+      updateTopology(){
+        if ((this.structure.chart_type ==  "MAP_TOPOJSON" 
+              || this.structure.chart_type ==  "MAP_POLYGON") 
+              && this.structure.chart_options.topology ){
+            let scope = this.structure.chart_options.topology.scope;
+            let range = this.structure.chart_options.topology.range;
+            let id = this.structure.chart_options.topology.id;
+            if (id == undefined){
+              if (range == "uf"){
+                id = this.selectedPlace ? this.selectedPlace.substring(0, 2) : this.customParams.idLocalidade.substring(0, 2);
+              } else {
+                id = 0;
+              }
+            }
+            let topoFile = "/static/topojson/" + scope + "/" + range + "/" + id + ".json";
+            axios.get(topoFile)
+              .then(response => {
+                this.selectedTopology = response.data;
+                if (this.loadingStatusDataset == 'SUCCESS'){
+                  this.triggerChartUpdates();
+                }
+              });
+          }
+      }
 
     }
   }
