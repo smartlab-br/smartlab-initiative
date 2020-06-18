@@ -427,6 +427,20 @@
             },
           get_proportional_indicator_uf: function(d,campo='vl_indicador', media="media_uf") { return Math.log(((d[campo] - d[media]) / d[media]) + 1.01); },
           get_log: function(d,campo='vl_indicador') { return Math.log(d[campo] + 0.01); },
+          get_week_status: function(d, reg_week){
+            Date.prototype.getWeekNumber = function(){
+              var d = new Date(Date.UTC(this.getFullYear(), this.getMonth(), this.getDate()));
+              var dayNum = d.getUTCDay() || 7;
+              d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+              var yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
+              return Math.ceil((((d - yearStart) / 86400000) + 1)/7)
+            };
+            if (reg_week == new Date().getWeekNumber()){
+              return "Semana corrente";
+            } else {
+              return "Semana completa";
+            }
+          },
           get_bipolar_scale: function(d, prop, origin = 0) {
             if (d[prop] == null) return null;
             let val = d[prop] - origin;

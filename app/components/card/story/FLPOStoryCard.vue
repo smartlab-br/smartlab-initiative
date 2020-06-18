@@ -86,7 +86,7 @@
                   </v-flex>
 
                   <div v-if="sourceDesc && !sourceLink" class="caption pb-0 pt-3 px-2 pl-3 bottom-30 data-source">Fonte: {{ sourceDesc }}</div>
-                  <div v-else-if="sourceDesc && sourceLink" class="caption pb-0 px-2 pt-3 bottom-30 data-source">
+                  <div v-else-if="sourceDesc && sourceLink" class="caption pb-0 px-2 pt-3 pl-3 bottom-30 data-source">
                     Fonte: 
                     <a class="accent--text" v-on:click="openLinkFonte">{{ sourceDesc }}</a>
                   </div>
