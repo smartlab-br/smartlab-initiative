@@ -136,6 +136,13 @@ const ViewConfReader = {
 										for (let dataset of datasets) {
 											fullDS = fullDS.concat(dataset);
 										}
+										if (structure.api_options) {
+											fullDS = fnReformDataset(
+												fullDS,
+												structure.api_options,
+												customFunctions
+											)											
+										}
 										cbFunction(
 											fullDS,
 											structure.args,
@@ -278,6 +285,13 @@ const ViewConfReader = {
 										let fullDS = [];
 										for (let dataset of datasets) {
 											fullDS = fullDS.concat(dataset);
+										}
+										if (structure.api_options) {
+											fullDS = fnReformDataset(
+												fullDS,
+												structure.api_options,
+												customFunctions
+											)											
 										}
 										cbFunction(
 											fullDS,
