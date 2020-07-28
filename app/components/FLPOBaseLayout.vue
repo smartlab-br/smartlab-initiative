@@ -1,7 +1,7 @@
 <script>
   export default {
     props: ['structure', 'customParams', 'customFunctions', 'topology',
-            'topologyUf', 'sectionIndex'],
+            'sectionIndex'],
     methods: {
     
       setComplexAttribute(base_object_list, rules, structure, addedParams = null, metadata = null) {

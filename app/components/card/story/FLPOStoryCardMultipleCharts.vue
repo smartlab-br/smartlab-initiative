@@ -202,6 +202,7 @@
 </template>
 
 <script>
+  import axios from 'axios'
   import { Parser } from 'json2csv'
 
   import FLPOBaseStoryCard from '../../FLPOBaseStoryCard.vue';
@@ -446,7 +447,7 @@
               let topoFile = "/static/topojson/" + scope + "/" + range + "/" + id + ".json";
               axios.get(topoFile)
                 .then(response => {
-                  this.cmpTopology = response.data;
+                  this.selectedTopology = response.data;
                   this.fillDataStructure(
                     eachChart, this.customParams,
                     this.customFunctions, this.setDataset,
@@ -470,7 +471,7 @@
 
       // triggerSelect(payload) {
       //   if (payload.type && payload.type === 'switch-group') {
-      //     this.customParams.enabled = payload.enabled;
+      //     this.customFilters.enabled = payload.enabled;
       //     this.$refs.chart.reloadMap();
       //   } else {
       //     //var endpoint = this.$textTransformService.applyInterpol(payload.rules.api, this.customParams, this.customFunctions, payload.item);

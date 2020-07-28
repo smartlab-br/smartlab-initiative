@@ -8,13 +8,17 @@ const SnackbarManager = {
     Vue.mixin({
       data() {
         return {
-          validCharts: ['MAP_TOPOJSON', 'LINE', 'STACKED', 'BAR', 'TREEMAP', 'SCATTERPLOT', 'BOXPLOT', 'CALENDAR', 'SANKEYD3', 'MAP_BUBBLES', 'MAP_HEAT', 'MAP_CLUSTER', 'MAP_MIGRATION'],
-          leafletBasedCharts: ['MAP_BUBBLES', 'MAP_HEAT', 'MAP_CLUSTER', 'MAP_MIGRATION']
+          validCharts: ['MAP_TOPOJSON', 'LINE', 'STACKED', 'BAR', 'TREEMAP', 'SCATTERPLOT', 'BOXPLOT', 'CALENDAR', 'SANKEYD3', 'MAP_BUBBLES', 'MAP_HEAT', 'MAP_CLUSTER', 'MAP_MIGRATION', 'MAP_POLYGON'],
+          leafletBasedCharts: ['MAP_BUBBLES', 'MAP_HEAT', 'MAP_CLUSTER', 'MAP_MIGRATION', 'MAP_POLYGON']
         }
       },
       methods: {
-        sendError(message) {
-          this.$emit('showSnackbar', { color : 'error', text: message });
+        sendError(err) {
+          if (typeof err == 'string'){
+            this.$emit('showSnackbar', { color : 'error', text: err });
+          } else {
+            this.$emit('showSnackbar', { color : 'error', text: "Houve uma falha. - " + err.message });
+          }
         },
         
         snackAlert(params) {
@@ -61,11 +65,10 @@ const SnackbarManager = {
             idAU: idAnalysisUnit,
             theme: this.$vuetify.theme,
             sectionIndex: sectionIndex,
-            topology: this.topology,
-            topologyUf: this.topologyUf,
             headers: structure.headers,
             route: this.$route,
             context: this,
+            fnSendError: this.sendError,
             navigate: {
               fnNav: (router, placeId) => {
                 try {         
@@ -84,18 +87,33 @@ const SnackbarManager = {
             cleanLabel: TooltipBuildingService.removeFromLabel,
             axesStrokeClass: ColorsService.assessZebraAxesColor(sectionIndex, this.$vuetify.theme)
           }
+
+          additionalOptions.topology = this.selectedTopology;
+
           if (idAnalysisUnit) additionalOptions.au = this.$analysisUnitModel.findPlaceByID(idAnalysisUnit);
           if (chartType == 'SANKEYD3') additionalOptions.metadata = metadata;
+          if (chartOptions.colorScale && chartOptions.colorScale.scale_name_value && chartOptions.colorScale.color_array){
+            if (this.customFilters && this.customFilters[chartOptions.colorScale.scale_name_value]){
+              additionalOptions.colorScaleSelectedName = chartOptions.colorScale.color_array[this.customFilters[chartOptions.colorScale.scale_name_value]];
+            }
+          }
           if (this.leafletBasedCharts.includes(chartType)) {
               if (chartOptions.tooltip_function == null) additionalOptions.tooltipFunction = TooltipBuildingService.defaultLeafletTooltip; 
 
-              if (this.customParams && this.customParams.limCoords) {
+              if (this.limCoords){
+                additionalOptions.limCoords = this.limCoords;
+              } else if (this.customParams && this.customParams.limCoords) {
                 additionalOptions.limCoords = this.customParams.limCoords;
               }
               
+              if (chartType == "MAP_MIGRATION"){
+                additionalOptions.targetTooltipFunction = chartOptions.target.tooltip_function ? this[chartOptions.target.tooltip_function] : TooltipBuildingService.defaultLeafletTooltip;
+              }
               // Prepares the layers
               let visibleLayers = {}
-              if (this.customParams.enabled) {
+              if (this.customFilters && this.customFilters.enabled) {
+                visibleLayers = this.customFilters.enabled;
+              } else if (this.customParams.enabled) {
                 visibleLayers = this.customParams.enabled;
               } else {
                 if (chartOptions.indicadores) {
@@ -255,7 +273,7 @@ const SnackbarManager = {
   
         obsTITooltip(target, route, tooltip_list = [], removed_text_list = [], options = null){
           // let urlSinan = "/indicadoresmunicipais?categorias=nm_municipio_uf,ds_agreg_primaria,ds_fonte,nu_competencia_min,nu_competencia_max&valor=vl_indicador&agregacao=sum&filtros=eq-cd_indicador-'06_05_13_00',and,eq-cd_mun_ibge-"+ target.options.rowData.cd_mun_ibge;
-          let urlCatMenores = "/sst/cats?categorias=1&valor=nm_municipio_uf,cd_municipio_ibge&agregacao=COUNT&filtros=lt-idade_cat-18,and,eq-cd_municipio_ibge_dv-"+ target.options.rowData.cd_mun_ibge;
+          let urlCatMenores = "/sst/cats?categorias=1&valor=nm_municipio_uf,cd_municipio_ibge&agregacao=COUNT&filtros=lt-idade_cat-18,and,ne-idade_cat-0,and,eq-cd_municipio_ibge_dv-"+ target.options.rowData.cd_mun_ibge;
           let urlProvaBrasil = "/ti/provabrasil?categorias=nm_municipio_uf,nu_ano_prova_brasil-nu_competencia&valor=vl_indicador&agregacao=sum&filtros=nn-vl_indicador,and,ne-vl_indicador-0,and,eq-nu_ano_prova_brasil-2017,and,eq-cd_tr_fora-1,and,eq-cd_municipio_ibge_dv-"+ target.options.rowData.cd_mun_ibge;
           let urlPotAprendizes = "/indicadoresmunicipais?categorias=nm_municipio_uf,nu_competencia,ds_fonte&valor=vl_indicador&agregacao=sum&filtros=eq-cd_indicador-'12_03_03_00',and,eq-nu_competencia-nu_competencia_max,and,eq-cd_municipio_ibge_dv-"+ target.options.rowData.cd_mun_ibge;
           let urlTENascimento = "/te/indicadoresmunicipais?categorias=nm_municipio_uf&valor=vl_indicador&agregacao=sum&filtros=eq-cd_indicador-'te_nat_idade',and,lt-cast(ds_agreg_primaria as smallint)-18,and,eq-cd_mun_ibge-"+ target.options.rowData.cd_mun_ibge;
@@ -397,7 +415,7 @@ const SnackbarManager = {
             txtTipoQtde = this.$numberTransformService.constructor.formatNumber(target.options.rowData.agr_count_cd_municipio_ibge,"inteiro") + " registros de acidentes de trabalho";
             txtColor = "red--text darken-4"
             urlAtividade = "/sst/cats?categorias=ds_cnae_classe_cat-nm_atividade&agregacao=COUNT&filtros=ne-ds_cnae_classe_cat-'null',and,eq-cd_municipio_ibge-" + target.options.rowData.cd_mun_ibge + filtro + "&ordenacao=-agr_count&limit=5";
-            urlObs1 = "/sst/cats?categorias=cd_municipio_ibge&agregacao=COUNT&filtros=lt-idade_cat-18,and,eq-cd_municipio_ibge-" + target.options.rowData.cd_mun_ibge + filtro;
+            urlObs1 = "/sst/cats?categorias=cd_municipio_ibge&agregacao=COUNT&filtros=lt-idade_cat-18,and,ne-idade_cat-0,and,eq-cd_municipio_ibge-" + target.options.rowData.cd_mun_ibge + filtro;
             urlObs2 = "/sst/cats?categorias=cd_municipio_ibge&agregacao=COUNT&filtros=eq-cd_indica_obito-'S',and,eq-cd_municipio_ibge-" + target.options.rowData.cd_mun_ibge + filtro;
           } else if (target.options.rowData.codigo == "mortes"){  
             urlPeriodo = "/sst/cats?categorias=1&valor=ano_cat&agregacao=min,max";
@@ -406,7 +424,7 @@ const SnackbarManager = {
             txtTipoQtde = this.$numberTransformService.constructor.formatNumber(target.options.rowData.agr_count_cd_municipio_ibge,"inteiro") + " registros de acidentes de trabalho com mortes.";
             txtColor = "black--text"
             urlAtividade = "/sst/cats?categorias=ds_cnae_classe_cat-nm_atividade&agregacao=COUNT&filtros=eq-cd_indica_obito-'S',and,ne-ds_cnae_classe_cat-'null',and,eq-cd_municipio_ibge-" + target.options.rowData.cd_mun_ibge + filtro + "&ordenacao=-agr_count&limit=5";
-            urlObs1 = "/sst/cats?categorias=cd_municipio_ibge&agregacao=COUNT&filtros=eq-cd_indica_obito-'S',and,lt-idade_cat-18,and,eq-cd_municipio_ibge-" + target.options.rowData.cd_mun_ibge + filtro;
+            urlObs1 = "/sst/cats?categorias=cd_municipio_ibge&agregacao=COUNT&filtros=eq-cd_indica_obito-'S',and,lt-idade_cat-18,and,ne-idade_cat-0,and,eq-cd_municipio_ibge-" + target.options.rowData.cd_mun_ibge + filtro;
             urlObs2 = "/sst/cats?categorias=cd_municipio_ibge&agregacao=COUNT&filtros=eq-cd_indica_obito-'S',and,eq-cd_municipio_ibge-" + target.options.rowData.cd_mun_ibge + filtro;
           } else {
             urlPeriodo = "/sst/beneficios?categorias=1&valor=ano_beneficio&agregacao=min,max";
@@ -483,6 +501,86 @@ const SnackbarManager = {
           target.unbindPopup();
           target.bindPopup(text).openPopup();
         },
+
+        obsCovidRegicTooltip(target, route, tooltip_list = [], removed_text_list = [], options = null) { 
+          let urlRegic = "/thematic/arranjoregic?categorias=nm_municipio_uf_origem,populacao_estimada_mun_origem&ordenacao=nm_municipio_uf_origem&filtros=eq-cd_municipio_ibge_alta_complex-"+ target.options.rowData.target_cd_mun;
+          let urlArranjo = "/thematic/arranjoregic?categorias=nm_municipio_uf_alta_complex,qt_leitos_uti_arranjo, qt_leitos_outros_arranjo,qt_respiradores_arranjo,qt_respiradores_uso_arranjo,qt_estabelecimentos_arranjo,dt_coleta_covid_arranjo,qt_casos_covid_arranjo,qt_mortes_covid_arranjo,proporcao_mortes_covid_arranjo,populacao_aglomerados_subnormais_arranjo,proporcao_leitos_uti_10k_arranjo,proporcao_respiradores_uso_10k_arranjo,proporcao_respiradores_uso_arranjo&limit=1&filtros=eq-cd_municipio_ibge_alta_complex-"+ target.options.rowData.target_cd_mun;
+          axios.all([axios(this.$axiosCallSetupService.getAxiosOptions(urlRegic)),
+                    axios(this.$axiosCallSetupService.getAxiosOptions(urlArranjo))])
+          .then(axios.spread((resultRegic, resultArranjo) => {
+            let dtRegic = JSON.parse(resultRegic.data).dataset;
+            let dtArranjo = JSON.parse(resultArranjo.data).dataset[0];
+            // let tooltip_list = [
+            //   {text: 'Pólo Alta Complexidade',
+            //     value: 'nm_municipio_alta_complex'},
+            //   {text: 'Origem',
+            //     value: 'nm_municipio_uf_origem'},
+            //   {text: 'População Estimada',
+            //     value: 'populacao_estimada_mun_origem'}
+            // ]
+            // let d = dtRegic[0];
+            // text = this.$tooltipBuildingService.constructor.defaultTooltip(d, route, tooltip_list, [], options);
+            let pop = 0;
+            let municipios = "";
+            let total_mun = dtRegic.length;
+            for (let item of dtRegic){
+              municipios += item.nm_municipio_uf_origem + ", ";
+              pop += item.populacao_estimada_mun_origem;
+            }
+            municipios = municipios.substring(0,municipios.length-2);
+
+            
+            // ,qt_mortes_covid_arranjo
+            let text = "";
+            text += "<p class='headline-obs text-xs-center'>Pólo de Alta Complexidade<br/>" + 
+                    "<b>Arranjo Populacional de " + dtArranjo.nm_municipio_uf_alta_complex + "</b></p>";
+            text += "<table width='100%'>";
+            text += "<tr><td class='font-weight-bold'>Municípios Atendidos:</td>";
+            text += "<td>"+ total_mun +"</td></tr>";
+            text += "<tr><td nowrap class='font-weight-bold'>População atendida:</td>";
+            text += "<td>"+ this.$numberTransformService.constructor.formatNumber(pop,"inteiro") +"</td></tr>";
+            text += "<tr><td class='font-weight-bold'>População aglomerados subnormais (2010):</td>";
+            text += "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.populacao_aglomerados_subnormais_arranjo,"inteiro") +"</td></tr>";
+            text += "<tr><td nowrap class='font-weight-bold'>COVID-19 - Data coleta:</td>";
+            text += "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.dt_coleta_covid_arranjo,"dataDMY") +"</td></tr>";
+            text += "<tr><td nowrap class='font-weight-bold'>COVID-19 - Casos confirmados:</td>";
+            text += "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.qt_casos_covid_arranjo,"inteiro") +"</td></tr>";
+            text += "<tr><td nowrap class='font-weight-bold'>COVID-19 - Óbitos confirmados:</td>";
+            text += "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.qt_mortes_covid_arranjo,"inteiro") +"</td></tr>";
+            text += "<tr><td nowrap class='font-weight-bold'>COVID-19 - Letalidade:</td>";
+            text += "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.proporcao_mortes_covid_arranjo,"porcentagem",1,100) +"</td></tr>";
+            text += "<tr><td class='font-weight-bold'>Qt hospitais:</td>";
+            text += "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.qt_estabelecimentos_arranjo,"inteiro") +"</td></tr>";
+            text += "<tr><td class='font-weight-bold'>Qt leitos UTI:</td>";
+            text += "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.qt_leitos_uti_arranjo,"inteiro") +"</td></tr>";
+            text += "<tr><td class='font-weight-bold'>Qt leitos outros:</td>";
+            text += "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.qt_leitos_outros_arranjo,"inteiro") +"</td></tr>";
+            text += "<tr><td class='font-weight-bold'>Leitos UTI/10.000 hab.:</td>";
+            // text += "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.qt_leitos_uti_arranjo/pop*10000,"real") +"</td></tr>";
+            text += "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.proporcao_leitos_uti_10k_arranjo,"real") +"</td></tr>";
+            text += "<tr><td class='font-weight-bold'>Qt respiradores:</td>";
+            text += "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.qt_respiradores_arranjo,"inteiro") +"</td></tr>";
+            text += "<tr><td class='font-weight-bold'>Qt respiradores em condições de uso:</td>";
+            text += "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.qt_respiradores_uso_arranjo,"inteiro") +"</td></tr>";
+            text += "<tr><td class='font-weight-bold'>Respiradores em condições de uso (%):</td>";
+            // text += "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.qt_respiradores_uso_arranjo/dtArranjo.qt_respiradores_arranjo,"real",1,100) +"%</td></tr>";
+            text += "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.proporcao_respiradores_uso_arranjo,"real",1,100) +"%</td></tr>";
+            text += "<tr><td class='font-weight-bold'>Respiradores em condições de uso/10.000 hab.:</td>";
+            // text += "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.qt_respiradores_uso_arranjo/pop*10000,"real") +"</td></tr>";
+            text += "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.proporcao_respiradores_uso_10k_arranjo,"real") +"</td></tr>";
+            text += "<tr><td colspan='2'class='font-weight-bold text-xs-center'>Municípios</td></tr>";
+            text += "<tr><td colspan='2'>"+ municipios +"</td></tr>";
+            text += "</table>";
+            target.unbindPopup();
+            target.bindPopup(text, {maxHeight: 350}).openPopup();
+
+          }, error => {
+            console.error(error.toString());
+            this.sendError("Erro ao carregar dataset tooltip");
+          }));
+
+        },
+
       }
     })
   }

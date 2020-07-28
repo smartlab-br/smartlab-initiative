@@ -122,7 +122,7 @@
         <v-flex sm12 md4 lg3>
           <v-layout column>
             <v-layout row align-end fill-height wrap pl-3 pt-3 pr-2 class="subheading mb-0" 
-              v-on:mousedown="!mapEnabled ? dialogMapLoading = true : dialogMapLoading = false"
+              v-on:mouseup="!mapEnabled ? dialogMapLoading = true : dialogMapLoading = false"
               v-on:click="enableMap">
               <v-flex class="headline-obs card-title pb-0 pl-3">
                 {{ cmpTitle ? cmpTitle : '' }}
@@ -203,7 +203,6 @@
             </v-layout>
             <v-layout fill-height style="position: absolute"
               v-if="dataset !== null && observatorio && observatorio.prevalencia &&
-                    observatorio.prevalencia.chart_type == 'MAP_BUBBLES' &&
                     observatorio.prevalencia.chart_options"
               ref = "chartRef"
               :class = "leafletBasedCharts.includes(observatorio.prevalencia.chart_type) ? 'map_geo' : ''"

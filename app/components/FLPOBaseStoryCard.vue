@@ -10,7 +10,9 @@
       return {
         customFilters: {},
         reactiveFilter: null,
-        errorMessage: null
+        errorMessage: null,
+        selectedTopology: this.topology,
+        limCoords: { xmin: null, ymin: null, xmax: null, ymax: null }
       }
     },
 
@@ -68,6 +70,7 @@
             .then(result => {
               structure = Object.assign(structure, result.data);
               this.structure = structure;
+              this.updateTopology();
               this.completeStructure();
               this.fillDataStructure(
                 this.structure.title, this.customParams,
@@ -86,6 +89,7 @@
               this.fetchData();
             }).catch(error => { this.sendDataStructureError("Falha ao buscar dados do card " + cardTitle); });
         } else {
+          this.updateTopology();
           this.completeStructure();
           this.fillDataStructure(
             this.structure.title, this.customParams,
@@ -247,22 +251,24 @@
         //Limpa filtros dos selects que tem payload como pai (parent)
         for (let item of this.structure.description) {
           if (item.type &&  item.type == "select" && payload.id.includes(item.parent)){
-            this.customFilters[item.selection.rules.api.args[0].named_prop] = null;
+            let itemCustomFilter = "";
+            if (!Array.isArray(item.selection.rules.api)){
+              itemCustomFilterName = item.selection.rules.api.args[0].named_prop;
+            } else {
+              itemCustomFilterName = item.selection.rules.api[0].args[0].named_prop;
+            }
+            this.customFilters[itemCustomFilterName] = null;
           }
         }
 
         if (payload.type && payload.type === 'switch-group') {
-          this.customParams.enabled = payload.enabled;
+          this.customFilters.enabled = payload.enabled;
         } else if (payload.type && payload.type === 'check') {
           this.customFilters[payload.id] = payload.value;
         } else if (payload.type && payload.type === 'radio') {
-          this.customParams.enabled = payload.enabled;
-          if (payload.item == null || payload.item == undefined){
-            this.customFilters.radioApi = null;
-          } else {
-            this.customFilters.radioApi = payload.item.api;
-            this.customFilters.filterUrl = "";
-          }
+          this.customFilters.enabled = payload.enabled;
+          this.customFilters[payload.id] = payload.item.value;
+          this.customFilters[payload.id + "_label"] = payload.item.label;
         } else if (payload.type && payload.type === 'slider') {
           if (Array.isArray(payload.value)){
             this.customFilters.value_min = payload.value[0];
@@ -272,8 +278,15 @@
           }
         } else {
           //Registra no customFilters
+          let itemCustomFilterName = "";
+          if (!Array.isArray(payload.rules.api)){
+            itemCustomFilterName = payload.rules.api.args[0].named_prop;
+          } else {
+            itemCustomFilterName = payload.rules.api[0].args[0].named_prop;
+          }
+
           if (payload.item == null || payload.item == undefined){
-            this.customFilters[payload.rules.api.args[0].named_prop] = null;
+            this.customFilters[itemCustomFilterName] = null;
           } else {
             let item_value = "";
             if (Array.isArray(payload.item)){
@@ -281,7 +294,7 @@
               let value_label = "";
               let i = 0
               for (let item of payload.item){
-                item_value = item[payload.rules.api.args[0].named_prop];
+                item_value = item[itemCustomFilterName];
                 if(typeof item_value === 'string'){
                   //substitui a vírgula e o hífen por '\,' e '\-'
                   item_value = item_value.replace(/,/g,"\\,"); 
@@ -305,17 +318,17 @@
                 }
                 i++;
               }
-              this.customFilters[payload.rules.api.args[0].named_prop] = value;
-              this.customFilters[payload.rules.api.args[0].named_prop + "_label"] = value_label;
+              this.customFilters[itemCustomFilterName] = value;
+              this.customFilters[itemCustomFilterName + "_label"] = value_label;
             } else {
-              item_value = payload.item[payload.rules.api.args[0].named_prop];
+              item_value = payload.item[itemCustomFilterName];
               if(typeof item_value === 'string'){
                 //substitui a vírgula e o hífen por '\,' e '\-'
                 item_value = item_value.replace(/,/g,"\\,"); 
                 item_value = item_value.replace(/-/g,"\\-"); 
               }
-              this.customFilters[payload.rules.api.args[0].named_prop] = item_value;
-              this.customFilters[payload.rules.api.args[0].named_prop + "_label"] = payload.item.label;
+              this.customFilters[itemCustomFilterName] = item_value;
+              this.customFilters[itemCustomFilterName + "_label"] = payload.item.label;
             }
           }
         }
@@ -324,25 +337,35 @@
       getFilters() {
         let filterText = "";
         let filterUrl = "";
+        let filterApiArgs = "";
         for (let filter of this.structure.description) {
           if (filter.group == null || filter.group == undefined || filter.group == this.activeGroup){
+
             if (filter.type == "slider" || filter.type == "select"){
-              if (this.customFilters[filter.selection.rules.api.args[0].named_prop]){
-                filter.selection.rules.api.template = filterUrl + filter.selection.rules.filter
-                filterUrl = this.$textTransformService.applyInterpol(filter.selection.rules.api, {}, this.customFunctions, this.customFilters);
-                filterText += "<br/>" + (filter.title ? filter.title + ": " : filter.label ? filter.label+ ": " : "");
-                if (filter.type == "slider"){
-                  if (filter.selection.rules.api.args.length > 1){
-                    if (this.customFilters[filter.selection.rules.api.args[0].named_prop] != this.customFilters[filter.selection.rules.api.args[1].named_prop]) {
-                      filterText += this.customFilters[filter.selection.rules.api.args[0].named_prop] + " a " + this.customFilters[filter.selection.rules.api.args[1].named_prop];
+              if (filter.selection && filter.selection.rules && filter.selection.rules.api){
+                if (!Array.isArray(filter.selection.rules.api)){
+                  filterApiArgs = filter.selection.rules.api.args;
+                } else {
+                  filterApiArgs = filter.selection.rules.api[0].args;
+                }
+
+                if (this.customFilters[filterApiArgs[0].named_prop]){
+                  filter.selection.rules.api.template = filterUrl + filter.selection.rules.filter
+                  filterUrl = this.$textTransformService.applyInterpol(filter.selection.rules.api, {}, this.customFunctions, this.customFilters);
+                  filterText += "<br/>" + (filter.title ? filter.title + ": " : filter.label ? filter.label+ ": " : "");
+                  if (filter.type == "slider"){
+                    if (filterApiArgs.length > 1){
+                      if (this.customFilters[filterApiArgs[0].named_prop] != this.customFilters[filterApiArgs[1].named_prop]) {
+                        filterText += this.customFilters[filterApiArgs[0].named_prop] + " a " + this.customFilters[filterApiArgs[1].named_prop];
+                      } else {
+                        filterText += this.customFilters[filterApiArgs[0].named_prop];
+                      }
                     } else {
-                      filterText += this.customFilters[filter.selection.rules.api.args[0].named_prop];
+                      filterText += this.customFilters[filterApiArgs[0].named_prop];
                     }
                   } else {
-                    filterText += this.customFilters[filter.selection.rules.api.args[0].named_prop];
+                    filterText += this.customFilters[filterApiArgs[0].named_prop + "_label"];
                   }
-                } else {
-                  filterText += this.customFilters[filter.selection.rules.api.args[0].named_prop + "_label"];
                 }
               }
             } else if (filter.type == "check"){
@@ -350,7 +373,13 @@
                 filterUrl = filterUrl + filter.selection.rules.filter;
                 filterText += "<br/>" + filter.selection.rules.filter_text;
               }
+            } else if (filter.type == "radio"){
+              if (this.customFilters[filter.id]){
+                filterUrl = filterUrl + filter.selection.rules.filter;
+                filterText += "<br/>" + filter.selection.rules.filter_text;
+              }
             }
+
           }
         }
         this.customFilters.filterUrl = filterUrl;
@@ -367,6 +396,31 @@
         this.reactiveFilter = payload.item ? payload.item : payload.value;
         this.updateDataStructure(payload);
       },
+
+      updateTopology(){
+        if ((this.structure.chart_type ==  "MAP_TOPOJSON" 
+              || this.structure.chart_type ==  "MAP_POLYGON") 
+              && this.structure.chart_options.topology ){
+            let scope = this.structure.chart_options.topology.scope;
+            let range = this.structure.chart_options.topology.range;
+            let id = this.structure.chart_options.topology.id;
+            if (id == undefined){
+              if (range == "uf"){
+                id = this.selectedPlace ? this.selectedPlace.substring(0, 2) : this.customParams.idLocalidade.substring(0, 2);
+              } else {
+                id = 0;
+              }
+            }
+            let topoFile = "/static/topojson/" + scope + "/" + range + "/" + id + ".json";
+            axios.get(topoFile)
+              .then(response => {
+                this.selectedTopology = response.data;
+                if (this.loadingStatusDataset == 'SUCCESS'){
+                  this.triggerChartUpdates();
+                }
+              });
+          }
+      }
 
     }
   }

@@ -86,7 +86,7 @@
                   </v-flex>
 
                   <div v-if="sourceDesc && !sourceLink" class="caption pb-0 pt-3 px-2 pl-3 bottom-30 data-source">Fonte: {{ sourceDesc }}</div>
-                  <div v-else-if="sourceDesc && sourceLink" class="caption pb-0 px-2 pt-3 bottom-30 data-source">
+                  <div v-else-if="sourceDesc && sourceLink" class="caption pb-0 px-2 pt-3 pl-3 bottom-30 data-source">
                     Fonte: 
                     <a class="accent--text" v-on:click="openLinkFonte">{{ sourceDesc }}</a>
                   </div>
@@ -189,15 +189,12 @@
         cmpTitleComment: null,
         invalidInterpol: false,
         footnote: null,
-        cmpTopology: null,
         chartFooter: null,
         chart: null,
         renderComponent: true
       }
     },
     created() {
-      this.cmpTopology = this.topology;
-
       // switch-group or radio - initialize customParams.enabled used in leaflet maps(visibleLayers)
       let visibleLayers = {};
       if (this.structure.description){
@@ -220,14 +217,14 @@
                 visibleLayers[struct.items[idxRadio].id] = false;
               }
             }
+            this.customFilters[struct.id] = struct.items[0].value;
             break;
           }
         } 
       }
       if (Object.keys(visibleLayers).length > 0){
-        this.customParams.enabled = visibleLayers;
+        this.customFilters.enabled = visibleLayers;
       }
-
     },
     mounted() {
     },
@@ -292,46 +289,48 @@
       updateDataStructure(payload) {
         let endpoint = "";
 
-        if (payload.type && (payload.type === 'switch-group' || payload.type === 'radio')) {
-          if (this.chartHandler) this.chartHandler.adjustVisibleLayers(payload.enabled);
-        } else if (payload.type && (payload.type === 'slider' || payload.type === 'check')) {
-          if (payload.rules.filter){
-            let apiUrl = this.$textTransformService.applyInterpol(this.structure.api, this.customParams, this.customFunctions);
-            if (this.structure.apiBase){
-              apiUrl = this.$textTransformService.applyInterpol(this.structure.apiBase, this.customParams, this.customFunctions);// this.structure.apiBase;
-            }            // if (this.customFilters.radioApi){
-            //   apiUrl = this.customFilters.radioApi;
+        if (payload.type && this.chartHandler && !this.chartHandler.topojson && (payload.type === 'switch-group' || payload.type === 'radio')) {
+          this.chartHandler.adjustVisibleLayers(payload.enabled);
+        } 
+        
+        if (payload.rules){
+          if (payload.type && (payload.type === 'slider' || payload.type === 'check'|| payload.type === 'radio')) {
+            if (payload.rules.filter){
+              let apiUrl = this.$textTransformService.applyInterpol(this.structure.api, this.customParams, this.customFunctions);
+              if (this.structure.apiBase){
+                apiUrl = this.$textTransformService.applyInterpol(this.structure.apiBase, this.customParams, this.customFunctions);// this.structure.apiBase;
+              }            
+              endpoint = apiUrl + this.getFilters();
+              this.structure.chart_options.filterText = this.customFilters.filterText;
+            } else {
+              endpoint = this.$textTransformService.applyInterpol(payload.rules.api, this.customParams, this.customFunctions, this.customFilters);
+            }
+            this.fetchData(endpoint);
+          } else if (payload.type && (payload.type !== 'switch-group')) {
+            //substitui a vírgula por '\,'
+            // let payloadItem = Object.assign({}, payload.item);
+            // for (let indexItem in payloadItem){
+            //   let itemValue = payloadItem[indexItem];
+            //   if (typeof(itemValue) == "string"){
+            //     payloadItem[indexItem] = itemValue.replace(/,/g,"\\,");
+            //     payloadItem[indexItem] = itemValue.replace(/-/g,"\\-");
+            //   }
             // }
-            endpoint = apiUrl + this.getFilters();
-            this.structure.chart_options.filterText = this.customFilters.filterText;
-          } else {
-            endpoint = this.$textTransformService.applyInterpol(payload.rules.api, this.customParams, this.customFunctions, this.customFilters);
-          }
-          this.fetchData(endpoint);
-        } else {
-          //substitui a vírgula por '\,'
-          // let payloadItem = Object.assign({}, payload.item);
-          // for (let indexItem in payloadItem){
-          //   let itemValue = payloadItem[indexItem];
-          //   if (typeof(itemValue) == "string"){
-          //     payloadItem[indexItem] = itemValue.replace(/,/g,"\\,");
-          //     payloadItem[indexItem] = itemValue.replace(/-/g,"\\-");
-          //   }
-          // }
 
-          // Troca a topologia se for um select de uf
-          if (payload.target && payload.target.scope && payload.target.range) {
-            let range = payload.target.range;
-            let scope = payload.target.scope;
-            let id = payload.item.id;
-            let topoFile = "/static/topojson/" + scope + "/" + range + "/" + id + ".json";
-            axios.get(topoFile)
-              .then(response => {
-                this.cmpTopology = response.data;
-                this.handleDataStructure(payload);
-              });
-          } else {
-            this.handleDataStructure(payload);
+            // Troca a topologia se for um select de uf
+            if (payload.target && payload.target.scope && payload.target.range) {
+              let range = payload.target.range;
+              let scope = payload.target.scope;
+              let id = payload.item.id;
+              let topoFile = "/static/topojson/" + scope + "/" + range + "/" + id + ".json";
+              axios.get(topoFile)
+                .then(response => {
+                  this.selectedTopology = response.data;
+                  this.handleDataStructure(payload);
+                });
+            } else {
+              this.handleDataStructure(payload);
+            }
           }
         }
       },

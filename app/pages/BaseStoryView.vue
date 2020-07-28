@@ -8,16 +8,6 @@
     methods: {
       selectCoords(range, scope, id, suffix = "") {
         let topoFile = "/static/topojson/" + scope + "/" + range + "/" + id + ".json";
-        if (scope == 'uf') {
-          topoFile = "/static/topojson/uf.json";
-          this['topologyUfLoaded'+ suffix] = true;
-        } else {
-          axios.get("/static/topojson/uf.json")
-          .then(response => {
-            this['topology_uf' + suffix] = response.data;
-            this['topologyUfLoaded'+ suffix] = true;
-          });
-        }
         axios.get(topoFile)
           .then(response => {
             this['topology' + suffix] = response.data;

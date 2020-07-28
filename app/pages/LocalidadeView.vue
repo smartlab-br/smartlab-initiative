@@ -174,33 +174,30 @@
                       v-html="card.title.fixed">
                     </v-layout>
                     <flpo-story-card-autofill
-                      v-else-if="card.autoFill && topologyUfLoaded  && topology && ((indexSecao*100) + cardIndex <= visibleCardMaxIndex)"
+                      v-else-if="card.autoFill && topology && ((indexSecao*100) + cardIndex <= visibleCardMaxIndex)"
                       :structure="card"
                       :custom-params = "customParams"
                       :custom-functions = "custom_functions"
                       :topology = "topology"
-                      :topology-uf = "topology_uf"
                       :section-index="indexSecao"
                       @showSnackbar="snackAlert">
                     </flpo-story-card-autofill>
                     <flpo-story-card-multiple-charts
-                      v-else-if="card.type && card.type == 'multiple-charts' && topologyUfLoaded  && topology && ((indexSecao*100) + cardIndex  <= visibleCardMaxIndex)"
+                      v-else-if="card.type && card.type == 'multiple-charts' && topology && ((indexSecao*100) + cardIndex  <= visibleCardMaxIndex)"
                       :structure="card"
                       :custom-params = "customParams"
                       :custom-functions = "custom_functions"
                       :topology = "topology"
-                      :topology-uf = "topology_uf"
                       :section-index="indexSecao"
                       @showBugDialog="openBugDialog"
                       @showSnackbar="snackAlert">
                     </flpo-story-card-multiple-charts>
                     <flpo-story-card
-                      v-else-if="topologyUfLoaded  && topology && ((indexSecao*100) + cardIndex  <= visibleCardMaxIndex)"
+                      v-else-if="topology && ((indexSecao*100) + cardIndex  <= visibleCardMaxIndex)"
                       :structure="card"
                       :custom-params = "customParams"
                       :custom-functions = "custom_functions"
                       :topology = "topology"
-                      :topology-uf = "topology_uf"
                       :section-index="indexSecao"
                       @showBugDialog="openBugDialog"
                       @showSnackbar="snackAlert">
@@ -336,8 +333,6 @@
         dimensoes: [],
         customParams: {},
         topology: null,
-        topology_uf: null,
-        topologyUfLoaded: false,
         isPageBottom: true,
         cardLinks: [],
         totalLinksSections: 0,
@@ -357,8 +352,6 @@
         presentation_compare: null,
         ind_principais_compare:[],
         topology_compare: null,
-        topology_uf_compare: null,
-        topologyUfLoaded_compare: false,
         thematicDatasets: [],
 
         // Functions
@@ -434,13 +427,28 @@
             },
           get_proportional_indicator_uf: function(d,campo='vl_indicador', media="media_uf") { return Math.log(((d[campo] - d[media]) / d[media]) + 1.01); },
           get_log: function(d,campo='vl_indicador') { return Math.log(d[campo] + 0.01); },
+          get_week_status: function(d, reg_week){
+            Date.prototype.getWeekNumber = function(){
+              var d = new Date(Date.UTC(this.getFullYear(), this.getMonth(), this.getDate()));
+              var dayNum = d.getUTCDay() || 7;
+              d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+              var yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
+              return Math.ceil((((d - yearStart) / 86400000) + 1)/7)
+            };
+            if (reg_week == new Date().getWeekNumber()){
+              return "Semana corrente";
+            } else {
+              return "Semana completa";
+            }
+          },
           get_bipolar_scale: function(d, prop, origin = 0) {
+            if (d[prop] == null) return null;
             let val = d[prop] - origin;
             if (val > 0) {
               return Math.log(val / d.maxVal + 1.0001);
             }
             if (val < 0) {
-              return -Math.log(Math.abs(val) / Math.abs(d.minVal) + 1.0001);
+               return d.minVal == 0 ? -Math.log(Math.abs(val) + 1.0001) : -Math.log(Math.abs(val) / Math.abs(d.minVal) + 1.0001);
             }
             return 0;
           },
@@ -484,6 +492,12 @@
             if (d.vl_indicador < 0.8) return 4; // Alto
             return 5;
           },
+          get_uti_level: (d, value) => {
+            if (value == null) return "Não informado";
+            if (value < 1) return "Abaixo do recomendado"; 
+            if (value <= 3) return "Dentro do recomendado"; 
+            if (value > 3) return "Acima do recomendado"; 
+          },          
           remove_year: function(d){ return String(d.ds_indicador_radical).replace(d.nu_competencia,"").replace("  "," ")},
           absolute: function(d, campo="vl_indicador") { return Math.abs(d[campo]); },
           concat_descriptions: function(d) {
@@ -714,14 +728,14 @@
                    this.$route.params.idLocalidade.includes("ptm") || this.$route.params.idLocalidade.includes("PTM")) {
           this.selectCoords("uf", "municipio", this.$analysisUnitModel.getUFFromPlace(this.$route.params.idLocalidade));
         } else if (this.$route.params.idLocalidade.length == 1){ //Região
-          this.selectCoords("br", "uf", 0);
+          this.selectCoords("regiao", "uf",this.$route.params.idLocalidade);
           // this.selectCoords("/static/topojson/regiao.json");
         } else if (this.$route.params.idLocalidade.length == 2){ //Estado
-          this.selectCoords("uf", "municipio", this.$route.params.idLocalidade.substring(0, 2));
+          this.selectCoords("uf", "municipio", this.$route.params.idLocalidade);
         } else if (this.$route.params.idLocalidade.length == 4){ //Mesorregião
-          this.selectCoords("uf", "uf", this.$route.params.idLocalidade);
+          this.selectCoords("uf", "mesorregiao", this.$route.params.idLocalidade.substring(0, 2));
         } else if (this.$route.params.idLocalidade.length == 5){ //Microrregião
-          this.selectCoords("mesorregiao", "uf", this.$route.params.idLocalidade);
+          this.selectCoords("uf", "microrregiao", this.$route.params.idLocalidade.substring(0, 2));
         } else {
           this.selectCoords("uf", "municipio", this.$route.params.idLocalidade.substring(0, 2));
         }
@@ -737,14 +751,14 @@
                     this.$route.query.compare.includes("ptm") || this.$route.query.compare.includes("PTM")) {
             this.selectCoords("uf", "municipio", this.getUFFromPlace(this.$route.query.compare), "_compare");
           } else if (this.$route.query.compare.length == 1){ //Região
-            this.selectCoords("br", "uf", 0, "_compare");
+            this.selectCoords("regiao", "uf",this.$route.params.idLocalidade, "_compare");
             // this.selectCoords("/static/topojson/regiao.json");
           } else if (this.$route.query.compare.length == 2){ //Estado
-            this.selectCoords("uf", "municipio", this.$route.query.compare.substring(0, 2), "_compare");
+            this.selectCoords("uf", "municipio", this.$route.query.compare, "_compare");
           } else if (this.$route.query.compare.length == 4){ //Mesorregião
-            this.selectCoords("uf", "uf", this.$route.query.compare, "_compare");
+            this.selectCoords("uf", "mesorregiao", this.$route.query.compare.substring(0, 2), "_compare");
           } else if (this.$route.query.compare.length == 5){ //Microrregião
-            this.selectCoords("mesorregiao", "uf", this.$route.query.compare, "_compare");
+            this.selectCoords("uf", "microrregiao", this.$route.query.compare.substring(0, 2), "_compare");
           } else {
             this.selectCoords("uf", "municipio", this.$route.query.compare.substring(0, 2), "_compare");
           }
@@ -949,7 +963,7 @@
           this[nm_var] = localidade;
           this.customParams[nm_var] = localidade;
         } else if (idLocalidade.length == 2){ //Estado
-          url = "/municipios?categorias=cd_uf,nm_uf&filtros=eq-cd_uf-" + idLocalidade;
+          url = "/municipios?categorias=cd_uf,nm_uf&agregacao=distinct&filtros=eq-cd_uf-" + idLocalidade;
           axios(this.$axiosCallSetupService.getAxiosOptions(url))
             .then(result => {
               localidade = JSON.parse(result.data).dataset[0];
@@ -965,7 +979,7 @@
               this.sendError("Falha ao buscar dados do município");
             });
         } else if (idLocalidade.length == 4){ //Mesorregião
-          url = "/municipios?categorias=cd_mesorregiao,nm_mesorregiao&filtros=eq-cd_mesorregiao-" + idLocalidade;
+          url = "/municipios?categorias=cd_mesorregiao,nm_mesorregiao&agregacao=distinct&filtros=eq-cd_mesorregiao-" + idLocalidade;
           axios(this.$axiosCallSetupService.getAxiosOptions(url))
             .then(result => {
               localidade = JSON.parse(result.data).dataset[0];
@@ -981,7 +995,7 @@
               this.sendError("Falha ao buscar dados da mesorregião");
             });
         } else if (idLocalidade.length == 5){ //Microrregião
-          url = "/municipios?categorias=cd_microrregiao,nm_microrregiao,latitude,longitude&filtros=eq-cd_microrregiao-" + idLocalidade;
+          url = "/municipios?categorias=cd_microrregiao,nm_microrregiao&agregacao=distinct&filtros=eq-cd_microrregiao-" + idLocalidade;
           axios(this.$axiosCallSetupService.getAxiosOptions(url))
             .then(result => {
               localidade = JSON.parse(result.data).dataset[0];

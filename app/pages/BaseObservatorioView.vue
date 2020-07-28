@@ -20,6 +20,7 @@
         customParams: {},
         customFunctions: {
           calc_subtraction: function(a, b) {  return a - b; },
+          calc_percentage: function(parte,total) { return parte / total * 100},
         },
         topology: null,
 
@@ -50,8 +51,13 @@
           this.obsSliceSize = 1;
         }
       }
-
-      
+      // let topoFile = "/static/topojson/br-municipio.json";
+      // // this['topologyBrLoaded'+ suffix] = true;
+      // axios.get(topoFile)
+      //   .then(response => {
+      //     this['topology'] = response.data;
+      //   });
+     
     },
     beforeDestroy: function() {
       window.removeEventListener('resize', this.resizeFirstSection);
