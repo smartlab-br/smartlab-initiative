@@ -139,7 +139,8 @@ export default {
         }
     },
     created () {
-        this.fillDataStructure(this.structure, {}, {}, this.fillFromDataset, {});
+        this.fillDataStructure(this.structure, this.customParams,
+        this.customFunctions, this.fillFromDataset, {});
     },
     methods: {
         customSort(items, index, isDesc) {
