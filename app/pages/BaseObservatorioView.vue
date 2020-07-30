@@ -21,6 +21,10 @@
         customFunctions: {
           calc_subtraction: function(a, b) {  return a - b; },
           calc_percentage: function(parte,total) { return parte / total * 100},
+          calc_date_diff: function(dias, data = new Date()){
+              dias = (24*60*60*1000) * dias;
+              return new Date(data - dias).toISOString().substring(0,10).replace(/-/g,'\\-');
+          },
         },
         topology: null,
 

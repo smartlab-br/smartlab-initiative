@@ -264,6 +264,8 @@
             <v-flex pt-3 pb-0 v-for="(strSparklines, index) in observatorio.sparklines.tables" :key="index" :class="strSparklines.cls?strSparklines.cls:'xs12'" text-xs-center>
               {{ strSparklines.title }}
               <flpo-sparklines 
+                :custom-params="customParams"
+                :custom-functions="customFunctions"
                 :dataset = "dataset"
                 :structure = "strSparklines">
               </flpo-sparklines>
