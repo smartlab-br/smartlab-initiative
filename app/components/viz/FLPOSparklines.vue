@@ -371,7 +371,7 @@ export default {
 
                     if(series){
                         row['last_value_' + series_value] = sparkline_values[sparkline_values.length-1];
-                        row['higher_value_str_' + series_value] = higher_value + " (" + higher_cat + ")";
+                        row['higher_value_str_' + series_value] = NumberTransformService.formatNumber(higher_value, "inteiro") + " (" + higher_cat + ")";
                     } else {
                         row['last_value_' + series_value] = 0;
                         row['higher_value_str_' + series_value] = "";
