@@ -398,7 +398,7 @@
           calc_percentage_val1: function(val1,val2) { return val1 / (val1 + val2) * 100},
           calc_percentage_2values: function(val1,val2,total) { return (val1 + val2) / total * 100},
           calc_proportion: function(dividendo, divisor) { return dividendo / divisor; },
-          calc_proportion_ds: function(d,dividendo, divisor) { return dividendo / divisor; },
+          calc_proportion_ds: function(d,dividendo, divisor) { return divisor==0 ? null:dividendo / divisor; },
           get_flag_value: function(d) {return (d.vl_indicador == 0) ? d.ds_indicador_radical + ": NÃO" : d.ds_indicador_radical + ": SIM";},
           get_te_label: function(d,campo) {
               switch(d[campo]) {
