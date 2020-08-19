@@ -427,6 +427,9 @@
             },
           get_proportional_indicator_uf: function(d,campo='vl_indicador', media="media_uf") { return Math.log(((d[campo] - d[media]) / d[media]) + 1.01); },
           get_log: function(d,campo='vl_indicador') { return Math.log(d[campo] + 0.01); },
+          get_number: function(d,val) { 
+            return parseFloat(val); 
+          },
           get_week_status: function(d, reg_week){
             Date.prototype.getWeekNumber = function(){
               var d = new Date(Date.UTC(this.getFullYear(), this.getMonth(), this.getDate()));
@@ -502,6 +505,9 @@
           absolute: function(d, campo="vl_indicador") { return Math.abs(d[campo]); },
           concat_descriptions: function(d) {
             return d.desc_indicador + " - " + d.ds_indicador_radical;
+          },
+          replace_text: function(d,field,text,text_replace){
+            return d[field].replace(text,text_replace);
           },
           replace_text_namepercent: function(data, options) {
             return data[options.name_field] + " (" + data[options.pct_field] + ")"; 
