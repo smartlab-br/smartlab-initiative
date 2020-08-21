@@ -52,11 +52,11 @@ class TooltipBuildingService {
         text += "<p class='headline-obs'><b>" + value + "</b></p>";
         text += "<hr class='tooltip_divider'>";
       } else {
-        if (Array.isArray(value)){
-          for(let value_item_tb in value){
-            table += "<tr><td class='font-weight-bold'>" + tooltip_list[item].text + ":</td><td class='text-xs-right'>" + value[value_item_tb] + "</td></tr>";
-          }
-        } else {
+        if (!Array.isArray(value)){
+        //   for(let value_item_tb in value){
+        //     table += "<tr><td class='font-weight-bold'>" + tooltip_list[item].text + ":</td><td class='text-xs-right'>" + value[value_item_tb] + "</td></tr>";
+        //   }
+        // } else {
           table += "<tr><td class='font-weight-bold'>" + tooltip_list[item].text + ":</td><td class='text-xs-right'>" + value + "</td></tr>";
         }
 
