@@ -65,7 +65,7 @@ describe('ThemeManager', () => {
       "<p class='headline-obs'><b>1</b></p><hr class='tooltip_divider'>"+
       "<table width='100%' style='max-width:350px'>"+
       "<tr style='vertical-align:top'>"+
-      "<td class='font-weight-bold'>Ano:</td><td class='text-xs-right'>2099</td></tr>"+
+      "<td class='font-weight-bold'>Ano:</td><td class='text-xs-right'>2020</td></tr>"+
       "<tr style='vertical-align:top'>"+
       "<td class='font-weight-bold'>Valor:</td><td class='text-xs-right'>123.45</td>"+
       "</tr></table>"
