@@ -27,7 +27,8 @@
                 :width="header.width"
                 >
                 <v-icon small>arrow_upward</v-icon>
-                {{ header.type != 'spark' ? header.text : header.text + " (" + first_cat[header.series] + ' a ' + last_cat[header.series] + ')' }}
+                {{ header.text }}<br/>
+                {{ header.type == 'spark' ? "(" + first_cat[header.series] + " a " + last_cat[header.series] + ")" : "" }}
                 </th>
             </tr>
             </template>            
@@ -71,7 +72,7 @@
                             <v-flex xs4 px-2 class="sparkline">
                         -->
                         <div px-2 class="sparkline" v-if="hdr.type && hdr.type == 'spark'">
-                            <v-layout row nowrap> 
+                            <v-layout row nowrap v-if="(hdr.show_labels == undefined || hdr.show_labels)"> 
                                 <v-flex v-if="props.item['sparkline_values_' + hdr.series].length > 1" 
                                     xs2 xl2 micro-caption text-xs-right :style="'color:'+hdr.bgColor">
                                     {{ hdr.format ? numberTransformService.formatNumber(
@@ -95,6 +96,17 @@
                                                         hdr.format, hdr.precision, hdr.multiplier, hdr.collapse, hdr.signed, hdr.uiTags ) 
                                                   : props.item['sparkline_values_' + hdr.series][props.item['sparkline_values_' + hdr.series].length-1]
                                     }}
+                                </v-flex>
+                            </v-layout>
+                            <v-layout row nowrap v-else> 
+                                <v-flex xs12>
+                                    <v-sparkline 
+                                        :value="props.item['sparkline_values_'+ hdr.series]"
+                                        :color="hdr.bgColor"
+                                        :line-width="hdr.stroke?hdr.stroke:3"
+                                        padding="8"
+                                        height="45"
+                                    ></v-sparkline>
                                 </v-flex>
                             </v-layout>
                         </div>
@@ -203,39 +215,9 @@ export default {
                             
                             eachInHierarchy[row[sourceStructure.series_field]] = [entry];
 
-                            // eachInHierarchy['total_' + row[sourceStructure.series_field]] = entry.value;
-                            // eachInHierarchy['stats_' + row[sourceStructure.series_field]] = {
-                            //     initialValue: entry.value,
-                            //     finalValue: entry.value,
-                            //     initialCat: entry.cat_value,
-                            //     finalCat: entry.cat_value
-                            // };
                         } else { // Existing instance and series
                             eachInHierarchy[row[sourceStructure.series_field]].push(entry);
 
-                            // eachInHierarchy['total_' + row[sourceStructure.series_field]] = eachInHierarchy['total_' + row[sourceStructure.series_field]] + entry.value;
-
-                            // if (eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialCat > entry.cat_value) {
-                            //     eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialValue = entry.value;
-                            //     eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialCat = entry.cat_value;
-                            // }
-                            // if (eachInHierarchy['stats_' + row[sourceStructure.series_field]].finalCat < entry.cat_value) {
-                            //     eachInHierarchy['stats_' + row[sourceStructure.series_field]].finalValue = entry.value;
-                            //     eachInHierarchy['stats_' + row[sourceStructure.series_field]].finalCat = entry.cat_value;
-                            // }
-
-                            // if (eachInHierarchy[row[sourceStructure.series_field]].length > 1 &&
-                            //     eachInHierarchy['stats_' + row[sourceStructure.series_field]] &&
-                            //     eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialValue != 0) {
-                            //     eachInHierarchy['stats_' + row[sourceStructure.series_field]].deltaPerc = (eachInHierarchy['stats_' + row[sourceStructure.series_field]].finalValue - eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialValue) / eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialValue * 100;
-                            //     eachInHierarchy['deltaPerc_' + row[sourceStructure.series_field]] = (eachInHierarchy['stats_' + row[sourceStructure.series_field]].finalValue - eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialValue) / eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialValue * 100;
-                                // Delta % for sorter
-                                // if (row[sourceStructure.series_field] == sourceStructure.sorter.indicador) {
-                                //     eachInHierarchy.deltaPerc = (eachInHierarchy['stats_' + row[sourceStructure.series_field]].finalValue - eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialValue) / eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialValue * 100;
-                                // }
-                                // Delta % string formatters
-                            //     eachInHierarchy['str_deltaPerc_' + row[sourceStructure.series_field]] = this.$numberTransformService.constructor.formatNumber(eachInHierarchy['deltaPerc_' + row[sourceStructure.series_field]], 'porcentagem');
-                            // }
                         }
                         continue fromSource;
                     }    
@@ -245,25 +227,10 @@ export default {
                 let nuInstance = row;
                 nuInstance.id = row[sourceStructure.id_field];
 
-                // nuInstance['total_' + row[sourceStructure.series_field]] = entry.value;
                 nuInstance[row[sourceStructure.series_field]] = [entry];
-                // nuInstance['stats_' + row[sourceStructure.series_field]] = {
-                //     initialValue: entry.value,
-                //     finalValue: entry.value,
-                //     initialCat: entry.cat_value,
-                //     finalCat: entry.cat_value
-                // };                
                 hierarchicalDS.push(nuInstance);
             }
 
-            // let fnSorter = (a, b) => {
-            //     if (a.deltaPerc && b.deltaPerc) {
-            //         return - (a.deltaPerc - b.deltaPerc);
-            //     }
-            //     if (a.deltaPerc) return -1;
-            //     if (b.deltaPerc) return 1;
-            //     return 0;
-            // }
             let fillZeros = sourceStructure.fillZeros == undefined ? true : sourceStructure.fillZeros;
             this.createSparklineFields(hierarchicalDS, allSeries, series_first_cat, series_last_cat, fillZeros, sourceStructure);
 
@@ -278,6 +245,50 @@ export default {
             this.first_cat = series_first_cat
             this.last_cat = series_last_cat
             
+            if(sourceStructure.category_type == "timestamp" && sourceStructure.category_aggregation == "week"){
+                for(let reg of hierarchicalDS){
+                    for(let serie of allSeries){
+                        let new_serie = [];
+                        let sum_week = 0;
+                        let weekday;
+                        let first_reg = true;
+                        let day_before = null;
+                        let same_week = true;
+                        const _MS_PER_DAY = 1000 * 60 * 60 * 24;
+                        for (let item of reg[serie]){
+                            weekday = new Date(item.cat_value).getUTCDay();
+                            //TODO - acrescentar verificação para mesma semana date-7?
+                            if (day_before){
+                                let days_diff = Math.floor((new Date(item.cat_value) - new Date(item.cat_value)) / _MS_PER_DAY);                                
+                                if (new Date(item.cat_value) == day_before) {
+                                    same_week = true;
+                                } else if (weekday <= day_before.getUTCDay()){
+                                    same_week = false;
+                                } else if (days_diff > 6){
+                                    same_week = false;
+                                } else {
+                                    same_week = true;
+                                }
+                            }
+                            if (weekday == 0 || (day_before && !same_week) ){
+                                if (!first_reg){
+                                    new_serie.push(sum_week);
+                                } 
+                                sum_week = item.value;
+                            } else {
+                                sum_week += item.value;
+                            }
+                            first_reg = false;
+                            day_before = new Date(item.cat_value);
+                        }
+                        // não conta a última semana
+                        // new_serie.push(sum_week);
+                        reg['sparkline_values_' + serie] = new_serie;
+                        reg['last_value_' + serie] = new_serie[new_serie.length-1];
+                    }
+                }
+            }
+
             //default order = last value in first series
             let order_field = 'last_value_' + allSeries[0];
             if (sourceStructure.order_field){
@@ -288,7 +299,6 @@ export default {
             }
 
             hierarchicalDS.sort(fnSorter);
-            
             this.dataset = hierarchicalDS;
 
         },
@@ -361,7 +371,7 @@ export default {
                         row[series_value] = [];
                     }
 
-                    row['sparkline_labels_' + series_value] = sparkline_labels;
+                    // row['sparkline_labels_' + series_value] = sparkline_labels;
                     row['sparkline_values_' + series_value] = sparkline_values;
                     row['total_' + series_value] = total;
                     row['higher_value_' + series_value] = higher_value;
