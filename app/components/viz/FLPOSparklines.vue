@@ -259,7 +259,7 @@ export default {
                             weekday = new Date(item.cat_value).getUTCDay();
                             //TODO - acrescentar verificação para mesma semana date-7?
                             if (day_before){
-                                let days_diff = Math.floor((new Date(item.cat_value) - new Date(item.cat_value)) / _MS_PER_DAY);                                
+                                let days_diff = Math.floor((new Date(item.cat_value) - day_before) / _MS_PER_DAY);                                
                                 if (new Date(item.cat_value) == day_before) {
                                     same_week = true;
                                 } else if (weekday <= day_before.getUTCDay()){
