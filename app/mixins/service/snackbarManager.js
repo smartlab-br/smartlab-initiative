@@ -506,13 +506,16 @@ const SnackbarManager = {
           let urlCovidMunicipio = "/thematic/covidcasos?categorias=cd_municipio_ibge_dv,nm_municipio_uf,last_available_date,last_available_deaths,last_available_confirmed,last_available_death_rate&filtros=eq-place_type-'city',and,eq-is_last-TRUE,and,ne-latitude-0,and,ne-longitude-0,and,eq-cd_municipio_ibge_dv-"+ target.options.rowData.cd_mun_ibge;
           let urlDenunciaMPT = "/thematic/coviddenunciampt?categorias=cd_municipio_ibge_dv,nm_municipio_uf&agregacao=COUNT&filtros=eq-cd_municipio_ibge_dv-"+ target.options.rowData.cd_mun_ibge;
           let urlAcoesMPT = "/thematic/coviddocumentompt?categorias=descricao_tipodocumento&agregacao=COUNT&filtros=in-tipodocumento-'ACPs'-'TAC'-'RECOMENDAÇÃO',and,eq-cd_municipio_ibge_dv-"+ target.options.rowData.cd_mun_ibge;
+          let urlDestinacaoMPT = "/thematic/coviddestinacaompt?categorias=1&valor=destinacaovalor&agregacao=SUM&filtros=eq-cd_municipio_ibge_dv-"+ target.options.rowData.cd_mun_ibge;
           axios.all([axios(this.$axiosCallSetupService.getAxiosOptions(urlCovidMunicipio)),
                     axios(this.$axiosCallSetupService.getAxiosOptions(urlDenunciaMPT)),
-                    axios(this.$axiosCallSetupService.getAxiosOptions(urlAcoesMPT))])
-          .then(axios.spread((resultCovidMun, resultDenunciaMPT, resultAcoesMPT) => {
+                    axios(this.$axiosCallSetupService.getAxiosOptions(urlAcoesMPT)),
+                    axios(this.$axiosCallSetupService.getAxiosOptions(urlDestinacaoMPT))])
+          .then(axios.spread((resultCovidMun, resultDenunciaMPT, resultAcoesMPT, resultDestinacaoMPT) => {
             let dtCovidMun = JSON.parse(resultCovidMun.data).dataset[0];
             let dtDenunciaMPT = JSON.parse(resultDenunciaMPT.data).dataset[0];
             let dtAcoesMPT = JSON.parse(resultAcoesMPT.data).dataset;
+            let dtDestinacaoMPT = JSON.parse(resultDestinacaoMPT.data).dataset[0];
             let total_acoes = 0;
             if(dtAcoesMPT){
               for (let item of dtAcoesMPT){
@@ -526,7 +529,24 @@ const SnackbarManager = {
             }
             text += "<p class='headline-obs'>Município: <b>" + dtCovidMun.nm_municipio_uf + "</b></p>";
             text += "<table width='100%'>";
-            text += "<tr><td class='text-xs-center font-weight-bold light-blue--text' colspan='2'>COVID-19</td></tr>";
+            if(dtDenunciaMPT){
+              text += "<tr><td class='text-xs-center font-weight-bold red--text accent-4' colspan='2'>DENÚNCIAS AO MPT</td></tr>";
+              text += "<tr><td nowrap class='font-weight-bold'>Total de Denúncias:</td>";
+              text += "<td class='text-xs-right'>"+ this.$numberTransformService.constructor.formatNumber(dtDenunciaMPT.agr_count,"inteiro") +"</td></tr>";
+            }
+            if(dtAcoesMPT.length > 0){
+              text += "<tr><td class='text-xs-center font-weight-bold green--text' colspan='2'>ATUAÇÃO MPT</td></tr>";
+              for (let item of dtAcoesMPT){
+                text += "<tr><td><b>" + item.descricao_tipodocumento + "</b> :</td><td class='text-xs-right'>" + this.$numberTransformService.constructor.formatNumber(item.agr_count,"inteiro") + "</td></tr>";
+              }
+              text += "<tr><td><b>TOTAL</b>:</td><td class='text-xs-right'><b>" + this.$numberTransformService.constructor.formatNumber(total_acoes,"inteiro") + "</b></td></tr>";
+            }
+            if(dtDestinacaoMPT){
+              text += "<tr><td class='text-xs-center font-weight-bold light-blue--text accent-4' colspan='2'>RECURSOS DESTINADOS PELO MPT PARA AÇÕES DE COMBATE À COVID-19</td></tr>";
+              text += "<tr><td nowrap class='font-weight-bold'>Total de recursos:</td>";
+              text += "<td class='text-xs-right'>"+ this.$numberTransformService.constructor.formatNumber(dtDestinacaoMPT.agr_sum_destinacaovalor,"monetario",2) +"</td></tr>";
+            }
+            text += "<tr><td class='text-xs-center font-weight-bold brown--text' colspan='2'>COVID-19</td></tr>";
             text += "<tr><td nowrap class='font-weight-bold'>Data coleta:</td>";
             text += "<td>"+ this.$numberTransformService.constructor.formatNumber(dtCovidMun.last_available_date,"dataDMY") +"</td></tr>";
             text += "<tr><td nowrap class='font-weight-bold'>Casos confirmados:</td>";
@@ -535,21 +555,9 @@ const SnackbarManager = {
             text += "<td class='text-xs-right'>"+ this.$numberTransformService.constructor.formatNumber(dtCovidMun.last_available_deaths,"inteiro") +"</td></tr>";
             text += "<tr><td nowrap class='font-weight-bold'>Letalidade:</td>";
             text += "<td class='text-xs-right'>"+ this.$numberTransformService.constructor.formatNumber(dtCovidMun.last_available_death_rate,"porcentagem",1,100) +"</td></tr>";
-            if(dtDenunciaMPT){
-              text += "<tr><td class='text-xs-center font-weight-bold green--text accent-4' colspan='2'>DENÚNCIAS AO MPT</td></tr>";
-              text += "<tr><td nowrap class='font-weight-bold'>Total de Denúncias:</td>";
-              text += "<td class='text-xs-right'>"+ this.$numberTransformService.constructor.formatNumber(dtDenunciaMPT.agr_count,"inteiro") +"</td></tr>";
-            }
-            if(dtAcoesMPT.length > 0){
-              text += "<tr><td class='text-xs-center font-weight-bold purple--text' colspan='2'>ATUAÇÃO MPT</td></tr>";
-              for (let item of dtAcoesMPT){
-                text += "<tr><td><b>" + item.descricao_tipodocumento + "</b> :</td><td class='text-xs-right'>" + this.$numberTransformService.constructor.formatNumber(item.agr_count,"inteiro") + "</td></tr>";
-              }
-              text += "<tr><td><b>TOTAL</b>:</td><td class='text-xs-right'><b>" + this.$numberTransformService.constructor.formatNumber(total_acoes,"inteiro") + "</b></td></tr>";
-            }
             text += "</table>";
             target.unbindPopup();
-            target.bindPopup(text, {maxHeight: 350}).openPopup();
+            target.bindPopup(text, {maxHeight: 400}).openPopup();
 
           }, error => {
             console.error(error.toString());
