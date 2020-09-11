@@ -567,6 +567,14 @@ const SnackbarManager = {
         },
 
         obsCovidRegicTooltip(target, route, tooltip_list = [], removed_text_list = [], options = null) { 
+          this.obsCovidRegicTextTooltip(target);
+        },
+
+        obsCovidRegicUTITooltip(target, route, tooltip_list = [], removed_text_list = [], options = null) { 
+          this.obsCovidRegicTextTooltip(target, true);
+        },
+
+        obsCovidRegicTextTooltip(target, showDadosSaude = false){
           let urlRegic = "/thematic/covidarranjoregic?categorias=nm_municipio_uf_origem,populacao_estimada_mun_origem&ordenacao=nm_municipio_uf_origem&filtros=eq-cd_municipio_ibge_alta_complex-"+ target.options.rowData.target_cd_mun;
           let urlArranjo = "/thematic/covidarranjoregic?categorias=nm_municipio_uf_alta_complex,qt_leitos_uti_arranjo,qt_leitos_outros_arranjo,qt_respiradores_arranjo,qt_respiradores_uso_arranjo,qt_estabelecimentos_arranjo,dt_coleta_covid_arranjo,qt_casos_covid_arranjo,qt_mortes_covid_arranjo,proporcao_mortes_covid_arranjo,populacao_aglomerados_subnormais_arranjo,proporcao_leitos_uti_10k_arranjo,proporcao_respiradores_uso_10k_arranjo,proporcao_respiradores_uso_arranjo&limit=1&filtros=eq-cd_municipio_ibge_alta_complex-"+ target.options.rowData.target_cd_mun;
           axios.all([axios(this.$axiosCallSetupService.getAxiosOptions(urlRegic)),
@@ -574,16 +582,6 @@ const SnackbarManager = {
           .then(axios.spread((resultRegic, resultArranjo) => {
             let dtRegic = JSON.parse(resultRegic.data).dataset;
             let dtArranjo = JSON.parse(resultArranjo.data).dataset[0];
-            // let tooltip_list = [
-            //   {text: 'Pólo Alta Complexidade',
-            //     value: 'nm_municipio_alta_complex'},
-            //   {text: 'Origem',
-            //     value: 'nm_municipio_uf_origem'},
-            //   {text: 'População Estimada',
-            //     value: 'populacao_estimada_mun_origem'}
-            // ]
-            // let d = dtRegic[0];
-            // text = this.$tooltipBuildingService.constructor.defaultTooltip(d, route, tooltip_list, [], options);
             let pop = 0;
             let municipios = "";
             let total_mun = dtRegic.length;
@@ -592,119 +590,56 @@ const SnackbarManager = {
               pop += item.populacao_estimada_mun_origem;
             }
             municipios = municipios.substring(0,municipios.length-2);
-
-            
-            // ,qt_mortes_covid_arranjo
             let text = "";
-            text += "<p class='headline-obs text-xs-center'>Pólo de Alta Complexidade<br/>" + 
-                    "<b>Arranjo Populacional de " + dtArranjo.nm_municipio_uf_alta_complex + "</b></p>";
-            text += "<table width='100%'>";
-            text += "<tr><td class='font-weight-bold'>Municípios Atendidos:</td>";
-            text += "<td>"+ total_mun +"</td></tr>";
-            text += "<tr><td nowrap class='font-weight-bold'>População atendida:</td>";
-            text += "<td>"+ this.$numberTransformService.constructor.formatNumber(pop,"inteiro") +"</td></tr>";
-            text += "<tr><td class='font-weight-bold'>População aglomerados subnormais (2010):</td>";
-            text += "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.populacao_aglomerados_subnormais_arranjo,"inteiro") +"</td></tr>";
-            text += "<tr><td nowrap class='font-weight-bold'>COVID-19 - Data coleta:</td>";
-            text += "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.dt_coleta_covid_arranjo,"dataDMY") +"</td></tr>";
-            text += "<tr><td nowrap class='font-weight-bold'>COVID-19 - Casos confirmados:</td>";
-            text += "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.qt_casos_covid_arranjo,"inteiro") +"</td></tr>";
-            text += "<tr><td nowrap class='font-weight-bold'>COVID-19 - Óbitos confirmados:</td>";
-            text += "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.qt_mortes_covid_arranjo,"inteiro") +"</td></tr>";
-            text += "<tr><td nowrap class='font-weight-bold'>COVID-19 - Letalidade:</td>";
-            text += "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.proporcao_mortes_covid_arranjo,"porcentagem",1,100) +"</td></tr>";
-            text += "<tr><td colspan='2'class='font-weight-bold text-xs-center'>Municípios</td></tr>";
-            text += "<tr><td colspan='2'>"+ municipios +"</td></tr>";
-            text += "</table>";
-            target.unbindPopup();
-            target.bindPopup(text, {maxHeight: 350}).openPopup();
-
-          }, error => {
-            console.error(error.toString());
-            this.sendError("Erro ao carregar dataset tooltip");
-          }));
-
-        },
-
-        obsCovidRegicUTITooltip(target, route, tooltip_list = [], removed_text_list = [], options = null) { 
-          let urlRegic = "/thematic/covidarranjoregic?categorias=nm_municipio_uf_origem,populacao_estimada_mun_origem&ordenacao=nm_municipio_uf_origem&filtros=eq-cd_municipio_ibge_alta_complex-"+ target.options.rowData.target_cd_mun;
-          let urlArranjo = "/thematic/covidarranjoregic?categorias=nm_municipio_uf_alta_complex,qt_leitos_uti_arranjo, qt_leitos_outros_arranjo,qt_respiradores_arranjo,qt_respiradores_uso_arranjo,qt_estabelecimentos_arranjo,dt_coleta_covid_arranjo,qt_casos_covid_arranjo,qt_mortes_covid_arranjo,proporcao_mortes_covid_arranjo,populacao_aglomerados_subnormais_arranjo,proporcao_leitos_uti_10k_arranjo,proporcao_respiradores_uso_10k_arranjo,proporcao_respiradores_uso_arranjo&limit=1&filtros=eq-cd_municipio_ibge_alta_complex-"+ target.options.rowData.target_cd_mun;
-          axios.all([axios(this.$axiosCallSetupService.getAxiosOptions(urlRegic)),
-                    axios(this.$axiosCallSetupService.getAxiosOptions(urlArranjo))])
-          .then(axios.spread((resultRegic, resultArranjo) => {
-            let dtRegic = JSON.parse(resultRegic.data).dataset;
-            let dtArranjo = JSON.parse(resultArranjo.data).dataset[0];
-            // let tooltip_list = [
-            //   {text: 'Pólo Alta Complexidade',
-            //     value: 'nm_municipio_alta_complex'},
-            //   {text: 'Origem',
-            //     value: 'nm_municipio_uf_origem'},
-            //   {text: 'População Estimada',
-            //     value: 'populacao_estimada_mun_origem'}
-            // ]
-            // let d = dtRegic[0];
-            // text = this.$tooltipBuildingService.constructor.defaultTooltip(d, route, tooltip_list, [], options);
-            let pop = 0;
-            let municipios = "";
-            let total_mun = dtRegic.length;
-            for (let item of dtRegic){
-              municipios += item.nm_municipio_uf_origem + ", ";
-              pop += item.populacao_estimada_mun_origem;
+            text = "<p class='headline-obs text-xs-center'>Pólo de Alta Complexidade<br/>" + 
+                    "<b>Arranjo Populacional de " + dtArranjo.nm_municipio_uf_alta_complex + "</b></p>" +
+                    "<table width='100%'>" +
+                    "<tr><td class='font-weight-bold'>Municípios Atendidos:</td>" +
+                    "<td>"+ total_mun +"</td></tr>" +
+                    "<tr><td nowrap class='font-weight-bold'>População atendida:</td>" +
+                    "<td>"+ this.$numberTransformService.constructor.formatNumber(pop,"inteiro") +"</td></tr>" +
+                    "<tr><td class='font-weight-bold'>População aglomerados subnormais (2010):</td>" +
+                    "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.populacao_aglomerados_subnormais_arranjo,"inteiro") +"</td></tr>";
+            if (showDadosSaude){
+              text += "<tr><td class='font-weight-bold'>Qt hospitais:</td>" +
+                      "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.qt_estabelecimentos_arranjo,"inteiro") +"</td></tr>" +
+                      "<tr><td class='font-weight-bold'>Qt leitos UTI:</td>" +
+                      "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.qt_leitos_uti_arranjo,"inteiro") +"</td></tr>" +
+                      "<tr><td class='font-weight-bold'>Qt leitos outros:</td>" +
+                      "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.qt_leitos_outros_arranjo,"inteiro") +"</td></tr>" +
+                      "<tr><td class='font-weight-bold'>Leitos UTI/10.000 hab.:</td>" +
+              //         "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.qt_leitos_uti_arranjo/pop*10000,"real") +"</td></tr>" +
+                      "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.proporcao_leitos_uti_10k_arranjo,"real") +"</td></tr>" +
+                      "<tr><td class='font-weight-bold'>Qt respiradores:</td>" +
+                      "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.qt_respiradores_arranjo,"inteiro") +"</td></tr>" +
+                      "<tr><td class='font-weight-bold'>Qt respiradores em condições de uso:</td>" +
+                      "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.qt_respiradores_uso_arranjo,"inteiro") +"</td></tr>" +
+                      "<tr><td class='font-weight-bold'>Respiradores em condições de uso (%):</td>" +
+              //         "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.qt_respiradores_uso_arranjo/dtArranjo.qt_respiradores_arranjo,"real",1,100) +"%</td></tr>" +
+                      "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.proporcao_respiradores_uso_arranjo,"real",1,100) +"%</td></tr>" +
+                      "<tr><td class='font-weight-bold'>Respiradores em condições de uso/10.000 hab.:</td>" +
+              //         "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.qt_respiradores_uso_arranjo/pop*10000,"real") +"</td></tr>" +
+                      "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.proporcao_respiradores_uso_10k_arranjo,"real") +"</td></tr>";
             }
-            municipios = municipios.substring(0,municipios.length-2);
-
-            
-            // ,qt_mortes_covid_arranjo
-            let text = "";
-            text += "<p class='headline-obs text-xs-center'>Pólo de Alta Complexidade<br/>" + 
-                    "<b>Arranjo Populacional de " + dtArranjo.nm_municipio_uf_alta_complex + "</b></p>";
-            text += "<table width='100%'>";
-            text += "<tr><td class='font-weight-bold'>Municípios Atendidos:</td>";
-            text += "<td>"+ total_mun +"</td></tr>";
-            text += "<tr><td nowrap class='font-weight-bold'>População atendida:</td>";
-            text += "<td>"+ this.$numberTransformService.constructor.formatNumber(pop,"inteiro") +"</td></tr>";
-            text += "<tr><td class='font-weight-bold'>População aglomerados subnormais (2010):</td>";
-            text += "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.populacao_aglomerados_subnormais_arranjo,"inteiro") +"</td></tr>";
-            text += "<tr><td class='font-weight-bold'>Qt hospitais:</td>";
-            text += "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.qt_estabelecimentos_arranjo,"inteiro") +"</td></tr>";
-            text += "<tr><td class='font-weight-bold'>Qt leitos UTI:</td>";
-            text += "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.qt_leitos_uti_arranjo,"inteiro") +"</td></tr>";
-            text += "<tr><td class='font-weight-bold'>Qt leitos outros:</td>";
-            text += "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.qt_leitos_outros_arranjo,"inteiro") +"</td></tr>";
-            text += "<tr><td class='font-weight-bold'>Leitos UTI/10.000 hab.:</td>";
-            // text += "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.qt_leitos_uti_arranjo/pop*10000,"real") +"</td></tr>";
-            text += "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.proporcao_leitos_uti_10k_arranjo,"real") +"</td></tr>";
-            text += "<tr><td class='font-weight-bold'>Qt respiradores:</td>";
-            text += "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.qt_respiradores_arranjo,"inteiro") +"</td></tr>";
-            text += "<tr><td class='font-weight-bold'>Qt respiradores em condições de uso:</td>";
-            text += "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.qt_respiradores_uso_arranjo,"inteiro") +"</td></tr>";
-            text += "<tr><td class='font-weight-bold'>Respiradores em condições de uso (%):</td>";
-            // text += "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.qt_respiradores_uso_arranjo/dtArranjo.qt_respiradores_arranjo,"real",1,100) +"%</td></tr>";
-            text += "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.proporcao_respiradores_uso_arranjo,"real",1,100) +"%</td></tr>";
-            text += "<tr><td class='font-weight-bold'>Respiradores em condições de uso/10.000 hab.:</td>";
-            // text += "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.qt_respiradores_uso_arranjo/pop*10000,"real") +"</td></tr>";
-            text += "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.proporcao_respiradores_uso_10k_arranjo,"real") +"</td></tr>";
-            text += "<tr><td nowrap class='font-weight-bold'>COVID-19 - Data coleta:</td>";
-            text += "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.dt_coleta_covid_arranjo,"dataDMY") +"</td></tr>";
-            text += "<tr><td nowrap class='font-weight-bold'>COVID-19 - Casos confirmados:</td>";
-            text += "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.qt_casos_covid_arranjo,"inteiro") +"</td></tr>";
-            text += "<tr><td nowrap class='font-weight-bold'>COVID-19 - Óbitos confirmados:</td>";
-            text += "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.qt_mortes_covid_arranjo,"inteiro") +"</td></tr>";
-            text += "<tr><td nowrap class='font-weight-bold'>COVID-19 - Letalidade:</td>";
-            text += "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.proporcao_mortes_covid_arranjo,"porcentagem",1,100) +"</td></tr>";
-            text += "<tr><td colspan='2'class='font-weight-bold text-xs-center'>Municípios</td></tr>";
-            text += "<tr><td colspan='2'>"+ municipios +"</td></tr>";
-            text += "</table>";
+            text += "<tr><td colspan='2'class='font-weight-bold text-xs-center'>COVID-19</td></tr>" +
+                    "<tr><td nowrap class='font-weight-bold'>Data coleta:</td>" +
+                    "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.dt_coleta_covid_arranjo,"dataDMY") +"</td></tr>" +
+                    "<tr><td nowrap class='font-weight-bold'>Casos confirmados:</td>" +
+                    "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.qt_casos_covid_arranjo,"inteiro") +"</td></tr>" +
+                    "<tr><td nowrap class='font-weight-bold'>Óbitos confirmados:</td>" +
+                    "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.qt_mortes_covid_arranjo,"inteiro") +"</td></tr>" +
+                    "<tr><td nowrap class='font-weight-bold'>Letalidade:</td>" +
+                    "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.proporcao_mortes_covid_arranjo,"porcentagem",1,100) +"</td></tr>" +
+                    "<tr><td colspan='2'class='font-weight-bold text-xs-center'>Municípios</td></tr>" +
+                    "<tr><td colspan='2'>"+ municipios +"</td></tr>" +
+                    "</table>";
             target.unbindPopup();
             target.bindPopup(text, {maxHeight: 350}).openPopup();
-
           }, error => {
             console.error(error.toString());
             this.sendError("Erro ao carregar dataset tooltip");
           }));
-
-        },
-
+        }
       }
     })
   }
