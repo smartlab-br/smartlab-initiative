@@ -1,9 +1,10 @@
 <template>
   <v-layout column pa-2 max-width="100%">
         <v-progress-linear v-if="!dataset"
-          height="5"
+          height="25"
           :indeterminate="!dataset"
           color="info">
+          <p>{{structure.title}}</p>
         </v-progress-linear>
         <!--@update:pagination="triggerChartUpdates()"-->
         <v-data-table v-if="dataset && structure.headers"
@@ -18,6 +19,9 @@
             >
 
             <template slot="headers" slot-scope="props">
+            <tr>
+                <th class="headline-obs" :colspan="props.headers.length">{{structure.title}}</th>
+            </tr>
             <tr>
                 <th
                 v-for="header in props.headers"
