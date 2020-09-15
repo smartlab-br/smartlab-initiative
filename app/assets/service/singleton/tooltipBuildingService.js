@@ -19,7 +19,7 @@ class TooltipBuildingService {
   
   static defaultTooltip(d, route, tooltip_list = [], removed_text_list = [], options = null) { 
     let text = "";
-    let table = "";
+    // let table = "";
     let value = "";
     let filter = "";
 

@@ -251,7 +251,7 @@
         //Limpa filtros dos selects que tem payload como pai (parent)
         for (let item of this.structure.description) {
           if (item.type &&  item.type == "select" && payload.id.includes(item.parent)){
-            let itemCustomFilter = "";
+            let itemCustomFilterName = "";
             if (!Array.isArray(item.selection.rules.api)){
               itemCustomFilterName = item.selection.rules.api.args[0].named_prop;
             } else {
@@ -368,12 +368,7 @@
                   }
                 }
               }
-            } else if (filter.type == "check"){
-              if (this.customFilters[filter.id]){
-                filterUrl = filterUrl + filter.selection.rules.filter;
-                filterText += "<br/>" + filter.selection.rules.filter_text;
-              }
-            } else if (filter.type == "radio"){
+            } else if (filter.type == "check" || filter.type == "radio"){
               if (this.customFilters[filter.id]){
                 filterUrl = filterUrl + filter.selection.rules.filter;
                 filterText += "<br/>" + filter.selection.rules.filter_text;
