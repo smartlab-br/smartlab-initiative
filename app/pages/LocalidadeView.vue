@@ -432,11 +432,11 @@
           },
           get_week_status: function(d, reg_week){
             Date.prototype.getWeekNumber = function(){
-              var d = new Date(Date.UTC(this.getFullYear(), this.getMonth(), this.getDate()));
-              var dayNum = d.getUTCDay() || 7;
-              d.setUTCDate(d.getUTCDate() + 4 - dayNum);
-              var yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
-              return Math.ceil((((d - yearStart) / 86400000) + 1)/7)
+              let dt = new Date(Date.UTC(this.getFullYear(), this.getMonth(), this.getDate()));
+              let dayNum = dt.getUTCDay() || 7;
+              dt.setUTCDate(dt.getUTCDate() + 4 - dayNum);
+              let yearStart = new Date(Date.UTC(dt.getUTCFullYear(),0,1));
+              return Math.ceil((((dt - yearStart) / 86400000) + 1)/7)
             };
             if (reg_week == new Date().getWeekNumber()){
               return "Semana corrente";

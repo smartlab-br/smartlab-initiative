@@ -20,7 +20,7 @@
 
             <template slot="headers" slot-scope="props">
             <tr>
-                <th class="headline-obs" :colspan="props.headers.length">{{structure.title}}</th>
+                <th scope="colgroup" class="headline-obs" :colspan="props.headers.length">{{structure.title}}</th>
             </tr>
             <tr>
                 <th
@@ -39,42 +39,6 @@
             <template :headers="structure.headers" slot="items" slot-scope="props">
                 <!-- v-for SEM BIND, pois está restrito ao contexto do template do data-table -->
                 <td pa-0 v-for="(hdr, idxHdr) in structure.headers" :key="idxHdr" :style="(hdr.item_align?'text-align:'+hdr.item_align:'')">
-                        <!--
-                    <v-layout row nowrap pa-0 fill-height>
-
-                            <v-flex xs4 xl5 text-xs-right>
-                                {{ props.item[hdr.value] }}
-                            </v-flex>
-                        -->
-                        <!--
-                            <v-flex xs8 pa-1 fill-height column text-xs-center class="sparkline"
-                                :style="'color: ' + hdr.color + '; background-color: ' + hdr.bgColor">
-                                <div :class="'sparkline-value ' + (hdr.item_class != null ? hdr.item_class : '')"
-                                    v-html="props.item[hdr.value] ? props.item[hdr.value] : '&nbsp;'">
-                                </div>
-                                <div v-if="hdr.detail" title="Variação início/fim (%)"
-                                    :class="'sparkline-detail ' + (hdr.detail_class != null ? hdr.detail_class : '')"
-                                    v-html="props.item['str_' + hdr.detail] ? props.item['str_' + hdr.detail] : '&nbsp;'">
-                                </div>
-                            </v-flex>
-                            <v-flex xs4 class="sparkline">
-                                <v-layout fill-height
-                                    v-if="structure && structure.chart_options !== null && validCharts.includes(structure.chart_type)"
-                                    class="spark"
-                                    ref = "chartRef"
-                                    :class = "leafletBasedCharts.includes(structure.chart_type) ? 'map_geo' : ''"
-                                    :id="'spark_' + hdr.series + '_' + props.item.id">
-                                </v-layout>
-                            </v-flex>
-
-                                        :labels="props.item['sparkline_labels_' + hdr.series]"
-                        -->
-                        <!--
-                            <v-flex xs2 text-xs-center>
-                                {{ (props.item['total_'+ hdr.series]?props.item['total_'+ hdr.series]: 0) }}
-                            </v-flex>
-                            <v-flex xs4 px-2 class="sparkline">
-                        -->
                         <div px-2 class="sparkline" v-if="hdr.type && hdr.type == 'spark'">
                             <v-layout row nowrap v-if="(hdr.show_labels == undefined || hdr.show_labels)"> 
                                 <v-flex v-if="props.item['sparkline_values_' + hdr.series].length > 1" 
@@ -114,24 +78,9 @@
                                 </v-flex>
                             </v-layout>
                         </div>
-                        <!--
-                                                    
-                            <v-flex xs2 text-xs-center caption>
-                                {{ (props.item['higher_value_'+ hdr.series] !== 0 ? props.item['higher_value_'+ hdr.series] + "(" + props.item['higher_cat_'+ hdr.series] + ")": "") }}
-                            </v-flex>
-                        -->
-                        <!--
-                        <div v-else-if="typeof props.item[hdr.value] === 'string' && props.item[hdr.value].includes('</')"
-                            :class="(hdr.item_class != null ? hdr.item_class : '')"
-                            v-html="props.item[hdr.value]">
-                        </div>
-                        -->
                         <div v-else>
                             {{ props.item['fmt_' + hdr.value] ? props.item['fmt_' + hdr.value]: props.item[hdr.value] }}
                         </div>
-                    <!--
-                    </v-layout>
-                    -->
                 </td> 
             </template>
         </v-data-table>
@@ -236,7 +185,7 @@ export default {
             }
 
             let fillZeros = sourceStructure.fillZeros == undefined ? true : sourceStructure.fillZeros;
-            this.createSparklineFields(hierarchicalDS, allSeries, series_first_cat, series_last_cat, fillZeros, sourceStructure);
+            this.createSparklineFields(hierarchicalDS, allSeries, series_first_cat, series_last_cat, sourceStructure, fillZeros);
 
             if (sourceStructure.category_type == "timestamp"){
                 for(let serie of allSeries){
@@ -307,13 +256,13 @@ export default {
 
         },
 
-        createSparklineFields(dataset, seriesList, series_first_cat, series_last_cat, fillZeros = true, sourceStructure){
+        createSparklineFields(dataset, seriesList, series_first_cat, series_last_cat, sourceStructure, fillZeros = true){
             for (let row of dataset){
 
                 for (let series_value of seriesList){
                     let series = row[series_value];
 
-                    let sparkline_labels = [];
+                    // let sparkline_labels = [];
                     let sparkline_values = [];
                     let higher_cat = series_first_cat[series_value];
                     let higher_value = 0;
@@ -331,13 +280,13 @@ export default {
                         if (fillZeros){
                             if (firstSeries.cat_value > series_first_cat[series_value]){
                                 for(let i = series_first_cat[series_value]; i < firstSeries.cat_value; i++){
-                                    sparkline_labels.push(i);
+                                    // sparkline_labels.push(i);
                                     sparkline_values.push(0);                                
                                 }
                             }
                         }
 
-                        sparkline_labels.push(firstSeries.cat_value);
+                        // sparkline_labels.push(firstSeries.cat_value);
                         sparkline_values.push(firstSeries.value);  
 
                         higher_value = firstSeries.value;
@@ -348,11 +297,11 @@ export default {
                             let seriesPrev = series[k-1];
                             if (fillZeros){
                                 for(let j = seriesPrev.cat_value + 1; j < series[k].cat_value; j++){
-                                    sparkline_labels.push(j);
+                                    // sparkline_labels.push(j);
                                     sparkline_values.push(0);                                
                                 }
                             }
-                            sparkline_labels.push(series[k].cat_value);
+                            // sparkline_labels.push(series[k].cat_value);
                             sparkline_values.push(series[k].value);    
                             total += series[k].value;
                             if (series[k].value > higher_value){
@@ -365,7 +314,7 @@ export default {
                             let lastSeries = series[series.length - 1];
                             if (lastSeries.cat_value < series_last_cat[series_value]){
                                 for(let i = lastSeries.cat_value + 1; i <= series_last_cat[series_value]; i++){
-                                    sparkline_labels.push(i);
+                                    // sparkline_labels.push(i);
                                     sparkline_values.push(0);                                
                                 }
                             }
