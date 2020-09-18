@@ -8,7 +8,7 @@
           <v-flex>{{ applyInterpol(descSection.content, customParams, customFunctions) }}</v-flex>
         </v-layout> -->
         <v-layout v-if="descSection.type && descSection.type == 'text'" column>
-          <v-flex py-0 px-4 class="headline-obs">{{ descSection.title }}</v-flex>
+          <v-flex :class="'headline-obs ' + (descSection.cls ? descSection.cls : 'py-0 px-4')">{{ descSection.title }}</v-flex>
           <flpo-text-builder
             :reactive-filter="reactiveFilter"
             :custom-params="customParams"
