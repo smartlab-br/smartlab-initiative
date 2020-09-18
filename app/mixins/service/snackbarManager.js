@@ -534,18 +534,18 @@ const SnackbarManager = {
               text += "<tr><td nowrap class='font-weight-bold'>Total de Denúncias:</td>";
               text += "<td class='text-xs-right'>"+ this.$numberTransformService.constructor.formatNumber(dtDenunciaMPT.agr_count,"inteiro") +"</td></tr>";
             }
-            if(dtAcoesMPT.length > 0){
-              text += "<tr><td class='text-xs-center font-weight-bold green--text' colspan='2'>ATUAÇÃO MPT</td></tr>";
-              for (let item of dtAcoesMPT){
-                text += "<tr><td><b>" + item.descricao_tipodocumento + "</b> :</td><td class='text-xs-right'>" + this.$numberTransformService.constructor.formatNumber(item.agr_count,"inteiro") + "</td></tr>";
-              }
-              text += "<tr><td><b>TOTAL</b>:</td><td class='text-xs-right'><b>" + this.$numberTransformService.constructor.formatNumber(total_acoes,"inteiro") + "</b></td></tr>";
-            }
-            if(dtDestinacaoMPT){
-              text += "<tr><td class='text-xs-center font-weight-bold light-blue--text accent-4' colspan='2'>RECURSOS DESTINADOS PELO MPT PARA AÇÕES DE COMBATE À COVID-19</td></tr>";
-              text += "<tr><td nowrap class='font-weight-bold'>Total de recursos:</td>";
-              text += "<td class='text-xs-right'>"+ this.$numberTransformService.constructor.formatNumber(dtDestinacaoMPT.agr_sum_destinacaovalor,"monetario",2) +"</td></tr>";
-            }
+            // if(dtAcoesMPT.length > 0){
+            //   text += "<tr><td class='text-xs-center font-weight-bold green--text' colspan='2'>ATUAÇÃO MPT</td></tr>";
+            //   for (let item of dtAcoesMPT){
+            //     text += "<tr><td><b>" + item.descricao_tipodocumento + "</b> :</td><td class='text-xs-right'>" + this.$numberTransformService.constructor.formatNumber(item.agr_count,"inteiro") + "</td></tr>";
+            //   }
+            //   text += "<tr><td><b>TOTAL</b>:</td><td class='text-xs-right'><b>" + this.$numberTransformService.constructor.formatNumber(total_acoes,"inteiro") + "</b></td></tr>";
+            // }
+            // if(dtDestinacaoMPT){
+            //   text += "<tr><td class='text-xs-center font-weight-bold light-blue--text accent-4' colspan='2'>RECURSOS DESTINADOS PELO MPT PARA AÇÕES DE COMBATE À COVID-19</td></tr>";
+            //   text += "<tr><td nowrap class='font-weight-bold'>Total de recursos:</td>";
+            //   text += "<td class='text-xs-right'>"+ this.$numberTransformService.constructor.formatNumber(dtDestinacaoMPT.agr_sum_destinacaovalor,"monetario",2) +"</td></tr>";
+            // }
             text += "<tr><td class='text-xs-center font-weight-bold brown--text' colspan='2'>COVID-19</td></tr>";
             text += "<tr><td nowrap class='font-weight-bold'>Data coleta:</td>";
             text += "<td>"+ this.$numberTransformService.constructor.formatNumber(dtCovidMun.last_available_date,"dataDMY") +"</td></tr>";
