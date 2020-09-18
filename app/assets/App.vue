@@ -326,7 +326,7 @@
           />
           <img 
             v-on:click="$navigationManager.constructor.pushRoute($router, 'https://ilo.org', true)" 
-            src="/static/smartlab/oit_100anos.png"
+            src="/static/smartlab/oit.png"
             class="cursor-pointer mr-2 ml-2" alt="Organização Internacional do Trabalho"
             height="50px"
           />
