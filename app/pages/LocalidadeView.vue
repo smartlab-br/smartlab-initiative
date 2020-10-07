@@ -403,14 +403,11 @@
           get_te_label: function(d,campo) {
               switch(d[campo]) {
                   case 'te_nat':
-                      return 'Vítimas que nasceram na localidade'
-                      break;
+                      return 'Vítimas que nasceram na localidade';
                   case 'te_res':
-                      return 'Vítimas que residem na localidade'
-                      break;
+                      return 'Vítimas que residem na localidade';
                   case 'te_rgt':
-                      return 'Vítimas resgatadas na localidade'
-                      break;
+                      return 'Vítimas resgatadas na localidade';
                   default:
                       return d[campo];
               }
