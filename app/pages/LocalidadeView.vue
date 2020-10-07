@@ -1075,7 +1075,6 @@
         switch (this.dimensoes.length) {
           case 6:
             return 'xs4 sm2';
-            break;
           case 8:
             let clz = 'xs3 sm1';
             if (dimIndx == 0) {
