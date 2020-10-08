@@ -71,7 +71,7 @@ class AnalysisUnitModel {
     return axios(this.axiosSetup.getAxiosOptions(url))
       .then(
         (result) => {
-          var infoMunicipio = JSON.parse(result.data).dataset;
+          var infoMunicipio = result.data.dataset;
           if (infoMunicipio.length > 0) {
             VueCookies.set("currentAnalysisUnit", infoMunicipio[0].cd_municipio_ibge_dv, -1); // Never expires
             this.currentAnalysisUnit = infoMunicipio[0].cd_municipio_ibge_dv;
@@ -88,7 +88,7 @@ class AnalysisUnitModel {
     let url = "/municipios?categorias=cd_unidade,nm_unidade,cd_uf&agregacao=distinct&filtros=eq-cd_unidade-" + id;
     return axios(this.axiosSetup.getAxiosOptions(url))
       .then(result => {
-        var infoUnidade = JSON.parse(result.data).dataset;
+        var infoUnidade =result.data.dataset;
         if (infoUnidade.length > 0) {
           resolve({
             id_localidade: infoUnidade[0].cd_unidade,
@@ -125,7 +125,7 @@ class AnalysisUnitModel {
       let url = "/municipios?categorias=cd_unidade,nm_unidade,cd_uf&agregacao=distinct";
       return axios(this.axiosSetup.getAxiosOptions(url))
         .then((result) => {
-          let unidadesMPT = JSON.parse(result.data).dataset;
+          let unidadesMPT = result.data.dataset;
           
           for (let indxPRT in unidadesMPT) {
             this.options.push({
@@ -164,7 +164,7 @@ class AnalysisUnitModel {
     let url = "/municipios?categorias=cd_municipio_ibge_dv,nm_municipio_uf,cd_uf,nm_uf,cd_mesorregiao,nm_mesorregiao,cd_microrregiao,nm_microrregiao&ordenacao=cd_municipio_ibge_dv";
     return axios(this.axiosSetup.getAxiosOptions(url))
       .then((result) => {
-        let municipios = JSON.parse(result.data).dataset;
+        let municipios = result.data.dataset;
         //let cd_regiao = 0;
         //let added_meso = [];
         //let added_micro = [];
@@ -281,7 +281,7 @@ class AnalysisUnitModel {
     var url = "/municipios?categorias=cd_municipio_ibge_dv";
     return axios(this.axiosSetup.getAxiosOptions(url))
       .then(
-        (result) => { return JSON.parse(result.data).dataset.length; },
+        (result) => { return result.data.dataset.length; },
         (error) => { reject("Falha ao buscar total das localidades"); }
       );
   }
@@ -290,7 +290,7 @@ class AnalysisUnitModel {
     var url = "/municipios?categorias=cd_municipio_ibge_dv,cd_uf&filtros=eq-cd_uf-"+uf;
     return axios(this.axiosSetup.getAxiosOptions(url))
       .then(
-        (result) => { return JSON.parse(result.data).dataset.length; },
+        (result) => { return result.data.dataset.length; },
         (error) => { reject("Falha ao buscar total das localidades"); }
       );
   }
@@ -299,7 +299,7 @@ class AnalysisUnitModel {
     var url = "/municipios?categorias=cd_uf,sg_uf,nm_uf&valor=cd_uf&agregacao=distinct";
     return axios(this.axiosSetup.getAxiosOptions(url))
       .then(
-        (result) => { return JSON.parse(result.data).dataset; },
+        (result) => { return result.data.dataset; },
         (error) => { reject("Falha ao buscar Unidades Federativas"); }
       );
   }
@@ -336,7 +336,7 @@ class AnalysisUnitModel {
       url = "/municipios?categorias=cd_uf,nm_uf&filtros=eq-cd_uf-" + id;
       return axios(this.axiosSetup.getAxiosOptions(url))
         .then(result => {
-          localidade = JSON.parse(result.data).dataset[0];
+          localidade = result.data.dataset[0];
           localidade.id_localidade = localidade.cd_uf;
           localidade.nm_localidade = localidade.nm_uf;
           localidade.tipo = 'UF';
@@ -350,7 +350,7 @@ class AnalysisUnitModel {
       url = "/municipios?categorias=cd_mesorregiao,nm_mesorregiao&filtros=eq-cd_mesorregiao-" + id;
       return axios(this.axiosSetup.getAxiosOptions(url))
         .then(result => {
-          localidade = JSON.parse(result.data).dataset[0];
+          localidade = result.data.dataset[0];
           localidade.id_localidade = localidade.cd_mesorregiao;
           localidade.nm_localidade = localidade.nm_mesorregiao;
           localidade.tipo = 'Mesorregião';
@@ -364,7 +364,7 @@ class AnalysisUnitModel {
       url = "/municipios?categorias=cd_microrregiao,nm_microrregiao,latitude,longitude&filtros=eq-cd_microrregiao-" + id;
       return axios(this.axiosSetup.getAxiosOptions(url))
         .then(result => {
-          localidade = JSON.parse(result.data).dataset[0];
+          localidade = result.data.dataset[0];
           localidade.id_localidade = localidade.cd_microrregiao;
           localidade.nm_localidade = localidade.nm_microrregiao;
           localidade.tipo = 'Microrregião';
@@ -378,7 +378,7 @@ class AnalysisUnitModel {
       url = "/municipio/" + id;
       return axios(this.axiosSetup.getAxiosOptions(url))
         .then(result => {
-          localidade = JSON.parse(result.data)[0];
+          localidade = result.data[0];
           localidade.id_localidade = localidade.cd_municipio_ibge_dv;
           localidade.nm_localidade = localidade.nm_municipio_uf;
           localidade.tipo = 'Município';

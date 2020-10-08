@@ -78,7 +78,7 @@ class IndicatorsModel {
 
     return axios(this.axiosSetup.getAxiosOptions(url))
       .then((result) => {
-        var todosIndicadores = JSON.parse(result.data).dataset;
+        var todosIndicadores = result.data.dataset;
 
         for (var i = 0; i < todosIndicadores.length; i++) {
           var dim = context.findDimensionById(todosIndicadores[i].cd_dimensao);
@@ -608,7 +608,7 @@ class IndicatorsModel {
     //busca indicadores da localidade
     return axios(this.axiosSetup.getAxiosOptions(url))
       .then((result) => {
-        let dataset = { name: dataset_name, ds: JSON.parse(result.data).dataset, valid: true };
+        let dataset = { name: dataset_name, ds: result.data.dataset, valid: true };
         this.globalDatasets[dataset_name + suffix] = dataset;
         return dataset;
       });
