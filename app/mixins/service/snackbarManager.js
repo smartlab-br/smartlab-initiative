@@ -154,9 +154,9 @@ const SnackbarManager = {
           axios.all([axios(this.$axiosCallSetupService.getAxiosOptions(url)),
                      axios(this.$axiosCallSetupService.getAxiosOptions(urlIndicadores))])
             .then(axios.spread((result, resultIndicadores) => {
-              let dt = JSON.parse(result.data).dataset;
-              let dtIndicadores = JSON.parse(resultIndicadores.data).dataset;
-              // let source = JSON.parse(result.data).metadata.fonte;
+              let dt = result.data.dataset;
+              let dtIndicadores = resultIndicadores.data.dataset;
+              // let source = result.data).metadata.fonte;
               let ano_min = this.customParams.value_min ? this.customParams.value_min : dt[0].nu_competencia_min;
               let ano_max = this.customParams.value_max ? this.customParams.value_max : dt[0].nu_competencia_max;
   
@@ -317,15 +317,15 @@ const SnackbarManager = {
                                 resultMapear, 
                                 resultCenso, 
                                 resultCensoAgro) => {
-              // let dtSinan = JSON.parse(resultSinan.data).dataset[0];
-              let dtProvaBrasil = JSON.parse(resultProvaBrasil.data).dataset[0];
-              let dtCatMenores = JSON.parse(resultCatMenores.data).dataset[0];
-              let dtPotAprendizes = JSON.parse(resultPotAprendizes.data).dataset[0];
-              let dtTENascimento = JSON.parse(resultTENascimento.data).dataset[0];
-              // let dtTEResidencia = JSON.parse(resultTEResidencia.data).dataset[0];
-              let dtMapear = JSON.parse(resultMapear.data).dataset[0];
-              let dtCenso = JSON.parse(resultCenso.data).dataset[0];
-              let dtCensoAgro = JSON.parse(resultCensoAgro.data).dataset[0];
+              // let dtSinan = resultSinan.data.dataset[0];
+              let dtProvaBrasil = resultProvaBrasil.data.dataset[0];
+              let dtCatMenores = resultCatMenores.data.dataset[0];
+              let dtPotAprendizes = resultPotAprendizes.data.dataset[0];
+              let dtTENascimento = resultTENascimento.data.dataset[0];
+              // let dtTEResidencia = resultTEResidencia.data.dataset[0];
+              let dtMapear = resultMapear.data.dataset[0];
+              let dtCenso = resultCenso.data.dataset[0];
+              let dtCensoAgro = resultCensoAgro.data.dataset[0];
               let municipio = dtCenso && dtCenso.nm_municipio_uf ? dtCenso.nm_municipio_uf : dtProvaBrasil && dtProvaBrasil.nm_municipio_uf ? dtProvaBrasil.nm_municipio_uf : dtCatMenores && dtCatMenores.nm_municipio_uf ? dtCatMenores.nm_municipio_uf : dtSinan.nm_municipio_uf;
   
               text += "<p class='headline-obs ma-0'>Município: <b>" + municipio + "</b></p>";
@@ -377,7 +377,7 @@ const SnackbarManager = {
   //          }
             axios.all([axios(this.$axiosCallSetupService.getAxiosOptions(urlIndicadores))])
               .then(axios.spread((resultIndicadores) => {
-                let dtIndicadores = JSON.parse(resultIndicadores.data).dataset;
+                let dtIndicadores = resultIndicadores.data.dataset;
   
                 text += "<p class='headline-obs'>Município: <b>" + dtIndicadores[0].nm_municipio_uf + "</b></p>";
                 text += "<table width='100%'>";
@@ -443,11 +443,11 @@ const SnackbarManager = {
                      axios(this.$axiosCallSetupService.getAxiosOptions(urlObs2))])
             .then(axios.spread((resultPeriodo, resultTipo, resultAtividade, resultObs1, resultObs2) => {
   
-              let dtPeriodo = JSON.parse(resultPeriodo.data);
-              let dtTipo = JSON.parse(resultTipo.data).dataset;
-              let dtAtividade = JSON.parse(resultAtividade.data).dataset;
-              let dtObs1 = JSON.parse(resultObs1.data).dataset;
-              let dtObs2 = JSON.parse(resultObs2.data).dataset;
+              let dtPeriodo = resultPeriodo.data;
+              let dtTipo = resultTipo.data.dataset;
+              let dtAtividade = resultAtividade.data.dataset;
+              let dtObs1 = resultObs1.data.dataset;
+              let dtObs2 = resultObs2.data.dataset;
   
   
               text += "<p class='title-obs'>Município: <b>" + target.options.rowData.nm_municipio_uf + "</b></p>";
@@ -512,10 +512,10 @@ const SnackbarManager = {
                     axios(this.$axiosCallSetupService.getAxiosOptions(urlAcoesMPT)),
                     axios(this.$axiosCallSetupService.getAxiosOptions(urlDestinacaoMPT))])
           .then(axios.spread((resultCovidMun, resultDenunciaMPT, resultAcoesMPT, resultDestinacaoMPT) => {
-            let dtCovidMun = JSON.parse(resultCovidMun.data).dataset[0];
-            let dtDenunciaMPT = JSON.parse(resultDenunciaMPT.data).dataset[0];
-            let dtAcoesMPT = JSON.parse(resultAcoesMPT.data).dataset;
-            let dtDestinacaoMPT = JSON.parse(resultDestinacaoMPT.data).dataset[0];
+            let dtCovidMun = resultCovidMun.data.dataset[0];
+            let dtDenunciaMPT = resultDenunciaMPT.data.dataset[0];
+            let dtAcoesMPT = resultAcoesMPT.data.dataset;
+            let dtDestinacaoMPT = resultDestinacaoMPT.data.dataset[0];
             let total_acoes = 0;
             if(dtAcoesMPT){
               for (let item of dtAcoesMPT){
@@ -580,8 +580,8 @@ const SnackbarManager = {
           axios.all([axios(this.$axiosCallSetupService.getAxiosOptions(urlRegic)),
                     axios(this.$axiosCallSetupService.getAxiosOptions(urlArranjo))])
           .then(axios.spread((resultRegic, resultArranjo) => {
-            let dtRegic = JSON.parse(resultRegic.data).dataset;
-            let dtArranjo = JSON.parse(resultArranjo.data).dataset[0];
+            let dtRegic = resultRegic.data.dataset;
+            let dtArranjo = resultArranjo.data.dataset[0];
             let pop = 0;
             let municipios = "";
             let total_mun = dtRegic.length;

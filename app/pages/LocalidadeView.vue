@@ -403,14 +403,11 @@
           get_te_label: function(d,campo) {
               switch(d[campo]) {
                   case 'te_nat':
-                      return 'Vítimas que nasceram na localidade'
-                      break;
+                      return 'Vítimas que nasceram na localidade';
                   case 'te_res':
-                      return 'Vítimas que residem na localidade'
-                      break;
+                      return 'Vítimas que residem na localidade';
                   case 'te_rgt':
-                      return 'Vítimas resgatadas na localidade'
-                      break;
+                      return 'Vítimas resgatadas na localidade';
                   default:
                       return d[campo];
               }
@@ -942,7 +939,7 @@
           url = "/municipios?categorias=cd_unidade,nm_unidade,cd_uf&agregacao=distinct&filtros=eq-cd_unidade-" + idLocalidade.substring(3);
           axios(this.$axiosCallSetupService.getAxiosOptions(url))
             .then(result => {
-              var infoUnidade = JSON.parse(result.data).dataset;
+              var infoUnidade = result.data.dataset;
               if (infoUnidade.length > 0) {
                 localidade = {
                   id_localidade: infoUnidade[0].cd_unidade,
@@ -972,7 +969,7 @@
           url = "/municipios?categorias=cd_uf,nm_uf&agregacao=distinct&filtros=eq-cd_uf-" + idLocalidade;
           axios(this.$axiosCallSetupService.getAxiosOptions(url))
             .then(result => {
-              localidade = JSON.parse(result.data).dataset[0];
+              localidade = result.data.dataset[0];
               localidade.id_localidade = localidade.cd_uf;
               localidade.nm_localidade = localidade.nm_uf;
               localidade.tipo = 'UF';
@@ -988,7 +985,7 @@
           url = "/municipios?categorias=cd_mesorregiao,nm_mesorregiao&agregacao=distinct&filtros=eq-cd_mesorregiao-" + idLocalidade;
           axios(this.$axiosCallSetupService.getAxiosOptions(url))
             .then(result => {
-              localidade = JSON.parse(result.data).dataset[0];
+              localidade = result.data.dataset[0];
               localidade.id_localidade = localidade.cd_mesorregiao;
               localidade.nm_localidade = localidade.nm_mesorregiao;
               localidade.tipo = 'Mesorregião';
@@ -1004,7 +1001,7 @@
           url = "/municipios?categorias=cd_microrregiao,nm_microrregiao&agregacao=distinct&filtros=eq-cd_microrregiao-" + idLocalidade;
           axios(this.$axiosCallSetupService.getAxiosOptions(url))
             .then(result => {
-              localidade = JSON.parse(result.data).dataset[0];
+              localidade = result.data.dataset[0];
               localidade.id_localidade = localidade.cd_microrregiao;
               localidade.nm_localidade = localidade.nm_microrregiao;
               localidade.tipo = 'Microrregião';
@@ -1020,7 +1017,7 @@
           url = "/municipio/" + idLocalidade;
           axios(this.$axiosCallSetupService.getAxiosOptions(url))
             .then(result => {
-              localidade = JSON.parse(result.data)[0];
+              localidade = result.data[0];
               localidade.id_localidade = localidade.cd_municipio_ibge_dv;
               localidade.nm_localidade = localidade.nm_municipio_uf;
               localidade.tipo = 'Município';
@@ -1078,7 +1075,6 @@
         switch (this.dimensoes.length) {
           case 6:
             return 'xs4 sm2';
-            break;
           case 8:
             let clz = 'xs3 sm1';
             if (dimIndx == 0) {

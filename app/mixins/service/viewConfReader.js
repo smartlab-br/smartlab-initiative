@@ -86,14 +86,14 @@ const ViewConfReader = {
 								.then(result => {
 									cbFunction(
 										this.reformDataset(
-											JSON.parse(result.data).dataset,
+											result.data.dataset,
 											structure.api.options,
 											customFunctions
 										),
 										structure.args,
 										structure,
 										addedParams,
-										JSON.parse(result.data).metadata
+										result.data.metadata
 									);
 								}
 							 	).catch(error => { 
@@ -114,7 +114,7 @@ const ViewConfReader = {
 											.then(result => {
 												resolve(
 													fnReformDataset(
-														JSON.parse(result.data).dataset,
+														result.data.dataset,
 														structure.api[indexApi].options,
 														customFunctions
 													)
@@ -168,14 +168,14 @@ const ViewConfReader = {
 							.then(result => {
 								cbFunction(
 									this.reformDataset(
-										JSON.parse(result.data).dataset,
+										result.data.dataset,
 										structure.api_reactive.options,
 										customFunctions
 									),
 									structure.args,
 									structure,
 									addedParams,
-									JSON.parse(result.data).metadata
+									result.data.metadata
 								);
 							}).catch(error => { 
 								console.log(error);
@@ -237,14 +237,14 @@ const ViewConfReader = {
 								.then(result => {
 									cbFunction(
 										this.reformDataset(
-											JSON.parse(result.data).dataset,
+											result.data.dataset,
 											structure.api.options,
 											customFunctions
 										),
 										structure.args,
 										structure,
 										addedParams,
-										JSON.parse(result.data).metadata
+										result.data.metadata
 									);
 								}).catch(error => { 
 									console.log(error);
@@ -264,7 +264,7 @@ const ViewConfReader = {
 											.then(result => {
 												resolve(
 													fnReformDataset(
-														JSON.parse(result.data).dataset,
+														result.data.dataset,
 														eachApi.options,
 														customFunctions
 													)

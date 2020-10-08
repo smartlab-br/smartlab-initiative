@@ -208,14 +208,14 @@
         .then(result => {
           this.fillMinicard(
             this.reformDataset(
-              JSON.parse(result.data).dataset,
+              result.data.dataset,
               this.structure.api.options,
               this.customFunctions
             ),
             this.structure.args,
             this.structure,
             null,
-            JSON.parse(result.data).metadata
+            result.data.metadata
           );
         }).catch(error => { this.sendDataStructureError("Falha ao carregar dados do componente."); });
       },
