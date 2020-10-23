@@ -8,7 +8,7 @@ const SnackbarManager = {
     Vue.mixin({
       data() {
         return {
-          validCharts: ['MAP_TOPOJSON', 'LINE', 'STACKED', 'BAR', 'TREEMAP', 'SCATTERPLOT', 'BOXPLOT', 'CALENDAR', 'SANKEYD3', 'MAP_BUBBLES', 'MAP_HEAT', 'MAP_CLUSTER', 'MAP_MIGRATION', 'MAP_POLYGON'],
+          validCharts: ['MAP_TOPOJSON', 'LINE', 'STACKED', 'BAR', 'TREEMAP', 'SCATTERPLOT', 'BOXPLOT', 'CALENDAR', 'SANKEYD3', 'MAP_BUBBLES', 'MAP_HEAT', 'MAP_CLUSTER', 'MAP_MIGRATION', 'MAP_POLYGON', 'MIXED_MAP'],
           leafletBasedCharts: ['MAP_BUBBLES', 'MAP_HEAT', 'MAP_CLUSTER', 'MAP_MIGRATION', 'MAP_POLYGON']
         }
       },
@@ -31,15 +31,37 @@ const SnackbarManager = {
         
         chartGen(id, chartType, structure, chartOptions, dataset, metadata, sectionIndex = 0) {
           if (structure && chartOptions && this.validCharts.includes(chartType)) {
-            let additionalOptions = this.buildChartAdditionalOptions(id, chartType, structure, chartOptions, dataset, metadata, sectionIndex);
-  
-            return ChartBuilderService.generateChart(
-              chartType, 
-              id,
-              dataset,
-              chartOptions,
-              additionalOptions
-            );
+            if (chartOptions.from_api){
+              let idObservatorio = this.$parent.idObservatorio;
+              let dimension = this.$parent.dimensao_ativa_id;
+              let idLocalidade = this.$parent.idLocalidade;
+              let url = "/chart?from_viewconf=S&au="+ idLocalidade +
+                        "&card_id="+structure.id+"&observatory="+ idObservatorio +
+                        "&dimension="+dimension+"&as_image=N";
+              return new Promise((resolve, reject) => {
+                axios(this.$axiosCallSetupService.getAxiosOptions(url))
+                .then(result => {
+                  let container = document.getElementById(id);
+                  if (container) {
+                      container.innerHTML = result.data;
+                  }
+                  resolve();
+                }).catch(error => { 
+                  this.sendDataStructureError("Falha ao buscar dados do card " + cardTitle); 
+                  reject();
+                });
+              });
+            } else {
+              let additionalOptions = this.buildChartAdditionalOptions(id, chartType, structure, chartOptions, dataset, metadata, sectionIndex);
+    
+              return ChartBuilderService.generateChart(
+                chartType, 
+                id,
+                dataset,
+                chartOptions,
+                additionalOptions
+              );
+            }
           }
         },
         chartRegen(chartHandler, id, chartType, structure, chartOptions, dataset, metadata, sectionIndex = 0) {
