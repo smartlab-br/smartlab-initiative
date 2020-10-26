@@ -360,15 +360,29 @@
 
       fetchData(endpoint = null) {
         this.assessChartFooter();
-        this.fillDataStructure(
-          this.structure, this.customParams,
-          this.customFunctions, this.setDataset,
-          {
-            "endpoint": endpoint,
-            "msgError": "Falha ao carregar dados do gráfico " + this.chartFooter,
-            "fnCallback": this.triggerChartUpdates
+        if (this.structure.chart_type != "MIXED_MAP"){
+          this.fillDataStructure(
+            this.structure, this.customParams,
+            this.customFunctions, this.setDataset,
+            {
+              "endpoint": endpoint,
+              "msgError": "Falha ao carregar dados do gráfico " + this.chartFooter,
+              "fnCallback": this.triggerChartUpdates
+            }
+          );
+        } else {
+          for (var eachChart of this.structure.chart_options.layers) {
+              this.fillDataStructure(
+                eachChart,
+                this.customParams,
+                this.customFunctions,
+                this.setDataset,
+                { 
+                  id: eachChart.id
+                }
+              );
           }
-        );
+        }
       },
 
       triggerChartUpdates() {
