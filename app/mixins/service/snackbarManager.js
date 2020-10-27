@@ -44,6 +44,7 @@ const SnackbarManager = {
                   let container = document.getElementById(id);
                   if (container) {
                       container.innerHTML = result.data;
+                      container.style.display = 'inline';
                   }
                   resolve();
                 }).catch(error => { 
