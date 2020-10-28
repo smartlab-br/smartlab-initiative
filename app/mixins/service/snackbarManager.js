@@ -35,9 +35,10 @@ const SnackbarManager = {
               let idObservatorio = this.$parent.idObservatorio;
               let dimension = this.$parent.dimensao_ativa_id;
               let idLocalidade = this.$parent.idLocalidade;
+              let scope = this.getEscopo(idLocalidade);
               let url = "/chart?from_viewconf=S&au="+ idLocalidade +
                         "&card_id="+structure.id+"&observatory="+ idObservatorio +
-                        "&dimension="+dimension+"&as_image=N";
+                        "&dimension="+dimension+"&scope="+scope+"&as_image=N";
               return new Promise((resolve, reject) => {
                 axios(this.$axiosCallSetupService.getAxiosOptions(url))
                 .then(result => {
