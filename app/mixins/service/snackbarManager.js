@@ -493,6 +493,56 @@ const SnackbarManager = {
           }
         },
   
+        obsTDTooltip(target, route, tooltip_list = [], removed_text_list = [], options = null) {
+          let text = "";
+          if (options && options.clickable){
+            text += "<p class='text-xs-right ma-0'><a href='" + this.$tooltipBuildingService.constructor.getUrlByPlace(target.options.rowData.cd_municipio_ibge_dv, route) + "' class='primary--text font-weight-black'>IR PARA</a></p>";
+          }
+          let urlSaldoMunicipio = "/thematic/cagedtermometro?categorias=nm_municipio_uf,saldo_ocupacional_municipio&valor=admitidos,desligados&agregacao=sum,sum&filtros=eq-competencia_declarada-'202008',and,eq-cd_municipio_ibge_dv-" + target.options.rowData.cd_municipio_ibge_dv;
+          let urlCBOAumento = "/thematic/cagedtermometro?categorias=termometro_codigo,termometro_descricao,saldo_ocupacional,admitidos,desligados&ordenacao=-saldo_ocupacional&limit=5&filtros=eq-competencia_declarada-'202008',and,eq-cd_municipio_ibge_dv-" + target.options.rowData.cd_municipio_ibge_dv;
+          let urlCBODiminui = "/thematic/cagedtermometro?categorias=termometro_codigo,termometro_descricao,saldo_ocupacional,admitidos,desligados&ordenacao=saldo_ocupacional&limit=5&filtros=eq-competencia_declarada-'202008',and,eq-cd_municipio_ibge_dv-" + target.options.rowData.cd_municipio_ibge_dv;
+          axios.all([axios(this.$axiosCallSetupService.getAxiosOptions(urlSaldoMunicipio)),
+                     axios(this.$axiosCallSetupService.getAxiosOptions(urlCBOAumento)),
+                     axios(this.$axiosCallSetupService.getAxiosOptions(urlCBODiminui))])
+            .then(axios.spread((resultSaldoMunicipio, resultCBOAumento, resultCBODiminui) => {
+  
+              let dtSaldoMunicipio = resultSaldoMunicipio.data.dataset[0];
+              let dtCBOAumento = resultCBOAumento.data.dataset;
+              let dtCBODiminui = resultCBODiminui.data.dataset;
+ 
+              text += "<p class='title-obs'>Município: <b>" + target.options.rowData.nm_municipio_uf + "</b></p>";
+              text += "<table width='100%'>";
+              text += "<tr><td class='font-weight-bold'>Criados</td><td class='font-weight-bold'>Perdidos</td><td class='font-weight-bold'>Saldo</td></tr>";
+              text += "<tr><td class='font-weight-bold'>" + this.$numberTransformService.constructor.formatNumber(dtSaldoMunicipio.agr_sum_admitidos,"inteiro") + 
+                          "</td><td class='font-weight-bold'>" + this.$numberTransformService.constructor.formatNumber(dtSaldoMunicipio.agr_sum_desligados,"inteiro") + 
+                          "</td><td class='font-weight-bold'>" + this.$numberTransformService.constructor.formatNumber(dtSaldoMunicipio.saldo_ocupacional_municipio,"inteiro") + "</td></tr>";
+              text += "</table>";
+              text += "<table width='100%'>";
+              text += "<tr><td colspan='4' class='font-weight-bold light-blue--text'>Ocupações com Aumento de Postos Formais</td></tr>";
+              text += "<tr><td class='font-weight-bold'>Ocupação</td><td class='font-weight-bold'>Criados</td><td class='font-weight-bold'>Perdidos</td><td class='font-weight-bold'>Saldo</td></tr>";
+              for (let item of dtCBOAumento){
+                text += "<tr><td class='font-weight-bold'>" + item.termometro_descricao + 
+                "</td><td class='font-weight-bold'>" + this.$numberTransformService.constructor.formatNumber(item.admitidos,"inteiro") + 
+                "</td><td class='font-weight-bold'>" + this.$numberTransformService.constructor.formatNumber(item.desligados,"inteiro") + 
+                "</td><td class='font-weight-bold'>" + this.$numberTransformService.constructor.formatNumber(item.saldo_ocupacional,"inteiro") + "</td></tr>";
+              }
+              text += "<tr><td colspan='4' class='font-weight-bold red--text'>Ocupações com Aumento de Postos Formais</td></tr>";
+              text += "<tr><td class='font-weight-bold'>Ocupação</td><td class='font-weight-bold'>Criados</td><td class='font-weight-bold'>Perdidos</td><td class='font-weight-bold'>Saldo</td></tr>";
+              for (let item of dtCBODiminui){
+                text += "<tr><td class='font-weight-bold'>" + item.termometro_descricao + 
+                "</td><td class='font-weight-bold'>" + this.$numberTransformService.constructor.formatNumber(item.admitidos,"inteiro") + 
+                "</td><td class='font-weight-bold'>" + this.$numberTransformService.constructor.formatNumber(item.desligados,"inteiro") + 
+                "</td><td class='font-weight-bold'>" + this.$numberTransformService.constructor.formatNumber(item.saldo_ocupacional,"inteiro") + "</td></tr>";
+              }
+              text += "</table>";
+  
+              target.bindPopup(text).openPopup();
+            }, error => {
+              console.error(error.toString());
+              this.sendError("Erro ao carregar dataset tooltip");
+            }));
+        },
+  
         tooltipLinkGoogleStreetView(target, route, tooltip_list = [], removed_text_list = [], options = null) { 
           let text = "";
           let d = target.options.rowData;
