@@ -26,6 +26,9 @@
               dias = (24*60*60*1000) * dias;
               return new Date(data - dias).toISOString().substring(0,10).replace(/-/g,'\\-');
           },
+          format_month_ds: function(d,month_ym){
+            return month_ym.substr(4,2) + "/" + month_ym.substr(0,4);
+          }
         },
         topology: null,
 
