@@ -78,7 +78,7 @@
       },
       updateReactiveDataStructure(filterUrl){
         let structReactive = Object.assign({},this.structure);
-        structReactive.api = Object.assign({},this.structure.api);
+        structReactive.api = Object.assign({},(this.structure.apiBase?this.structure.apiBase:this.structure.api));
 
         if (structReactive.api && structReactive.api.fixed){
           structReactive.api.fixed += filterUrl
