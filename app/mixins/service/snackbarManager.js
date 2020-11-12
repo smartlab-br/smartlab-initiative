@@ -522,25 +522,25 @@ const SnackbarManager = {
                       "</td><td class='text-lg-center'>" + this.$numberTransformService.constructor.formatNumber(dtSaldoMunicipio.agr_sum_desligados,"inteiro") + 
                       "</td><td class='text-lg-center'>" + this.$numberTransformService.constructor.formatNumber(dtSaldoMunicipio.saldo_ocupacional_municipio,"inteiro") + "</td></tr>" +
                       "</table>" +
-                      "<table width='100%'>" + 
-                      "<tr><td colspan='4' class='title-obs font-weight-bold light-blue--text'>Ocupações com Aumento de Postos Formais</td></tr>" +
-                      "<tr><td width='40%' class='font-weight-bold'>Ocupação</td>"+
+                      "<table width='100%' style='border-collapse: collapse;'>" + 
+                      "<tr><td colspan='4' class='title-obs font-weight-bold light-blue--text'>Ocupações com Maior Ganho de Postos Formais</td></tr>" +
+                      "<tr style='border-bottom: 1px solid rgba(0,0,0,0.15);'><td width='40%' class='font-weight-bold'>Ocupação</td>"+
                       "<td width='20%' class='font-weight-bold text-lg-center'>Criados</td>"+
                       "<td width='20%' class='font-weight-bold text-lg-center'>Perdidos</td>"+
                       "<td width='20%' class='font-weight-bold text-lg-center'>Saldo</td></tr>";
               for (let item of dtCBOAumento){
-                text += "<tr><td>" + item.termometro_descricao + 
+                text += "<tr style='border-bottom: 1px solid rgba(0,0,0,0.15);'><td>" + item.termometro_descricao + 
                 "</td><td class='text-lg-center'>" + this.$numberTransformService.constructor.formatNumber(item.admitidos,"inteiro") + 
                 "</td><td class='text-lg-center'>" + this.$numberTransformService.constructor.formatNumber(item.desligados,"inteiro") + 
                 "</td><td class='text-lg-center'>" + this.$numberTransformService.constructor.formatNumber(item.saldo_ocupacional,"inteiro") + "</td></tr>";
               }
-              text += "<tr><td colspan='4' class='title-obs font-weight-bold red--text'>Ocupações com Diminuição de Postos Formais</td></tr>" +
-                      "<tr><td width='40%' class='font-weight-bold'>Ocupação</td>"+
+              text += "<tr><td colspan='4' class='title-obs font-weight-bold red--text'>Ocupações com Maior Perda de Postos Formais</td></tr>" +
+                      "<tr style='border-bottom: 1px solid rgba(0,0,0,0.15);'><td width='40%' class='font-weight-bold'>Ocupação</td>"+
                       "<td width='20%' class='font-weight-bold text-lg-center'>Criados</td>"+
                       "<td width='20%' class='font-weight-bold text-lg-center'>Perdidos</td>"+
                       "<td width='20%' class='font-weight-bold text-lg-center'>Saldo</td></tr>";
               for (let item of dtCBODiminui){
-                text += "<tr><td>" + item.termometro_descricao + 
+                text += "<tr style='border-bottom: 1px solid rgba(0,0,0,0.15);'><td>" + item.termometro_descricao + 
                 "</td><td class='text-lg-center'>" + this.$numberTransformService.constructor.formatNumber(item.admitidos,"inteiro") + 
                 "</td><td class='text-lg-center'>" + this.$numberTransformService.constructor.formatNumber(item.desligados,"inteiro") + 
                 "</td><td class='text-lg-center'>" + this.$numberTransformService.constructor.formatNumber(item.saldo_ocupacional,"inteiro") + "</td></tr>";
