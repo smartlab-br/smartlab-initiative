@@ -78,13 +78,21 @@
       },
       updateReactiveDataStructure(filterUrl){
         let structReactive = Object.assign({},this.structure);
-        structReactive.api = Object.assign({},(this.structure.apiBase?this.structure.apiBase:this.structure.api));
+        structReactive.api = JSON.parse(JSON.stringify(this.structure.apiBase?this.structure.apiBase:this.structure.api));
 
-        if (structReactive.api && structReactive.api.fixed){
-          structReactive.api.fixed += filterUrl
-        } else if (structReactive.api && structReactive.api.template){
-          structReactive.api.template += filterUrl
+        if (structReactive.api){
+          if (!Array.isArray(structReactive.api)){
+            structReactive.api = [structReactive.api];
+          }
+          for(let struct of structReactive.api){
+            if (struct.fixed){
+              struct.fixed += filterUrl
+            } else if (struct.template){
+              struct.template += filterUrl
+            }
+          }
         }
+        
         this.fillDataStructure(
           structReactive, this.customParams,
           this.customFunctions, this.fillRankingList
