@@ -501,14 +501,21 @@ const SnackbarManager = {
           let urlSaldoMunicipio = "/thematic/cagedtermometro?categorias=competencia_declarada,nm_municipio_uf,saldo_ocupacional_municipio&valor=admitidos,desligados&agregacao=sum,sum&filtros=eq-termometro_grupo-'cbo',and,eq-competencia_declarada-'"+ target.options.rowData.competencia_declarada +"',and,eq-cd_municipio_ibge_dv-" + target.options.rowData.cd_municipio_ibge_dv;
           let urlCBOAumento = "/thematic/cagedtermometro?categorias=termometro_codigo,termometro_descricao,saldo_ocupacional,admitidos,desligados&ordenacao=-saldo_ocupacional&limit=5&filtros=eq-termometro_grupo-'cbo',and,eq-competencia_declarada-'"+ target.options.rowData.competencia_declarada +"',and,eq-cd_municipio_ibge_dv-" + target.options.rowData.cd_municipio_ibge_dv;
           let urlCBODiminui = "/thematic/cagedtermometro?categorias=termometro_codigo,termometro_descricao,saldo_ocupacional,admitidos,desligados&ordenacao=saldo_ocupacional&limit=5&filtros=eq-termometro_grupo-'cbo',and,eq-competencia_declarada-'"+ target.options.rowData.competencia_declarada +"',and,eq-cd_municipio_ibge_dv-" + target.options.rowData.cd_municipio_ibge_dv;
+          let urlCNAEAumento = "/thematic/cagedtermometro?categorias=termometro_codigo,termometro_descricao,saldo_ocupacional,admitidos,desligados&ordenacao=-saldo_ocupacional&limit=5&filtros=eq-termometro_grupo-'cnae_classe',and,eq-competencia_declarada-'"+ target.options.rowData.competencia_declarada +"',and,eq-cd_municipio_ibge_dv-" + target.options.rowData.cd_municipio_ibge_dv;
+          let urlCNAEDiminui = "/thematic/cagedtermometro?categorias=termometro_codigo,termometro_descricao,saldo_ocupacional,admitidos,desligados&ordenacao=saldo_ocupacional&limit=5&filtros=eq-termometro_grupo-'cnae_classe',and,eq-competencia_declarada-'"+ target.options.rowData.competencia_declarada +"',and,eq-cd_municipio_ibge_dv-" + target.options.rowData.cd_municipio_ibge_dv;
           axios.all([axios(this.$axiosCallSetupService.getAxiosOptions(urlSaldoMunicipio)),
                      axios(this.$axiosCallSetupService.getAxiosOptions(urlCBOAumento)),
-                     axios(this.$axiosCallSetupService.getAxiosOptions(urlCBODiminui))])
-            .then(axios.spread((resultSaldoMunicipio, resultCBOAumento, resultCBODiminui) => {
+                     axios(this.$axiosCallSetupService.getAxiosOptions(urlCBODiminui)),
+                     axios(this.$axiosCallSetupService.getAxiosOptions(urlCNAEAumento)),
+                     axios(this.$axiosCallSetupService.getAxiosOptions(urlCNAEDiminui))
+                    ])
+            .then(axios.spread((resultSaldoMunicipio, resultCBOAumento, resultCBODiminui, resultCNAEAumento, resultCNAEDiminui) => {
   
               let dtSaldoMunicipio = resultSaldoMunicipio.data.dataset[0];
               let dtCBOAumento = resultCBOAumento.data.dataset;
               let dtCBODiminui = resultCBODiminui.data.dataset;
+              let dtCNAEAumento = resultCNAEAumento.data.dataset;
+              let dtCNAEDiminui = resultCNAEDiminui.data.dataset;
  
               text += "<span class='title-obs'>Município: <b>" + target.options.rowData.nm_municipio_uf + "</b></span>" +
                       "<table width='100%'>"+
@@ -545,9 +552,31 @@ const SnackbarManager = {
                 "</td><td class='text-lg-center'>" + this.$numberTransformService.constructor.formatNumber(item.desligados,"inteiro") + 
                 "</td><td class='text-lg-center'>" + this.$numberTransformService.constructor.formatNumber(item.saldo_ocupacional,"inteiro") + "</td></tr>";
               }
+              text += "<tr><td colspan='4' class='title-obs font-weight-bold light-blue--text'>Atividades Econômicas com Maior Ganho de Postos Formais</td></tr>" +
+                      "<tr style='border-bottom: 1px solid rgba(0,0,0,0.15);'><td width='40%' class='font-weight-bold'>Atividade</td>"+
+                      "<td width='20%' class='font-weight-bold text-lg-center'>Criados</td>"+
+                      "<td width='20%' class='font-weight-bold text-lg-center'>Perdidos</td>"+
+                      "<td width='20%' class='font-weight-bold text-lg-center'>Saldo</td></tr>";
+              for (let item of dtCNAEAumento){
+                text += "<tr style='border-bottom: 1px solid rgba(0,0,0,0.15);'><td>" + item.termometro_descricao + 
+                "</td><td class='text-lg-center'>" + this.$numberTransformService.constructor.formatNumber(item.admitidos,"inteiro") + 
+                "</td><td class='text-lg-center'>" + this.$numberTransformService.constructor.formatNumber(item.desligados,"inteiro") + 
+                "</td><td class='text-lg-center'>" + this.$numberTransformService.constructor.formatNumber(item.saldo_ocupacional,"inteiro") + "</td></tr>";
+              }
+              text += "<tr><td colspan='4' class='title-obs font-weight-bold red--text'>Atividades Econômicas com Maior Perda de Postos Formais</td></tr>" +
+                      "<tr style='border-bottom: 1px solid rgba(0,0,0,0.15);'><td width='40%' class='font-weight-bold'>Atividade</td>"+
+                      "<td width='20%' class='font-weight-bold text-lg-center'>Criados</td>"+
+                      "<td width='20%' class='font-weight-bold text-lg-center'>Perdidos</td>"+
+                      "<td width='20%' class='font-weight-bold text-lg-center'>Saldo</td></tr>";
+              for (let item of dtCNAEDiminui){
+                text += "<tr style='border-bottom: 1px solid rgba(0,0,0,0.15);'><td>" + item.termometro_descricao + 
+                "</td><td class='text-lg-center'>" + this.$numberTransformService.constructor.formatNumber(item.admitidos,"inteiro") + 
+                "</td><td class='text-lg-center'>" + this.$numberTransformService.constructor.formatNumber(item.desligados,"inteiro") + 
+                "</td><td class='text-lg-center'>" + this.$numberTransformService.constructor.formatNumber(item.saldo_ocupacional,"inteiro") + "</td></tr>";
+              }
               text += "</table>";
   
-              target.bindPopup(text).openPopup();
+              target.bindPopup(text, {maxHeight: 500}).openPopup();
             }, error => {
               console.error(error.toString());
               this.sendError("Erro ao carregar dataset tooltip");
