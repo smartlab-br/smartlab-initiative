@@ -520,7 +520,7 @@ const SnackbarManager = {
               text += "<span class='title-obs'>Município: <b>" + target.options.rowData.nm_municipio_uf + "</b></span>" +
                       "<table width='100%'>"+
                       "<tr><td class='font-weight-bold text-lg-center title-obs' colspan='3'>Empregos Formais (CAGED)</td></tr>" +
-                      "<tr><td class='title-obs text-lg-center' colspan='3'>Competência declarada: "+
+                      "<tr><td class='text-lg-center' colspan='3'>Competência declarada: "+
                       dtSaldoMunicipio.competencia_declarada.substr(4,2) + "/" + dtSaldoMunicipio.competencia_declarada.substr(0,4) +"</td></tr>" +
                       "<tr style='border-bottom:1px solid rgba(0,0,0,0.12)'><td width='33%' class='font-weight-bold text-lg-center'>Criados</td>" +
                       "<td width='33%' class='font-weight-bold text-lg-center'>Perdidos</td>"+
@@ -530,44 +530,44 @@ const SnackbarManager = {
                       "</td><td class='text-lg-center'>" + this.$numberTransformService.constructor.formatNumber(dtSaldoMunicipio.saldo_ocupacional_municipio,"inteiro") + "</td></tr>" +
                       "</table>" +
                       "<table width='100%' style='border-collapse: collapse;'>" + 
-                      "<tr><td colspan='4' class='title-obs font-weight-bold light-blue--text'>Ocupações com Maior Ganho de Postos Formais</td></tr>" +
-                      "<tr style='border-bottom: 1px solid rgba(0,0,0,0.15);'><td width='40%' class='font-weight-bold'>Ocupação</td>"+
-                      "<td width='20%' class='font-weight-bold text-lg-center'>Criados</td>"+
-                      "<td width='20%' class='font-weight-bold text-lg-center'>Perdidos</td>"+
-                      "<td width='20%' class='font-weight-bold text-lg-center'>Saldo</td></tr>";
+                      "<tr><td colspan='4' class='title-obs font-weight-bold light-blue--text pt-3 pb-1'>Ocupações com Maior Ganho de Postos Formais</td></tr>" +
+                      "<tr style='border-bottom: 1px solid rgba(0,0,0,0.15);'><td width='55%' class='font-weight-bold'>Ocupação</td>"+
+                      "<td width='15%' class='font-weight-bold text-lg-center'>Criados</td>"+
+                      "<td width='15%' class='font-weight-bold text-lg-center'>Perdidos</td>"+
+                      "<td width='15%' class='font-weight-bold text-lg-center'>Saldo</td></tr>";
               for (let item of dtCBOAumento){
                 text += "<tr style='border-bottom: 1px solid rgba(0,0,0,0.15);'><td>" + item.termometro_descricao + 
                 "</td><td class='text-lg-center'>" + this.$numberTransformService.constructor.formatNumber(item.admitidos,"inteiro") + 
                 "</td><td class='text-lg-center'>" + this.$numberTransformService.constructor.formatNumber(item.desligados,"inteiro") + 
                 "</td><td class='text-lg-center'>" + this.$numberTransformService.constructor.formatNumber(item.saldo_ocupacional,"inteiro") + "</td></tr>";
               }
-              text += "<tr><td colspan='4' class='title-obs font-weight-bold red--text'>Ocupações com Maior Perda de Postos Formais</td></tr>" +
-                      "<tr style='border-bottom: 1px solid rgba(0,0,0,0.15);'><td width='40%' class='font-weight-bold'>Ocupação</td>"+
-                      "<td width='20%' class='font-weight-bold text-lg-center'>Criados</td>"+
-                      "<td width='20%' class='font-weight-bold text-lg-center'>Perdidos</td>"+
-                      "<td width='20%' class='font-weight-bold text-lg-center'>Saldo</td></tr>";
+              text += "<tr><td colspan='4' class='title-obs font-weight-bold red--text pt-3 pb-1'>Ocupações com Maior Perda de Postos Formais</td></tr>" +
+                      "<tr style='border-bottom: 1px solid rgba(0,0,0,0.15);'><td class='font-weight-bold'>Ocupação</td>"+
+                      "<td class='font-weight-bold text-lg-center'>Criados</td>"+
+                      "<td class='font-weight-bold text-lg-center'>Perdidos</td>"+
+                      "<td class='font-weight-bold text-lg-center'>Saldo</td></tr>";
               for (let item of dtCBODiminui){
                 text += "<tr style='border-bottom: 1px solid rgba(0,0,0,0.15);'><td>" + item.termometro_descricao + 
                 "</td><td class='text-lg-center'>" + this.$numberTransformService.constructor.formatNumber(item.admitidos,"inteiro") + 
                 "</td><td class='text-lg-center'>" + this.$numberTransformService.constructor.formatNumber(item.desligados,"inteiro") + 
                 "</td><td class='text-lg-center'>" + this.$numberTransformService.constructor.formatNumber(item.saldo_ocupacional,"inteiro") + "</td></tr>";
               }
-              text += "<tr><td colspan='4' class='title-obs font-weight-bold light-blue--text'>Atividades Econômicas com Maior Ganho de Postos Formais</td></tr>" +
-                      "<tr style='border-bottom: 1px solid rgba(0,0,0,0.15);'><td width='40%' class='font-weight-bold'>Atividade</td>"+
-                      "<td width='20%' class='font-weight-bold text-lg-center'>Criados</td>"+
-                      "<td width='20%' class='font-weight-bold text-lg-center'>Perdidos</td>"+
-                      "<td width='20%' class='font-weight-bold text-lg-center'>Saldo</td></tr>";
+              text += "<tr><td colspan='4' class='title-obs font-weight-bold light-blue--text pt-3 pb-1'>Atividades Econômicas com Maior Ganho de Postos Formais</td></tr>" +
+                      "<tr style='border-bottom: 1px solid rgba(0,0,0,0.15);'><td class='font-weight-bold'>Atividade</td>"+
+                      "<td class='font-weight-bold text-lg-center'>Criados</td>"+
+                      "<td class='font-weight-bold text-lg-center'>Perdidos</td>"+
+                      "<td class='font-weight-bold text-lg-center'>Saldo</td></tr>";
               for (let item of dtCNAEAumento){
                 text += "<tr style='border-bottom: 1px solid rgba(0,0,0,0.15);'><td>" + item.termometro_descricao + 
                 "</td><td class='text-lg-center'>" + this.$numberTransformService.constructor.formatNumber(item.admitidos,"inteiro") + 
                 "</td><td class='text-lg-center'>" + this.$numberTransformService.constructor.formatNumber(item.desligados,"inteiro") + 
                 "</td><td class='text-lg-center'>" + this.$numberTransformService.constructor.formatNumber(item.saldo_ocupacional,"inteiro") + "</td></tr>";
               }
-              text += "<tr><td colspan='4' class='title-obs font-weight-bold red--text'>Atividades Econômicas com Maior Perda de Postos Formais</td></tr>" +
-                      "<tr style='border-bottom: 1px solid rgba(0,0,0,0.15);'><td width='40%' class='font-weight-bold'>Atividade</td>"+
-                      "<td width='20%' class='font-weight-bold text-lg-center'>Criados</td>"+
-                      "<td width='20%' class='font-weight-bold text-lg-center'>Perdidos</td>"+
-                      "<td width='20%' class='font-weight-bold text-lg-center'>Saldo</td></tr>";
+              text += "<tr><td colspan='4' class='title-obs font-weight-bold red--text pt-3 pb-1'>Atividades Econômicas com Maior Perda de Postos Formais</td></tr>" +
+                      "<tr style='border-bottom: 1px solid rgba(0,0,0,0.15);'><td class='font-weight-bold'>Atividade</td>"+
+                      "<td class='font-weight-bold text-lg-center'>Criados</td>"+
+                      "<td class='font-weight-bold text-lg-center'>Perdidos</td>"+
+                      "<td class='font-weight-bold text-lg-center'>Saldo</td></tr>";
               for (let item of dtCNAEDiminui){
                 text += "<tr style='border-bottom: 1px solid rgba(0,0,0,0.15);'><td>" + item.termometro_descricao + 
                 "</td><td class='text-lg-center'>" + this.$numberTransformService.constructor.formatNumber(item.admitidos,"inteiro") + 
@@ -576,7 +576,7 @@ const SnackbarManager = {
               }
               text += "</table>";
   
-              target.bindPopup(text, {maxHeight: 500}).openPopup();
+              target.bindPopup(text, {maxHeight: 500, minWidth: 400}).openPopup();
             }, error => {
               console.error(error.toString());
               this.sendError("Erro ao carregar dataset tooltip");
