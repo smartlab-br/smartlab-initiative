@@ -299,8 +299,17 @@
               let apiUrl = this.$textTransformService.applyInterpol(this.structure.api, this.customParams, this.customFunctions);
               if (this.structure.apiBase){
                 apiUrl = this.$textTransformService.applyInterpol(this.structure.apiBase, this.customParams, this.customFunctions);// this.structure.apiBase;
-              }            
-              endpoint = apiUrl + this.getFilters();
+              } 
+              let filters =  this.getFilters();
+              if(!Array.isArray(apiUrl)){
+                endpoint = apiUrl + filters;
+              } else {
+                endpoint = [];
+                for (let item of apiUrl){
+                  enpoint.push(item + filters);
+                }
+              } 
+                       
               this.structure.chart_options.filterText = this.customFilters.filterText;
             } else {
               endpoint = this.$textTransformService.applyInterpol(payload.rules.api, this.customParams, this.customFunctions, this.customFilters);
@@ -347,7 +356,15 @@
         //   apiUrl = this.customFilters.radioApi;
         // }
         if (payload.rules.filter){
-          endpoint = apiUrl + this.getFilters();
+          let filters =  this.getFilters();
+          if(!Array.isArray(apiUrl)){
+            endpoint = apiUrl + filters;
+          } else {
+            endpoint = [];
+            for (let item of apiUrl){
+              endpoint.push(item + filters);
+            }
+          } 
           this.structure.chart_options.filterText = this.customFilters.filterText;
           this.fetchData(endpoint);
         } else if (payload.item){
