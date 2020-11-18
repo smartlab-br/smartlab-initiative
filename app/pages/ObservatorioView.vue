@@ -529,7 +529,7 @@
           }
         } else {
           var endpoint = this.$textTransformService.applyInterpol(payload.rules.api, this.customParams, this.customFunctions, payload.item);
-          this.fetchData(endpoint);
+          this.fetchMapData(endpoint);
         }
       },
 

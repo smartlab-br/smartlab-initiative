@@ -7,7 +7,7 @@ const ViewConfReader = {
 			data() {
 				return {
 					errorMessage: null,
-					leafletBasedCharts: ['MAP_BUBBLES', 'MAP_HEAT', 'MAP_CLUSTER', 'MAP_MIGRATION', 'MAP_POLYGON']
+					leafletBasedCharts: ['MAP_BUBBLES', 'MAP_HEAT', 'MAP_CLUSTER', 'MAP_MIGRATION', 'MAP_POLYGON', 'MIXED_MAP']
 				}
 			},
 			methods: {
@@ -662,7 +662,12 @@ const ViewConfReader = {
 					}
 				
 					if (addedParams && addedParams.id) {
-					  // Múltiplos gráficos
+					  //Mixed_map
+					  if (this.dataset == null){
+						  this.dataset = [];
+						  this.metadata = [];
+					  }
+					  // Múltiplos gráficos ou mixed_map
 					  this.dataset[addedParams.id] = dataset;
 					  this.metadata[addedParams.id] = metadata;
 					  this.triggerChartUpdates(addedParams.id, dataset, metadata);
