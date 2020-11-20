@@ -23,7 +23,7 @@
                 <th scope="colgroup" class="headline-obs" :colspan="props.headers.length">{{structure.title}}</th>
             </tr>
             <tr>
-                <th
+                <th scope="colgroup" 
                 v-for="header in props.headers"
                 :key="header.text"
                 :class="['column sortable', pagination.descending ? 'desc' : 'asc', header.value === pagination.sortBy ? 'active' : '']"
