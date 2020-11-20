@@ -2,8 +2,8 @@
   <v-app>
     <v-navigation-drawer
       :mini-variant="miniVariant"
-      clipped
       v-model="drawer"
+      clipped
       fixed
       disable-resize-watcher
       app>
@@ -112,7 +112,7 @@
           <v-divider v-show="computedPlaceTitle" vertical class="mx-2" style="background-color:rgba(255,255,255,0.7)"></v-divider>
           <v-flex v-if="currentAnalysisUnit" pl-2 v-on:mousedown="seen = true" v-on:click="focusChangePlace()" class="cursor-pointer line-height-1">
             <v-flex>{{ computedPlaceTitle }}</v-flex>
-            <v-flex pa-0 caption>{{ currentPlaceType }}</v-flex>
+            <v-flex pa-0 caption>{{ computedPlaceType }}</v-flex>
           </v-flex>
         </v-layout>
       </v-toolbar-title>
@@ -340,27 +340,29 @@
             min-height="50%"
             style="border-left: 1px solid white; padding-left: 10px;"
           />
-          <img v-if="$observatories.constructor.identifyObservatory($route.path.split('/')[1]) == 'ti'"
+          <img 
+            v-if="currentObs == 'ti'"
             v-on:click="$navigationManager.constructor.pushRoute('https://fnpeti.org.br', true)" 
             src="/static/smartlab/fnpeti.svg"
             class="cursor-pointer mb-1 ml-0" alt="Fórum Nacional de Prevenção e Erradicação do Trabalho Infantil"
             max-height="80%"
             min-height="50%"
           />
-          <img v-if="$observatories.constructor.identifyObservatory($route.path.split('/')[1]) == 'ti' || this.$observatories.constructor.identifyObservatory(this.$route.path.split('/')[1]) == 'td'"
+          <img 
+            v-if="currentObs == 'ti' || currentObs == 'td'"
             v-on:click="$navigationManager.constructor.pushRoute('http:///ibge.gov.br', true)" 
             src="/static/smartlab/ibge.png"
             class="cursor-pointer mb-1 ml-0" alt="Instituto Brasileiro de Geografia e Estatística"
             height="50px"
           />
-          <img v-if="$observatories.constructor.identifyObservatory($route.path.split('/')[1]) == 'des'"
+          <img v-if="currentObs == 'des'"
             v-on:click="$navigationManager.constructor.pushRoute('https://www.pactoglobal.org.br', true)" 
             src="/static/smartlab/pacto.svg"
             class="cursor-pointer mb-1 ml-0" alt="Pacto Global - Rede Brasil"
             max-height="80%"
             min-height="50%"
           />
-          <img v-if="$observatories.constructor.identifyObservatory($route.path.split('/')[1]) == 'des'"
+          <img v-if="currentObs == 'des'"
             v-on:click="$navigationManager.constructor.pushRoute('http://www.onumulheres.org.br/', true)" 
             src="/static/smartlab/onumulheres.svg"
             class="cursor-pointer ml-2" alt="ONU Mulheres"
@@ -611,8 +613,8 @@
         miniLeftDrawerTitle: false,
         hintAutocomplete: '',
         currentAnalysisUnit: null,
-        currentPlaceType: null,
         observatorios: null,
+        currentObs: null,
         dim: { label: null }
       }
     },
@@ -625,9 +627,9 @@
       }
 
       this.dim = { label: null };
-      let observ = this.$observatories.constructor.identifyObservatory(this.$route.path.split('/')[1]);
-      if (observ != null && (this.$route.query.dimensao || this.$route.params.idLocalidade)) {
-        this.$dimensions.getDimensionByObservatoryAndId(observ, this.$route.query.dimensao)
+      this.currentObs = this.$observatories.constructor.identifyObservatory(this.$route.path.split('/')[1]);
+      if (this.currentObs != null && (this.$route.query.dimensao || this.$route.params.idLocalidade)) {
+        this.$dimensions.getDimensionByObservatoryAndId(this.currentObs, this.$route.query.dimensao)
           .then((result) => { this.dim = result; });
       }
 
@@ -671,7 +673,7 @@
         };
 
         if (this.observatorios) {
-          let tmpObs = this.$observatories.getObservatoryById(this.$observatories.constructor.identifyObservatory(this.$route.path.split('/')[1]));
+          let tmpObs = this.$observatories.getObservatoryById(this.currentObs);
           if (tmpObs) {
             observ = tmpObs;
           } else if (this.$route.path.indexOf("saibamais") != -1){ //Sobre
@@ -695,13 +697,12 @@
         return '';
       },
       computedSubtitle: function() {
-        let observ = this.$observatories.constructor.identifyObservatory(this.$route.path.split('/')[1]);
 
         if (!this.visibleTitle && this.dim && this.dim.short_desc){
           return this.dim.short_desc;
         }
 
-        if (observ != null && this.$route.params.idEstudo ){
+        if (this.currentObs != null && this.$route.params.idEstudo ){
           return "Estudos temáticos";
         }
 
@@ -718,14 +719,19 @@
       },
       computedPlaceTitle: function() {
         if (this.currentAnalysisUnit) {
+          return this.currentAnalysisUnit.nm_localidade;
+        }
+        return null;
+      },
+      computedPlaceType: function() {
+        if (this.currentAnalysisUnit) {
           let tipoLocalidade = "Seleção Atual"
           if (this.currentAnalysisUnit.tipo == 'Município'){
             tipoLocalidade = "Município Selecionado";
           } else if (this.currentAnalysisUnit.tipo == 'UF'){
             tipoLocalidade = "UF Selecionada";
           } 
-          this.currentPlaceType = tipoLocalidade;
-          return this.currentAnalysisUnit.nm_localidade;
+          return tipoLocalidade;
         }
         return null;
       },
@@ -780,10 +786,10 @@
     },
     watch: {
       '$route.fullPath': function(newVal, oldVal) {
+        this.currentObs = this.$observatories.constructor.identifyObservatory(this.$route.path.split('/')[1]);
         this.dim = { label: null }
-        let observ = this.$observatories.constructor.identifyObservatory(this.$route.path.split('/')[1]);
-        if (observ != null && (this.$route.query.dimensao || this.$route.params.idLocalidade)) {
-          this.$dimensions.getDimensionByObservatoryAndId(observ, this.$route.query.dimensao)
+        if (this.currentObs != null && (this.$route.query.dimensao || this.$route.params.idLocalidade)) {
+          this.$dimensions.getDimensionByObservatoryAndId(this.currentObs, this.$route.query.dimensao)
             .then((result) => { this.dim = result; });
         }
       },
@@ -837,7 +843,7 @@
         }
       },
       themeEval: function() {
-        let theme = this.$observatories.getTheme(this.$observatories.constructor.identifyObservatory(this.$route.path.split('/')[1]));
+        let theme = this.$observatories.getTheme(this.currentObs);
         if (theme) this.$vuetify.theme = theme; // Changes only if 
       },
       changeMiddleToolbar: function(params) {

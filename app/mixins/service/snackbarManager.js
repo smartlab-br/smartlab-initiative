@@ -600,7 +600,7 @@ const SnackbarManager = {
               }
               text += "</table>";
   
-              target.bindPopup(text, {maxHeight: 500, minWidth: 400}).openPopup();
+              target.bindPopup(text, {maxHeight: 300, minWidth: 400}).openPopup();
             }, error => {
               console.error(error.toString());
               this.sendError("Erro ao carregar dataset tooltip");
