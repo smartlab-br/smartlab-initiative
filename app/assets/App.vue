@@ -8,12 +8,11 @@
       disable-resize-watcher
       app
       >
-
       <v-list>
         <!-- Item acrescentado para solucionar problema nos displays xs, sm e md, onde o primeiro item desaparecia -->
         <v-list-tile class="hidden-lg-and-up">
           <v-list-tile-content>
-            <v-list-tile-title/>
+            <v-list-tile-title />
           </v-list-tile-content>
         </v-list-tile>
 
@@ -28,17 +27,19 @@
           @keyup.enter="itemClick(item)"
         >
           <v-list-tile-action>
-            <v-icon v-if="item.icon" 
+            <v-icon 
+              v-if="item.icon" 
               :title="item.title" 
               v-html="item.icon" 
             />
-            <app-icon v-else-if="item.app_icon"
+            <app-icon 
+              v-else-if="item.app_icon"
               :title="item.title" 
               :icon="item.app_icon"
             />
           </v-list-tile-action>
           <v-list-tile-content>
-            <v-list-tile-title v-text="item.title"/>
+            <v-list-tile-title v-text="item.title" />
           </v-list-tile-content>
         </v-list-tile>
       </v-list>
@@ -46,7 +47,7 @@
       <v-list>
         <v-list-tile @click.native.stop="miniVariant = !miniVariant">
           <v-list-tile-action>
-            <v-icon v-html="miniVariant ? 'chevron_right' : 'chevron_left'"/>
+            <v-icon v-html="miniVariant ? 'chevron_right' : 'chevron_left'" />
           </v-list-tile-action>
           <v-list-tile-content>
             <v-list-tile-title>Apenas ícones</v-list-tile-title>
@@ -69,11 +70,13 @@
       />
 
       <v-toolbar-title class="ml-2">
-        <v-layout pa-0 
+        <v-layout 
+          pa-0 
           row 
           align-center
         >
-          <v-flex pr-2 
+          <v-flex 
+            pr-2 
             pt-2 
             hidden-xs-only
           >
@@ -86,7 +89,8 @@
               @keyup.enter="$navigationManager.constructor.pushRoute($router, '/', false)"
             /> 
           </v-flex>
-          <v-flex pr-2 
+          <v-flex 
+            pr-2 
             pt-2 
             hidden-sm-and-up
           >
@@ -100,23 +104,26 @@
           </v-flex>
           <v-divider 
             v-show="computedTitle" 
-            vertical class="mx-2" 
+            vertical 
+            class="mx-2" 
             style="background-color:rgba(255,255,255,0.7)"
           />
-          <v-flex text-xs-right 
+          <v-flex 
+            text-xs-right 
             class="line-height-1"
           >
             <v-flex 
-              @click="$navigationManager.constructor.pushRoute($router, ($route && ($route.path.indexOf('localidade') != -1)) ? '../' : ($route && ($route.path.indexOf('estudo') != -1 || $route.path.indexOf('smartmap') != -1)) ? './' : '', false);" 
               class="cursor-pointer" 
               pa-0
+              @click="$navigationManager.constructor.pushRoute($router, ($route && ($route.path.indexOf('localidade') != -1)) ? '../' : ($route && ($route.path.indexOf('estudo') != -1 || $route.path.indexOf('smartmap') != -1)) ? './' : '', false);" 
             >
-            {{ computedTitle }}
+              {{ computedTitle }}
             </v-flex>
-            <v-flex pa-0 
+            <v-flex 
+              pa-0 
               caption
             >
-            {{ computedSubtitle }}
+              {{ computedSubtitle }}
             </v-flex>
           </v-flex>
           <v-divider 
@@ -137,13 +144,13 @@
               pa-0 
               caption
             >
-            {{ computedPlaceType }}
+              {{ computedPlaceType }}
             </v-flex>
           </v-flex>
         </v-layout>
       </v-toolbar-title>
       
-      <v-spacer/>
+      <v-spacer />
       
       <div width="20rem">
         <v-autocomplete
@@ -165,7 +172,8 @@
           :color="gsLoadingStatusSearchOptions == 'ERROR' ? 'error' : (gsLoadingStatusSearchOptions == 'LOADING' ? 'warning' : 'accent')"
           @blur="gsItemBusca = null"
         >
-          <template slot="item" 
+          <template 
+            slot="item" 
             slot-scope="data"
           >
             <template v-if="auOptions.length < 2">
@@ -191,7 +199,8 @@
                     :key="'search_item_obs_' + indxSearch"
                     @click="changeAnalysisUnit($router, data.item, search_item.id)"
                   >
-                    <v-layout column 
+                    <v-layout 
+                      column 
                       v-if="data.item.exclude_from == null || data.item.exclude_from == undefined || !data.item.exclude_from.includes(search_item.id)"
                       wrap 
                       align-center
@@ -211,7 +220,7 @@
                           :fill="search_item.color"
                           :icon="search_item.app_icon"
                         />
-                        <v-layout v-html="search_item.title"/> 
+                        <v-layout v-html="search_item.title" /> 
                       </v-tooltip>
                     </v-layout>
                   </v-layout>
@@ -241,7 +250,8 @@
       </v-btn>
     </v-toolbar>
     <v-content>
-      <v-container fluid 
+      <v-container 
+        fluid 
         class="pa-0 fill-height"
       >
         <router-view 
@@ -250,9 +260,10 @@
           @showSnackbar="snackAlert"
           @showLocationDialog="showLocationDialog"
           @showBugDialog="showBugDialog" 
-          @alterToolbar="changeToolbar" @alterMiddleToolbar="changeMiddleToolbar" 
+          @alterToolbar="changeToolbar" 
+          @alterMiddleToolbar="changeMiddleToolbar" 
         />
-        <v-slide-y-transition mode="out-in"/>
+        <v-slide-y-transition mode="out-in" />
       </v-container>
     </v-content>
     <!--
@@ -314,7 +325,8 @@
       </v-list>
     </v-navigation-drawer>
     -->
-      <v-layout row 
+      <v-layout 
+        row 
         wrap 
         primary 
         align-center 
@@ -327,12 +339,14 @@
         <v-flex xs2 sm1 md1 lg2 xl2 
           :class="{'pt-5 pb-3': $vuetify.breakpoint.smAndDown }" 
         >
-          <v-layout row 
+          <v-layout 
+            row 
             wrap 
             class="text-xs-left"
           >
             <v-flex xs12>
-            <a class="white--text" 
+            <a 
+              class="white--text" 
               @click="$navigationManager.constructor.pushRoute($router, '/saibamais/smartlab', false)"
             >
               <img  
@@ -362,14 +376,15 @@
           />
           <img 
             src="/static/smartlab/oit.png"
-            class="cursor-pointer mr-2 ml-2" alt="Organização Internacional do Trabalho"
+            class="cursor-pointer mr-2 ml-2" 
+            alt="Organização Internacional do Trabalho"
             height="50px"
             @click="$navigationManager.constructor.pushRoute($router, 'https://ilo.org', true)" 
           />
-          
           <img
             src="/static/smartlab/cnmp.svg"
-            class="cursor-pointer mb-1 ml-2" alt="Conselho Nacional do Ministério Público"
+            class="cursor-pointer mb-1 ml-2" 
+            alt="Conselho Nacional do Ministério Público"
             max-height="80%"
             min-height="50%"
             style="border-left: 1px solid white; padding-left: 10px;"
@@ -378,7 +393,8 @@
           <img 
             v-if="currentObs == 'ti'"
             src="/static/smartlab/fnpeti.svg"
-            class="cursor-pointer mb-1 ml-0" alt="Fórum Nacional de Prevenção e Erradicação do Trabalho Infantil"
+            class="cursor-pointer mb-1 ml-0" 
+            alt="Fórum Nacional de Prevenção e Erradicação do Trabalho Infantil"
             max-height="80%"
             min-height="50%"
             @click="$navigationManager.constructor.pushRoute('https://fnpeti.org.br', true)" 
@@ -386,14 +402,16 @@
           <img 
             v-if="currentObs == 'ti' || currentObs == 'td'"
             src="/static/smartlab/ibge.png"
-            class="cursor-pointer mb-1 ml-0" alt="Instituto Brasileiro de Geografia e Estatística"
+            class="cursor-pointer mb-1 ml-0" 
+            alt="Instituto Brasileiro de Geografia e Estatística"
             height="50px"
             @click="$navigationManager.constructor.pushRoute('http:///ibge.gov.br', true)" 
           />
           <img 
             v-if="currentObs == 'des'"
             src="/static/smartlab/pacto.svg"
-            class="cursor-pointer mb-1 ml-0" alt="Pacto Global - Rede Brasil"
+            class="cursor-pointer mb-1 ml-0" 
+            alt="Pacto Global - Rede Brasil"
             max-height="80%"
             min-height="50%"
             @click="$navigationManager.constructor.pushRoute('https://www.pactoglobal.org.br', true)" 
@@ -401,8 +419,10 @@
           <img 
             v-if="currentObs == 'des'"
             src="/static/smartlab/onumulheres.svg"
-            class="cursor-pointer ml-2" alt="ONU Mulheres"
-            height="20px" style="margin-bottom: 12px;"
+            class="cursor-pointer ml-2" 
+            alt="ONU Mulheres"
+            height="20px" 
+            tyle="margin-bottom: 12px;"
             @click="$navigationManager.constructor.pushRoute('http://www.onumulheres.org.br/', true)" 
           />
           
@@ -411,25 +431,29 @@
           class="text-xs-left text-sm-left text-md-center subheading"
           :class="{'pt-5 pb-3': $vuetify.breakpoint.smAndDown }" 
         >
-            <a class="white--text mr-3" 
+            <a 
+              class="white--text mr-3" 
               @click="$navigationManager.constructor.pushRoute($router, 'https://github.com/smartlab-br', true)"
             >
-              <span v-html="renderIcon('fab','faGithub','GitHub')"/>
+              <span v-html="renderIcon('fab','faGithub','GitHub')" />
             </a>
-            <a class="white--text mr-3" 
+            <a 
+              class="white--text mr-3" 
               @click="$navigationManager.constructor.pushRoute($router, 'https://hub.docker.com/u/smartlab/', true)"
             >
-              <span v-html="renderIcon('fab','faDocker','Docker')"/>
+              <span v-html="renderIcon('fab','faDocker','Docker')" />
             </a>
-            <a class="white--text mr-3" 
+            <a 
+              class="white--text mr-3" 
               @click="$navigationManager.constructor.pushRoute($router, '', true)"
             >
-              <span v-html="renderIcon('fab','faFacebook','Facebook')"/>
+              <span v-html="renderIcon('fab','faFacebook','Facebook')" />
             </a>
-            <a class="white--text" 
+            <a 
+              class="white--text" 
               @click="$navigationManager.constructor.pushRoute($router, '', true)"
             >
-              <span v-html="renderIcon('fab','faTwitter','Twitter')"/>
+              <span v-html="renderIcon('fab','faTwitter','Twitter')" />
             </a>
         </v-flex>
         <v-flex xs6 sm6 md2 lg2 xl3 
@@ -437,20 +461,23 @@
           :class="{'pt-5 pb-3': $vuetify.breakpoint.smAndDown }" 
         >
           <div class="caption mr-1 mb-1">Licenças</div>
-          <a class="white--text mx-2" 
+          <a 
+            class="white--text mx-2" 
             @click="$navigationManager.constructor.pushRoute($router, 'https://creativecommons.org/licences/by-nc-sa/4.0/', true)"
           >
-            <span v-html="renderIcon('fab','faCreativeCommons','CC BY 4.0')"/>
+            <span v-html="renderIcon('fab','faCreativeCommons','CC BY 4.0')" />
           </a>
-          <a class="white--text" 
+          <a 
+            class="white--text" 
             @click="$navigationManager.constructor.pushRoute($router, 'https://opensource.org/licenses/MIT', true)"
           >
-            <span v-html="renderIcon('fab','faOsi','MIT - Open Source Initiative')"/>
+            <span v-html="renderIcon('fab','faOsi','MIT - Open Source Initiative')" />
           </a>
         </v-flex>
       </v-layout>
 
     <v-snackbar 
+      v-model="snackbar"
       :timeout="snack_timeout" 
       :top="snack_y === 'top'" 
       :bottom="snack_y === 'bottom'"
@@ -458,10 +485,11 @@
       :left="snack_x === 'left'" 
       :multi-line="snack_mode === 'multi-line'"
       :vertical="snack_mode === 'vertical'" 
-      :color = "snack_color" v-model="snackbar"
+      :color = "snack_color" 
     >
       {{ snackText }}
-      <v-btn flat 
+      <v-btn 
+        flat 
         color="white" 
         @click.native="snackbar = false"
       >
@@ -474,10 +502,11 @@
       bottom
       multi-line 
       :timeout="0" 
-      color = "blue-grey darken2" 
+      color="blue-grey darken2" 
     >
       Este site utiliza cookies para registrar as preferências de navegação do usuário. Ao navegar no site, você aceita a utilização dos cookies.
-      <v-btn flat 
+      <v-btn 
+        flat 
         color="white" 
         @click.native="setCookieAccept"
       >
@@ -490,7 +519,11 @@
       width="500px" 
     >
       <v-card>
-        <v-card-title class="headline-obs py-1">Relate um problema</v-card-title>
+        <v-card-title 
+          class="headline-obs py-1"
+        >
+          Relate um problema
+        </v-card-title>
         <v-card-text py-1>
           <v-form 
             ref="bugForm" 
@@ -543,8 +576,8 @@
                     label="Relate um problema"
                     :rules= "bugTextRules"                      
                     autofocus
-                    required>
-                  </v-textarea>
+                    required
+                  />
                 </v-flex>
 
                 <v-flex>
@@ -558,7 +591,8 @@
                   />
                 </v-flex>
 
-                <v-layout py-0 
+                <v-layout 
+                  py-0 
                   row
                 >
                   <v-layout 
@@ -571,12 +605,13 @@
                     />
                     <span class="pl-2 align-self-center">Enviando...</span>
                   </v-layout>
-                  <v-spacer/>
+                  <v-spacer />
                   <v-layout 
                     justify-end 
                     pa-0
                   >
-                    <v-btn small 
+                    <v-btn 
+                      small 
                       flat  
                       class="mb-0 mr-2"
                       @click="sendBugReport"
@@ -584,7 +619,8 @@
                       <span class="hidden-sm-and-down body">Enviar</span>
                       <v-icon right>send</v-icon> 
                     </v-btn>
-                    <v-btn small 
+                    <v-btn
+                      small 
                       flat 
                       class="mb-0 mx-0"
                       @click="closeBugDialog"
@@ -639,7 +675,7 @@
               </template>
               <template v-else>
                 <v-list-tile-content>
-                  <v-list-tile-title v-html="data.item.label"/>
+                  <v-list-tile-title v-html="data.item.label" />
                 </v-list-tile-content>
               </template>
             </template>  
