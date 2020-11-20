@@ -43,7 +43,7 @@
           </v-list-tile-content>
         </v-list-tile>
       </v-list>
-      <v-divider/>
+      <v-divider />
       <v-list>
         <v-list-tile @click.native.stop="miniVariant = !miniVariant">
           <v-list-tile-action>
@@ -325,156 +325,157 @@
       </v-list>
     </v-navigation-drawer>
     -->
-      <v-layout 
-        row 
-        wrap 
-        primary 
-        align-center 
-        class="white--text"
-        :class="{'px-2 py-4': $vuetify.breakpoint.xsAndup, 
-                'px-3 py-4': $vuetify.breakpoint.mdAndDown, 
-                'px-5 py-5': $vuetify.breakpoint.lgAndUp}" 
-        app
+    <v-layout 
+      row 
+      wrap 
+      primary 
+      align-center 
+      class="white--text"
+      :class="{'px-2 py-4': $vuetify.breakpoint.xsAndup, 
+              'px-3 py-4': $vuetify.breakpoint.mdAndDown, 
+              'px-5 py-5': $vuetify.breakpoint.lgAndUp}" 
+      app
+    >
+      <v-flex 
+        class="xs2 sm1 md1 lg2 xl2"
+        :class="{'pt-5 pb-3': $vuetify.breakpoint.smAndDown }" 
       >
-        <v-flex xs2 sm1 md1 lg2 xl2 
-          :class="{'pt-5 pb-3': $vuetify.breakpoint.smAndDown }" 
+        <v-layout 
+          row 
+          wrap 
+          class="text-xs-left"
         >
-          <v-layout 
-            row 
-            wrap 
-            class="text-xs-left"
-          >
-            <v-flex xs12>
-            <a 
-              class="white--text" 
-              @click="$navigationManager.constructor.pushRoute($router, '/saibamais/smartlab', false)"
-            >
-              <img  
-                src="/static/smartlab/smartlab-small.svg" 
-                alt="Smartlab" 
-                height="25px" 
-                style="margin-bottom: -5px;"
-              />
-              <span class="ml-3">Sobre</span>
-            </a>
-            </v-flex>
-          </v-layout>
-        </v-flex>
-        <v-flex xs10 sm11 md7 lg5 xl4 
-          class="text-xs-right text-md-center" 
-          :class="{'pt-5 pb-3': $vuetify.breakpoint.smAndDown }"
-        >
-          <!-- TODO Devolver os ajustes de tamanho depois do lançamento
-            max-height="80%"
-            min-height="50%" -->
-          <img 
-            src="/static/smartlab/mpt.svg"
-            class="cursor-pointer mr-2" 
-            alt="Ministério Público do Trabalho"
-            height="50px"
-            @click="$navigationManager.constructor.pushRoute($router, 'https://mpt.mp.br', true)" 
-          />
-          <img 
-            src="/static/smartlab/oit.png"
-            class="cursor-pointer mr-2 ml-2" 
-            alt="Organização Internacional do Trabalho"
-            height="50px"
-            @click="$navigationManager.constructor.pushRoute($router, 'https://ilo.org', true)" 
-          />
-          <img
-            src="/static/smartlab/cnmp.svg"
-            class="cursor-pointer mb-1 ml-2" 
-            alt="Conselho Nacional do Ministério Público"
-            max-height="80%"
-            min-height="50%"
-            style="border-left: 1px solid white; padding-left: 10px;"
-            @click="$navigationManager.constructor.pushRoute($router, 'http://cnmp.mp.br', true)" 
-          />
-          <img 
-            v-if="currentObs == 'ti'"
-            src="/static/smartlab/fnpeti.svg"
-            class="cursor-pointer mb-1 ml-0" 
-            alt="Fórum Nacional de Prevenção e Erradicação do Trabalho Infantil"
-            max-height="80%"
-            min-height="50%"
-            @click="$navigationManager.constructor.pushRoute('https://fnpeti.org.br', true)" 
-          />
-          <img 
-            v-if="currentObs == 'ti' || currentObs == 'td'"
-            src="/static/smartlab/ibge.png"
-            class="cursor-pointer mb-1 ml-0" 
-            alt="Instituto Brasileiro de Geografia e Estatística"
-            height="50px"
-            @click="$navigationManager.constructor.pushRoute('http:///ibge.gov.br', true)" 
-          />
-          <img 
-            v-if="currentObs == 'des'"
-            src="/static/smartlab/pacto.svg"
-            class="cursor-pointer mb-1 ml-0" 
-            alt="Pacto Global - Rede Brasil"
-            max-height="80%"
-            min-height="50%"
-            @click="$navigationManager.constructor.pushRoute('https://www.pactoglobal.org.br', true)" 
-          />
-          <img 
-            v-if="currentObs == 'des'"
-            src="/static/smartlab/onumulheres.svg"
-            class="cursor-pointer ml-2" 
-            alt="ONU Mulheres"
-            height="20px" 
-            tyle="margin-bottom: 12px;"
-            @click="$navigationManager.constructor.pushRoute('http://www.onumulheres.org.br/', true)" 
-          />
-          
-        </v-flex>
-        <v-flex xs6 sm6 md2 lg3 xl3 
-          class="text-xs-left text-sm-left text-md-center subheading"
-          :class="{'pt-5 pb-3': $vuetify.breakpoint.smAndDown }" 
-        >
-            <a 
-              class="white--text mr-3" 
-              @click="$navigationManager.constructor.pushRoute($router, 'https://github.com/smartlab-br', true)"
-            >
-              <span v-html="renderIcon('fab','faGithub','GitHub')" />
-            </a>
-            <a 
-              class="white--text mr-3" 
-              @click="$navigationManager.constructor.pushRoute($router, 'https://hub.docker.com/u/smartlab/', true)"
-            >
-              <span v-html="renderIcon('fab','faDocker','Docker')" />
-            </a>
-            <a 
-              class="white--text mr-3" 
-              @click="$navigationManager.constructor.pushRoute($router, '', true)"
-            >
-              <span v-html="renderIcon('fab','faFacebook','Facebook')" />
-            </a>
-            <a 
-              class="white--text" 
-              @click="$navigationManager.constructor.pushRoute($router, '', true)"
-            >
-              <span v-html="renderIcon('fab','faTwitter','Twitter')" />
-            </a>
-        </v-flex>
-        <v-flex xs6 sm6 md2 lg2 xl3 
-          class="text-xs-right subheading" 
-          :class="{'pt-5 pb-3': $vuetify.breakpoint.smAndDown }" 
-        >
-          <div class="caption mr-1 mb-1">Licenças</div>
+          <v-flex xs12>
           <a 
-            class="white--text mx-2" 
-            @click="$navigationManager.constructor.pushRoute($router, 'https://creativecommons.org/licences/by-nc-sa/4.0/', true)"
+            class="white--text" 
+            @click="$navigationManager.constructor.pushRoute($router, '/saibamais/smartlab', false)"
           >
-            <span v-html="renderIcon('fab','faCreativeCommons','CC BY 4.0')" />
+            <img  
+              src="/static/smartlab/smartlab-small.svg" 
+              alt="Smartlab" 
+              height="25px" 
+              style="margin-bottom: -5px;"
+            />
+            <span class="ml-3">Sobre</span>
+          </a>
+          </v-flex>
+        </v-layout>
+      </v-flex>
+      <v-flex  
+        class="xs10 sm11 md7 lg5 xl4 text-xs-right text-md-center" 
+        :class="{'pt-5 pb-3': $vuetify.breakpoint.smAndDown }"
+      >
+        <!-- TODO Devolver os ajustes de tamanho depois do lançamento
+          max-height="80%"
+          min-height="50%" -->
+        <img 
+          src="/static/smartlab/mpt.svg"
+          class="cursor-pointer mr-2" 
+          alt="Ministério Público do Trabalho"
+          height="50px"
+          @click="$navigationManager.constructor.pushRoute($router, 'https://mpt.mp.br', true)" 
+        />
+        <img 
+          src="/static/smartlab/oit.png"
+          class="cursor-pointer mr-2 ml-2" 
+          alt="Organização Internacional do Trabalho"
+          height="50px"
+          @click="$navigationManager.constructor.pushRoute($router, 'https://ilo.org', true)" 
+        />
+        <img
+          src="/static/smartlab/cnmp.svg"
+          class="cursor-pointer mb-1 ml-2" 
+          alt="Conselho Nacional do Ministério Público"
+          max-height="80%"
+          min-height="50%"
+          style="border-left: 1px solid white; padding-left: 10px;"
+          @click="$navigationManager.constructor.pushRoute($router, 'http://cnmp.mp.br', true)" 
+        />
+        <img 
+          v-if="currentObs == 'ti'"
+          src="/static/smartlab/fnpeti.svg"
+          class="cursor-pointer mb-1 ml-0" 
+          alt="Fórum Nacional de Prevenção e Erradicação do Trabalho Infantil"
+          max-height="80%"
+          min-height="50%"
+          @click="$navigationManager.constructor.pushRoute('https://fnpeti.org.br', true)" 
+        />
+        <img 
+          v-if="currentObs == 'ti' || currentObs == 'td'"
+          src="/static/smartlab/ibge.png"
+          class="cursor-pointer mb-1 ml-0" 
+          alt="Instituto Brasileiro de Geografia e Estatística"
+          height="50px"
+          @click="$navigationManager.constructor.pushRoute('http:///ibge.gov.br', true)" 
+        />
+        <img 
+          v-if="currentObs == 'des'"
+          src="/static/smartlab/pacto.svg"
+          class="cursor-pointer mb-1 ml-0" 
+          alt="Pacto Global - Rede Brasil"
+          max-height="80%"
+          min-height="50%"
+          @click="$navigationManager.constructor.pushRoute('https://www.pactoglobal.org.br', true)" 
+        />
+        <img 
+          v-if="currentObs == 'des'"
+          src="/static/smartlab/onumulheres.svg"
+          class="cursor-pointer ml-2" 
+          alt="ONU Mulheres"
+          height="20px" 
+          tyle="margin-bottom: 12px;"
+          @click="$navigationManager.constructor.pushRoute('http://www.onumulheres.org.br/', true)" 
+        />
+        
+      </v-flex>
+      <v-flex  
+        class="xs6 sm6 md2 lg3 xl3 text-xs-left text-sm-left text-md-center subheading"
+        :class="{'pt-5 pb-3': $vuetify.breakpoint.smAndDown }" 
+      >
+          <a 
+            class="white--text mr-3" 
+            @click="$navigationManager.constructor.pushRoute($router, 'https://github.com/smartlab-br', true)"
+          >
+            <span v-html="renderIcon('fab','faGithub','GitHub')" />
+          </a>
+          <a 
+            class="white--text mr-3" 
+            @click="$navigationManager.constructor.pushRoute($router, 'https://hub.docker.com/u/smartlab/', true)"
+          >
+            <span v-html="renderIcon('fab','faDocker','Docker')" />
+          </a>
+          <a 
+            class="white--text mr-3" 
+            @click="$navigationManager.constructor.pushRoute($router, '', true)"
+          >
+            <span v-html="renderIcon('fab','faFacebook','Facebook')" />
           </a>
           <a 
             class="white--text" 
-            @click="$navigationManager.constructor.pushRoute($router, 'https://opensource.org/licenses/MIT', true)"
+            @click="$navigationManager.constructor.pushRoute($router, '', true)"
           >
-            <span v-html="renderIcon('fab','faOsi','MIT - Open Source Initiative')" />
+            <span v-html="renderIcon('fab','faTwitter','Twitter')" />
           </a>
-        </v-flex>
-      </v-layout>
+      </v-flex>
+      <v-flex  
+        class="xs6 sm6 md2 lg2 xl3 text-xs-right subheading" 
+        :class="{'pt-5 pb-3': $vuetify.breakpoint.smAndDown }" 
+      >
+        <div class="caption mr-1 mb-1">Licenças</div>
+        <a 
+          class="white--text mx-2" 
+          @click="$navigationManager.constructor.pushRoute($router, 'https://creativecommons.org/licences/by-nc-sa/4.0/', true)"
+        >
+          <span v-html="renderIcon('fab','faCreativeCommons','CC BY 4.0')" />
+        </a>
+        <a 
+          class="white--text" 
+          @click="$navigationManager.constructor.pushRoute($router, 'https://opensource.org/licenses/MIT', true)"
+        >
+          <span v-html="renderIcon('fab','faOsi','MIT - Open Source Initiative')" />
+        </a>
+      </v-flex>
+    </v-layout>
 
     <v-snackbar 
       v-model="snackbar"
@@ -485,7 +486,7 @@
       :left="snack_x === 'left'" 
       :multi-line="snack_mode === 'multi-line'"
       :vertical="snack_mode === 'vertical'" 
-      :color = "snack_color" 
+      :color="snack_color" 
     >
       {{ snackText }}
       <v-btn 
