@@ -455,9 +455,6 @@
           @click="$navigationManager.constructor.pushRoute($router, '', true)"
         >
           <span v-html="renderIcon('fab','faTwitter','Twitter')" />
-          <span>
-            {{ renderIcon('fab','faTwitter','Twitter') }}
-          </span>
         </a>
       </v-flex>
       <v-flex  
