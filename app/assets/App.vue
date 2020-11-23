@@ -423,7 +423,7 @@
           class="cursor-pointer ml-2" 
           alt="ONU Mulheres"
           height="20px" 
-          tyle="margin-bottom: 12px;"
+          style="margin-bottom: 12px;"
           @click="$navigationManager.constructor.pushRoute('http://www.onumulheres.org.br/', true)" 
         />
         
