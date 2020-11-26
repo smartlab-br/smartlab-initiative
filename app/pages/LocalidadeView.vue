@@ -502,7 +502,8 @@
           remove_year: function(d){ return String(d.ds_indicador_radical).replace(d.nu_competencia,"").replace("  "," ")},
           absolute: function(d, campo="vl_indicador") { return Math.abs(d[campo]); },
           format_month_ds: function(d,month_ym){
-            return month_ym.substr(4,2) + "/" + month_ym.substr(0,4);
+            let ym = typeof(month_ym) == "number"? month_ym.toString(): month_ym;
+            return ym.substr(4,2) + "/" + ym.substr(0,4);
           },
           concat_descriptions: function(d) {
             return d.desc_indicador + " - " + d.ds_indicador_radical;
