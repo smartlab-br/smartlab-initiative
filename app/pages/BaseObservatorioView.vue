@@ -30,7 +30,8 @@
               return new Date(data - dias).toISOString().substring(0,10).replace(/-/g,'\\-');
           },
           format_month_ds: function(d,month_ym){
-            return month_ym.substr(4,2) + "/" + month_ym.substr(0,4);
+            let ym = typeof(month_ym) == "number"? month_ym.toString(): month_ym;
+            return ym.substr(4,2) + "/" + ym.substr(0,4);
           }
         },
         topology: null,

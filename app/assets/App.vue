@@ -332,8 +332,8 @@
       align-center 
       class="white--text"
       :class="{'px-2 py-4': $vuetify.breakpoint.xsAndup, 
-              'px-3 py-4': $vuetify.breakpoint.mdAndDown, 
-              'px-5 py-5': $vuetify.breakpoint.lgAndUp}" 
+               'px-3 py-4': $vuetify.breakpoint.mdAndDown, 
+               'px-5 py-5': $vuetify.breakpoint.lgAndUp}" 
       app
     >
       <v-flex 
@@ -346,18 +346,18 @@
           class="text-xs-left"
         >
           <v-flex xs12>
-          <a 
-            class="white--text" 
-            @click="$navigationManager.constructor.pushRoute($router, '/saibamais/smartlab', false)"
-          >
-            <img  
-              src="/static/smartlab/smartlab-small.svg" 
-              alt="Smartlab" 
-              height="25px" 
-              style="margin-bottom: -5px;"
-            />
-            <span class="ml-3">Sobre</span>
-          </a>
+            <a 
+              class="white--text" 
+              @click="$navigationManager.constructor.pushRoute($router, '/saibamais/smartlab', false)"
+            >
+              <img  
+                src="/static/smartlab/smartlab-small.svg" 
+                alt="Smartlab" 
+                height="25px" 
+                style="margin-bottom: -5px;"
+              />
+              <span class="ml-3">Sobre</span>
+            </a>
           </v-flex>
         </v-layout>
       </v-flex>
@@ -423,7 +423,7 @@
           class="cursor-pointer ml-2" 
           alt="ONU Mulheres"
           height="20px" 
-          tyle="margin-bottom: 12px;"
+          style="margin-bottom: 12px;"
           @click="$navigationManager.constructor.pushRoute('http://www.onumulheres.org.br/', true)" 
         />
         
@@ -432,30 +432,30 @@
         class="xs6 sm6 md2 lg3 xl3 text-xs-left text-sm-left text-md-center subheading"
         :class="{'pt-5 pb-3': $vuetify.breakpoint.smAndDown }" 
       >
-          <a 
-            class="white--text mr-3" 
-            @click="$navigationManager.constructor.pushRoute($router, 'https://github.com/smartlab-br', true)"
-          >
-            <span v-html="renderIcon('fab','faGithub','GitHub')" />
-          </a>
-          <a 
-            class="white--text mr-3" 
-            @click="$navigationManager.constructor.pushRoute($router, 'https://hub.docker.com/u/smartlab/', true)"
-          >
-            <span v-html="renderIcon('fab','faDocker','Docker')" />
-          </a>
-          <a 
-            class="white--text mr-3" 
-            @click="$navigationManager.constructor.pushRoute($router, '', true)"
-          >
-            <span v-html="renderIcon('fab','faFacebook','Facebook')" />
-          </a>
-          <a 
-            class="white--text" 
-            @click="$navigationManager.constructor.pushRoute($router, '', true)"
-          >
-            <span v-html="renderIcon('fab','faTwitter','Twitter')" />
-          </a>
+        <a 
+          class="white--text mr-3" 
+          @click="$navigationManager.constructor.pushRoute($router, 'https://github.com/smartlab-br', true)"
+        >
+          <span v-html="renderIcon('fab','faGithub','GitHub')" />
+        </a>
+        <a 
+          class="white--text mr-3" 
+          @click="$navigationManager.constructor.pushRoute($router, 'https://hub.docker.com/u/smartlab/', true)"
+        >
+          <span v-html="renderIcon('fab','faDocker','Docker')" />
+        </a>
+        <a 
+          class="white--text mr-3" 
+          @click="$navigationManager.constructor.pushRoute($router, '', true)"
+        >
+          <span v-html="renderIcon('fab','faFacebook','Facebook')" />
+        </a>
+        <a 
+          class="white--text" 
+          @click="$navigationManager.constructor.pushRoute($router, '', true)"
+        >
+          <span v-html="renderIcon('fab','faTwitter','Twitter')" />
+        </a>
       </v-flex>
       <v-flex  
         class="xs6 sm6 md2 lg2 xl3 text-xs-right subheading" 
