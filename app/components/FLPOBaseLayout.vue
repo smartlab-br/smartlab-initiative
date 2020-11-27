@@ -43,7 +43,7 @@
   @import "../node_modules/leaflet.markercluster/dist/MarkerCluster.Default.css";
 
   .leaflet-container {
-        font-family: Palanquin !important;
+        font-family: Palanquin, Calibri, sans-serif !important;
   }
   .leaflet-interactive {
     cursor: pointer;
