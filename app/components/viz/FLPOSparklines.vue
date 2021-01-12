@@ -1,5 +1,15 @@
 <template>
   <v-layout column pa-2 max-width="100%">
+    <v-card>
+        <v-card-title>
+        <v-text-field
+            v-model="search"
+            append-icon="search"
+            label="Procurar"
+            single-line
+            hide-details
+        />
+        </v-card-title>
         <v-progress-linear v-if="!dataset"
           height="40"
           :indeterminate="!dataset"
@@ -7,10 +17,12 @@
           <p class="headline-obs">{{structure.title}}</p>
         </v-progress-linear>
         <!--@update:pagination="triggerChartUpdates()"-->
-        <v-data-table v-if="dataset && structure.headers"
+        <v-data-table 
+            v-if="dataset && structure.headers"
             :headers="removeFormatItems(structure.headers)"
             :items="dataset"
             :disable-initial-sort="disableInitialSort"
+            :search="search"
             class="sparklines-grid elevation-1"
             style="width: 100%;"
             :rows-per-page-items='[10,50,100,200,500,{"text":"$vuetify.dataIterator.rowsPerPageAll","value":-1}]'
@@ -39,51 +51,57 @@
             <template :headers="structure.headers" slot="items" slot-scope="props">
                 <!-- v-for SEM BIND, pois está restrito ao contexto do template do data-table -->
                 <td pa-0 v-for="(hdr, idxHdr) in structure.headers" :key="idxHdr" :style="(hdr.item_align?'text-align:'+hdr.item_align:'')">
-                        <div px-2 class="sparkline" v-if="hdr.type && hdr.type == 'spark'">
-                            <v-layout row nowrap v-if="(hdr.show_labels == undefined || hdr.show_labels)"> 
-                                <v-flex v-if="props.item['sparkline_values_' + hdr.series].length > 1" 
-                                    xs2 xl2 micro-caption text-xs-right :style="'color:'+hdr.bgColor">
-                                    {{ hdr.format ? numberTransformService.formatNumber(
-                                                        props.item['sparkline_values_' + hdr.series][0], hdr.format, hdr.precision, hdr.multiplier, hdr.collapse, hdr.signed, hdr.uiTags ) 
-                                                  : props.item['sparkline_values_' + hdr.series][0] 
-                                    }}
-                                </v-flex>
-                                <v-flex xs8 xl8>
-                                    <v-sparkline 
-                                        :value="props.item['sparkline_values_'+ hdr.series]"
-                                        :color="hdr.bgColor"
-                                        :line-width="hdr.stroke?hdr.stroke:3"
-                                        padding="8"
-                                        height="45"
-                                    ></v-sparkline>
-                                </v-flex>
-                                <v-flex v-if="props.item['sparkline_values_' + hdr.series].length > 1" 
-                                    xs2 xl2 micro-caption text-xs-left :style="'color:'+hdr.bgColor">
-                                    {{ hdr.format ? numberTransformService.formatNumber(
-                                                        props.item['sparkline_values_' + hdr.series][props.item['sparkline_values_' + hdr.series].length-1], 
-                                                        hdr.format, hdr.precision, hdr.multiplier, hdr.collapse, hdr.signed, hdr.uiTags ) 
-                                                  : props.item['sparkline_values_' + hdr.series][props.item['sparkline_values_' + hdr.series].length-1]
-                                    }}
-                                </v-flex>
-                            </v-layout>
-                            <v-layout row nowrap v-else> 
-                                <v-flex xs12>
-                                    <v-sparkline 
-                                        :value="props.item['sparkline_values_'+ hdr.series]"
-                                        :color="hdr.bgColor"
-                                        :line-width="hdr.stroke?hdr.stroke:3"
-                                        padding="8"
-                                        height="45"
-                                    ></v-sparkline>
-                                </v-flex>
-                            </v-layout>
-                        </div>
-                        <div v-else>
-                            {{ props.item['fmt_' + hdr.value] ? props.item['fmt_' + hdr.value]: props.item[hdr.value] }}
-                        </div>
+                    <div px-2 class="sparkline" v-if="hdr.type && hdr.type == 'spark'">
+                        <v-layout row nowrap v-if="(hdr.show_labels == undefined || hdr.show_labels)"> 
+                            <v-flex v-if="props.item['sparkline_values_' + hdr.series].length > 1" 
+                                xs2 xl2 micro-caption text-xs-right :style="'color:'+hdr.bgColor">
+                                {{ hdr.format ? numberTransformService.formatNumber(
+                                                    props.item['sparkline_values_' + hdr.series][0], hdr.format, hdr.precision, hdr.multiplier, hdr.collapse, hdr.signed, hdr.uiTags ) 
+                                                : props.item['sparkline_values_' + hdr.series][0] 
+                                }}
+                            </v-flex>
+                            <v-flex xs8 xl8>
+                                <v-sparkline 
+                                    :value="props.item['sparkline_values_'+ hdr.series]"
+                                    :color="hdr.bgColor"
+                                    :line-width="hdr.stroke?hdr.stroke:3"
+                                    padding="8"
+                                    height="45"
+                                ></v-sparkline>
+                            </v-flex>
+                            <v-flex v-if="props.item['sparkline_values_' + hdr.series].length > 1" 
+                                xs2 xl2 micro-caption text-xs-left :style="'color:'+hdr.bgColor">
+                                {{ hdr.format ? numberTransformService.formatNumber(
+                                                    props.item['sparkline_values_' + hdr.series][props.item['sparkline_values_' + hdr.series].length-1], 
+                                                    hdr.format, hdr.precision, hdr.multiplier, hdr.collapse, hdr.signed, hdr.uiTags ) 
+                                                : props.item['sparkline_values_' + hdr.series][props.item['sparkline_values_' + hdr.series].length-1]
+                                }}
+                            </v-flex>
+                        </v-layout>
+                        <v-layout row nowrap v-else> 
+                            <v-flex xs12>
+                                <v-sparkline 
+                                    :value="props.item['sparkline_values_'+ hdr.series]"
+                                    :color="hdr.bgColor"
+                                    :line-width="hdr.stroke?hdr.stroke:3"
+                                    padding="8"
+                                    height="45"
+                                ></v-sparkline>
+                            </v-flex>
+                        </v-layout>
+                    </div>
+                    <div v-else>
+                        {{ props.item['fmt_' + hdr.value] ? props.item['fmt_' + hdr.value]: props.item[hdr.value] }}
+                    </div>
                 </td> 
             </template>
+            <template slot="no-results">
+                <v-alert :value="true" color="error" icon="warning">
+                    Sua busca por "{{ search }}" não trouxe resultados.
+                </v-alert>
+            </template>            
         </v-data-table>
+    </v-card>        
   </v-layout>
 </template>
 
@@ -95,6 +113,7 @@ export default {
     extends: FLPOBaseLayout,
     data() {
         return {
+            search: '',
             dataset: null,
             disableInitialSort: true,
             numberTransformService: NumberTransformService,

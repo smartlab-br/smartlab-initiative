@@ -1,13 +1,13 @@
 <template>
   <v-app>
     <v-navigation-drawer
-      :mini-variant="miniVariant"
       v-model="drawer"
+      :mini-variant="miniVariant"
       clipped
       fixed
       disable-resize-watcher
       app
-      >
+    >
       <v-list>
         <!-- Item acrescentado para solucionar problema nos displays xs, sm e md, onde o primeiro item desaparecia -->
         <v-list-tile class="hidden-lg-and-up">
@@ -17,10 +17,10 @@
         </v-list-tile>
 
         <v-list-tile 
-          :ripple="{ class: item.rippleColor }"
-          :key="i"
           v-for="(item, i) in items"
           v-ripple
+          :key="i"
+          :ripple="{ class: item.rippleColor }"
           exact
           :tabindex="drawer ? 10 + i : ''"
           @click="itemClick(item)"
@@ -156,8 +156,8 @@
         <v-autocomplete
           v-if="auOptions.length > 0"
           v-show="seen"
-          v-model="gsItemBusca"
           ref="autocompleteChangePlace"
+          v-model="gsItemBusca"
           tabindex="21"
           class="input-group--focused global-search"
           persistent-hint
@@ -200,8 +200,8 @@
                     @click="changeAnalysisUnit($router, data.item, search_item.id)"
                   >
                     <v-layout 
-                      column 
                       v-if="data.item.exclude_from == null || data.item.exclude_from == undefined || !data.item.exclude_from.includes(search_item.id)"
+                      column 
                       wrap 
                       align-center
                     >
