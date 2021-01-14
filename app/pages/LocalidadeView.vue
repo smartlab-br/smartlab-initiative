@@ -190,7 +190,8 @@
                       :topology = "topology"
                       :section-index="indexSecao"
                       @showBugDialog="openBugDialog"
-                      @showSnackbar="snackAlert">
+                      @showSnackbar="snackAlert"
+                      @showAuthenticatioDialog="openAuthenticatioDialog">
                     </flpo-story-card-multiple-charts>
                     <flpo-story-card
                       v-else-if="topology && ((indexSecao*100) + cardIndex  <= visibleCardMaxIndex)"
@@ -200,7 +201,8 @@
                       :topology = "topology"
                       :section-index="indexSecao"
                       @showBugDialog="openBugDialog"
-                      @showSnackbar="snackAlert">
+                      @showSnackbar="snackAlert"
+                      @showAuthenticatioDialog="openAuthenticatioDialog">
                     </flpo-story-card>
                   </v-layout>
                 </v-flex>

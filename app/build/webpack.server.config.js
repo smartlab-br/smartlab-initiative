@@ -31,10 +31,9 @@ module.exports = merge(base, {
       // 'process.env.MAILER_APP_KEY': JSON.stringify(process.env.MAILER_APP_KEY || 'key'),
       // 'process.env.ACIDENTOMETROS_API_BASE_URL': JSON.stringify(process.env.ACIDENTOMETROS_API_BASE_URL || 'http://localhost:8080'),
       // 'process.env.ACIDENTOMETROS_APP_KEY': JSON.stringify(process.env.ACIDENTOMETROS_APP_KEY || 'key'),
-      'process.env.GOOGLE_CLIENTID': JSON.stringify(process.env.GOOGLE_CLIENTID),
-      'process.env.GOOGLE_CLIENTSECRET': JSON.stringify(process.env.GOOGLE_CLIENTSECRET),
-      'process.env.FACEBOOK_CLIENTID': JSON.stringify(process.env.FACEBOOK_CLIENTID),
-      'process.env.FACEBOOK_CLIENTSECRET': JSON.stringify(process.env.FACEBOOK_CLIENTSECRET || 'key')
+      'process.env.GRAVITEE_AM_BASE_URL': JSON.stringify(process.env.GRAVITEE_AM_BASE_URL),
+      'process.env.GRAVITEE_AM_CLIENT_ID': JSON.stringify(process.env.GRAVITEE_AM_CLIENT_ID),
+      'process.env.GRAVITEE_AM_REDIRECT_URL': JSON.stringify(process.env.GRAVITEE_AM_REDIRECT_URL)
     }),
     new VueSSRServerPlugin()
   ]

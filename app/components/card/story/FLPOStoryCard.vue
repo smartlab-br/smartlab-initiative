@@ -76,7 +76,8 @@
                       v-on:selection="triggerSelect"
                       v-on:default-selection="triggerDefaultSelect"
                       v-on:resendInvalidInterpol="changeTextToInvalidInterpol"
-                      @showSnackbar="snackAlert">
+                      @showSnackbar="snackAlert"
+                      @showAuthenticatioDialog="openAuthenticatioDialog">
                     </flpo-composite-text>
                     <v-flex v-else
                       class="text-xs-justify body-obs d-inline-block"
@@ -440,22 +441,26 @@
       },
 
       downloadData() {
-        // Dataset to binary data
-        let datasetCsv = new Parser({delimiter: ';',withBOM: true}).parse(this.dataset);
-        datasetCsv = datasetCsv.replace(/<span>/g,"").replace(/<\/span>/g,"")
-        const csvBin = new Blob([datasetCsv]);
-        
-        // Generates transient link
-        let dynaLink = document.createElement("a");
-        dynaLink.setAttribute("download", "dataset.csv");
-        dynaLink.setAttribute("href", "data:text/plain;charset=utf-8," + encodeURIComponent(csvBin));
-        dynaLink.href = URL.createObjectURL(csvBin);
-        dynaLink.style.display = 'none';
+        if (!this.$store.state.user) {
+          this.openAuthenticatioDialog();
+        } else {
+          // Dataset to binary data
+          let datasetCsv = new Parser({delimiter: ';',withBOM: true}).parse(this.dataset);
+          datasetCsv = datasetCsv.replace(/<span>/g,"").replace(/<\/span>/g,"")
+          const csvBin = new Blob([datasetCsv]);
+          
+          // Generates transient link
+          let dynaLink = document.createElement("a");
+          dynaLink.setAttribute("download", "dataset.csv");
+          dynaLink.setAttribute("href", "data:text/plain;charset=utf-8," + encodeURIComponent(csvBin));
+          dynaLink.href = URL.createObjectURL(csvBin);
+          dynaLink.style.display = 'none';
 
-        // Activates the transient link
-        document.body.appendChild(dynaLink);
-        dynaLink.click();
-        document.body.removeChild(dynaLink);
+          // Activates the transient link
+          document.body.appendChild(dynaLink);
+          dynaLink.click();
+          document.body.removeChild(dynaLink);
+        }
       },
 
       downloadChart() {

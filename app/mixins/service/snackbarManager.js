@@ -28,6 +28,10 @@ const SnackbarManager = {
         openBugDialog(cardTitle){
           this.$emit('showBugDialog', cardTitle);
         },
+
+        openAuthenticatioDialog() {
+          this.$emit('showAuthenticatioDialog');
+        },
         
         chartGen(id, chartType, structure, chartOptions, dataset, metadata, sectionIndex = 0) {
           if (structure && chartOptions && this.validCharts.includes(chartType)) {
