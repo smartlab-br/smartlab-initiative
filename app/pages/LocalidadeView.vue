@@ -400,19 +400,17 @@
           calc_percentage_val1: function(val1,val2) { return val1 / (val1 + val2) * 100},
           calc_percentage_2values: function(val1,val2,total) { return (val1 + val2) / total * 100},
           calc_proportion: function(dividendo, divisor) { return dividendo / divisor; },
-          calc_proportion_ds: function(d,dividendo, divisor) { return dividendo / divisor; },
+          calc_proportion_ds: function(d,dividendo, divisor) { return divisor==0 ? null:dividendo / divisor; },
           get_flag_value: function(d) {return (d.vl_indicador == 0) ? d.ds_indicador_radical + ": NÃO" : d.ds_indicador_radical + ": SIM";},
+          get_flag_number: function(d,a){ return a>=0 ? 'Positivo':'Negativo'; },
           get_te_label: function(d,campo) {
               switch(d[campo]) {
                   case 'te_nat':
-                      return 'Vítimas que nasceram na localidade'
-                      break;
+                      return 'Vítimas que nasceram na localidade';
                   case 'te_res':
-                      return 'Vítimas que residem na localidade'
-                      break;
+                      return 'Vítimas que residem na localidade';
                   case 'te_rgt':
-                      return 'Vítimas resgatadas na localidade'
-                      break;
+                      return 'Vítimas resgatadas na localidade';
                   default:
                       return d[campo];
               }
@@ -429,13 +427,16 @@
             },
           get_proportional_indicator_uf: function(d,campo='vl_indicador', media="media_uf") { return Math.log(((d[campo] - d[media]) / d[media]) + 1.01); },
           get_log: function(d,campo='vl_indicador') { return Math.log(d[campo] + 0.01); },
+          get_number: function(d,val) { 
+            return parseFloat(val); 
+          },
           get_week_status: function(d, reg_week){
             Date.prototype.getWeekNumber = function(){
-              var d = new Date(Date.UTC(this.getFullYear(), this.getMonth(), this.getDate()));
-              var dayNum = d.getUTCDay() || 7;
-              d.setUTCDate(d.getUTCDate() + 4 - dayNum);
-              var yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
-              return Math.ceil((((d - yearStart) / 86400000) + 1)/7)
+              let dt = new Date(Date.UTC(this.getFullYear(), this.getMonth(), this.getDate()));
+              let dayNum = dt.getUTCDay() || 7;
+              dt.setUTCDate(dt.getUTCDate() + 4 - dayNum);
+              let yearStart = new Date(Date.UTC(dt.getUTCFullYear(),0,1));
+              return Math.ceil((((dt - yearStart) / 86400000) + 1)/7)
             };
             if (reg_week == new Date().getWeekNumber()){
               return "Semana corrente";
@@ -502,8 +503,18 @@
           },          
           remove_year: function(d){ return String(d.ds_indicador_radical).replace(d.nu_competencia,"").replace("  "," ")},
           absolute: function(d, campo="vl_indicador") { return Math.abs(d[campo]); },
+          to_upper_ds: function(d,value_field){
+            return d[value_field].toUpperCase();
+          },
+          format_month_ds: function(d,month_ym){
+            let ym = typeof(month_ym) == "number"? month_ym.toString(): month_ym;
+            return ym.substr(4,2) + "/" + ym.substr(0,4);
+          },
           concat_descriptions: function(d) {
             return d.desc_indicador + " - " + d.ds_indicador_radical;
+          },
+          replace_text: function(d,field,text,text_replace){
+            return d[field].replace(text,text_replace);
           },
           replace_text_namepercent: function(data, options) {
             return data[options.name_field] + " (" + data[options.pct_field] + ")"; 
@@ -938,7 +949,7 @@
           url = "/municipios?categorias=cd_unidade,nm_unidade,cd_uf&agregacao=distinct&filtros=eq-cd_unidade-" + idLocalidade.substring(3);
           axios(this.$axiosCallSetupService.getAxiosOptions(url))
             .then(result => {
-              var infoUnidade = JSON.parse(result.data).dataset;
+              var infoUnidade = result.data.dataset;
               if (infoUnidade.length > 0) {
                 localidade = {
                   id_localidade: infoUnidade[0].cd_unidade,
@@ -968,7 +979,7 @@
           url = "/municipios?categorias=cd_uf,nm_uf&agregacao=distinct&filtros=eq-cd_uf-" + idLocalidade;
           axios(this.$axiosCallSetupService.getAxiosOptions(url))
             .then(result => {
-              localidade = JSON.parse(result.data).dataset[0];
+              localidade = result.data.dataset[0];
               localidade.id_localidade = localidade.cd_uf;
               localidade.nm_localidade = localidade.nm_uf;
               localidade.tipo = 'UF';
@@ -984,7 +995,7 @@
           url = "/municipios?categorias=cd_mesorregiao,nm_mesorregiao&agregacao=distinct&filtros=eq-cd_mesorregiao-" + idLocalidade;
           axios(this.$axiosCallSetupService.getAxiosOptions(url))
             .then(result => {
-              localidade = JSON.parse(result.data).dataset[0];
+              localidade = result.data.dataset[0];
               localidade.id_localidade = localidade.cd_mesorregiao;
               localidade.nm_localidade = localidade.nm_mesorregiao;
               localidade.tipo = 'Mesorregião';
@@ -1000,7 +1011,7 @@
           url = "/municipios?categorias=cd_microrregiao,nm_microrregiao&agregacao=distinct&filtros=eq-cd_microrregiao-" + idLocalidade;
           axios(this.$axiosCallSetupService.getAxiosOptions(url))
             .then(result => {
-              localidade = JSON.parse(result.data).dataset[0];
+              localidade = result.data.dataset[0];
               localidade.id_localidade = localidade.cd_microrregiao;
               localidade.nm_localidade = localidade.nm_microrregiao;
               localidade.tipo = 'Microrregião';
@@ -1016,7 +1027,7 @@
           url = "/municipio/" + idLocalidade;
           axios(this.$axiosCallSetupService.getAxiosOptions(url))
             .then(result => {
-              localidade = JSON.parse(result.data)[0];
+              localidade = result.data[0];
               localidade.id_localidade = localidade.cd_municipio_ibge_dv;
               localidade.nm_localidade = localidade.nm_municipio_uf;
               localidade.tipo = 'Município';
@@ -1074,7 +1085,6 @@
         switch (this.dimensoes.length) {
           case 6:
             return 'xs4 sm2';
-            break;
           case 8:
             let clz = 'xs3 sm1';
             if (dimIndx == 0) {

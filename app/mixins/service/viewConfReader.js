@@ -7,7 +7,7 @@ const ViewConfReader = {
 			data() {
 				return {
 					errorMessage: null,
-					leafletBasedCharts: ['MAP_BUBBLES', 'MAP_HEAT', 'MAP_CLUSTER', 'MAP_MIGRATION', 'MAP_POLYGON']
+					leafletBasedCharts: ['MAP_BUBBLES', 'MAP_HEAT', 'MAP_CLUSTER', 'MAP_MIGRATION', 'MAP_POLYGON', 'MIXED_MAP']
 				}
 			},
 			methods: {
@@ -86,14 +86,14 @@ const ViewConfReader = {
 								.then(result => {
 									cbFunction(
 										this.reformDataset(
-											JSON.parse(result.data).dataset,
+											result.data.dataset,
 											structure.api.options,
 											customFunctions
 										),
 										structure.args,
 										structure,
 										addedParams,
-										JSON.parse(result.data).metadata
+										result.data.metadata
 									);
 								}
 							 	).catch(error => { 
@@ -114,7 +114,7 @@ const ViewConfReader = {
 											.then(result => {
 												resolve(
 													fnReformDataset(
-														JSON.parse(result.data).dataset,
+														result.data.dataset,
 														structure.api[indexApi].options,
 														customFunctions
 													)
@@ -168,14 +168,14 @@ const ViewConfReader = {
 							.then(result => {
 								cbFunction(
 									this.reformDataset(
-										JSON.parse(result.data).dataset,
+										result.data.dataset,
 										structure.api_reactive.options,
 										customFunctions
 									),
 									structure.args,
 									structure,
 									addedParams,
-									JSON.parse(result.data).metadata
+									result.data.metadata
 								);
 							}).catch(error => { 
 								console.log(error);
@@ -237,14 +237,14 @@ const ViewConfReader = {
 								.then(result => {
 									cbFunction(
 										this.reformDataset(
-											JSON.parse(result.data).dataset,
+											result.data.dataset,
 											structure.api.options,
 											customFunctions
 										),
 										structure.args,
 										structure,
 										addedParams,
-										JSON.parse(result.data).metadata
+										result.data.metadata
 									);
 								}).catch(error => { 
 									console.log(error);
@@ -264,7 +264,7 @@ const ViewConfReader = {
 											.then(result => {
 												resolve(
 													fnReformDataset(
-														JSON.parse(result.data).dataset,
+														result.data.dataset,
 														eachApi.options,
 														customFunctions
 													)
@@ -662,7 +662,12 @@ const ViewConfReader = {
 					}
 				
 					if (addedParams && addedParams.id) {
-					  // Múltiplos gráficos
+					  //Mixed_map
+					  if (this.dataset == null){
+						  this.dataset = [];
+						  this.metadata = [];
+					  }
+					  // Múltiplos gráficos ou mixed_map
 					  this.dataset[addedParams.id] = dataset;
 					  this.metadata[addedParams.id] = metadata;
 					  this.triggerChartUpdates(addedParams.id, dataset, metadata);

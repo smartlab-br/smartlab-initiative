@@ -262,8 +262,9 @@
         <v-flex px-4 id="sparklines" style="min-height:630px">
           <v-layout row wrap v-if="visibleSparklines" >
             <v-flex pt-3 pb-0 v-for="(strSparklines, index) in observatorio.sparklines.tables" :key="index" :class="strSparklines.cls?strSparklines.cls:'xs12'" text-xs-center>
-              {{ strSparklines.title }}
               <flpo-sparklines 
+                :custom-params="customParams"
+                :custom-functions="customFunctions"
                 :dataset = "dataset"
                 :structure = "strSparklines">
               </flpo-sparklines>
@@ -528,7 +529,7 @@
           }
         } else {
           var endpoint = this.$textTransformService.applyInterpol(payload.rules.api, this.customParams, this.customFunctions, payload.item);
-          this.fetchData(endpoint);
+          this.fetchMapData(endpoint);
         }
       },
 

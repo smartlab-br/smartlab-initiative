@@ -1,15 +1,28 @@
 <template>
   <v-layout column pa-2 max-width="100%">
+    <v-card>
+        <v-card-title>
+        <v-text-field
+            v-model="search"
+            append-icon="search"
+            label="Procurar"
+            single-line
+            hide-details
+        />
+        </v-card-title>
         <v-progress-linear v-if="!dataset"
-          height="5"
+          height="40"
           :indeterminate="!dataset"
           color="info">
+          <p class="headline-obs">{{structure.title}}</p>
         </v-progress-linear>
         <!--@update:pagination="triggerChartUpdates()"-->
-        <v-data-table v-if="dataset && structure.headers"
+        <v-data-table 
+            v-if="dataset && structure.headers"
             :headers="removeFormatItems(structure.headers)"
             :items="dataset"
             :disable-initial-sort="disableInitialSort"
+            :search="search"
             class="sparklines-grid elevation-1"
             style="width: 100%;"
             :rows-per-page-items='[10,50,100,200,500,{"text":"$vuetify.dataIterator.rowsPerPageAll","value":-1}]'
@@ -19,7 +32,10 @@
 
             <template slot="headers" slot-scope="props">
             <tr>
-                <th
+                <th scope="colgroup" class="headline-obs" :colspan="props.headers.length">{{structure.title}}</th>
+            </tr>
+            <tr>
+                <th scope="colgroup" 
                 v-for="header in props.headers"
                 :key="header.text"
                 :class="['column sortable', pagination.descending ? 'desc' : 'asc', header.value === pagination.sortBy ? 'active' : '']"
@@ -27,98 +43,65 @@
                 :width="header.width"
                 >
                 <v-icon small>arrow_upward</v-icon>
-                {{ header.type != 'spark' ? header.text : header.text + " (" + first_cat[header.series] + ' a ' + last_cat[header.series] + ')' }}
+                {{ header.text }}<br/>
+                {{ header.type == 'spark' ? "(" + first_cat[header.series] + " a " + last_cat[header.series] + ")" : "" }}
                 </th>
             </tr>
             </template>            
             <template :headers="structure.headers" slot="items" slot-scope="props">
                 <!-- v-for SEM BIND, pois está restrito ao contexto do template do data-table -->
                 <td pa-0 v-for="(hdr, idxHdr) in structure.headers" :key="idxHdr" :style="(hdr.item_align?'text-align:'+hdr.item_align:'')">
-                        <!--
-                    <v-layout row nowrap pa-0 fill-height>
-
-                            <v-flex xs4 xl5 text-xs-right>
-                                {{ props.item[hdr.value] }}
+                    <div px-2 class="sparkline" v-if="hdr.type && hdr.type == 'spark'">
+                        <v-layout row nowrap v-if="(hdr.show_labels == undefined || hdr.show_labels)"> 
+                            <v-flex v-if="props.item['sparkline_values_' + hdr.series].length > 1" 
+                                xs2 xl2 micro-caption text-xs-right :style="'color:'+hdr.bgColor">
+                                {{ hdr.format ? numberTransformService.formatNumber(
+                                                    props.item['sparkline_values_' + hdr.series][0], hdr.format, hdr.precision, hdr.multiplier, hdr.collapse, hdr.signed, hdr.uiTags ) 
+                                                : props.item['sparkline_values_' + hdr.series][0] 
+                                }}
                             </v-flex>
-                        -->
-                        <!--
-                            <v-flex xs8 pa-1 fill-height column text-xs-center class="sparkline"
-                                :style="'color: ' + hdr.color + '; background-color: ' + hdr.bgColor">
-                                <div :class="'sparkline-value ' + (hdr.item_class != null ? hdr.item_class : '')"
-                                    v-html="props.item[hdr.value] ? props.item[hdr.value] : '&nbsp;'">
-                                </div>
-                                <div v-if="hdr.detail" title="Variação início/fim (%)"
-                                    :class="'sparkline-detail ' + (hdr.detail_class != null ? hdr.detail_class : '')"
-                                    v-html="props.item['str_' + hdr.detail] ? props.item['str_' + hdr.detail] : '&nbsp;'">
-                                </div>
+                            <v-flex xs8 xl8>
+                                <v-sparkline 
+                                    :value="props.item['sparkline_values_'+ hdr.series]"
+                                    :color="hdr.bgColor"
+                                    :line-width="hdr.stroke?hdr.stroke:3"
+                                    padding="8"
+                                    height="45"
+                                ></v-sparkline>
                             </v-flex>
-                            <v-flex xs4 class="sparkline">
-                                <v-layout fill-height
-                                    v-if="structure && structure.chart_options !== null && validCharts.includes(structure.chart_type)"
-                                    class="spark"
-                                    ref = "chartRef"
-                                    :class = "leafletBasedCharts.includes(structure.chart_type) ? 'map_geo' : ''"
-                                    :id="'spark_' + hdr.series + '_' + props.item.id">
-                                </v-layout>
+                            <v-flex v-if="props.item['sparkline_values_' + hdr.series].length > 1" 
+                                xs2 xl2 micro-caption text-xs-left :style="'color:'+hdr.bgColor">
+                                {{ hdr.format ? numberTransformService.formatNumber(
+                                                    props.item['sparkline_values_' + hdr.series][props.item['sparkline_values_' + hdr.series].length-1], 
+                                                    hdr.format, hdr.precision, hdr.multiplier, hdr.collapse, hdr.signed, hdr.uiTags ) 
+                                                : props.item['sparkline_values_' + hdr.series][props.item['sparkline_values_' + hdr.series].length-1]
+                                }}
                             </v-flex>
-
-                                        :labels="props.item['sparkline_labels_' + hdr.series]"
-                        -->
-                        <!--
-                            <v-flex xs2 text-xs-center>
-                                {{ (props.item['total_'+ hdr.series]?props.item['total_'+ hdr.series]: 0) }}
+                        </v-layout>
+                        <v-layout row nowrap v-else> 
+                            <v-flex xs12>
+                                <v-sparkline 
+                                    :value="props.item['sparkline_values_'+ hdr.series]"
+                                    :color="hdr.bgColor"
+                                    :line-width="hdr.stroke?hdr.stroke:3"
+                                    padding="8"
+                                    height="45"
+                                ></v-sparkline>
                             </v-flex>
-                            <v-flex xs4 px-2 class="sparkline">
-                        -->
-                        <div px-2 class="sparkline" v-if="hdr.type && hdr.type == 'spark'">
-                            <v-layout row nowrap> 
-                                <v-flex v-if="props.item['sparkline_values_' + hdr.series].length > 1" 
-                                    xs2 xl2 micro-caption text-xs-right :style="'color:'+hdr.bgColor">
-                                    {{ hdr.format ? numberTransformService.formatNumber(
-                                                        props.item['sparkline_values_' + hdr.series][0], hdr.format, hdr.precision, hdr.multiplier, hdr.collapse, hdr.signed, hdr.uiTags ) 
-                                                  : props.item['sparkline_values_' + hdr.series][0] 
-                                    }}
-                                </v-flex>
-                                <v-flex xs8 xl8>
-                                    <v-sparkline 
-                                        :value="props.item['sparkline_values_'+ hdr.series]"
-                                        :color="hdr.bgColor"
-                                        :line-width="hdr.stroke?hdr.stroke:3"
-                                        padding="8"
-                                        height="45"
-                                    ></v-sparkline>
-                                </v-flex>
-                                <v-flex v-if="props.item['sparkline_values_' + hdr.series].length > 1" 
-                                    xs2 xl2 micro-caption text-xs-left :style="'color:'+hdr.bgColor">
-                                    {{ hdr.format ? numberTransformService.formatNumber(
-                                                        props.item['sparkline_values_' + hdr.series][props.item['sparkline_values_' + hdr.series].length-1], 
-                                                        hdr.format, hdr.precision, hdr.multiplier, hdr.collapse, hdr.signed, hdr.uiTags ) 
-                                                  : props.item['sparkline_values_' + hdr.series][props.item['sparkline_values_' + hdr.series].length-1]
-                                    }}
-                                </v-flex>
-                            </v-layout>
-                        </div>
-                        <!--
-                                                    
-                            <v-flex xs2 text-xs-center caption>
-                                {{ (props.item['higher_value_'+ hdr.series] !== 0 ? props.item['higher_value_'+ hdr.series] + "(" + props.item['higher_cat_'+ hdr.series] + ")": "") }}
-                            </v-flex>
-                        -->
-                        <!--
-                        <div v-else-if="typeof props.item[hdr.value] === 'string' && props.item[hdr.value].includes('</')"
-                            :class="(hdr.item_class != null ? hdr.item_class : '')"
-                            v-html="props.item[hdr.value]">
-                        </div>
-                        -->
-                        <div v-else>
-                            {{ props.item['fmt_' + hdr.value] ? props.item['fmt_' + hdr.value]: props.item[hdr.value] }}
-                        </div>
-                    <!--
-                    </v-layout>
-                    -->
+                        </v-layout>
+                    </div>
+                    <div v-else>
+                        {{ props.item['fmt_' + hdr.value] ? props.item['fmt_' + hdr.value]: props.item[hdr.value] }}
+                    </div>
                 </td> 
             </template>
+            <template slot="no-results">
+                <v-alert :value="true" color="error" icon="warning">
+                    Sua busca por "{{ search }}" não trouxe resultados.
+                </v-alert>
+            </template>            
         </v-data-table>
+    </v-card>        
   </v-layout>
 </template>
 
@@ -130,6 +113,7 @@ export default {
     extends: FLPOBaseLayout,
     data() {
         return {
+            search: '',
             dataset: null,
             disableInitialSort: true,
             numberTransformService: NumberTransformService,
@@ -139,7 +123,8 @@ export default {
         }
     },
     created () {
-        this.fillDataStructure(this.structure, {}, {}, this.fillFromDataset, {});
+        this.fillDataStructure(this.structure, this.customParams,
+        this.customFunctions, this.fillFromDataset, {});
     },
     methods: {
         customSort(items, index, isDesc) {
@@ -202,39 +187,9 @@ export default {
                             
                             eachInHierarchy[row[sourceStructure.series_field]] = [entry];
 
-                            // eachInHierarchy['total_' + row[sourceStructure.series_field]] = entry.value;
-                            // eachInHierarchy['stats_' + row[sourceStructure.series_field]] = {
-                            //     initialValue: entry.value,
-                            //     finalValue: entry.value,
-                            //     initialCat: entry.cat_value,
-                            //     finalCat: entry.cat_value
-                            // };
                         } else { // Existing instance and series
                             eachInHierarchy[row[sourceStructure.series_field]].push(entry);
 
-                            // eachInHierarchy['total_' + row[sourceStructure.series_field]] = eachInHierarchy['total_' + row[sourceStructure.series_field]] + entry.value;
-
-                            // if (eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialCat > entry.cat_value) {
-                            //     eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialValue = entry.value;
-                            //     eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialCat = entry.cat_value;
-                            // }
-                            // if (eachInHierarchy['stats_' + row[sourceStructure.series_field]].finalCat < entry.cat_value) {
-                            //     eachInHierarchy['stats_' + row[sourceStructure.series_field]].finalValue = entry.value;
-                            //     eachInHierarchy['stats_' + row[sourceStructure.series_field]].finalCat = entry.cat_value;
-                            // }
-
-                            // if (eachInHierarchy[row[sourceStructure.series_field]].length > 1 &&
-                            //     eachInHierarchy['stats_' + row[sourceStructure.series_field]] &&
-                            //     eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialValue != 0) {
-                            //     eachInHierarchy['stats_' + row[sourceStructure.series_field]].deltaPerc = (eachInHierarchy['stats_' + row[sourceStructure.series_field]].finalValue - eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialValue) / eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialValue * 100;
-                            //     eachInHierarchy['deltaPerc_' + row[sourceStructure.series_field]] = (eachInHierarchy['stats_' + row[sourceStructure.series_field]].finalValue - eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialValue) / eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialValue * 100;
-                                // Delta % for sorter
-                                // if (row[sourceStructure.series_field] == sourceStructure.sorter.indicador) {
-                                //     eachInHierarchy.deltaPerc = (eachInHierarchy['stats_' + row[sourceStructure.series_field]].finalValue - eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialValue) / eachInHierarchy['stats_' + row[sourceStructure.series_field]].initialValue * 100;
-                                // }
-                                // Delta % string formatters
-                            //     eachInHierarchy['str_deltaPerc_' + row[sourceStructure.series_field]] = this.$numberTransformService.constructor.formatNumber(eachInHierarchy['deltaPerc_' + row[sourceStructure.series_field]], 'porcentagem');
-                            // }
                         }
                         continue fromSource;
                     }    
@@ -244,27 +199,12 @@ export default {
                 let nuInstance = row;
                 nuInstance.id = row[sourceStructure.id_field];
 
-                // nuInstance['total_' + row[sourceStructure.series_field]] = entry.value;
                 nuInstance[row[sourceStructure.series_field]] = [entry];
-                // nuInstance['stats_' + row[sourceStructure.series_field]] = {
-                //     initialValue: entry.value,
-                //     finalValue: entry.value,
-                //     initialCat: entry.cat_value,
-                //     finalCat: entry.cat_value
-                // };                
                 hierarchicalDS.push(nuInstance);
             }
 
-            // let fnSorter = (a, b) => {
-            //     if (a.deltaPerc && b.deltaPerc) {
-            //         return - (a.deltaPerc - b.deltaPerc);
-            //     }
-            //     if (a.deltaPerc) return -1;
-            //     if (b.deltaPerc) return 1;
-            //     return 0;
-            // }
             let fillZeros = sourceStructure.fillZeros == undefined ? true : sourceStructure.fillZeros;
-            this.createSparklineFields(hierarchicalDS, allSeries, series_first_cat, series_last_cat, fillZeros, sourceStructure);
+            this.createSparklineFields(hierarchicalDS, allSeries, series_first_cat, series_last_cat, sourceStructure, fillZeros);
 
             if (sourceStructure.category_type == "timestamp"){
                 for(let serie of allSeries){
@@ -277,6 +217,50 @@ export default {
             this.first_cat = series_first_cat
             this.last_cat = series_last_cat
             
+            if(sourceStructure.category_type == "timestamp" && sourceStructure.category_aggregation == "week"){
+                for(let reg of hierarchicalDS){
+                    for(let serie of allSeries){
+                        let new_serie = [];
+                        let sum_week = 0;
+                        let weekday;
+                        let first_reg = true;
+                        let day_before = null;
+                        let same_week = true;
+                        const _MS_PER_DAY = 1000 * 60 * 60 * 24;
+                        for (let item of reg[serie]){
+                            weekday = new Date(item.cat_value).getUTCDay();
+                            //TODO - acrescentar verificação para mesma semana date-7?
+                            if (day_before){
+                                let days_diff = Math.floor((new Date(item.cat_value) - day_before) / _MS_PER_DAY);                                
+                                if (new Date(item.cat_value) == day_before) {
+                                    same_week = true;
+                                } else if (weekday <= day_before.getUTCDay()){
+                                    same_week = false;
+                                } else if (days_diff > 6){
+                                    same_week = false;
+                                } else {
+                                    same_week = true;
+                                }
+                            }
+                            if (weekday == 0 || (day_before && !same_week) ){
+                                if (!first_reg){
+                                    new_serie.push(sum_week);
+                                } 
+                                sum_week = item.value;
+                            } else {
+                                sum_week += item.value;
+                            }
+                            first_reg = false;
+                            day_before = new Date(item.cat_value);
+                        }
+                        // não conta a última semana
+                        // new_serie.push(sum_week);
+                        reg['sparkline_values_' + serie] = new_serie;
+                        reg['last_value_' + serie] = new_serie[new_serie.length-1];
+                    }
+                }
+            }
+
             //default order = last value in first series
             let order_field = 'last_value_' + allSeries[0];
             if (sourceStructure.order_field){
@@ -287,18 +271,17 @@ export default {
             }
 
             hierarchicalDS.sort(fnSorter);
-            
             this.dataset = hierarchicalDS;
 
         },
 
-        createSparklineFields(dataset, seriesList, series_first_cat, series_last_cat, fillZeros = true, sourceStructure){
+        createSparklineFields(dataset, seriesList, series_first_cat, series_last_cat, sourceStructure, fillZeros = true){
             for (let row of dataset){
 
                 for (let series_value of seriesList){
                     let series = row[series_value];
 
-                    let sparkline_labels = [];
+                    // let sparkline_labels = [];
                     let sparkline_values = [];
                     let higher_cat = series_first_cat[series_value];
                     let higher_value = 0;
@@ -316,13 +299,13 @@ export default {
                         if (fillZeros){
                             if (firstSeries.cat_value > series_first_cat[series_value]){
                                 for(let i = series_first_cat[series_value]; i < firstSeries.cat_value; i++){
-                                    sparkline_labels.push(i);
+                                    // sparkline_labels.push(i);
                                     sparkline_values.push(0);                                
                                 }
                             }
                         }
 
-                        sparkline_labels.push(firstSeries.cat_value);
+                        // sparkline_labels.push(firstSeries.cat_value);
                         sparkline_values.push(firstSeries.value);  
 
                         higher_value = firstSeries.value;
@@ -333,11 +316,11 @@ export default {
                             let seriesPrev = series[k-1];
                             if (fillZeros){
                                 for(let j = seriesPrev.cat_value + 1; j < series[k].cat_value; j++){
-                                    sparkline_labels.push(j);
+                                    // sparkline_labels.push(j);
                                     sparkline_values.push(0);                                
                                 }
                             }
-                            sparkline_labels.push(series[k].cat_value);
+                            // sparkline_labels.push(series[k].cat_value);
                             sparkline_values.push(series[k].value);    
                             total += series[k].value;
                             if (series[k].value > higher_value){
@@ -350,7 +333,7 @@ export default {
                             let lastSeries = series[series.length - 1];
                             if (lastSeries.cat_value < series_last_cat[series_value]){
                                 for(let i = lastSeries.cat_value + 1; i <= series_last_cat[series_value]; i++){
-                                    sparkline_labels.push(i);
+                                    // sparkline_labels.push(i);
                                     sparkline_values.push(0);                                
                                 }
                             }
@@ -360,7 +343,7 @@ export default {
                         row[series_value] = [];
                     }
 
-                    row['sparkline_labels_' + series_value] = sparkline_labels;
+                    // row['sparkline_labels_' + series_value] = sparkline_labels;
                     row['sparkline_values_' + series_value] = sparkline_values;
                     row['total_' + series_value] = total;
                     row['higher_value_' + series_value] = higher_value;
@@ -370,7 +353,7 @@ export default {
 
                     if(series){
                         row['last_value_' + series_value] = sparkline_values[sparkline_values.length-1];
-                        row['higher_value_str_' + series_value] = higher_value + " (" + higher_cat + ")";
+                        row['higher_value_str_' + series_value] = NumberTransformService.formatNumber(higher_value, "inteiro") + " (" + higher_cat + ")";
                     } else {
                         row['last_value_' + series_value] = 0;
                         row['higher_value_str_' + series_value] = "";
