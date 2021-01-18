@@ -249,13 +249,11 @@
         </v-tooltip>
       </v-btn>
       <v-btn
-      </v-btn>
         tabindex = "23"
         icon class="ml-0"
         aria-label="Identifique-se"
         @click="handleAvatarClick()">
         <v-tooltip bottom>
-        </v-tooltip>
               <v-avatar
                 size="36px"
               slot="activator">
@@ -266,6 +264,8 @@
                 <v-icon v-else color="white" slot="activator">perm_identity</v-icon>
               </v-avatar>
           {{ computedLoginLabel }} 
+        </v-tooltip>
+      </v-btn>
       <!--
       <v-btn
         icon class="ml-0"
