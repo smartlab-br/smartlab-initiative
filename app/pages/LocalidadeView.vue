@@ -409,6 +409,8 @@
                       return 'Vítimas que residem na localidade';
                   case 'te_rgt':
                       return 'Vítimas resgatadas na localidade';
+                  case 'te_sit_trab_resgatados':
+                      return 'Vítimas resgatadas na localidade';
                   default:
                       return d[campo];
               }
