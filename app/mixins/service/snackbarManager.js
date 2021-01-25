@@ -174,6 +174,10 @@ const SnackbarManager = {
             url = url + this.customParams.filterUrl;
             text += "Considerados os seguintes filtros: " + this.customParams.filterText;
           }
+          if (this.customFilters.filterUrl && this.customFilters.filterUrl != ""){
+            url = url + this.customFilters.filterUrl;
+            text += "Considerados os seguintes filtros: " + this.customFilters.filterText;
+          }
           this.changeCursor(target.options.customOptions.containerId, 'wait');
           axios.all([axios(this.$axiosCallSetupService.getAxiosOptions(url)),
                      axios(this.$axiosCallSetupService.getAxiosOptions(urlIndicadores))])
