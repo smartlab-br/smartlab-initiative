@@ -9,18 +9,16 @@
         :color="eachSwitch.color !== null ? eachSwitch.color : 'primary'"
         v-on:change="toggleSwitch(eachSwitch)">
         <template slot="label">
-          <v-layout row wrap>
+          <v-layout align-center>
             <v-flex>
             {{ eachSwitch.label ? eachSwitch.label : '' }}
             </v-flex>
-            <v-flex>
-              <flpo-minicard v-for="(miniCard, index) in eachSwitch.minicards" :key="index"
-                :structure="miniCard" :customFunctions="customFunctions"
-                :customParams="customParams"
-                :row-class="miniCard.rowClass ? miniCard.rowClass : 'pa-1'"
-                @showSnackbar="snackAlert">
-              </flpo-minicard>
-            </v-flex>
+            <flpo-minicard v-for="(miniCard, index) in eachSwitch.minicards" :key="index"
+              :structure="miniCard" :customFunctions="customFunctions"
+              :customParams="customParams"
+              :row-class="miniCard.rowClass ? miniCard.rowClass : 'pa-1'"
+              @showSnackbar="snackAlert">
+            </flpo-minicard>
           </v-layout>
         </template>
       </v-switch>
