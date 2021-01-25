@@ -174,7 +174,7 @@ const SnackbarManager = {
             url = url + this.customParams.filterUrl;
             text += "Considerados os seguintes filtros: " + this.customParams.filterText;
           }
-          if (this.customFilters.filterUrl && this.customFilters.filterUrl != ""){
+          if (this.customFilters && this.customFilters.filterUrl && this.customFilters.filterUrl != ""){
             url = url + this.customFilters.filterUrl;
             text += "Considerados os seguintes filtros: " + this.customFilters.filterText;
           }
