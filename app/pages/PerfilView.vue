@@ -42,7 +42,7 @@
                   <div class="display-2-obs white--text">{{this.$store.state.user ? this.$store.state.user.name : ''}}</div>
                   <div class="display-1-obs white--text mb-5">{{this.$store.state.user ? this.$store.state.user.email : ''}}</div>
                   
-                  <v-btn href="am/autenticar/logout?invalidate_tokens=true">Sair</v-btn>
+                  <v-btn @click="logOut()">Sair</v-btn>
                 </v-flex>
               </v-layout>
           </v-container>
@@ -73,7 +73,7 @@
     },
     methods: {
       logOut: function() {
-        this.$navigationManager.constructor.pushRoute(this.$router, 'https://80bae3a20908.ngrok.io/am/autenticar/logout', false)
+        window.location = `${process.env.GRAVITEE_AM_BASE_URL}/logout?invalidate_tokens=true&target_url=${process.env.GRAVITEE_AM_REDIRECT_URL}`;
       }
     }
   }

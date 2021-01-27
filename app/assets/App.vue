@@ -1108,11 +1108,9 @@
         };
 
         // var $window = (typeof window !== undefined) ? window : fakeWindow;
-        
         var loginUrl = `${process.env.GRAVITEE_AM_BASE_URL}/oauth/authorize?client_id=${process.env.GRAVITEE_AM_CLIENT_ID}&response_type=token&redirect_uri=${process.env.GRAVITEE_AM_REDIRECT_URL}`;
         // console.log(loginUrl);
         var popup = window.open(loginUrl, '_blank', 'width=550,height=450,resizable=no,scrollbars=yes')
-        // var popup = window.open('http://localhost/am/autenticar/oauth/authorize?client_id=f9a54967-5098-49c9-a549-67509849c90b&response_type=token&redirect_uri=https://80bae3a20908.ngrok.io', '', 'width=600,height=700,resizable=no,scrollbars=yes')
 
         var this_ = this;
         var poolingInterval = setInterval(function () {
