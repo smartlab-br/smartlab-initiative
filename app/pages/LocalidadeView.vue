@@ -444,6 +444,10 @@
               return "Semana completa";
             }
           },
+          get_week_year: function(d, week, week_start){
+            let wee_start_ISO = new Date(week_start).toISOString().substring(0,10);
+            return  wee_start_ISO.substring(0,4) + '-' + week;
+          },
           get_bipolar_scale: function(d, prop, origin = 0) {
             if (d[prop] == null) return null;
             let val = d[prop] - origin;
