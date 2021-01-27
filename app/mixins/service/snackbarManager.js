@@ -8,8 +8,8 @@ const SnackbarManager = {
     Vue.mixin({
       data() {
         return {
-          validCharts: ['MAP_TOPOJSON', 'LINE', 'STACKED', 'BAR', 'TREEMAP', 'SCATTERPLOT', 'BOXPLOT', 'CALENDAR', 'SANKEYD3', 'MAP_BUBBLES', 'MAP_HEAT', 'MAP_CLUSTER', 'MAP_MIGRATION', 'MAP_POLYGON'],
-          leafletBasedCharts: ['MAP_BUBBLES', 'MAP_HEAT', 'MAP_CLUSTER', 'MAP_MIGRATION', 'MAP_POLYGON']
+          validCharts: ['MAP_TOPOJSON', 'LINE', 'STACKED', 'BAR', 'TREEMAP', 'SCATTERPLOT', 'BOXPLOT', 'CALENDAR', 'SANKEYD3', 'MAP_BUBBLES', 'MAP_HEAT', 'MAP_CLUSTER', 'MAP_MIGRATION', 'MAP_POLYGON', 'MIXED_MAP'],
+          leafletBasedCharts: ['MAP_BUBBLES', 'MAP_HEAT', 'MAP_CLUSTER', 'MAP_MIGRATION', 'MAP_POLYGON', 'MIXED_MAP']
         }
       },
       methods: {
@@ -31,15 +31,39 @@ const SnackbarManager = {
         
         chartGen(id, chartType, structure, chartOptions, dataset, metadata, sectionIndex = 0) {
           if (structure && chartOptions && this.validCharts.includes(chartType)) {
-            let additionalOptions = this.buildChartAdditionalOptions(id, chartType, structure, chartOptions, dataset, metadata, sectionIndex);
-  
-            return ChartBuilderService.generateChart(
-              chartType, 
-              id,
-              dataset,
-              chartOptions,
-              additionalOptions
-            );
+            if (chartOptions.from_api){
+              let idObservatorio = this.$parent.idObservatorio;
+              let dimension = this.$parent.dimensao_ativa_id;
+              let idLocalidade = this.$parent.idLocalidade;
+              let scope = this.getEscopo(idLocalidade);
+              let url = "/chart?from_viewconf=S&au="+ idLocalidade +
+                        "&card_id="+structure.id+"&observatory="+ idObservatorio +
+                        "&dimension="+dimension+"&scope="+scope+"&as_image=N";
+              return new Promise((resolve, reject) => {
+                axios(this.$axiosCallSetupService.getAxiosOptions(url))
+                .then(result => {
+                  let container = document.getElementById(id);
+                  if (container) {
+                      container.innerHTML = result.data;
+                      container.style.display = 'inline';
+                  }
+                  resolve();
+                }).catch(error => { 
+                  this.sendDataStructureError("Falha ao buscar dados do card " + cardTitle); 
+                  reject();
+                });
+              });
+            } else {
+              let additionalOptions = this.buildChartAdditionalOptions(id, chartType, structure, chartOptions, dataset, metadata, sectionIndex);
+    
+              return ChartBuilderService.generateChart(
+                chartType, 
+                id,
+                dataset,
+                chartOptions,
+                additionalOptions
+              );
+            }
           }
         },
         chartRegen(chartHandler, id, chartType, structure, chartOptions, dataset, metadata, sectionIndex = 0) {
@@ -139,7 +163,7 @@ const SnackbarManager = {
         },
         
         obsTETooltip(target, route, tooltip_list = [], removed_text_list = [], options = null){
-          let url = "/te/indicadoresmunicipais/rerank?categorias=cd_mun_ibge,cd_uf,cd_indicador,nm_municipio_uf,nu_competencia_max,nu_competencia_min&valor=vl_indicador&agregacao=sum&filtros=nn-vl_indicador,and,in-cd_indicador-'te_ope'-'te_rgt'-'te_nat'-'te_res'-'te_inspecoes'-'te_insp_rgt',and,post-eq-cd_mun_ibge-"+ target.options.rowData.cd_mun_ibge;
+          let url = "/te/indicadoresmunicipais/rerank?categorias=cd_mun_ibge,cd_uf,cd_indicador,nm_municipio_uf,nu_competencia_max,nu_competencia_min&valor=vl_indicador&agregacao=sum&filtros=nn-vl_indicador,and,in-cd_indicador-'te_ope'-'te_sit_trab_resgatados'-'te_nat'-'te_res'-'te_inspecoes'-'te_insp_rgt',and,post-eq-cd_mun_ibge-"+ target.options.rowData.cd_mun_ibge;
           // let url = "/te/indicadoresmunicipais?categorias=cd_mun_ibge,nm_municipio_uf,nu_competencia_max,nu_competencia_min&valor=vl_indicador&agregacao=sum&pivot=cd_indicador&filtros=nn-vl_indicador,and,in-cd_indicador-'te_ope'-'te_rgt'-'te_nat'-'te_res'-'te_inspecoes',and,eq-cd_mun_ibge-"+ target.options.rowData.cd_mun_ibge;
           let urlIndicadores = "/indicadoresmunicipais?categorias=cd_indicador,ds_indicador_radical,nu_competencia,nu_competencia_max,nu_competencia_min,vl_indicador&filtros=nn-vl_indicador,and,in-cd_indicador-'06_01_09_01'-'01_16_02_00'-'01_15_01_00'-'01_14_13_00',and,eq-cd_mun_ibge-"+ target.options.rowData.cd_mun_ibge+",and,eq-nu_competencia-nu_competencia_max&ordenacao=ds_indicador_radical";
           let text = "";
@@ -150,6 +174,10 @@ const SnackbarManager = {
             url = url + this.customParams.filterUrl;
             text += "Considerados os seguintes filtros: " + this.customParams.filterText;
           }
+          if (this.customFilters && this.customFilters.filterUrl && this.customFilters.filterUrl != ""){
+            url = url + this.customFilters.filterUrl;
+            text += "Considerados os seguintes filtros: " + this.customFilters.filterText;
+          }
           this.changeCursor(target.options.customOptions.containerId, 'wait');
           axios.all([axios(this.$axiosCallSetupService.getAxiosOptions(url)),
                      axios(this.$axiosCallSetupService.getAxiosOptions(urlIndicadores))])
@@ -157,12 +185,14 @@ const SnackbarManager = {
               let dt = result.data.dataset;
               let dtIndicadores = resultIndicadores.data.dataset;
               // let source = result.data).metadata.fonte;
-              let ano_min = this.customParams.value_min ? this.customParams.value_min : dt[0].nu_competencia_min;
-              let ano_max = this.customParams.value_max ? this.customParams.value_max : dt[0].nu_competencia_max;
+              let ano_min;
+              let ano_max;
   
               text += "<p class='headline-obs'>Município: <b>" + dt[0].nm_municipio_uf + "</b></p>";
               text += "<table width='100%'>";
               let vl_ope = 0;
+              let vl_ope_nu_competencia_min;
+              let vl_ope_nu_competencia_max;
               let vl_inspecoes = 0;
               let vl_insp_rgt = 0;
               let vl_rgt = 0;
@@ -170,20 +200,30 @@ const SnackbarManager = {
               let vl_rgt_pct_uf = 0;
               let vl_rgt_rank_br = 0;
               let vl_rgt_pct_br = 0;
+              let vl_rgt_nu_competencia_min;
+              let vl_rgt_nu_competencia_max;
               let vl_nat = 0;
               let vl_nat_rank_uf = 0;
               let vl_nat_pct_uf = 0;
               let vl_nat_rank_br = 0;
               let vl_nat_pct_br = 0;
+              let vl_nat_nu_competencia_min;
+              let vl_nat_nu_competencia_max;
               let vl_res = 0;
               let vl_res_rank_uf = 0;
               let vl_res_pct_uf = 0;
               let vl_res_rank_br = 0;
               let vl_res_pct_br = 0;
+              let vl_res_nu_competencia_min;
+              let vl_res_nu_competencia_max;
               for (let item of dt){
                 switch(item.cd_indicador){
                   case "te_ope": // Operações
+                    vl_ope_nu_competencia_max = item.nu_competencia_max ? item.nu_competencia_max : null;
+                    vl_ope_nu_competencia_min = item.nu_competencia_min ? item.nu_competencia_min : null;
                     vl_ope = item.agr_sum_vl_indicador ? item.agr_sum_vl_indicador : 0;
+                    vl_ope_nu_competencia_max = item.nu_competencia_max ? item.nu_competencia_max : null;
+                    vl_ope_nu_competencia_min = item.nu_competencia_min ? item.nu_competencia_min : null;
                   break;
                   case "te_inspecoes": // Inspeções
                     vl_inspecoes = item.agr_sum_vl_indicador ? item.agr_sum_vl_indicador : 0;
@@ -191,7 +231,9 @@ const SnackbarManager = {
                   case "te_insp_rgt": // Inspeções com resgate
                     vl_insp_rgt = item.agr_sum_vl_indicador ? item.agr_sum_vl_indicador : 0;
                   break;
-                  case "te_rgt": // Resgates
+                  case "te_sit_trab_resgatados": // Resgates
+                    vl_rgt_nu_competencia_max = item.nu_competencia_max ? item.nu_competencia_max : null;
+                    vl_rgt_nu_competencia_min = item.nu_competencia_min ? item.nu_competencia_min : null;
                     vl_rgt = item.agr_sum_vl_indicador ? item.agr_sum_vl_indicador : 0;
                     vl_rgt_rank_uf = item.rerank_rank_uf ? this.$numberTransformService.constructor.formatNumber(item.rerank_rank_uf,"inteiro") : 0;
                     vl_rgt_rank_br = item.rerank_rank_br ? this.$numberTransformService.constructor.formatNumber(item.rerank_rank_br,"inteiro") : 0;
@@ -199,6 +241,8 @@ const SnackbarManager = {
                     vl_rgt_pct_br = item.rerank_rank_br ? this.$numberTransformService.constructor.formatNumber(item.rerank_perc_br,"porcentagem",3,100) : 0;
                   break;
                   case "te_nat": // Resgatados Naturais
+                    vl_nat_nu_competencia_max = item.nu_competencia_max ? item.nu_competencia_max : null;
+                    vl_nat_nu_competencia_min = item.nu_competencia_min ? item.nu_competencia_min : null;
                     vl_nat = item.agr_sum_vl_indicador ? item.agr_sum_vl_indicador : 0;
                     vl_nat_rank_uf = item.rerank_rank_uf ? this.$numberTransformService.constructor.formatNumber(item.rerank_rank_uf,"inteiro") : 0;
                     vl_nat_rank_br = item.rerank_rank_br ? this.$numberTransformService.constructor.formatNumber(item.rerank_rank_br,"inteiro") : 0;
@@ -206,6 +250,8 @@ const SnackbarManager = {
                     vl_nat_pct_br = item.rerank_rank_br ? this.$numberTransformService.constructor.formatNumber(item.rerank_perc_br,"porcentagem",3,100) : 0;
                   break;
                   case "te_res": // Resgatados Residentes
+                    vl_res_nu_competencia_max = item.nu_competencia_max ? item.nu_competencia_max : null;
+                    vl_res_nu_competencia_min = item.nu_competencia_min ? item.nu_competencia_min : null;
                     vl_res = item.agr_sum_vl_indicador ? item.agr_sum_vl_indicador : 0;
                     vl_res_rank_uf = item.rerank_rank_uf ? this.$numberTransformService.constructor.formatNumber(item.rerank_rank_uf,"inteiro") : 0;
                     vl_res_rank_br = item.rerank_rank_br ? this.$numberTransformService.constructor.formatNumber(item.rerank_rank_br,"inteiro") : 0;
@@ -215,35 +261,51 @@ const SnackbarManager = {
                 }
               }
   
-              text += "<tr><td class='font-weight-bold green--text accent-4'>OPERAÇÕES E RESGATES</td></tr>";
-              text += "<tr><td>" + this.$numberTransformService.constructor.formatNumber(vl_ope,"inteiro") + " operações</td></tr>";
+              text += "<tr><td class='font-weight-bold green--text accent-4'>RESGATES</td></tr>";
               text += "<tr><td>" + this.$numberTransformService.constructor.formatNumber(vl_rgt,"inteiro") + " resgates</td></tr>";
               if (vl_rgt != 0){
                 text += "<tr><td>" + vl_rgt_rank_uf + "ª posição no Estado com " + vl_rgt_pct_uf + " do total</td></tr>";
                 text += "<tr><td>" + vl_rgt_rank_br + "ª posição no Brasil com " + vl_rgt_pct_br + " do total</td></tr>";
+                ano_min = this.customParams.value_min && this.customParams.value_min >= vl_rgt_nu_competencia_min ? this.customParams.value_min : vl_rgt_nu_competencia_min;
+                ano_max = this.customParams.value_max && this.customParams.value_max <= vl_rgt_nu_competencia_max? this.customParams.value_max : vl_rgt_nu_competencia_max;
+                text += "<tr><td>Fonte: Radar SIT - Painel de Informações e Estatísticas da Inspeção do Trabalho no Brasil</td></tr>";
+                text += "<tr><td>Período: "+ ano_min + (ano_min != ano_max ? " a "+ ano_max : "") +"<br/><br/></td></tr>";
               }
+              text += "<tr><td class='font-weight-bold accent-4'>OPERAÇÕES</td></tr>";
+              text += "<tr><td>" + this.$numberTransformService.constructor.formatNumber(vl_ope,"inteiro") + " operações</td></tr>";
               if (vl_ope != 0){
                 text += "<tr><td>" + this.$numberTransformService.constructor.formatNumber(vl_rgt/vl_ope,"real",2) + " resgates por operação (envolvendo " + vl_inspecoes + " inspeções/fiscalizações)</td></tr>";
               }
               if (vl_inspecoes != 0){
                 text += "<tr><td>" + this.$numberTransformService.constructor.formatNumber(vl_insp_rgt/vl_inspecoes,"real",2,100) + "% de inspeções/fiscalizações com resgates</td></tr>";
               }
+              if (vl_ope != 0){
+                ano_min = this.customParams.value_min && this.customParams.value_min >= vl_ope_nu_competencia_min ? this.customParams.value_min : vl_ope_nu_competencia_min;
+                ano_max = this.customParams.value_max && this.customParams.value_max <= vl_ope_nu_competencia_max? this.customParams.value_max : vl_ope_nu_competencia_max;
+                text += "<tr><td>Fonte: COETE</td></tr>";
+                text += "<tr><td>Período: "+ ano_min + (ano_min != ano_max ? " a "+ ano_max : "") +"<br/><br/></td></tr>";
+              }
               text += "<tr><td class='font-weight-bold red--text'>RESGATADOS NATURAIS</td></tr>";
               text += "<tr><td>" + this.$numberTransformService.constructor.formatNumber(vl_nat,"inteiro") + " trabalhadores regatados nascidos no município em destaque</td></tr>";
               if (vl_nat != 0){
                 text += "<tr><td>" + vl_nat_rank_uf + "ª posição no Estado com " + vl_nat_pct_uf + " do total</td></tr>";
                 text += "<tr><td>" + vl_nat_rank_br + "ª posição no Brasil com " + vl_nat_pct_br + " do total</td></tr>";
+                ano_min = this.customParams.value_min && this.customParams.value_min >= vl_nat_nu_competencia_min ? this.customParams.value_min : vl_nat_nu_competencia_min;
+                ano_max = this.customParams.value_max && this.customParams.value_max <= vl_nat_nu_competencia_max? this.customParams.value_max : vl_nat_nu_competencia_max;
+                text += "<tr><td>Fonte: Seguro Desemprego do Trabalhador Resgatado (MTb)</td></tr>";
+                text += "<tr><td>Período: "+ ano_min + (ano_min != ano_max ? " a "+ ano_max : "") +"<br/><br/></td></tr>";
               }
               text += "<tr><td class='font-weight-bold light-blue--text'>RESGATADOS RESIDENTES</td></tr>";
               text += "<tr><td>" + this.$numberTransformService.constructor.formatNumber(vl_res,"inteiro") + " trabalhadores resgatados que declararam residir, no momento do resgate, no município em destaque</td></tr>";
               if (vl_res != 0){
                 text += "<tr><td>" + vl_res_rank_uf + "ª posição no Estado com " + vl_res_pct_uf + " do total</td></tr>";
                 text += "<tr><td>" + vl_res_rank_br + "ª posição no Brasil com " + vl_res_pct_br + " do total</td></tr>";
+                ano_min = this.customParams.value_min && this.customParams.value_min >= vl_res_nu_competencia_min ? this.customParams.value_min : vl_res_nu_competencia_min;
+                ano_max = this.customParams.value_max && this.customParams.value_max <= vl_res_nu_competencia_max? this.customParams.value_max : vl_res_nu_competencia_max;
+                text += "<tr><td>Fonte: Seguro Desemprego do Trabalhador Resgatado (MTb)</td></tr>";
+                text += "<tr><td>Período: "+ ano_min + (ano_min != ano_max ? " a "+ ano_max : "") +"<br/><br/></td></tr>";
               }
-              // text += "<tr><td><br/>Fonte: "+ source +"</td></tr>";
-              text += "<tr><td><br/>Fonte: COETE e Seguro Desemprego do Trabalhador Resgatado (MTb)</td></tr>";
-              text += "<tr><td>Período: "+ ano_min + (ano_min != ano_max ? " a "+ ano_max : "") +"</td></tr>";
-  
+ 
               text += "<tr><td class='font-weight-bold'><br/>INDICADORES MUNICIPAIS:</td></tr>";
               for (let item of dtIndicadores){
                 switch(item.cd_indicador){
@@ -262,7 +324,7 @@ const SnackbarManager = {
                 }
               }
               text += "</table>";
-              target.bindPopup(text).openPopup();
+              target.bindPopup(text, {maxHeight: 300, minWidth: 400}).openPopup();
               this.changeCursor(target.options.customOptions.containerId, '');
             }, error => {
               this.changeCursor(target.options.customOptions.containerId, '');
@@ -360,7 +422,7 @@ const SnackbarManager = {
               text += "<tr><td>" + (dtPotAprendizes && dtPotAprendizes.agr_sum_vl_indicador ? this.$numberTransformService.constructor.formatNumber(dtPotAprendizes.agr_sum_vl_indicador,"inteiro") + " vagas de cotas de aprendizagem" : "Nenhuma vaga de cotas de aprendizagem") + "</td></tr>";
               text += "<tr><td>Fonte: RAIS/Ministério da Economia, 2019</td></tr>";
               text += "</table>";
-              target.bindPopup(text).openPopup();
+              target.bindPopup(text, {maxHeight: 300, minWidth: 400}).openPopup();
             }))
         },
   
@@ -388,7 +450,7 @@ const SnackbarManager = {
                 text += "<tr><td>Fonte: "+ dtIndicadores[0].ds_fonte +"</td></tr>";
                 text += "<tr><td>Período: 2012 a 2018</td></tr>";              
                 text += "</table>";
-                target.bindPopup(text).openPopup();
+                target.bindPopup(text, {maxHeight: 300, minWidth: 400}).openPopup();
               }, error => {
                 console.error(error.toString());
                 this.sendError("Erro ao carregar dataset tooltip");
@@ -485,12 +547,102 @@ const SnackbarManager = {
               }
               text += "</table>";
   
-              target.bindPopup(text).openPopup();
+              target.bindPopup(text, {maxHeight: 300, minWidth: 400}).openPopup();
             }, error => {
               console.error(error.toString());
               this.sendError("Erro ao carregar dataset tooltip");
             }));
           }
+        },
+  
+        obsTDTooltip(target, route, tooltip_list = [], removed_text_list = [], options = null) {
+          let text = "";
+          if (options && options.clickable){
+            text += "<p class='text-xs-right ma-0'><a href='" + this.$tooltipBuildingService.constructor.getUrlByPlace(target.options.rowData.cd_municipio_ibge_dv, route) + "' class='primary--text font-weight-black'>IR PARA</a></p>";
+          }
+          let urlSaldoMunicipio = "/thematic/cagedtermometro?categorias=competencia_mov,nm_municipio_uf,saldo_municipio&valor=admitidos,desligados&agregacao=sum,sum&filtros=eq-termometro_grupo-'cbo',and,eq-competencia_mov-"+ target.options.rowData.competencia_mov +",and,eq-cd_municipio_ibge_dv-" + target.options.rowData.cd_municipio_ibge_dv;
+          let urlCBOAumento = "/thematic/cagedtermometro?categorias=termometro_codigo,termometro_descricao,saldo,admitidos,desligados&ordenacao=-saldo&limit=5&filtros=eq-termometro_grupo-'cbo',and,gt-saldo-0,and,eq-competencia_mov-"+ target.options.rowData.competencia_mov +",and,eq-cd_municipio_ibge_dv-" + target.options.rowData.cd_municipio_ibge_dv;
+          let urlCBODiminui = "/thematic/cagedtermometro?categorias=termometro_codigo,termometro_descricao,saldo,admitidos,desligados&ordenacao=saldo&limit=5&filtros=eq-termometro_grupo-'cbo',and,lt-saldo-0,and,eq-competencia_mov-"+ target.options.rowData.competencia_mov +",and,eq-cd_municipio_ibge_dv-" + target.options.rowData.cd_municipio_ibge_dv;
+          let urlCNAEAumento = "/thematic/cagedtermometro?categorias=termometro_codigo,termometro_descricao,saldo,admitidos,desligados&ordenacao=-saldo&limit=5&filtros=eq-termometro_grupo-'cnae_classe',and,gt-saldo-0,and,eq-competencia_mov-"+ target.options.rowData.competencia_mov +",and,eq-cd_municipio_ibge_dv-" + target.options.rowData.cd_municipio_ibge_dv;
+          let urlCNAEDiminui = "/thematic/cagedtermometro?categorias=termometro_codigo,termometro_descricao,saldo,admitidos,desligados&ordenacao=saldo&limit=5&filtros=eq-termometro_grupo-'cnae_classe',and,lt-saldo-0,and,eq-competencia_mov-"+ target.options.rowData.competencia_mov +",and,eq-cd_municipio_ibge_dv-" + target.options.rowData.cd_municipio_ibge_dv;
+          axios.all([axios(this.$axiosCallSetupService.getAxiosOptions(urlSaldoMunicipio)),
+                     axios(this.$axiosCallSetupService.getAxiosOptions(urlCBOAumento)),
+                     axios(this.$axiosCallSetupService.getAxiosOptions(urlCBODiminui)),
+                     axios(this.$axiosCallSetupService.getAxiosOptions(urlCNAEAumento)),
+                     axios(this.$axiosCallSetupService.getAxiosOptions(urlCNAEDiminui))
+                    ])
+            .then(axios.spread((resultSaldoMunicipio, resultCBOAumento, resultCBODiminui, resultCNAEAumento, resultCNAEDiminui) => {
+  
+              let dtSaldoMunicipio = resultSaldoMunicipio.data.dataset[0];
+              let dtCBOAumento = resultCBOAumento.data.dataset;
+              let dtCBODiminui = resultCBODiminui.data.dataset;
+              let dtCNAEAumento = resultCNAEAumento.data.dataset;
+              let dtCNAEDiminui = resultCNAEDiminui.data.dataset;
+ 
+              text += "<span class='title-obs'>Município: <b>" + target.options.rowData.nm_municipio_uf + "</b></span>" +
+                      "<table width='100%'>"+
+                      "<tr><td class='font-weight-bold text-lg-center title-obs' colspan='3'>Empregos Formais (CAGED)</td></tr>" +
+                      "<tr><td class='text-lg-center' colspan='3'>Competência da movimentação: "+
+                      dtSaldoMunicipio.competencia_mov.toString().substr(4,2) + "/" + dtSaldoMunicipio.competencia_mov.toString().substr(0,4) +"</td></tr>" +
+                      "<tr style='border-bottom:1px solid rgba(0,0,0,0.12)'><td width='33%' class='font-weight-bold text-lg-center'>Admitidos</td>" +
+                      "<td width='33%' class='font-weight-bold text-lg-center'>Desligados</td>"+
+                      "<td width='34%' class='font-weight-bold text-lg-center'>Saldo</td></tr>" +
+                      "<tr><td class='text-lg-center'>" + this.$numberTransformService.constructor.formatNumber(dtSaldoMunicipio.agr_sum_admitidos,"inteiro") + 
+                      "</td><td class='text-lg-center'>" + this.$numberTransformService.constructor.formatNumber(dtSaldoMunicipio.agr_sum_desligados,"inteiro") + 
+                      "</td><td class='text-lg-center'>" + this.$numberTransformService.constructor.formatNumber(dtSaldoMunicipio.saldo_municipio,"inteiro") + "</td></tr>" +
+                      "</table>" +
+                      "<table width='100%' style='border-collapse: collapse;'>" + 
+                      "<tr><td colspan='4' class='title-obs font-weight-bold light-blue--text pt-3 pb-1'>Ocupações com Maior Ganho de Postos Formais</td></tr>" +
+                      "<tr style='border-bottom: 1px solid rgba(0,0,0,0.15);'><td width='55%' class='font-weight-bold'>Ocupação</td>"+
+                      "<td width='15%' class='font-weight-bold text-lg-center'>Admitidos</td>"+
+                      "<td width='15%' class='font-weight-bold text-lg-center'>Desligados</td>"+
+                      "<td width='15%' class='font-weight-bold text-lg-center'>Saldo</td></tr>";
+              for (let item of dtCBOAumento){
+                text += "<tr style='border-bottom: 1px solid rgba(0,0,0,0.15);'><td>" + item.termometro_descricao + 
+                "</td><td class='text-lg-center'>" + this.$numberTransformService.constructor.formatNumber(item.admitidos,"inteiro") + 
+                "</td><td class='text-lg-center'>" + this.$numberTransformService.constructor.formatNumber(item.desligados,"inteiro") + 
+                "</td><td class='text-lg-center'>" + this.$numberTransformService.constructor.formatNumber(item.saldo,"inteiro") + "</td></tr>";
+              }
+              text += "<tr><td colspan='4' class='title-obs font-weight-bold red--text pt-3 pb-1'>Ocupações com Maior Perda de Postos Formais</td></tr>" +
+                      "<tr style='border-bottom: 1px solid rgba(0,0,0,0.15);'><td class='font-weight-bold'>Ocupação</td>"+
+                      "<td class='font-weight-bold text-lg-center'>Admitidos</td>"+
+                      "<td class='font-weight-bold text-lg-center'>Desligados</td>"+
+                      "<td class='font-weight-bold text-lg-center'>Saldo</td></tr>";
+              for (let item of dtCBODiminui){
+                text += "<tr style='border-bottom: 1px solid rgba(0,0,0,0.15);'><td>" + item.termometro_descricao + 
+                "</td><td class='text-lg-center'>" + this.$numberTransformService.constructor.formatNumber(item.admitidos,"inteiro") + 
+                "</td><td class='text-lg-center'>" + this.$numberTransformService.constructor.formatNumber(item.desligados,"inteiro") + 
+                "</td><td class='text-lg-center'>" + this.$numberTransformService.constructor.formatNumber(item.saldo,"inteiro") + "</td></tr>";
+              }
+              text += "<tr><td colspan='4' class='title-obs font-weight-bold light-blue--text pt-3 pb-1'>Atividades Econômicas com Maior Ganho de Postos Formais</td></tr>" +
+                      "<tr style='border-bottom: 1px solid rgba(0,0,0,0.15);'><td class='font-weight-bold'>Atividade</td>"+
+                      "<td class='font-weight-bold text-lg-center'>Admitidos</td>"+
+                      "<td class='font-weight-bold text-lg-center'>Desligados</td>"+
+                      "<td class='font-weight-bold text-lg-center'>Saldo</td></tr>";
+              for (let item of dtCNAEAumento){
+                text += "<tr style='border-bottom: 1px solid rgba(0,0,0,0.15);'><td>" + item.termometro_descricao + 
+                "</td><td class='text-lg-center'>" + this.$numberTransformService.constructor.formatNumber(item.admitidos,"inteiro") + 
+                "</td><td class='text-lg-center'>" + this.$numberTransformService.constructor.formatNumber(item.desligados,"inteiro") + 
+                "</td><td class='text-lg-center'>" + this.$numberTransformService.constructor.formatNumber(item.saldo,"inteiro") + "</td></tr>";
+              }
+              text += "<tr><td colspan='4' class='title-obs font-weight-bold red--text pt-3 pb-1'>Atividades Econômicas com Maior Perda de Postos Formais</td></tr>" +
+                      "<tr style='border-bottom: 1px solid rgba(0,0,0,0.15);'><td class='font-weight-bold'>Atividade</td>"+
+                      "<td class='font-weight-bold text-lg-center'>Admitidos</td>"+
+                      "<td class='font-weight-bold text-lg-center'>Desligados</td>"+
+                      "<td class='font-weight-bold text-lg-center'>Saldo</td></tr>";
+              for (let item of dtCNAEDiminui){
+                text += "<tr style='border-bottom: 1px solid rgba(0,0,0,0.15);'><td>" + item.termometro_descricao + 
+                "</td><td class='text-lg-center'>" + this.$numberTransformService.constructor.formatNumber(item.admitidos,"inteiro") + 
+                "</td><td class='text-lg-center'>" + this.$numberTransformService.constructor.formatNumber(item.desligados,"inteiro") + 
+                "</td><td class='text-lg-center'>" + this.$numberTransformService.constructor.formatNumber(item.saldo,"inteiro") + "</td></tr>";
+              }
+              text += "</table>";
+  
+              target.bindPopup(text, {maxHeight: 300, minWidth: 400}).openPopup();
+            }, error => {
+              console.error(error.toString());
+              this.sendError("Erro ao carregar dataset tooltip");
+            }));
         },
   
         tooltipLinkGoogleStreetView(target, route, tooltip_list = [], removed_text_list = [], options = null) { 

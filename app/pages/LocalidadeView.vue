@@ -400,6 +400,7 @@
           calc_proportion: function(dividendo, divisor) { return dividendo / divisor; },
           calc_proportion_ds: function(d,dividendo, divisor) { return divisor==0 ? null:dividendo / divisor; },
           get_flag_value: function(d) {return (d.vl_indicador == 0) ? d.ds_indicador_radical + ": NÃO" : d.ds_indicador_radical + ": SIM";},
+          get_flag_number: function(d,a){ return a>=0 ? 'Positivo':'Negativo'; },
           get_te_label: function(d,campo) {
               switch(d[campo]) {
                   case 'te_nat':
@@ -407,6 +408,8 @@
                   case 'te_res':
                       return 'Vítimas que residem na localidade';
                   case 'te_rgt':
+                      return 'Vítimas resgatadas na localidade';
+                  case 'te_sit_trab_resgatados':
                       return 'Vítimas resgatadas na localidade';
                   default:
                       return d[campo];
@@ -500,6 +503,13 @@
           },          
           remove_year: function(d){ return String(d.ds_indicador_radical).replace(d.nu_competencia,"").replace("  "," ")},
           absolute: function(d, campo="vl_indicador") { return Math.abs(d[campo]); },
+          to_upper_ds: function(d,value_field){
+            return d[value_field].toUpperCase();
+          },
+          format_month_ds: function(d,month_ym){
+            let ym = typeof(month_ym) == "number"? month_ym.toString(): month_ym;
+            return ym.substr(4,2) + "/" + ym.substr(0,4);
+          },
           concat_descriptions: function(d) {
             return d.desc_indicador + " - " + d.ds_indicador_radical;
           },
