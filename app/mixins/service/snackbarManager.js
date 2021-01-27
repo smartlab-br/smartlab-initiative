@@ -583,7 +583,7 @@ const SnackbarManager = {
                       "<table width='100%'>"+
                       "<tr><td class='font-weight-bold text-lg-center title-obs' colspan='3'>Empregos Formais (CAGED)</td></tr>" +
                       "<tr><td class='text-lg-center' colspan='3'>Competência da movimentação: "+
-                      dtSaldoMunicipio.competencia_mov.toString().substr(4,2) + "/" + dtSaldoMunicipio.competencia_mov.toString().substr(0,4) +"</td></tr>" +
+                      dtSaldoMunicipio.competencia_mov.toString().substr(5,1) + "º Trimestre " + dtSaldoMunicipio.competencia_mov.toString().substr(0,4) +"</td></tr>" +
                       "<tr style='border-bottom:1px solid rgba(0,0,0,0.12)'><td width='33%' class='font-weight-bold text-lg-center'>Admitidos</td>" +
                       "<td width='33%' class='font-weight-bold text-lg-center'>Desligados</td>"+
                       "<td width='34%' class='font-weight-bold text-lg-center'>Saldo</td></tr>" +

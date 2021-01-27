@@ -32,7 +32,12 @@
           format_month_ds: function(d,month_ym){
             let ym = typeof(month_ym) == "number"? month_ym.toString(): month_ym;
             return ym.substr(4,2) + "/" + ym.substr(0,4);
+          },
+          format_quarter_ds: function(d,quarter_yq){
+            let yq = typeof(quarter_yq) == "number"? quarter_yq.toString(): quarter_yq;
+            return yq.substr(5,1) + "º Trimestre " + yq.substr(0,4);
           }
+
         },
         topology: null,
 
