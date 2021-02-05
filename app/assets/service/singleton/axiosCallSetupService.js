@@ -21,7 +21,7 @@ class AxiosCallSetupService {
 
   //   return Object.assign(
   //     { 'Content-Type': "application/json"
-  //       // "X-Gravitee-Api-Key": this.envFromKey(key + '_APP_KEY')
+  //       // "X-Mpt-Api-Key": this.envFromKey(key + '_APP_KEY')
   //       // 'Authorization': token
   //     },
   //     customHeaders
@@ -60,7 +60,7 @@ class AxiosCallSetupService {
   //   // return {
   //   //   method: "GET",
   //   //   "url": this.envFromKey(key + '_API_BASE_URL') + endpoint,
-  //   //   headers: this.getHeaders(key, { 'Cache-Control': 'no-cache' , "X-Gravitee-Api-Key": this.envFromKey(key + '_APP_KEY')})
+  //   //   headers: this.getHeaders(key, { 'Cache-Control': 'no-cache' , "X-Mpt-Api-Key": this.envFromKey(key + '_APP_KEY')})
   //   // };
   //   console.log("TESTE TESTE TESTE")
   //   return this.getAxiosOptions(endpoint, key, false)
