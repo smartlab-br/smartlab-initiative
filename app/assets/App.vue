@@ -945,7 +945,7 @@
             },
             headers: {
               'Content-Type': "application/json",
-              "X-Gravitee-Api-Key": mailer_key
+              "X-Mpt-Api-Key": mailer_key
             }
           }).then(function (response) {
             finishMailSend();
