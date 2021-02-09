@@ -31,11 +31,11 @@ pipeline {
             }            
         }
 
-        stage('SonarQube analysis') {
-            steps {
-                sonarScanner()
-            }
-        }
+        // stage('SonarQube analysis') {
+        //     steps {
+        //         sonarScanner()
+        //     }
+        // }
 
         stage('Build and Register Image') {
             steps {

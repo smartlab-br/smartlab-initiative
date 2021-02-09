@@ -5,11 +5,21 @@ Vue.use(Vuex)
 
 export function createStore (secrets) {
   return new Vuex.Store({
-    state: {},
+    state: {
+      accessToken: null,
+      user: null
+    },
 
     actions: {},
 
-    mutations: {},
+    mutations: {
+      setUser (state, user) {
+        state.user = user
+      },
+      setAccessToken (state, accessToken) {
+        state.accessToken = accessToken
+      }
+    },
 
     getters: {}
   })

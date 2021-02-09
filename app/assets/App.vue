@@ -248,21 +248,39 @@
           Alterar Localidade
         </v-tooltip>
       </v-btn>
+      <v-btn
+        tabindex = "23"
+        icon class="ml-0"
+        aria-label="Identifique-se"
+        @click="handleAvatarClick()">
+        <v-tooltip bottom>
+              <v-avatar
+                size="36px"
+              slot="activator">
+                <img
+                  v-if="this.$store.state.user && this.$store.state.user.picture"
+                  :src="this.$store.state.user.picture"
+                >
+                <v-icon v-else color="white" slot="activator">perm_identity</v-icon>
+              </v-avatar>
+          {{ computedLoginLabel }} 
+        </v-tooltip>
+      </v-btn>
+      <!--
+      <v-btn
+        icon class="ml-0"
+        @click.native.stop="rightDrawer = !rightDrawer">
+        <v-tooltip bottom>
+          <v-icon  color="white" slot="activator">settings</v-icon>
+          Configurações
+        </v-tooltip>
+      </v-btn>
+      -->
     </v-toolbar>
     <v-content>
-      <v-container 
-        fluid 
-        class="pa-0 fill-height"
-      >
-        <router-view 
-          ref="currentRoute"
-          :key="reRenderPath" 
-          @showSnackbar="snackAlert"
-          @showLocationDialog="showLocationDialog"
-          @showBugDialog="showBugDialog" 
-          @alterToolbar="changeToolbar" 
-          @alterMiddleToolbar="changeMiddleToolbar" 
-        />
+      <v-container fluid class="pa-0 fill-height">
+        <router-view :key="reRenderPath" @userChanged="updateUser" @showSnackbar="snackAlert"
+          @showLocationDialog="showLocationDialog" @showAuthenticatioDialog="showAuthenticatioDialog" @showBugDialog="showBugDialog" @alterToolbar="changeToolbar" @alterMiddleToolbar="changeMiddleToolbar" ref="currentRoute"></router-view>
         <v-slide-y-transition mode="out-in" />
       </v-container>
     </v-content>
@@ -684,6 +702,23 @@
         </v-card-text>
       </v-card>
     </v-dialog>
+
+<v-dialog width="500px" v-model="authMessageDialog">
+  <v-card>
+    <v-card-title class="headline-obs">Autenticação necessária</v-card-title>
+    <v-card-text>
+      <p>Para baixar os dados, é necessário que você se autentique.</p>
+      <p>Clique no botão abaixo e faça o login na plataforma utilizando sua conta do Google ou Facebook.</p>
+    </v-card-text>
+    <v-layout align-center justify-center row fill-height>
+    <v-btn class="theme--light mb-3 mt-0" color="accent" @click="handleAuthClick()">
+      <v-icon left color="white">perm_identity</v-icon>
+      Autenticar
+    </v-btn>
+    </v-layout>
+  </v-card>
+</v-dialog>
+
   </v-app>
 </template>
 
@@ -755,6 +790,7 @@
         gsLoadingStatusSearchOptions: 'LOADING',
         auOptions: [],
         locationDialog: false,
+        authMessageDialog: false,
         //Formulário Relate um problema
         valid: true,
         bugDialog: false,
@@ -781,6 +817,8 @@
       }
     },
     created () {    
+      // console.log(process.env.GRAVITEE_AM_URL_BASE)
+
       let tmpObs = this.$observatories.getObservatories();
       if (tmpObs instanceof Promise) {
         tmpObs.then((result) => { this.observatorios = result });
@@ -817,6 +855,16 @@
       this.themeEval();
     },
     computed: {
+      computedLoginLabel: function(){
+        // if (this.user && this.user.name){
+        //   return this.user.name;
+        // } else {
+        if (this.$store.state.user){
+          return "Visualizar perfil";
+        } else {
+          return "Identifique-se"
+        }
+      },
       toolbarColor: function() {
         return this.$vuetify.theme.toolbar;
       },
@@ -927,6 +975,8 @@
         this.snackbarCookies = true;
       }
 
+      // this.user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null;
+
       let findLoc = this.$analysisUnitModel.findCurrentPlace();
       if (findLoc && (findLoc instanceof Promise || findLoc.then)) {
         findLoc.then(response => {
@@ -992,6 +1042,7 @@
         return itemText.indexOf(queryText) > -1 
       },      
       snackAlert(params) {
+        this.snack_mode = params.snack_mode || '';
         this.snack_color = params.color;
         this.snackText = params.text;
         this.snackbar = true;
@@ -1020,6 +1071,90 @@
 
       showLocationDialog: function(){
           this.locationDialog = true;
+      },
+
+      showAuthenticatioDialog: function() {
+        this.authMessageDialog = true;
+      },
+
+      handleAuthClick: function() {
+        this.showLoginDialog();
+        this.authMessageDialog = false;
+      },
+
+      handleAvatarClick: function() {
+        if (this.$store.state.user) {
+          this.$navigationManager.constructor.pushRoute(this.$router, '/perfil', false)
+        } else {
+          this.showLoginDialog()
+        }
+      },
+
+      showLoginDialog: function(){
+        var fakeWindow = {
+          atob: function atob() { },
+          open: function open() { },
+          location: {},
+          localStorage: {
+            setItem: function setItem() { },
+            getItem: function getItem() { },
+            removeItem: function removeItem() { },
+          },
+          sessionStorage: {
+            setItem: function setItem() { },
+            getItem: function getItem() { },
+            removeItem: function removeItem() { },
+          },
+        };
+
+        // var $window = (typeof window !== undefined) ? window : fakeWindow;
+        var loginUrl = `${process.env.GRAVITEE_AM_BASE_URL}/oauth/authorize?client_id=${process.env.GRAVITEE_AM_CLIENT_ID}&response_type=token&redirect_uri=${process.env.GRAVITEE_AM_REDIRECT_URL}`;
+        // console.log(loginUrl);
+        var popup = window.open(loginUrl, '_blank', 'width=550,height=450,resizable=no,scrollbars=yes')
+
+        var this_ = this;
+        var poolingInterval = setInterval(function () {
+          if (!popup || popup.closed || popup.closed === undefined) {
+            clearInterval(poolingInterval);
+            poolingInterval = null;
+            throw new Error('Pop-up de login fechado.');
+          }
+          try {
+            var popupWindowPath = popup.location;             
+            if (popupWindowPath.hash) {
+              var params = popupWindowPath.hash.split("access_token=")[1]
+              var access_token = params.split("&")[0]
+
+              var bearer = 'Bearer ' + access_token
+              axios({
+                method: "GET",
+                url: `${process.env.GRAVITEE_AM_BASE_URL}/oidc/userinfo`,
+                data: {},
+                headers: {'Authorization': bearer}
+              }).then(function (response) {
+                // console.log(response.data);
+                let graviteeUser = {};
+                graviteeUser.name = response.data.name;
+                graviteeUser.email = response.data.email;
+                graviteeUser.picture = response.data.picture;
+                this_.updateUser(graviteeUser)
+                this_.snackAlert({ color : 'success', text: "Login realizado com sucesso." });
+              }).catch(function(error) {
+                // handle error
+                console.log(error)
+                throw new Error('Erro ao buscar informações do usuário.');
+              });
+
+              clearInterval(poolingInterval);
+              poolingInterval = null;
+              popup.close();
+            }
+          } catch(e) {
+            console.log(e.message)
+            // Ignore DOMException: Blocked a frame with origin from accessing a cross-origin frame.
+          }
+        }, 250);
+
       },
 
       focusChangePlace(){
@@ -1101,18 +1236,22 @@
           let finishMailSend = () => { this.sendingMail = false; };
           let closeBugDialog = () => { this.bugDialog = false; };
 
-          var requestOptions = this.$axiosCallSetupService.getAxiosOptions('/mail', 'MERCURIO');
-          
-          requestOptions.data = {
-            mail: {
-              sistema: "smartlab",
-              recipients: ['atena@mpt.mp.br'],
-              subject: "Smartlab - Relate um problema",
-              "content": content
+          axios({
+            method: "POST",
+            "url": mailerUrl,
+            data: {
+              mail: {
+                sistema: "smartlab",
+                recipients: ['atena@mpt.mp.br'],
+                subject: "Smartlab - Relate um problema",
+                "content": content
+              }
+            },
+            headers: {
+              'Content-Type': "application/json",
+              "X-Mpt-Api-Key": mailer_key
             }
-          }
-          
-          axios(requestOptions).then(function (response) {
+          }).then(function (response) {
             finishMailSend();
             snackAlert({ color : 'success', text: "Formulário enviado com sucesso." });
             closeBugDialog();
@@ -1147,6 +1286,11 @@
         console.log("Icon not found: " + icon);
         return null;
         
+      },
+
+      updateUser(user){
+        this.$store.commit('setUser', user)
+        // this.user = user;
       }
       
     }
@@ -1554,4 +1698,5 @@
   }  
   -->
   */
+
 </style>

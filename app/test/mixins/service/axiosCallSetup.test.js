@@ -26,7 +26,7 @@ describe('AxiosCallSetup', () => {
   //   let expected = {
   //     method: "GET",
   //     "url": 'undefined/hcalive',
-  //     headers: {"Content-Type": "application/json", "X-Gravitee-Api-Key": undefined}
+  //     headers: {"Content-Type": "application/json", "X-Mpt-Api-Key": undefined}
   //   }
   //   expect(result).toEqual(expected);
   // })
@@ -44,7 +44,7 @@ describe('AxiosCallSetup', () => {
   //   let expected = {
   //     method: "GET",
   //     "url": 'http://test.mpt.mp.br/hcalive',
-  //     headers: {"Content-Type": "application/json", "X-Gravitee-Api-Key": undefined}
+  //     headers: {"Content-Type": "application/json", "X-Mpt-Api-Key": undefined}
   //   }
   //   expect(result).toEqual(expected);
   // })
@@ -67,7 +67,7 @@ describe('AxiosCallSetup', () => {
 //    let expected = {
 //      method: "GET",
 //      "url": 'http://test.mpt.mp.br/hcalive',
-//      headers: {"Content-Type": "application/json", "X-Gravitee-Api-Key": undefined}
+//      headers: {"Content-Type": "application/json", "X-Mpt-Api-Key": undefined}
 //    }
 //    expect(result).toEqual(expected);
   })
