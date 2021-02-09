@@ -202,12 +202,8 @@ app.get('/api-proxy/*', (req, res) => {
     'Content-Type': 'application/json',
   }
 
-  if (splitArray[2]  == 'datahub') {
-    header['X-Mpt-Api-Key'] = apiDataMap[splitArray[2]][1]  
-  } else {
-    header['X-Gravitee-Api-Key'] = apiDataMap[splitArray[2]][1]
-  }
-
+  header['X-Mpt-Api-Key'] = apiDataMap[splitArray[2]][1]  
+  
   if (req.headers['cache-control']) {
     header['cache-control'] = 'no-cache'
   }
