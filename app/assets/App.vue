@@ -1236,18 +1236,22 @@
           let finishMailSend = () => { this.sendingMail = false; };
           let closeBugDialog = () => { this.bugDialog = false; };
 
-          var requestOptions = this.$axiosCallSetupService.getAxiosOptions('/mail', 'MERCURIO');
-          
-          requestOptions.data = {
-            mail: {
-              sistema: "smartlab",
-              recipients: ['atena@mpt.mp.br'],
-              subject: "Smartlab - Relate um problema",
-              "content": content
+          axios({
+            method: "POST",
+            "url": mailerUrl,
+            data: {
+              mail: {
+                sistema: "smartlab",
+                recipients: ['atena@mpt.mp.br'],
+                subject: "Smartlab - Relate um problema",
+                "content": content
+              }
+            },
+            headers: {
+              'Content-Type': "application/json",
+              "X-Mpt-Api-Key": mailer_key
             }
-          }
-          
-          axios(requestOptions).then(function (response) {
+          }).then(function (response) {
             finishMailSend();
             snackAlert({ color : 'success', text: "Formulário enviado com sucesso." });
             closeBugDialog();
