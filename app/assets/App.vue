@@ -388,70 +388,70 @@
           justify-center
           wrap
         >
-            <img 
-              src="/static/smartlab/mpt.svg"
-              class="cursor-pointer mr-2" 
-              alt="Ministério Público do Trabalho"
-              height="50px"
-              @click="$navigationManager.constructor.pushRoute($router, 'https://mpt.mp.br', true)" 
-            />
-            <img 
-              src="/static/smartlab/oit.png"
-              class="cursor-pointer mr-2 ml-2" 
-              alt="Organização Internacional do Trabalho"
-              height="40px"
-              @click="$navigationManager.constructor.pushRoute($router, 'https://ilo.org', true)" 
-            />
-            <img
-              src="/static/smartlab/cnmp.svg"
-              class="cursor-pointer mb-1 ml-2" 
-              alt="Conselho Nacional do Ministério Público"
-              max-height="80%"
-              min-height="50%"
-              style="border-left: 1px solid white; padding-left: 10px;"
-              @click="$navigationManager.constructor.pushRoute($router, 'http://cnmp.mp.br', true)" 
-            />
-            <img 
-              src="/static/smartlab/mdh.png"
-              class="cursor-pointer mr-2 ml-2" 
-              alt="Ouvidoria Nacional dos Direitos Humanos"
-              height="50px"
-              @click="$navigationManager.constructor.pushRoute($router, 'https://ouvidoria.mdh.gov.br/portal', true)" 
-            />
-            <img 
-              v-if="currentObs == 'ti'"
-              src="/static/smartlab/fnpeti.svg"
-              class="cursor-pointer mb-1 ml-0" 
-              alt="Fórum Nacional de Prevenção e Erradicação do Trabalho Infantil"
-              max-height="80%"
-              min-height="50%"
-              @click="$navigationManager.constructor.pushRoute('https://fnpeti.org.br', true)" 
-            />
-            <img 
-              v-if="currentObs == 'ti' || currentObs == 'td'"
-              src="/static/smartlab/ibge.png"
-              class="cursor-pointer mb-1 ml-0" 
-              alt="Instituto Brasileiro de Geografia e Estatística"
-              height="50px"
-              @click="$navigationManager.constructor.pushRoute('http:///ibge.gov.br', true)" 
-            />
-            <img 
-              v-if="currentObs == 'des'"
-              src="/static/smartlab/pacto.svg"
-              class="cursor-pointer mb-1 ml-0" 
-              alt="Pacto Global - Rede Brasil"
-              max-height="80%"
-              min-height="50%"
-              @click="$navigationManager.constructor.pushRoute('https://www.pactoglobal.org.br', true)" 
-            />
-            <img 
-              v-if="currentObs == 'des'"
-              src="/static/smartlab/onumulheres.svg"
-              class="cursor-pointer ml-2" 
-              alt="ONU Mulheres"
-              height="20px" 
-              @click="$navigationManager.constructor.pushRoute('http://www.onumulheres.org.br/', true)" 
-            />
+          <img 
+            src="/static/smartlab/mpt.svg"
+            class="cursor-pointer mr-2" 
+            alt="Ministério Público do Trabalho"
+            height="50px"
+            @click="$navigationManager.constructor.pushRoute($router, 'https://mpt.mp.br', true)" 
+          />
+          <img 
+            src="/static/smartlab/oit.png"
+            class="cursor-pointer mr-2 ml-2" 
+            alt="Organização Internacional do Trabalho"
+            height="40px"
+            @click="$navigationManager.constructor.pushRoute($router, 'https://ilo.org', true)" 
+          />
+          <img
+            src="/static/smartlab/cnmp.svg"
+            class="cursor-pointer mb-1 ml-2" 
+            alt="Conselho Nacional do Ministério Público"
+            max-height="80%"
+            min-height="50%"
+            style="border-left: 1px solid white; padding-left: 10px;"
+            @click="$navigationManager.constructor.pushRoute($router, 'http://cnmp.mp.br', true)" 
+          />
+          <img 
+            src="/static/smartlab/mdh.png"
+            class="cursor-pointer mr-2 ml-2" 
+            alt="Ouvidoria Nacional dos Direitos Humanos"
+            height="50px"
+            @click="$navigationManager.constructor.pushRoute($router, 'https://ouvidoria.mdh.gov.br/portal', true)" 
+          />
+          <img 
+            v-if="currentObs == 'ti'"
+            src="/static/smartlab/fnpeti.svg"
+            class="cursor-pointer mb-1 ml-0" 
+            alt="Fórum Nacional de Prevenção e Erradicação do Trabalho Infantil"
+            max-height="80%"
+            min-height="50%"
+            @click="$navigationManager.constructor.pushRoute('https://fnpeti.org.br', true)" 
+          />
+          <img 
+            v-if="currentObs == 'ti' || currentObs == 'td'"
+            src="/static/smartlab/ibge.png"
+            class="cursor-pointer mb-1 ml-0" 
+            alt="Instituto Brasileiro de Geografia e Estatística"
+            height="50px"
+            @click="$navigationManager.constructor.pushRoute('http:///ibge.gov.br', true)" 
+          />
+          <img 
+            v-if="currentObs == 'des'"
+            src="/static/smartlab/pacto.svg"
+            class="cursor-pointer mb-1 ml-0" 
+            alt="Pacto Global - Rede Brasil"
+            max-height="80%"
+            min-height="50%"
+            @click="$navigationManager.constructor.pushRoute('https://www.pactoglobal.org.br', true)" 
+          />
+          <img 
+            v-if="currentObs == 'des'"
+            src="/static/smartlab/onumulheres.svg"
+            class="cursor-pointer ml-2" 
+            alt="ONU Mulheres"
+            height="20px" 
+            @click="$navigationManager.constructor.pushRoute('http://www.onumulheres.org.br/', true)" 
+          />
         </v-layout>       
       </v-flex>
       <v-flex  
