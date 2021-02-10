@@ -18,8 +18,8 @@
 
         <v-list-tile 
           v-for="(item, i) in items"
-          v-ripple
           :key="i"
+          v-ripple
           :ripple="{ class: item.rippleColor }"
           exact
           :tabindex="drawer ? 10 + i : ''"
@@ -249,38 +249,48 @@
         </v-tooltip>
       </v-btn>
       <v-btn
-        tabindex = "23"
-        icon class="ml-0"
+        tabindex="23"
+        icon 
+        class="ml-0"
         aria-label="Identifique-se"
-        @click="handleAvatarClick()">
+        @click="handleAvatarClick()"
+      >
         <v-tooltip bottom>
-              <v-avatar
-                size="36px"
-              slot="activator">
-                <img
-                  v-if="this.$store.state.user && this.$store.state.user.picture"
-                  :src="this.$store.state.user.picture"
-                >
-                <v-icon v-else color="white" slot="activator">perm_identity</v-icon>
-              </v-avatar>
+          <v-avatar
+            slot="activator"
+            size="36px"
+          >
+            <img
+              v-if="this.$store.state.user && this.$store.state.user.picture"
+              :src="this.$store.state.user.picture"
+            >
+            <v-icon 
+              v-else 
+              slot="activator"
+              color="white" 
+            >
+              perm_identity
+            </v-icon>
+          </v-avatar>
           {{ computedLoginLabel }} 
         </v-tooltip>
       </v-btn>
-      <!--
-      <v-btn
-        icon class="ml-0"
-        @click.native.stop="rightDrawer = !rightDrawer">
-        <v-tooltip bottom>
-          <v-icon  color="white" slot="activator">settings</v-icon>
-          Configurações
-        </v-tooltip>
-      </v-btn>
-      -->
     </v-toolbar>
     <v-content>
-      <v-container fluid class="pa-0 fill-height">
-        <router-view :key="reRenderPath" @userChanged="updateUser" @showSnackbar="snackAlert"
-          @showLocationDialog="showLocationDialog" @showAuthenticatioDialog="showAuthenticatioDialog" @showBugDialog="showBugDialog" @alterToolbar="changeToolbar" @alterMiddleToolbar="changeMiddleToolbar" ref="currentRoute"></router-view>
+      <v-container 
+        fluid 
+        class="pa-0 fill-height"
+      >
+        <router-view 
+          :key="reRenderPath" 
+          ref="currentRoute"
+          @userChanged="updateUser" 
+          @showSnackbar="snackAlert"
+          @showLocationDialog="showLocationDialog" 
+          @showAuthenticatioDialog="showAuthenticatioDialog" 
+          @showBugDialog="showBugDialog" @alterToolbar="changeToolbar" 
+          @alterMiddleToolbar="changeMiddleToolbar" 
+        />
         <v-slide-y-transition mode="out-in" />
       </v-container>
     </v-content>
@@ -481,7 +491,9 @@
         class="xs6 sm6 md6 lg1 xl3 text-xs-right subheading" 
         :class="{'pt-5 pb-3': $vuetify.breakpoint.mdAndDown }" 
       >
-        <div class="caption mr-1 mb-1">Licenças</div>
+        <div class="caption mr-1 mb-1">
+          Licenças
+        </div>
         <a 
           class="white--text mx-2" 
           @click="$navigationManager.constructor.pushRoute($router, 'https://creativecommons.org/licences/by-nc-sa/4.0/', true)"
@@ -591,11 +603,11 @@
                 <v-flex py-0>
                   <v-textarea 
                     v-if="bugDialog"
-                    v-model="bugText"
                     ref="bugText"
+                    v-model="bugText"
                     class="py-0"
                     label="Relate um problema"
-                    :rules= "bugTextRules"                      
+                    :rules="bugTextRules"                      
                     autofocus
                     required
                   />
@@ -603,10 +615,10 @@
 
                 <v-flex>
                   <v-text-field 
-                    v-model="bugEmail"
                     ref="bugEmail"                     
+                    v-model="bugEmail"
                     class="py-0"
-                    :rules= "bugEmailRules" 
+                    :rules="bugEmailRules" 
                     label="E-mail contato"
                     required
                   />
@@ -638,7 +650,9 @@
                       @click="sendBugReport"
                     >
                       <span class="hidden-sm-and-down body">Enviar</span>
-                      <v-icon right>send</v-icon> 
+                      <v-icon right>
+                        send
+                      </v-icon> 
                     </v-btn>
                     <v-btn
                       small 
@@ -647,7 +661,9 @@
                       @click="closeBugDialog"
                     >
                       <span class="hidden-sm-and-down body">Fechar</span>
-                      <v-icon right>close</v-icon> 
+                      <v-icon right>
+                        close
+                      </v-icon> 
                     </v-btn>
                   </v-layout>
                 </v-layout>
@@ -663,7 +679,11 @@
       persistent
     >
       <v-card>
-        <v-card-title class="headline-obs">Informe o município a ser visualizado ou sua localidade:</v-card-title>
+        <v-card-title 
+          class="headline-obs"
+        >
+          Informe o município a ser visualizado ou sua localidade:
+        </v-card-title>
         <v-card-text>
           <v-autocomplete
             v-if="auOptions.length > 0"
@@ -678,7 +698,7 @@
             :filter="customFilter"
             :loading="gsLoadingStatusSearchOptions == 'LOADING' ? true : false"
             :color="gsLoadingStatusSearchOptions == 'ERROR' ? 'error' :
-                    (gsLoadingStatusSearchOptions == 'LOADING' ? 'warning' : 'accent')"
+            (gsLoadingStatusSearchOptions == 'LOADING' ? 'warning' : 'accent')"
             @blur="gsFavLocation = null"
           >
             <template 
@@ -705,22 +725,38 @@
       </v-card>
     </v-dialog>
 
-<v-dialog width="500px" v-model="authMessageDialog">
-  <v-card>
-    <v-card-title class="headline-obs">Autenticação necessária</v-card-title>
-    <v-card-text>
-      <p>Para baixar os dados, é necessário que você se autentique.</p>
-      <p>Clique no botão abaixo e faça o login na plataforma utilizando sua conta do Google ou Facebook.</p>
-    </v-card-text>
-    <v-layout align-center justify-center row fill-height>
-    <v-btn class="theme--light mb-3 mt-0" color="accent" @click="handleAuthClick()">
-      <v-icon left color="white">perm_identity</v-icon>
-      Autenticar
-    </v-btn>
-    </v-layout>
-  </v-card>
-</v-dialog>
-
+    <v-dialog 
+      v-model="authMessageDialog"
+      width="500px" 
+    >
+      <v-card>
+        <v-card-title class="headline-obs">
+          Autenticação necessária
+        </v-card-title>
+        <v-card-text>
+          <p>Para baixar os dados, é necessário que você se autentique.</p>
+          <p>Clique no botão abaixo e faça o login na plataforma utilizando sua conta do Google ou Facebook.</p>
+        </v-card-text>
+        <v-layout 
+          align-center 
+          justify-center 
+          row 
+          fill-height
+        >
+          <v-btn class="theme--light mb-3 mt-0" 
+            color="accent" 
+            @click="handleAuthClick()"
+          >
+            <v-icon left 
+              color="white"
+            >
+              perm_identity
+            </v-icon>
+            Autenticar
+          </v-btn>
+        </v-layout>
+      </v-card>
+    </v-dialog>
   </v-app>
 </template>
 
@@ -817,44 +853,6 @@
         currentObs: null,
         dim: { label: null }
       }
-    },
-    created () {    
-      // console.log(process.env.GRAVITEE_AM_URL_BASE)
-
-      let tmpObs = this.$observatories.getObservatories();
-      if (tmpObs instanceof Promise) {
-        tmpObs.then((result) => { this.observatorios = result });
-      } else {
-        this.observatorios = tmpObs;
-      }
-
-      this.dim = { label: null };
-      this.currentObs = this.$observatories.constructor.identifyObservatory(this.$route.path.split('/')[1]);
-      if (this.currentObs != null && (this.$route.query.dimensao || this.$route.params.idLocalidade)) {
-        this.$dimensions.getDimensionByObservatoryAndId(this.currentObs, this.$route.query.dimensao)
-          .then((result) => { this.dim = result; });
-      }
-
-      Promise.all(this.$analysisUnitModel.buildAllSearchOptions())
-        .then((results) => {
-          let hasLoading = false;
-          for (let eachResult in results) {
-              if (eachResult == 'ERROR') {
-                this.gsLoadingStatusSearchOptions = eachResult;
-                return;
-              }
-              if (eachResult == 'LOADING') hasLoading = true;
-          }
-          this.gsLoadingStatusSearchOptions = hasLoading ? 'LOADING' : 'SUCCESS';
-          this.auOptions = this.$analysisUnitModel.getOptions();
-        })
-        .catch((error) => {
-          this.gsLoadingStatusSearchOptions = 'ERROR';
-          this.auOptions = this.$analysisUnitModel.getOptions();
-          this.sendError("Falha ao buscar lista das localidades");
-        });
-
-      this.themeEval();
     },
     computed: {
       computedLoginLabel: function(){
@@ -970,33 +968,43 @@
         })
       }
     },
-    mounted: function() {
-      // this.checkCurrentAnalysisUnit();
+    created () {    
+      // console.log(process.env.GRAVITEE_AM_URL_BASE)
 
-      if (!this.$cookies.isKey("cookieAccept")){
-        this.snackbarCookies = true;
+      let tmpObs = this.$observatories.getObservatories();
+      if (tmpObs instanceof Promise) {
+        tmpObs.then((result) => { this.observatorios = result });
+      } else {
+        this.observatorios = tmpObs;
       }
 
-      // this.user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null;
+      this.dim = { label: null };
+      this.currentObs = this.$observatories.constructor.identifyObservatory(this.$route.path.split('/')[1]);
+      if (this.currentObs != null && (this.$route.query.dimensao || this.$route.params.idLocalidade)) {
+        this.$dimensions.getDimensionByObservatoryAndId(this.currentObs, this.$route.query.dimensao)
+          .then((result) => { this.dim = result; });
+      }
 
-      let findLoc = this.$analysisUnitModel.findCurrentPlace();
-      if (findLoc && (findLoc instanceof Promise || findLoc.then)) {
-        findLoc.then(response => {
-          // console.log(response);
-          this.changeMiddleToolbar(response);
-          if (response.id_localidade && response.id_localidade.length > 5) this.localidade = response;
+      Promise.all(this.$analysisUnitModel.buildAllSearchOptions())
+        .then((results) => {
+          let hasLoading = false;
+          for (let eachResult in results) {
+              if (eachResult == 'ERROR') {
+                this.gsLoadingStatusSearchOptions = eachResult;
+                return;
+              }
+              if (eachResult == 'LOADING') hasLoading = true;
+          }
+          this.gsLoadingStatusSearchOptions = hasLoading ? 'LOADING' : 'SUCCESS';
+          this.auOptions = this.$analysisUnitModel.getOptions();
         })
-        .catch(error => { this.sendError(error); });
-      } else if (findLoc){
-        this.changeMiddleToolbar(findLoc);
-        if (findLoc.id_localidade && findLoc.id_localidade.length > 5) this.localidade = findLoc;
-      }
-    
-      this.langs = this.$translationModel.findAllLocales();
-      this.lang = this.$translationModel.findBrowserLocale(this);
+        .catch((error) => {
+          this.gsLoadingStatusSearchOptions = 'ERROR';
+          this.auOptions = this.$analysisUnitModel.getOptions();
+          this.sendError("Falha ao buscar lista das localidades");
+        });
 
-      window.addEventListener('scroll', this.assessVisibleTitle);
-      window.addEventListener('scroll', this.assessVisibleLeftDrawerTitle);
+      this.themeEval();
     },
     watch: {
       '$route.fullPath': function(newVal, oldVal) {
@@ -1031,6 +1039,34 @@
           }
         }
       }
+    },
+    mounted: function() {
+      // this.checkCurrentAnalysisUnit();
+
+      if (!this.$cookies.isKey("cookieAccept")){
+        this.snackbarCookies = true;
+      }
+
+      // this.user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null;
+
+      let findLoc = this.$analysisUnitModel.findCurrentPlace();
+      if (findLoc && (findLoc instanceof Promise || findLoc.then)) {
+        findLoc.then(response => {
+          // console.log(response);
+          this.changeMiddleToolbar(response);
+          if (response.id_localidade && response.id_localidade.length > 5) this.localidade = response;
+        })
+        .catch(error => { this.sendError(error); });
+      } else if (findLoc){
+        this.changeMiddleToolbar(findLoc);
+        if (findLoc.id_localidade && findLoc.id_localidade.length > 5) this.localidade = findLoc;
+      }
+    
+      this.langs = this.$translationModel.findAllLocales();
+      this.lang = this.$translationModel.findBrowserLocale(this);
+
+      window.addEventListener('scroll', this.assessVisibleTitle);
+      window.addEventListener('scroll', this.assessVisibleLeftDrawerTitle);
     },
     methods: {
       itemClick(item) {
