@@ -262,6 +262,7 @@
           >
             <img
               v-if="this.$store.state.user && this.$store.state.user.picture"
+              alt="Foto"
               :src="this.$store.state.user.picture"
             >
             <v-icon 
@@ -1129,23 +1130,6 @@
       },
 
       showLoginDialog: function(){
-        var fakeWindow = {
-          atob: function atob() { },
-          open: function open() { },
-          location: {},
-          localStorage: {
-            setItem: function setItem() { },
-            getItem: function getItem() { },
-            removeItem: function removeItem() { },
-          },
-          sessionStorage: {
-            setItem: function setItem() { },
-            getItem: function getItem() { },
-            removeItem: function removeItem() { },
-          },
-        };
-
-        // var $window = (typeof window !== undefined) ? window : fakeWindow;
         var loginUrl = `${process.env.GRAVITEE_AM_BASE_URL}/oauth/authorize?client_id=${process.env.GRAVITEE_AM_CLIENT_ID}&response_type=token&redirect_uri=${process.env.GRAVITEE_AM_REDIRECT_URL}`;
         // console.log(loginUrl);
         var popup = window.open(loginUrl, '_blank', 'width=550,height=450,resizable=no,scrollbars=yes')
