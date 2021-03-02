@@ -119,12 +119,22 @@
             >
               {{ computedTitle }}
             </v-flex>
-            <v-flex 
-              pa-0 
-              caption
-            >
-              {{ computedSubtitle }}
-            </v-flex>
+            <v-layout>
+              <v-flex 
+                pa-0 
+                caption
+                shrink
+              >
+                {{ computedHashTag }}
+              </v-flex>
+              <v-flex 
+                pa-0 
+                caption
+                grow
+              >
+                {{ computedSubtitle }}
+              </v-flex>
+            </v-layout>
           </v-flex>
           <v-divider 
             v-show="computedPlaceTitle" 
@@ -276,6 +286,16 @@
           {{ computedLoginLabel }} 
         </v-tooltip>
       </v-btn>
+      <v-tooltip bottom>
+        <a 
+          slot="activator"
+          class="white--text mx-2" 
+          @click="$navigationManager.constructor.pushRoute($router, 'https://www.instagram.com/smartlab_br/', true)"
+        >
+          <span v-html="renderIcon('fab','faInstagram','Instagram')" />
+        </a>
+        Instagram<br/>@smartlab_br
+      </v-tooltip>
     </v-toolbar>
     <v-content>
       <v-container 
@@ -471,6 +491,12 @@
       >
         <a 
           class="white--text mr-2" 
+          @click="$navigationManager.constructor.pushRoute($router, 'https://www.instagram.com/smartlab_br/', true)"
+        >
+          <span v-html="renderIcon('fab','faInstagram','Instagram')" />
+        </a>
+        <a 
+          class="white--text mr-2" 
           @click="$navigationManager.constructor.pushRoute($router, 'https://github.com/smartlab-br', true)"
         >
           <span v-html="renderIcon('fab','faGithub','GitHub')" />
@@ -480,12 +506,6 @@
           @click="$navigationManager.constructor.pushRoute($router, 'https://hub.docker.com/u/smartlab/', true)"
         >
           <span v-html="renderIcon('fab','faDocker','Docker')" />
-        </a>
-        <a 
-          class="white--text mr-2" 
-          @click="$navigationManager.constructor.pushRoute($router, 'https://www.instagram.com/smartlab_br/', true)"
-        >
-          <span v-html="renderIcon('fab','faInstagram','Instagram')" />
         </a>
       </v-flex>
       <v-flex  
@@ -906,6 +926,18 @@
           return observ.title;
         } 
         return '';
+      },
+      computedHashTag: function() {
+        let hashTag = '';
+        if (this.computedTitle != ''){
+          if (this.observatorios) {
+            let observ = this.$observatories.getObservatoryById(this.currentObs);
+            if (observ) {
+                hashTag = "#"+ observ.hash_tag;
+            } 
+          }
+        }
+        return hashTag;
       },
       computedSubtitle: function() {
 
