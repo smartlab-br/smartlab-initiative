@@ -791,8 +791,7 @@
   import fontawesome from '@fortawesome/fontawesome'
   import fa_brands from '@fortawesome/fontawesome-free-brands'
   import fa_solid from '@fortawesome/fontawesome-free-solid'
-  // import fa_regular from '@fortawesome/fontawesome-free-regular'
-
+  
   export default {
     mixins: [Meta],
     data () {
@@ -880,9 +879,6 @@
     },
     computed: {
       computedLoginLabel: function(){
-        // if (this.user && this.user.name){
-        //   return this.user.name;
-        // } else {
         if (this.$store.state.user){
           return "Visualizar perfil";
         } else {
@@ -956,10 +952,6 @@
           return "SmartMap - Mapa Avançado";
         }
         
-          
-        // if (this.$route.params.tab ){
-        //   return "Sobre";
-        // }
           
         return '';
       },
@@ -1077,18 +1069,14 @@
       }
     },
     mounted: function() {
-      // this.checkCurrentAnalysisUnit();
 
       if (!this.$cookies.isKey("cookieAccept")){
         this.snackbarCookies = true;
       }
 
-      // this.user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null;
-
       let findLoc = this.$analysisUnitModel.findCurrentPlace();
       if (findLoc && (findLoc instanceof Promise || findLoc.then)) {
         findLoc.then(response => {
-          // console.log(response);
           this.changeMiddleToolbar(response);
           if (response.id_localidade && response.id_localidade.length > 5) this.localidade = response;
         })
@@ -1166,7 +1154,6 @@
 
       showLoginDialog: function(){
         var loginUrl = `${process.env.GRAVITEE_AM_BASE_URL}/oauth/authorize?client_id=${process.env.GRAVITEE_AM_CLIENT_ID}&response_type=token&redirect_uri=${process.env.GRAVITEE_AM_REDIRECT_URL}`;
-        // console.log(loginUrl);
         var popup = window.open(loginUrl, '_blank', 'width=550,height=450,resizable=no,scrollbars=yes')
 
         var this_ = this;
@@ -1189,7 +1176,6 @@
                 data: {},
                 headers: {'Authorization': bearer}
               }).then(function (response) {
-                // console.log(response.data);
                 let graviteeUser = {};
                 graviteeUser.name = response.data.name;
                 graviteeUser.email = response.data.email;
@@ -1238,7 +1224,6 @@
       // },
       
       assessVisibleTitle() {
-        // const vHeight = (window.innerHeight || document.documentElement.clientHeight);
         if (document.getElementById("screenTitle")) {
           var { top, bottom } = document.getElementById("screenTitle").getBoundingClientRect();
           if (top < 0 && bottom < 0) {
@@ -1252,7 +1237,6 @@
       },
 
       assessVisibleLeftDrawerTitle() {
-        // const vHeight = (window.innerHeight || document.documentElement.clientHeight);
         if (document.getElementById("screenTitle")) {
           var { top, bottom } = document.getElementById("screenTitle").getBoundingClientRect();
           if (top < 0 && bottom < 0) {
@@ -1265,7 +1249,6 @@
 
       showBugDialog(cardTitle){
         this.bugCard = cardTitle;
-        // this.$refs.inputProblem.focus();
         this.bugDialog = true;
       },
 
@@ -1347,7 +1330,6 @@
 
       updateUser(user){
         this.$store.commit('setUser', user)
-        // this.user = user;
       }
       
     }
