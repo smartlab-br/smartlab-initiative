@@ -294,7 +294,7 @@
         >
           <span v-html="renderIcon('fab','faInstagram','Instagram')" />
         </a>
-        Instagram<br/>@smartlab_br
+        Instagram
       </v-tooltip>
     </v-toolbar>
     <v-content>
@@ -309,7 +309,8 @@
           @showSnackbar="snackAlert"
           @showLocationDialog="showLocationDialog" 
           @showAuthenticatioDialog="showAuthenticatioDialog" 
-          @showBugDialog="showBugDialog" @alterToolbar="changeToolbar" 
+          @showBugDialog="showBugDialog" 
+          @alterToolbar="changeToolbar" 
           @alterMiddleToolbar="changeMiddleToolbar" 
         />
         <v-slide-y-transition mode="out-in" />
@@ -764,11 +765,13 @@
           row 
           fill-height
         >
-          <v-btn class="theme--light mb-3 mt-0" 
+          <v-btn 
+            class="theme--light mb-3 mt-0" 
             color="accent" 
             @click="handleAuthClick()"
           >
-            <v-icon left 
+            <v-icon 
+              left 
               color="white"
             >
               perm_identity
