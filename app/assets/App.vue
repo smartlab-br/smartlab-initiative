@@ -1,6 +1,7 @@
 <template>
   <v-app>
     <v-navigation-drawer
+      v-if="observatorios"
       v-model="drawer"
       :mini-variant="miniVariant"
       clipped
@@ -27,19 +28,24 @@
           @keyup.enter="itemClick(item)"
         >
           <v-list-tile-action>
-            <v-icon 
-              v-if="item.icon" 
-              :title="item.title" 
-              v-html="item.icon" 
-            />
-            <app-icon 
-              v-else-if="item.app_icon"
-              :title="item.title" 
-              :icon="item.app_icon"
-            />
+            <v-tooltip bottom>
+              <v-icon 
+                v-if="item.icon" 
+                slot="activator"
+                :title="item.short_title" 
+                v-html="item.icon" 
+              />
+              <app-icon 
+                v-else-if="item.app_icon"
+                slot="activator"
+                :title="item.short_title" 
+                :icon="item.app_icon"
+              />
+              {{ item.short_title }}
+            </v-tooltip>
           </v-list-tile-action>
           <v-list-tile-content>
-            <v-list-tile-title v-text="item.title" />
+            <v-list-tile-title v-text="item.short_title" />
           </v-list-tile-content>
         </v-list-tile>
       </v-list>
@@ -205,12 +211,12 @@
               <v-list-tile-action style="min-width: 120px">
                 <v-layout row>
                   <v-layout 
-                    v-for="(search_item, indxSearch) in $observatories.getObservatoriesSearchOptions()"
+                    v-for="(search_item, indxSearch) in $observatories.getObservatories()"
                     :key="'search_item_obs_' + indxSearch"
                     @click="changeAnalysisUnit($router, data.item, search_item.id)"
                   >
                     <v-layout 
-                      v-if="data.item.exclude_from == null || data.item.exclude_from == undefined || !data.item.exclude_from.includes(search_item.id)"
+                      v-if="!search_item.blocked && (data.item.exclude_from == null || data.item.exclude_from == undefined || !data.item.exclude_from.includes(search_item.id))"
                       column 
                       wrap 
                       align-center
@@ -230,7 +236,7 @@
                           :fill="search_item.color"
                           :icon="search_item.app_icon"
                         />
-                        <v-layout v-html="search_item.title" /> 
+                        <v-layout v-html="search_item.tooltip" /> 
                       </v-tooltip>
                     </v-layout>
                   </v-layout>
@@ -809,31 +815,6 @@
           // { icon: 'stars', title: 'Destaques', to: '/', external: false },
           // { icon: 'map', title: 'Mapa Exploratório', to: '/mapa/0', external: false },
           // { icon: 'map', title: 'Mapa Exploratório', to: '/mapa/06_02_03_04?type=bubbles', external: false },
-          { app_icon: 'td', title: 'Trabalho Decente',
-            to: '/trabalhodecente', external: false,
-            rippleColor: 'grey--text darken-3' },
-          { app_icon: 'coord-02', title: 'Trabalho Escravo',
-            to: '/trabalhoescravo', external: false,
-            blocked: false,
-            rippleColor: 'brown--text darken-3' },
-          { app_icon: 'coord-01', title: 'Segurança e Saúde',
-            to: '/sst', external: false,
-            blocked: false,
-            rippleColor: 'teal--text darken-3' },
-          { app_icon: 'coord-07', title: 'Trabalho Infantil',
-            to: '/trabalhoinfantil', external: false,
-            blocked: false,
-            rippleColor: 'indigo--text darken-3' },
-          { app_icon: 'coord-06', title: 'Diversidade no Trabalho',
-            to: '/diversidade', external: false,
-            blocked: false,
-            rippleColor: 'deep-purple--text darken-2' },
-          { app_icon: 'covid', title: 'COVID-19',
-            to: '/covid', external: false,
-            blocked: false,
-            rippleColor: 'deep-orange--text darken-2' },
-          // { icon: 'flight_takeoff', title: 'Migrações e Trabalho',
-          //   to: '/', external: false }
         ],
         miniVariant: false,
         right: true,
@@ -1001,9 +982,13 @@
 
       let tmpObs = this.$observatories.getObservatories();
       if (tmpObs instanceof Promise) {
-        tmpObs.then((result) => { this.observatorios = result });
+        tmpObs.then((result) => { 
+          this.observatorios = result;
+          this.items = Object.assign(this.items, result);
+        });
       } else {
         this.observatorios = tmpObs;
+        this.items = Object.assign(this.items, tmpObs);
       }
 
       this.dim = { label: null };
@@ -1096,6 +1081,8 @@
       itemClick(item) {
         if (!item.blocked){
           this.$navigationManager.constructor.pushRoute(this.$router, item.to, item.external);
+        } else {
+          this.snackAlert({ color : 'orange darken-4', text: "Esse observatório estará disponível em breve." })
         }
       },
       customFilter (item, queryText, itemText) {

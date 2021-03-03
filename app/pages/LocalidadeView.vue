@@ -708,7 +708,7 @@
       setSiblingDimensions(content) {
         let dimensoesTmp = [];
         for (let dim of content.dimensoes) {
-          if (dim.status != 'EM BREVE') {
+          if (!dim.blocked) {
             dimensoesTmp.push(dim);
           }
         }
