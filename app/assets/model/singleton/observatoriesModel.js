@@ -1,12 +1,10 @@
-import colors from 'vuetify/es5/util/colors'
+
 import YamlFetcherService from '../../service/singleton/yamlFetcherService'
 import ColorsService from '../../service/singleton/colorsService';
 
 class ObservatoriesModel {
 
-    constructor() {
-        //this.colorsService = new ColorsService();
-    }
+    constructor() { }
 
     setStore(store) {
         this.store = store;
@@ -61,7 +59,7 @@ class ObservatoriesModel {
         if (route.includes('trabalhoinfantil')) return 'ti';
         if (route.includes('sst')) return 'sst';
         if (route.includes('covid')) return 'cov';
-        return;
+        return null;
     }
 
     // Mapeamento dos IDs para os observatorios
