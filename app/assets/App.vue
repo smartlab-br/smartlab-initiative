@@ -115,32 +115,27 @@
             style="background-color:rgba(255,255,255,0.7)"
           />
           <v-flex 
-            text-xs-right 
             class="line-height-1"
           >
             <v-flex 
+              text-xs-right 
               class="cursor-pointer" 
               pa-0
               @click="$navigationManager.constructor.pushRoute($router, ($route && ($route.path.indexOf('localidade') != -1)) ? '../' : ($route && ($route.path.indexOf('estudo') != -1 || $route.path.indexOf('smartmap') != -1)) ? './' : '', false);" 
             >
               {{ computedTitle }}
             </v-flex>
-            <v-layout>
-              <v-flex 
-                pa-0 
-                caption
-                shrink
+            <v-flex 
+              pa-0 
+              caption
+            >
+              <a 
+                class="white--text" 
+                @click="$navigationManager.constructor.pushRoute($router, 'https://twitter.com/hashtag/' + computedHashTag.replace('#',''), true)"
               >
                 {{ computedHashTag }}
-              </v-flex>
-              <v-flex 
-                pa-0 
-                caption
-                grow
-              >
-                {{ computedSubtitle }}
-              </v-flex>
-            </v-layout>
+              </a>
+            </v-flex>
           </v-flex>
           <v-divider 
             v-show="computedPlaceTitle" 
