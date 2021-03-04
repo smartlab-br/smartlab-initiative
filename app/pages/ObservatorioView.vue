@@ -66,7 +66,7 @@
             <!--
               :media = "dimension.media"
               :icon = "dimension.icon"
-              :app-icon = "dimension.appIcon"
+              :app-icon = "dimension.app_icon"
               icon-color = "white"
               :bg-color = "$vuetify.theme.secondary"
             -->
@@ -79,8 +79,10 @@
               :external = "dimension.external"
               :title = "dimension.label"
               :title-color = "'white'"
-              :detail = "dimension.sub">
-            </flpo-linked-view-card>
+              :detail = "dimension.sub"
+              :blocked = "dimension.blocked"
+              @showSnackbar="snackAlert"
+            />
           </v-flex>
         </v-layout>
       </v-layout>
@@ -152,8 +154,8 @@
                 :reactive-filter="reactiveFilter"
                 :custom-filters="customParams"
                 v-on:selection="triggerSelect"
-                @showSnackbar="snackAlert">
-              </flpo-composite-text>
+                @showSnackbar="snackAlert"
+              />
 
               <v-layout column wrap pl-2>
                 <div v-if="sourceDesc && !sourceLink" class="caption pt-2 px-2 pl-3 bottom-30 data-source">Fonte: {{ sourceDesc }}</div>
@@ -178,8 +180,7 @@
                 :custom-functions="customFunctions"
                 :custom-filters="customParams"
                 @showSnackbar="snackAlert"
-                >
-              </flpo-composite-text>
+              />
 
             </v-layout>
           </v-layout>
@@ -214,8 +215,8 @@
               <flpo-ranking-list v-for="(ranking, index) in observatorio.ranking_cards" :key="index"
                 :structure="ranking" :customFunctions="customFunctions"
                 :customParams="customParams"
-                @showSnackbar="snackAlert">
-              </flpo-ranking-list>
+                @showSnackbar="snackAlert"
+              />
             </v-layout>
             <flpo-composite-text
               v-if="observatorio && observatorio.prevalencia && observatorio.prevalencia.description_bottom"
@@ -224,8 +225,8 @@
               section-class = 'pa-0'
               :custom-params="customParams"
               :custom-functions="customFunctions"
-              @showSnackbar="snackAlert">
-            </flpo-composite-text>
+              @showSnackbar="snackAlert"
+            />
           </v-flex>
         </v-flex>
 
@@ -237,8 +238,8 @@
             :structure="observatorio.prevalencia.description_right"
             :custom-params="customParams"
             :custom-functions="customFunctions"
-            @showSnackbar="snackAlert">
-          </flpo-composite-text>
+            @showSnackbar="snackAlert"
+          />
         </v-flex>
 
       </v-layout>
@@ -256,8 +257,8 @@
             :custom-functions="customFunctions"
             :custom-filters="customParams"
             section-class="pa-0"
-            @showSnackbar="snackAlert">
-          </flpo-composite-text>
+            @showSnackbar="snackAlert"
+          />
         </v-flex>
         <v-flex px-4 id="sparklines" style="min-height:630px">
           <v-layout row wrap v-if="visibleSparklines" >
