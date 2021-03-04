@@ -18,10 +18,9 @@
         </v-list-tile>
 
         <v-list-tile 
-          v-for="(item, i) in items"
+          v-for="(item, i) in computedMenuItems"
           :key="i"
-          v-ripple
-          :ripple="{ class: item.rippleColor }"
+          v-ripple="{ class: item.rippleColor }"
           exact
           :tabindex="drawer ? 10 + i : ''"
           @click="itemClick(item)"
@@ -34,12 +33,14 @@
                 slot="activator"
                 :title="item.short_title" 
                 v-html="item.icon" 
+                :color="$observatories.getTheme(item.id).primary"
               />
               <app-icon 
                 v-else-if="item.app_icon"
                 slot="activator"
                 :title="item.short_title" 
                 :icon="item.app_icon"
+                :fill="$observatories.getTheme(item.id).primary"
               />
               {{ item.short_title }}
             </v-tooltip>
@@ -221,14 +222,14 @@
                           v-if="search_item.icon"
                           slot="activator"
                           small 
-                          :class="search_item.color"
+                          :color="$observatories.getTheme(search_item.id).primary"
                           v-html="search_item.icon"
                         />
                         <app-icon 
                           v-else-if="search_item.app_icon"
                           slot="activator"
                           size="16" 
-                          :fill="search_item.color"
+                          :fill="$observatories.getTheme(search_item.id).primary"
                           :icon="search_item.app_icon"
                         />
                         <v-layout v-html="search_item.tooltip" /> 
@@ -805,8 +806,8 @@
         seen: false,
         drawer: false,
         fixed: false,
-        items: [
-          { icon: 'apps', title: 'Início', to: '/', external: false },
+        menuItems: [
+          { icon: 'apps', short_title: 'Início', to: '/', external: false },
           // { icon: 'stars', title: 'Destaques', to: '/', external: false },
           // { icon: 'map', title: 'Mapa Exploratório', to: '/mapa/0', external: false },
           // { icon: 'map', title: 'Mapa Exploratório', to: '/mapa/06_02_03_04?type=bubbles', external: false },
@@ -974,6 +975,11 @@
         return items.filter(function(el) {
           return el.scope == "mun";
         })
+      },
+      computedMenuItems: function() {
+        if (this.observatorios) {
+          return [].concat(this.menuItems, this.observatorios);
+        }
       }
     },
     created () {    
@@ -983,11 +989,9 @@
       if (tmpObs instanceof Promise) {
         tmpObs.then((result) => { 
           this.observatorios = result;
-          this.items = Object.assign(this.items, result);
         });
       } else {
         this.observatorios = tmpObs;
-        this.items = Object.assign(this.items, tmpObs);
       }
 
       this.dim = { label: null };

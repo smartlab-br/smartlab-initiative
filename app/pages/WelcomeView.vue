@@ -23,15 +23,15 @@
               :bg-color = "$observatories.getTheme(observatorio.id).primary"
             -->
             <flpo-linked-view-card
-              :index-tab = "30 + indxObs"
-              :tagColor = "observatorio.tagColor"
-              :status = "observatorio.status"
-              :to = "observatorio.to"
-              :external = "observatorio.external"
-              :title = "observatorio.short_desc"
-              :ripple-color = "$observatories.getTheme(observatorio.id).primary"
-              :title-color = "'white'"
-              :blocked = "observatorio.blocked"
+              :index-tab="30 + indxObs"
+              :tagColor="observatorio.tagColor"
+              :status="observatorio.status"
+              :to="observatorio.to"
+              :external="observatorio.external"
+              :title="observatorio.short_desc"
+              :ripple-color="$observatories.getTheme(observatorio.id).primary"
+              :title-color="'white'"
+              :blocked="observatorio.blocked"
               @showSnackbar="snackAlert"
             />
           </v-flex>

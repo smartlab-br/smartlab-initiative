@@ -71,16 +71,16 @@
               :bg-color = "$vuetify.theme.secondary"
             -->
             <flpo-linked-view-card
-              :index-tab = "30 + indxDim"
-              :tagColor = "dimension.tagColor"
-              :ripple-color = "$vuetify.theme.primary"
-              :status = "dimension.status"
-              :to = "changeToGeoIP(dimension.to)"
-              :external = "dimension.external"
-              :title = "dimension.label"
-              :title-color = "'white'"
-              :detail = "dimension.sub"
-              :blocked = "dimension.blocked"
+              :index-tab="30 + indxDim"
+              :tagColor="dimension.tagColor"
+              :ripple-color="$vuetify.theme.primary"
+              :status="dimension.status"
+              :to="changeToGeoIP(dimension.to)"
+              :external="dimension.external"
+              :title="dimension.label"
+              :title-color="'white'"
+              :detail="dimension.sub"
+              :blocked="dimension.blocked"
               @showSnackbar="snackAlert"
             />
           </v-flex>
