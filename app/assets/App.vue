@@ -889,23 +889,27 @@
             };
           }
         }
-
-        if (!this.visibleTitle || (this.$route && (this.$route.path.indexOf("localidade") != -1 || 
-                                   this.$route.path.indexOf("estudo") != -1 || 
-                                   this.$route.path.indexOf("saibamais") != -1 || 
-                                   this.$route.path.indexOf("smartmap") != -1
-                                   ))){
-          if (this.$vuetify.breakpoint.smAndDown) {
-            return observ.short_title;
-          }
-          return observ.title;
-        } 
-        return '';
+        
+        // if (!this.visibleTitle || (this.$route && (this.$route.path.indexOf("localidade") != -1 || 
+        //                     this.$route.path.indexOf("localidade") != -1 || 
+        //                     this.$route.path.indexOf("estudo") != -1 || 
+        //                     this.$route.path.indexOf("saibamais") != -1 || 
+        //                     this.$route.path.indexOf("smartmap") != -1
+        //                     )))
+        // {
+        if (this.$vuetify.breakpoint.mdAndDown) {
+          return observ.short_title;
+        }
+        return observ.title;
+        // } 
+        // return '';
       },
       computedHashTag: function() {
         let hashTag = '';
         if (this.computedTitle != ''){
-          if (this.observatorios) {
+          if (this.computedTitle == "Sobre"){
+            hashTag = "#TrabalhoDecente";
+          } else if (this.observatorios) {
             let observ = this.$observatories.getObservatoryById(this.currentObs);
             if (observ) {
                 hashTag = "#"+ observ.hash_tag;
