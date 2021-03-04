@@ -18,7 +18,7 @@
             pa-3>
             <!--
               :icon = "observatorio.icon"
-              :app-icon = "observatorio.appIcon"
+              :app-icon = "observatorio.app_icon"
               :media = "observatorio.media"
               :bg-color = "$observatories.getTheme(observatorio.id).primary"
             -->
@@ -31,8 +31,9 @@
               :title = "observatorio.short_desc"
               :ripple-color = "$observatories.getTheme(observatorio.id).primary"
               :title-color = "'white'"
-              :blocked = "observatorio.status == 'EM BREVE'">
-            </flpo-linked-view-card>
+              :blocked = "observatorio.blocked"
+              @showSnackbar="snackAlert"
+            />
           </v-flex>
         </v-layout>
       </v-layout>

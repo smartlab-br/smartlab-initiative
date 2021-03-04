@@ -1,6 +1,7 @@
 <template>
   <v-app>
     <v-navigation-drawer
+      v-if="observatorios"
       v-model="drawer"
       :mini-variant="miniVariant"
       clipped
@@ -18,8 +19,8 @@
 
         <v-list-tile 
           v-for="(item, i) in items"
-          v-ripple
           :key="i"
+          v-ripple
           :ripple="{ class: item.rippleColor }"
           exact
           :tabindex="drawer ? 10 + i : ''"
@@ -27,19 +28,24 @@
           @keyup.enter="itemClick(item)"
         >
           <v-list-tile-action>
-            <v-icon 
-              v-if="item.icon" 
-              :title="item.title" 
-              v-html="item.icon" 
-            />
-            <app-icon 
-              v-else-if="item.app_icon"
-              :title="item.title" 
-              :icon="item.app_icon"
-            />
+            <v-tooltip bottom>
+              <v-icon 
+                v-if="item.icon" 
+                slot="activator"
+                :title="item.short_title" 
+                v-html="item.icon" 
+              />
+              <app-icon 
+                v-else-if="item.app_icon"
+                slot="activator"
+                :title="item.short_title" 
+                :icon="item.app_icon"
+              />
+              {{ item.short_title }}
+            </v-tooltip>
           </v-list-tile-action>
           <v-list-tile-content>
-            <v-list-tile-title v-text="item.title" />
+            <v-list-tile-title v-text="item.short_title" />
           </v-list-tile-content>
         </v-list-tile>
       </v-list>
@@ -109,10 +115,10 @@
             style="background-color:rgba(255,255,255,0.7)"
           />
           <v-flex 
-            text-xs-right 
             class="line-height-1"
           >
             <v-flex 
+              text-xs-right 
               class="cursor-pointer" 
               pa-0
               @click="$navigationManager.constructor.pushRoute($router, ($route && ($route.path.indexOf('localidade') != -1)) ? '../' : ($route && ($route.path.indexOf('estudo') != -1 || $route.path.indexOf('smartmap') != -1)) ? './' : '', false);" 
@@ -123,7 +129,12 @@
               pa-0 
               caption
             >
-              {{ computedSubtitle }}
+              <a 
+                class="white--text" 
+                @click="$navigationManager.constructor.pushRoute($router, 'https://twitter.com/hashtag/' + computedHashTag.replace('#',''), true)"
+              >
+                {{ computedHashTag }}
+              </a>
             </v-flex>
           </v-flex>
           <v-divider 
@@ -195,12 +206,12 @@
               <v-list-tile-action style="min-width: 120px">
                 <v-layout row>
                   <v-layout 
-                    v-for="(search_item, indxSearch) in $observatories.getObservatoriesSearchOptions()"
+                    v-for="(search_item, indxSearch) in $observatories.getObservatories()"
                     :key="'search_item_obs_' + indxSearch"
                     @click="changeAnalysisUnit($router, data.item, search_item.id)"
                   >
                     <v-layout 
-                      v-if="data.item.exclude_from == null || data.item.exclude_from == undefined || !data.item.exclude_from.includes(search_item.id)"
+                      v-if="!search_item.blocked && (data.item.exclude_from == null || data.item.exclude_from == undefined || !data.item.exclude_from.includes(search_item.id))"
                       column 
                       wrap 
                       align-center
@@ -220,7 +231,7 @@
                           :fill="search_item.color"
                           :icon="search_item.app_icon"
                         />
-                        <v-layout v-html="search_item.title" /> 
+                        <v-layout v-html="search_item.tooltip" /> 
                       </v-tooltip>
                     </v-layout>
                   </v-layout>
@@ -249,38 +260,60 @@
         </v-tooltip>
       </v-btn>
       <v-btn
-        tabindex = "23"
-        icon class="ml-0"
+        tabindex="23"
+        icon 
+        class="ml-0"
         aria-label="Identifique-se"
-        @click="handleAvatarClick()">
+        @click="handleAvatarClick()"
+      >
         <v-tooltip bottom>
-              <v-avatar
-                size="36px"
-              slot="activator">
-                <img
-                  v-if="this.$store.state.user && this.$store.state.user.picture"
-                  :src="this.$store.state.user.picture"
-                >
-                <v-icon v-else color="white" slot="activator">perm_identity</v-icon>
-              </v-avatar>
+          <v-avatar
+            slot="activator"
+            size="36px"
+          >
+            <img
+              v-if="this.$store.state.user && this.$store.state.user.picture"
+              alt="Foto"
+              :src="this.$store.state.user.picture"
+            >
+            <v-icon 
+              v-else 
+              slot="activator"
+              color="white" 
+            >
+              perm_identity
+            </v-icon>
+          </v-avatar>
           {{ computedLoginLabel }} 
         </v-tooltip>
       </v-btn>
-      <!--
-      <v-btn
-        icon class="ml-0"
-        @click.native.stop="rightDrawer = !rightDrawer">
-        <v-tooltip bottom>
-          <v-icon  color="white" slot="activator">settings</v-icon>
-          Configurações
-        </v-tooltip>
-      </v-btn>
-      -->
+      <v-tooltip bottom>
+        <a 
+          slot="activator"
+          class="white--text mx-2" 
+          @click="$navigationManager.constructor.pushRoute($router, 'https://www.instagram.com/smartlab_br/', true)"
+        >
+          <span v-html="renderIcon('fab','faInstagram','Instagram')" />
+        </a>
+        Instagram
+      </v-tooltip>
     </v-toolbar>
     <v-content>
-      <v-container fluid class="pa-0 fill-height">
-        <router-view :key="reRenderPath" @userChanged="updateUser" @showSnackbar="snackAlert"
-          @showLocationDialog="showLocationDialog" @showAuthenticatioDialog="showAuthenticatioDialog" @showBugDialog="showBugDialog" @alterToolbar="changeToolbar" @alterMiddleToolbar="changeMiddleToolbar" ref="currentRoute"></router-view>
+      <v-container 
+        fluid 
+        class="pa-0 fill-height"
+      >
+        <router-view 
+          :key="reRenderPath" 
+          ref="currentRoute"
+          @userChanged="updateUser" 
+          @showSnackbar="snackAlert"
+          @showLocationDialog="showLocationDialog" 
+          @showAuthenticatioDialog="showAuthenticatioDialog" 
+          @showBugDialog="showBugDialog" 
+          @alterToolbar="changeToolbar" 
+          @alterMiddleToolbar="changeMiddleToolbar" 
+        />
         <v-slide-y-transition mode="out-in" />
       </v-container>
     </v-content>
@@ -460,6 +493,12 @@
       >
         <a 
           class="white--text mr-2" 
+          @click="$navigationManager.constructor.pushRoute($router, 'https://www.instagram.com/smartlab_br/', true)"
+        >
+          <span v-html="renderIcon('fab','faInstagram','Instagram')" />
+        </a>
+        <a 
+          class="white--text mr-2" 
           @click="$navigationManager.constructor.pushRoute($router, 'https://github.com/smartlab-br', true)"
         >
           <span v-html="renderIcon('fab','faGithub','GitHub')" />
@@ -470,18 +509,14 @@
         >
           <span v-html="renderIcon('fab','faDocker','Docker')" />
         </a>
-        <a 
-          class="white--text mr-2" 
-          @click="$navigationManager.constructor.pushRoute($router, 'https://www.instagram.com/smartlab_br/', true)"
-        >
-          <span v-html="renderIcon('fab','faInstagram','Instagram')" />
-        </a>
       </v-flex>
       <v-flex  
         class="xs6 sm6 md6 lg1 xl3 text-xs-right subheading" 
         :class="{'pt-5 pb-3': $vuetify.breakpoint.mdAndDown }" 
       >
-        <div class="caption mr-1 mb-1">Licenças</div>
+        <div class="caption mr-1 mb-1">
+          Licenças
+        </div>
         <a 
           class="white--text mx-2" 
           @click="$navigationManager.constructor.pushRoute($router, 'https://creativecommons.org/licences/by-nc-sa/4.0/', true)"
@@ -591,11 +626,11 @@
                 <v-flex py-0>
                   <v-textarea 
                     v-if="bugDialog"
-                    v-model="bugText"
                     ref="bugText"
+                    v-model="bugText"
                     class="py-0"
                     label="Relate um problema"
-                    :rules= "bugTextRules"                      
+                    :rules="bugTextRules"                      
                     autofocus
                     required
                   />
@@ -603,10 +638,10 @@
 
                 <v-flex>
                   <v-text-field 
-                    v-model="bugEmail"
                     ref="bugEmail"                     
+                    v-model="bugEmail"
                     class="py-0"
-                    :rules= "bugEmailRules" 
+                    :rules="bugEmailRules" 
                     label="E-mail contato"
                     required
                   />
@@ -638,7 +673,9 @@
                       @click="sendBugReport"
                     >
                       <span class="hidden-sm-and-down body">Enviar</span>
-                      <v-icon right>send</v-icon> 
+                      <v-icon right>
+                        send
+                      </v-icon> 
                     </v-btn>
                     <v-btn
                       small 
@@ -647,7 +684,9 @@
                       @click="closeBugDialog"
                     >
                       <span class="hidden-sm-and-down body">Fechar</span>
-                      <v-icon right>close</v-icon> 
+                      <v-icon right>
+                        close
+                      </v-icon> 
                     </v-btn>
                   </v-layout>
                 </v-layout>
@@ -663,7 +702,11 @@
       persistent
     >
       <v-card>
-        <v-card-title class="headline-obs">Informe o município a ser visualizado ou sua localidade:</v-card-title>
+        <v-card-title 
+          class="headline-obs"
+        >
+          Informe o município a ser visualizado ou sua localidade:
+        </v-card-title>
         <v-card-text>
           <v-autocomplete
             v-if="auOptions.length > 0"
@@ -678,7 +721,7 @@
             :filter="customFilter"
             :loading="gsLoadingStatusSearchOptions == 'LOADING' ? true : false"
             :color="gsLoadingStatusSearchOptions == 'ERROR' ? 'error' :
-                    (gsLoadingStatusSearchOptions == 'LOADING' ? 'warning' : 'accent')"
+            (gsLoadingStatusSearchOptions == 'LOADING' ? 'warning' : 'accent')"
             @blur="gsFavLocation = null"
           >
             <template 
@@ -705,22 +748,40 @@
       </v-card>
     </v-dialog>
 
-<v-dialog width="500px" v-model="authMessageDialog">
-  <v-card>
-    <v-card-title class="headline-obs">Autenticação necessária</v-card-title>
-    <v-card-text>
-      <p>Para baixar os dados, é necessário que você se autentique.</p>
-      <p>Clique no botão abaixo e faça o login na plataforma utilizando sua conta do Google ou Facebook.</p>
-    </v-card-text>
-    <v-layout align-center justify-center row fill-height>
-    <v-btn class="theme--light mb-3 mt-0" color="accent" @click="handleAuthClick()">
-      <v-icon left color="white">perm_identity</v-icon>
-      Autenticar
-    </v-btn>
-    </v-layout>
-  </v-card>
-</v-dialog>
-
+    <v-dialog 
+      v-model="authMessageDialog"
+      width="500px" 
+    >
+      <v-card>
+        <v-card-title class="headline-obs">
+          Autenticação necessária
+        </v-card-title>
+        <v-card-text>
+          <p>Para baixar os dados, é necessário que você se autentique.</p>
+          <p>Clique no botão abaixo e faça o login na plataforma utilizando sua conta do Google ou Facebook.</p>
+        </v-card-text>
+        <v-layout 
+          align-center 
+          justify-center 
+          row 
+          fill-height
+        >
+          <v-btn 
+            class="theme--light mb-3 mt-0" 
+            color="accent" 
+            @click="handleAuthClick()"
+          >
+            <v-icon 
+              left 
+              color="white"
+            >
+              perm_identity
+            </v-icon>
+            Autenticar
+          </v-btn>
+        </v-layout>
+      </v-card>
+    </v-dialog>
   </v-app>
 </template>
 
@@ -731,8 +792,7 @@
   import fontawesome from '@fortawesome/fontawesome'
   import fa_brands from '@fortawesome/fontawesome-free-brands'
   import fa_solid from '@fortawesome/fontawesome-free-solid'
-  // import fa_regular from '@fortawesome/fontawesome-free-regular'
-
+  
   export default {
     mixins: [Meta],
     data () {
@@ -750,31 +810,6 @@
           // { icon: 'stars', title: 'Destaques', to: '/', external: false },
           // { icon: 'map', title: 'Mapa Exploratório', to: '/mapa/0', external: false },
           // { icon: 'map', title: 'Mapa Exploratório', to: '/mapa/06_02_03_04?type=bubbles', external: false },
-          { app_icon: 'td', title: 'Trabalho Decente',
-            to: '/trabalhodecente', external: false,
-            rippleColor: 'grey--text darken-3' },
-          { app_icon: 'coord-02', title: 'Trabalho Escravo',
-            to: '/trabalhoescravo', external: false,
-            blocked: false,
-            rippleColor: 'brown--text darken-3' },
-          { app_icon: 'coord-01', title: 'Segurança e Saúde',
-            to: '/sst', external: false,
-            blocked: false,
-            rippleColor: 'teal--text darken-3' },
-          { app_icon: 'coord-07', title: 'Trabalho Infantil',
-            to: '/trabalhoinfantil', external: false,
-            blocked: false,
-            rippleColor: 'indigo--text darken-3' },
-          { app_icon: 'coord-06', title: 'Diversidade no Trabalho',
-            to: '/diversidade', external: false,
-            blocked: false,
-            rippleColor: 'deep-purple--text darken-2' },
-          { app_icon: 'covid', title: 'COVID-19',
-            to: '/covid', external: false,
-            blocked: false,
-            rippleColor: 'deep-orange--text darken-2' },
-          // { icon: 'flight_takeoff', title: 'Migrações e Trabalho',
-          //   to: '/', external: false }
         ],
         miniVariant: false,
         right: true,
@@ -818,49 +853,8 @@
         dim: { label: null }
       }
     },
-    created () {    
-      // console.log(process.env.GRAVITEE_AM_URL_BASE)
-
-      let tmpObs = this.$observatories.getObservatories();
-      if (tmpObs instanceof Promise) {
-        tmpObs.then((result) => { this.observatorios = result });
-      } else {
-        this.observatorios = tmpObs;
-      }
-
-      this.dim = { label: null };
-      this.currentObs = this.$observatories.constructor.identifyObservatory(this.$route.path.split('/')[1]);
-      if (this.currentObs != null && (this.$route.query.dimensao || this.$route.params.idLocalidade)) {
-        this.$dimensions.getDimensionByObservatoryAndId(this.currentObs, this.$route.query.dimensao)
-          .then((result) => { this.dim = result; });
-      }
-
-      Promise.all(this.$analysisUnitModel.buildAllSearchOptions())
-        .then((results) => {
-          let hasLoading = false;
-          for (let eachResult in results) {
-              if (eachResult == 'ERROR') {
-                this.gsLoadingStatusSearchOptions = eachResult;
-                return;
-              }
-              if (eachResult == 'LOADING') hasLoading = true;
-          }
-          this.gsLoadingStatusSearchOptions = hasLoading ? 'LOADING' : 'SUCCESS';
-          this.auOptions = this.$analysisUnitModel.getOptions();
-        })
-        .catch((error) => {
-          this.gsLoadingStatusSearchOptions = 'ERROR';
-          this.auOptions = this.$analysisUnitModel.getOptions();
-          this.sendError("Falha ao buscar lista das localidades");
-        });
-
-      this.themeEval();
-    },
     computed: {
       computedLoginLabel: function(){
-        // if (this.user && this.user.name){
-        //   return this.user.name;
-        // } else {
         if (this.$store.state.user){
           return "Visualizar perfil";
         } else {
@@ -895,18 +889,34 @@
             };
           }
         }
-
-        if (!this.visibleTitle || (this.$route && (this.$route.path.indexOf("localidade") != -1 || 
-                                   this.$route.path.indexOf("estudo") != -1 || 
-                                   this.$route.path.indexOf("saibamais") != -1 || 
-                                   this.$route.path.indexOf("smartmap") != -1
-                                   ))){
-          if (this.$vuetify.breakpoint.smAndDown) {
-            return observ.short_title;
+        
+        // if (!this.visibleTitle || (this.$route && (this.$route.path.indexOf("localidade") != -1 || 
+        //                     this.$route.path.indexOf("localidade") != -1 || 
+        //                     this.$route.path.indexOf("estudo") != -1 || 
+        //                     this.$route.path.indexOf("saibamais") != -1 || 
+        //                     this.$route.path.indexOf("smartmap") != -1
+        //                     )))
+        // {
+        if (this.$vuetify.breakpoint.mdAndDown) {
+          return observ.short_title;
+        }
+        return observ.title;
+        // } 
+        // return '';
+      },
+      computedHashTag: function() {
+        let hashTag = '';
+        if (this.computedTitle != ''){
+          if (this.computedTitle == "Sobre"){
+            hashTag = "#TrabalhoDecente";
+          } else if (this.observatorios) {
+            let observ = this.$observatories.getObservatoryById(this.currentObs);
+            if (observ) {
+                hashTag = "#"+ observ.hash_tag;
+            } 
           }
-          return observ.title;
-        } 
-        return '';
+        }
+        return hashTag;
       },
       computedSubtitle: function() {
 
@@ -922,10 +932,6 @@
           return "SmartMap - Mapa Avançado";
         }
         
-          
-        // if (this.$route.params.tab ){
-        //   return "Sobre";
-        // }
           
         return '';
       },
@@ -970,33 +976,47 @@
         })
       }
     },
-    mounted: function() {
-      // this.checkCurrentAnalysisUnit();
+    created () {    
+      // console.log(process.env.GRAVITEE_AM_URL_BASE)
 
-      if (!this.$cookies.isKey("cookieAccept")){
-        this.snackbarCookies = true;
+      let tmpObs = this.$observatories.getObservatories();
+      if (tmpObs instanceof Promise) {
+        tmpObs.then((result) => { 
+          this.observatorios = result;
+          this.items = Object.assign(this.items, result);
+        });
+      } else {
+        this.observatorios = tmpObs;
+        this.items = Object.assign(this.items, tmpObs);
       }
 
-      // this.user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null;
+      this.dim = { label: null };
+      this.currentObs = this.$observatories.constructor.identifyObservatory(this.$route.path.split('/')[1]);
+      if (this.currentObs != null && (this.$route.query.dimensao || this.$route.params.idLocalidade)) {
+        this.$dimensions.getDimensionByObservatoryAndId(this.currentObs, this.$route.query.dimensao)
+          .then((result) => { this.dim = result; });
+      }
 
-      let findLoc = this.$analysisUnitModel.findCurrentPlace();
-      if (findLoc && (findLoc instanceof Promise || findLoc.then)) {
-        findLoc.then(response => {
-          // console.log(response);
-          this.changeMiddleToolbar(response);
-          if (response.id_localidade && response.id_localidade.length > 5) this.localidade = response;
+      Promise.all(this.$analysisUnitModel.buildAllSearchOptions())
+        .then((results) => {
+          let hasLoading = false;
+          for (let eachResult in results) {
+              if (eachResult == 'ERROR') {
+                this.gsLoadingStatusSearchOptions = eachResult;
+                return;
+              }
+              if (eachResult == 'LOADING') hasLoading = true;
+          }
+          this.gsLoadingStatusSearchOptions = hasLoading ? 'LOADING' : 'SUCCESS';
+          this.auOptions = this.$analysisUnitModel.getOptions();
         })
-        .catch(error => { this.sendError(error); });
-      } else if (findLoc){
-        this.changeMiddleToolbar(findLoc);
-        if (findLoc.id_localidade && findLoc.id_localidade.length > 5) this.localidade = findLoc;
-      }
-    
-      this.langs = this.$translationModel.findAllLocales();
-      this.lang = this.$translationModel.findBrowserLocale(this);
+        .catch((error) => {
+          this.gsLoadingStatusSearchOptions = 'ERROR';
+          this.auOptions = this.$analysisUnitModel.getOptions();
+          this.sendError("Falha ao buscar lista das localidades");
+        });
 
-      window.addEventListener('scroll', this.assessVisibleTitle);
-      window.addEventListener('scroll', this.assessVisibleLeftDrawerTitle);
+      this.themeEval();
     },
     watch: {
       '$route.fullPath': function(newVal, oldVal) {
@@ -1032,10 +1052,36 @@
         }
       }
     },
+    mounted: function() {
+
+      if (!this.$cookies.isKey("cookieAccept")){
+        this.snackbarCookies = true;
+      }
+
+      let findLoc = this.$analysisUnitModel.findCurrentPlace();
+      if (findLoc && (findLoc instanceof Promise || findLoc.then)) {
+        findLoc.then(response => {
+          this.changeMiddleToolbar(response);
+          if (response.id_localidade && response.id_localidade.length > 5) this.localidade = response;
+        })
+        .catch(error => { this.sendError(error); });
+      } else if (findLoc){
+        this.changeMiddleToolbar(findLoc);
+        if (findLoc.id_localidade && findLoc.id_localidade.length > 5) this.localidade = findLoc;
+      }
+    
+      this.langs = this.$translationModel.findAllLocales();
+      this.lang = this.$translationModel.findBrowserLocale(this);
+
+      window.addEventListener('scroll', this.assessVisibleTitle);
+      window.addEventListener('scroll', this.assessVisibleLeftDrawerTitle);
+    },
     methods: {
       itemClick(item) {
         if (!item.blocked){
           this.$navigationManager.constructor.pushRoute(this.$router, item.to, item.external);
+        } else {
+          this.snackAlert({ color : 'orange darken-4', text: "Esse observatório estará disponível em breve." })
         }
       },
       customFilter (item, queryText, itemText) {
@@ -1093,25 +1139,7 @@
       },
 
       showLoginDialog: function(){
-        var fakeWindow = {
-          atob: function atob() { },
-          open: function open() { },
-          location: {},
-          localStorage: {
-            setItem: function setItem() { },
-            getItem: function getItem() { },
-            removeItem: function removeItem() { },
-          },
-          sessionStorage: {
-            setItem: function setItem() { },
-            getItem: function getItem() { },
-            removeItem: function removeItem() { },
-          },
-        };
-
-        // var $window = (typeof window !== undefined) ? window : fakeWindow;
         var loginUrl = `${process.env.GRAVITEE_AM_BASE_URL}/oauth/authorize?client_id=${process.env.GRAVITEE_AM_CLIENT_ID}&response_type=token&redirect_uri=${process.env.GRAVITEE_AM_REDIRECT_URL}`;
-        // console.log(loginUrl);
         var popup = window.open(loginUrl, '_blank', 'width=550,height=450,resizable=no,scrollbars=yes')
 
         var this_ = this;
@@ -1134,7 +1162,6 @@
                 data: {},
                 headers: {'Authorization': bearer}
               }).then(function (response) {
-                // console.log(response.data);
                 let graviteeUser = {};
                 graviteeUser.name = response.data.name;
                 graviteeUser.email = response.data.email;
@@ -1183,7 +1210,6 @@
       // },
       
       assessVisibleTitle() {
-        // const vHeight = (window.innerHeight || document.documentElement.clientHeight);
         if (document.getElementById("screenTitle")) {
           var { top, bottom } = document.getElementById("screenTitle").getBoundingClientRect();
           if (top < 0 && bottom < 0) {
@@ -1197,7 +1223,6 @@
       },
 
       assessVisibleLeftDrawerTitle() {
-        // const vHeight = (window.innerHeight || document.documentElement.clientHeight);
         if (document.getElementById("screenTitle")) {
           var { top, bottom } = document.getElementById("screenTitle").getBoundingClientRect();
           if (top < 0 && bottom < 0) {
@@ -1210,7 +1235,6 @@
 
       showBugDialog(cardTitle){
         this.bugCard = cardTitle;
-        // this.$refs.inputProblem.focus();
         this.bugDialog = true;
       },
 
@@ -1292,7 +1316,6 @@
 
       updateUser(user){
         this.$store.commit('setUser', user)
-        // this.user = user;
       }
       
     }
