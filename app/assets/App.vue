@@ -127,12 +127,13 @@
               {{ computedTitle }}
             </v-flex>
             <v-flex 
+              text-xs-right 
               pa-0 
               caption
             >
               <a 
-                class="white--text" 
-                @click="$navigationManager.constructor.pushRoute($router, 'https://twitter.com/hashtag/' + computedHashTag.replace('#',''), true)"
+                class="white--text"                 
+                @click="$navigationManager.constructor.pushRoute($router, 'https://www.instagram.com/smartlab_br/', true)"
               >
                 {{ computedHashTag }}
               </a>
@@ -783,6 +784,21 @@
         </v-layout>
       </v-card>
     </v-dialog>
+    <v-layout text-xs-center pa-0 ma-0
+      class="footer-nav white--text">
+      <v-layout row wrap caption class="cursor-pointer">
+        <v-layout column scroll-menu v-if="!isPageBottom" pa-2
+          v-on:click="scrollDown()">
+          Leia mais
+          <v-icon dark>keyboard_arrow_down</v-icon>
+        </v-layout>
+        <v-layout column scroll-menu v-if="isPageBottom" pa-2
+          v-on:click="scrollTop()">
+          <v-icon dark>keyboard_arrow_up</v-icon>
+          Para o topo
+        </v-layout>
+       </v-layout>
+    </v-layout>
   </v-app>
 </template>
 
@@ -806,6 +822,7 @@
         seen: false,
         drawer: false,
         fixed: false,
+        isPageBottom: true,
         menuItems: [
           { icon: 'apps', short_title: 'Início', to: '/', external: false },
           // { icon: 'stars', title: 'Destaques', to: '/', external: false },
@@ -1077,10 +1094,33 @@
       this.langs = this.$translationModel.findAllLocales();
       this.lang = this.$translationModel.findBrowserLocale(this);
 
+      window.addEventListener('scroll', this.assessPageBottom);
+      this.assessPageBottom();
+
       window.addEventListener('scroll', this.assessVisibleTitle);
       window.addEventListener('scroll', this.assessVisibleLeftDrawerTitle);
     },
     methods: {
+      assessPageBottom() {
+        this.isPageBottom = false;
+        if (window && document) {
+          if (window.scrollY == 0){ //início
+            this.isPageBottom = false;
+          }
+          else{
+            this.isPageBottom = (window.innerHeight + window.scrollY) >= document.body.offsetHeight-1;
+          }
+        } 
+      },
+
+      scrollDown(){
+        window.scrollBy(0, window.innerHeight / 2);        
+      },
+
+      scrollTop(){
+        window.scrollTo(0,0);
+      },
+
       itemClick(item) {
         if (!item.blocked){
           this.$navigationManager.constructor.pushRoute(this.$router, item.to, item.external);
