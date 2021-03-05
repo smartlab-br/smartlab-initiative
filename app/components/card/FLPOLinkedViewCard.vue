@@ -1,7 +1,7 @@
 <template>
   <v-layout class="linked-view-card elevation-5" 
     v-ripple
-    :ripple = "{ class: rippleColor }"
+    :ripple="{ class: rippleColor }"
     @click="blocked ? snackBlocked() : $navigationManager.constructor.pushRoute($router, to, external)"
     @keyup.enter="blocked ? snackBlocked() : $navigationManager.constructor.pushRoute($router, to, external)"
   >

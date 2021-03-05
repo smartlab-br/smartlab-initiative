@@ -71,16 +71,16 @@
               :bg-color = "$vuetify.theme.secondary"
             -->
             <flpo-linked-view-card
-              :index-tab = "30 + indxDim"
-              :tagColor = "dimension.tagColor"
-              :ripple-color = "$vuetify.theme.primary"
-              :status = "dimension.status"
-              :to = "changeToGeoIP(dimension.to)"
-              :external = "dimension.external"
-              :title = "dimension.label"
-              :title-color = "'white'"
-              :detail = "dimension.sub"
-              :blocked = "dimension.blocked"
+              :index-tab="30 + indxDim"
+              :tagColor="dimension.tagColor"
+              :ripple-color="$vuetify.theme.primary"
+              :status="dimension.status"
+              :to="changeToGeoIP(dimension.to)"
+              :external="dimension.external"
+              :title="dimension.label"
+              :title-color="'white'"
+              :detail="dimension.sub"
+              :blocked="dimension.blocked"
               @showSnackbar="snackAlert"
             />
           </v-flex>
@@ -275,22 +275,6 @@
       </v-layout>
     </v-container>
 
-    <v-layout text-xs-center pa-0 ma-0
-      class="footer-nav white--text">
-      <v-layout row wrap caption class="cursor-pointer">
-        <v-layout column scroll-menu v-if="!isPageBottom" pa-2
-          v-on:click="scrollDown()">
-          Leia mais
-          <v-icon dark>keyboard_arrow_down</v-icon>
-        </v-layout>
-        <v-layout column scroll-menu v-if="isPageBottom" pa-2
-          v-on:click="scrollTop()">
-          <v-icon dark>keyboard_arrow_up</v-icon>
-          Para o topo
-        </v-layout>
-       </v-layout>
-    </v-layout>
-
     <!--
     <v-container fluid ma-0 pa-5 :style="'background-color:' + $colorsService.constructor.assessZebraBG(1, $vuetify.theme) + ';'">
       <v-layout row wrap text-xs-center pb-5>
@@ -389,15 +373,12 @@
     mounted: function() {
       this.resizeFirstSection();
       window.addEventListener('resize', this.resizeFirstSection);
-      window.addEventListener('scroll', this.assessPageBottom);
       window.addEventListener('scroll', this.setVisibleSparklines);
-      this.assessPageBottom();
       this.idLocalidade = this.$analysisUnitModel.getCurrentAnalysisUnit();
       this.mapEnabled = false;
       this.checkCurrentAnalysisUnit();
     },
     beforeDestroy () {
-      window.removeEventListener('scroll', this.assessPageBottom);
       window.removeEventListener('scroll', this.setVisibleSparklines);
     },
     computed: {
@@ -433,26 +414,6 @@
         }
       },
       
-      assessPageBottom() {
-        this.isPageBottom = false;
-        if (window && document) {
-          if (window.scrollY == 0){ //início
-            this.isPageBottom = false;
-          }
-          else{
-            this.isPageBottom = (window.innerHeight + window.scrollY) >= document.body.offsetHeight-1;
-          }
-        } 
-      },
-
-      scrollDown(){
-        window.scrollBy(0, window.innerHeight / 2);        
-      },
-
-      scrollTop(){
-        window.scrollTo(0,0);
-      },
-
       scrollTo(anchor) {
         var el = this.$el.querySelector("#" + anchor);
         el.scrollIntoView();

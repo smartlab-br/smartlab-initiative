@@ -18,10 +18,9 @@
         </v-list-tile>
 
         <v-list-tile 
-          v-for="(item, i) in items"
+          v-for="(item, i) in computedMenuItems"
           :key="i"
-          v-ripple
-          :ripple="{ class: item.rippleColor }"
+          v-ripple="{ class: item.rippleColor }"
           exact
           :tabindex="drawer ? 10 + i : ''"
           @click="itemClick(item)"
@@ -34,12 +33,14 @@
                 slot="activator"
                 :title="item.short_title" 
                 v-html="item.icon" 
+                :color="$observatories.getTheme(item.id).primary"
               />
               <app-icon 
                 v-else-if="item.app_icon"
                 slot="activator"
                 :title="item.short_title" 
                 :icon="item.app_icon"
+                :fill="$observatories.getTheme(item.id).primary"
               />
               {{ item.short_title }}
             </v-tooltip>
@@ -126,12 +127,13 @@
               {{ computedTitle }}
             </v-flex>
             <v-flex 
+              text-xs-right 
               pa-0 
               caption
             >
               <a 
-                class="white--text" 
-                @click="$navigationManager.constructor.pushRoute($router, 'https://twitter.com/hashtag/' + computedHashTag.replace('#',''), true)"
+                class="white--text"                 
+                @click="$navigationManager.constructor.pushRoute($router, 'https://www.instagram.com/smartlab_br/', true)"
               >
                 {{ computedHashTag }}
               </a>
@@ -221,14 +223,14 @@
                           v-if="search_item.icon"
                           slot="activator"
                           small 
-                          :class="search_item.color"
+                          :color="$observatories.getTheme(search_item.id).primary"
                           v-html="search_item.icon"
                         />
                         <app-icon 
                           v-else-if="search_item.app_icon"
                           slot="activator"
                           size="16" 
-                          :fill="search_item.color"
+                          :fill="$observatories.getTheme(search_item.id).primary"
                           :icon="search_item.app_icon"
                         />
                         <v-layout v-html="search_item.tooltip" /> 
@@ -782,6 +784,21 @@
         </v-layout>
       </v-card>
     </v-dialog>
+    <v-layout text-xs-center pa-0 ma-0
+      class="footer-nav white--text">
+      <v-layout row wrap caption class="cursor-pointer">
+        <v-layout column scroll-menu v-if="!isPageBottom" pa-2
+          v-on:click="scrollDown()">
+          Leia mais
+          <v-icon dark>keyboard_arrow_down</v-icon>
+        </v-layout>
+        <v-layout column scroll-menu v-if="isPageBottom" pa-2
+          v-on:click="scrollTop()">
+          <v-icon dark>keyboard_arrow_up</v-icon>
+          Para o topo
+        </v-layout>
+       </v-layout>
+    </v-layout>
   </v-app>
 </template>
 
@@ -805,8 +822,9 @@
         seen: false,
         drawer: false,
         fixed: false,
-        items: [
-          { icon: 'apps', title: 'Início', to: '/', external: false },
+        isPageBottom: true,
+        menuItems: [
+          { icon: 'apps', short_title: 'Início', to: '/', external: false },
           // { icon: 'stars', title: 'Destaques', to: '/', external: false },
           // { icon: 'map', title: 'Mapa Exploratório', to: '/mapa/0', external: false },
           // { icon: 'map', title: 'Mapa Exploratório', to: '/mapa/06_02_03_04?type=bubbles', external: false },
@@ -974,6 +992,13 @@
         return items.filter(function(el) {
           return el.scope == "mun";
         })
+      },
+      computedMenuItems: function() {
+        if (this.observatorios) {
+          return [].concat(this.menuItems, this.observatorios);
+        } else {
+          return this.menuItems;
+        }
       }
     },
     created () {    
@@ -983,11 +1008,9 @@
       if (tmpObs instanceof Promise) {
         tmpObs.then((result) => { 
           this.observatorios = result;
-          this.items = Object.assign(this.items, result);
         });
       } else {
         this.observatorios = tmpObs;
-        this.items = Object.assign(this.items, tmpObs);
       }
 
       this.dim = { label: null };
@@ -1073,10 +1096,33 @@
       this.langs = this.$translationModel.findAllLocales();
       this.lang = this.$translationModel.findBrowserLocale(this);
 
+      window.addEventListener('scroll', this.assessPageBottom);
+      this.assessPageBottom();
+
       window.addEventListener('scroll', this.assessVisibleTitle);
       window.addEventListener('scroll', this.assessVisibleLeftDrawerTitle);
     },
     methods: {
+      assessPageBottom() {
+        this.isPageBottom = false;
+        if (window && document) {
+          if (window.scrollY == 0){ //início
+            this.isPageBottom = false;
+          }
+          else{
+            this.isPageBottom = (window.innerHeight + window.scrollY) >= document.body.offsetHeight-1;
+          }
+        } 
+      },
+
+      scrollDown(){
+        window.scrollBy(0, window.innerHeight / 2);        
+      },
+
+      scrollTop(){
+        window.scrollTo(0,0);
+      },
+
       itemClick(item) {
         if (!item.blocked){
           this.$navigationManager.constructor.pushRoute(this.$router, item.to, item.external);
