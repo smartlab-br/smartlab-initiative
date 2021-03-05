@@ -663,10 +663,6 @@
       window.removeEventListener('resize', this.resizeFirstSection);
     },
     methods: {
-      scrollDown(){
-        window.scrollBy(0, window.innerHeight / 2);        
-      },
-
       setSiblingDimensions(content) {
         let dimensoesTmp = [];
         for (let dim of content.dimensoes) {
