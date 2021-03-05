@@ -996,6 +996,8 @@
       computedMenuItems: function() {
         if (this.observatorios) {
           return [].concat(this.menuItems, this.observatorios);
+        } else {
+          return this.menuItems;
         }
       }
     },
