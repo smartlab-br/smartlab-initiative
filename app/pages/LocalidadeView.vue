@@ -405,7 +405,8 @@
               let yearStart = new Date(Date.UTC(dt.getUTCFullYear(),0,1));
               return Math.ceil((((dt - yearStart) / 86400000) + 1)/7)
             };
-            if (reg_week == new Date().getWeekNumber()){
+            let week = new Date().getFullYear() * 100 + new Date().getWeekNumber()
+            if (reg_week == week){
               return "Semana corrente";
             } else {
               return "Semana completa";
@@ -413,7 +414,7 @@
           },
           get_week_year: function(d, week, week_start){
             let wee_start_ISO = new Date(week_start).toISOString().substring(0,10);
-            return  wee_start_ISO.substring(0,4) + '-' + week;
+            return  wee_start_ISO.substring(0,4) + '-' + week.toString().padStart(2, '0');
           },
           get_bipolar_scale: function(d, prop, origin = 0) {
             if (d[prop] == null) return null;
