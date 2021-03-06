@@ -38,7 +38,7 @@
         </v-layout>
         <v-layout v-else-if="descSection.type && descSection.type == 'ranking_list'" column pb-2>
           <v-flex pa-0 ml-2 class="headline-obs">{{ descSection.title }}</v-flex>
-          <v-layout row wrap pb-2>
+          <v-layout row wrap :class="descSection.sectionClass ? descSection.sectionClass : 'pb-2'">
             <flpo-ranking-list v-for="(ranking, index) in descSection.rankings.filter(filterGroup)" :key="(ranking.group ? ranking.group : 'group') + index"
               :structure="ranking" :customFunctions="customFunctions"
               :reactive-filter="reactiveFilter"
@@ -59,12 +59,13 @@
         <!-- Seção de minicards -->
         <v-layout v-else-if="descSection.type && descSection.type == 'minicards'" column pb-2>
           <v-flex pa-0 class="headline-obs">{{ descSection.title }}</v-flex>
-          <v-layout row wrap pb-4>
+          <v-layout row wrap :class="descSection.sectionClass ? descSection.sectionClass : 'pb-4'">
             <flpo-minicard v-for="(miniCard, index) in descSection.cards.filter(filterGroup)" :key="(miniCard.group ? miniCard.group : 'group') + index"
               :reactive-filter="reactiveFilter"
               :custom-filters="customFilters"
               :structure="miniCard" :customFunctions="customFunctions"
-              :customParams="customParams" :row-class="descSection.rowClass"
+              :customParams="customParams" 
+              :row-class="descSection.rowClass"
               @showSnackbar="snackAlert">
             </flpo-minicard>
           </v-layout>

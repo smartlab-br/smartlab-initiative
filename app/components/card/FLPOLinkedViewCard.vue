@@ -1,55 +1,93 @@
 <template>
   <v-layout class="linked-view-card elevation-5" 
     v-ripple
-    :ripple = "{ class: rippleColor }"
-    v-on:click="blocked ? '' : $navigationManager.constructor.pushRoute($router, to, external)"
-    v-on:keyup.enter="blocked ? '' : $navigationManager.constructor.pushRoute($router, to, external)">
+    :ripple="{ class: rippleColor }"
+    @click="blocked ? snackBlocked() : $navigationManager.constructor.pushRoute($router, to, external)"
+    @keyup.enter="blocked ? snackBlocked() : $navigationManager.constructor.pushRoute($router, to, external)"
+  >
     <v-img 
       :tabindex = "indexTab"
       :src="cmpMedia"
       :class="bgColor ? headerClass : headerClass + ' bg-black-transparent-buttom'"
       :height="height"
       :style="bgColor ? 'background-color:' + bgColor : ''"
-      :aspect-ratio="16/9">
-      <v-container fill-height pa-0 ma-0>
-        <v-container fill-height pa-0>
+      :aspect-ratio="16/9"
+    >
+      <v-container 
+        fill-height 
+        pa-0 
+        ma-0
+      >
+        <v-container 
+          fill-height  
+          pa-0
+        >
           <v-layout align-center>
             <v-layout column pa-0>
               <v-flex
-                v-on:click="blocked ? '' : $navigationManager.constructor.pushRoute($router, to, external)"
-                :class = "detail ? 'linked-view-icon-container' : 'text-xs-center'">
-                <v-btn v-if="icon || appIcon"
+                :class = "detail ? 'linked-view-icon-container' : 'text-xs-center'"
+                @click="blocked ? snackBlocked() : $navigationManager.constructor.pushRoute($router, to, external)"
+              >
+                <v-btn 
+                  v-if="icon || appIcon"
                   :color="btnColor ? btnColor : 'transparent'"
                   class="ma-0"
                   fab
                   flat
-                  small>
-                  <v-icon v-if="icon"
-                    :color="iconColor ? iconColor : ''">
+                  small
+                >
+                  <v-icon 
+                    v-if="icon"
+                    :color="iconColor ? iconColor : ''"
+                  >
                     {{icon}}
                   </v-icon>
-                  <app-icon v-else-if="appIcon"
+                  <app-icon 
+                    v-else-if="appIcon"
                     :fill="iconColor ? iconColor : ''"
-                    :icon="appIcon">
+                    :icon="appIcon"
+                  >
                   </app-icon>
                 </v-btn>
               </v-flex>
-              <v-flex px-2 
-                :class="titleColor ? 'linked-view-title-container text-xs-center ' + titleColor + '--text' : 'linked-view-title-container text-xs-center'">
-                <v-flex :style="(appIcon || icon) ? 'min-height: 70px' : ''" class="headline-obs" v-html="title != null ? title.toUpperCase() : ''">
+              <v-flex 
+                px-2 
+                :class="titleColor ? 'linked-view-title-container text-xs-center ' + titleColor + '--text' : 'linked-view-title-container text-xs-center'"
+              >
+                <v-flex 
+                  :style="(appIcon || icon) ? 'min-height: 70px' : ''" 
+                  class="headline-obs" 
+                  v-html="title != null ? title.toUpperCase() : ''"
+                >
                 </v-flex>
               </v-flex>
-              <v-layout v-if="detail"
-                column pt-1 pb-5 class="linked-view-detail-container">
-                <v-flex caption px-3 pb-4 pt-2 mt-4 text-xs-center 
-                  v-on:click="blocked ? '' : $navigationManager.constructor.pushRoute($router, to, external)"
-                  class="body-1">
+              <v-layout 
+                v-if="detail"
+                column 
+                pt-1 
+                pb-5 
+                class="linked-view-detail-container"
+              >
+                <v-flex 
+                  caption 
+                  px-3 pb-4 pt-2 mt-4 
+                  text-xs-center 
+                  class="body-1"
+                  @click="blocked ? snackBlocked() : $navigationManager.constructor.pushRoute($router, to, external)"
+                >
                   {{ detail.fixed }}
                 </v-flex>
-                <v-flex v-if="tags" pa-2>
-                  <v-chip v-for="(tag, tagIndx) in tags"
-                    small :color="tag.color" :key="'tag_'+tagIndx"
-                    text-color="white">
+                <v-flex 
+                  v-if="tags" 
+                  pa-2
+                >
+                  <v-chip 
+                    v-for="(tag, tagIndx) in tags"
+                    small 
+                    :key="'tag_'+tagIndx"
+                    :color="tag.color" 
+                    text-color="white"
+                  >
                     <v-icon left>label</v-icon>
                     <span>{{ tag.label }}</span>
                   </v-chip>
@@ -60,9 +98,13 @@
         </v-container>
       </v-container>
       <v-layout
-        caption font-weight-bold pa-1 text-xs-center
         v-if="status"
-        :class = "'tag ' + tagColor + ' ' + tagTextColor">
+        caption 
+        font-weight-bold 
+        pa-1 
+        text-xs-center
+        :class = "'tag ' + tagColor + ' ' + tagTextColor"
+      >
         {{ status }}
       </v-layout>
     </v-img>
@@ -91,6 +133,11 @@
       },
       cmpMedia: function() {
         return this.media;
+      }
+    },
+    methods: {
+      snackBlocked: function(){
+        this.$emit('showSnackbar', { color : 'orange darken-4', text: "Disponível em breve!" });
       }
     }
   }

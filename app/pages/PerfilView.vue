@@ -30,13 +30,27 @@
                       v-if="this.$store.state.user && this.$store.state.user.picture"
                       :src="this.$store.state.user.picture"
                     > -->
-                    <img v-if="this.$store.state.user" :src="this.$store.state.user.picture"/>
+                    <img 
+                      v-if="this.$store.state.user" 
+                      alt="Foto"
+                      :src="this.$store.state.user.picture"
+                    />
                     
                     <!-- <v-icon v-else color="white" slot="activator">perm_identity</v-icon> -->
                     
                   </v-avatar>
-                  <img v-if="this.$store.state.user && this.$store.state.user.picture && (this.$store.state.user.picture.search('google') != -1)" src="/static/icons/acesso_google.png" class="social-access-badge"/>
-                  <img v-if="this.$store.state.user && this.$store.state.user.picture && (this.$store.state.user.picture.search('fbsbx') != -1)" src="/static/icons/acesso_facebook.png" class="social-access-badge"/>
+                  <img 
+                    v-if="this.$store.state.user && this.$store.state.user.picture && (this.$store.state.user.picture.search('google') != -1)" 
+                    alt="Acesso Google"
+                    src="/static/icons/acesso_google.png" 
+                    class="social-access-badge"
+                  />
+                  <img 
+                    v-if="this.$store.state.user && this.$store.state.user.picture && (this.$store.state.user.picture.search('fbsbx') != -1)" 
+                    alt="Acesso Facebook"
+                    src="/static/icons/acesso_facebook.png" 
+                    class="social-access-badge"
+                  />
                 </v-layout>
                 <v-flex xs9>
                   <div class="display-2-obs white--text">{{this.$store.state.user ? this.$store.state.user.name : ''}}</div>
