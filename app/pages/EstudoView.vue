@@ -273,18 +273,6 @@
         }
       },
 
-      assessPageBottom() {
-        this.isPageBottom = false;
-        if (window && document) {
-          if (window.scrollY == 0){ //início
-            this.isPageBottom = false;
-          }
-          else{
-            this.isPageBottom = (window.innerHeight + window.scrollY) >= document.body.offsetHeight-1;
-          }
-        } 
-      },
-
       scrollTo(anchor) {
         var el = this.$el.querySelector("#" + anchor);
         el.scrollIntoView();

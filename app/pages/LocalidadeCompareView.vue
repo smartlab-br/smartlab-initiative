@@ -330,43 +330,6 @@
     </v-container>
     <!-- Navegação lateral em dots pelos dimensoes e seções -->
     <flpo-dot-nav :sections="sections"></flpo-dot-nav>
-    <v-layout text-xs-center pa-0 ma-0
-      class="footer-nav white--text">
-      <v-layout row wrap caption class="cursor-pointer">
-        <!--
-        <v-layout column scroll-menu v-if="!isFirstDim" pa-2
-          v-on:click="navDim(-1)">
-          <v-tooltip top>
-            <v-layout pa-2 column slot="activator">
-              <v-icon dark>chevron_left</v-icon>
-            </v-layout>
-            Dimensão anterior
-          </v-tooltip>
-        </v-layout>
-        -->
-        <v-layout column scroll-menu v-if="!isPageBottom" pa-2
-          v-on:click="scrollDown()">
-          Leia mais
-          <v-icon dark>keyboard_arrow_down</v-icon>
-        </v-layout>
-        <v-layout column scroll-menu v-if="isPageBottom" pa-2
-          v-on:click="navDim(0)">
-          <v-icon dark>keyboard_arrow_up</v-icon>
-          Para o topo
-        </v-layout>
-        <!--
-        <v-layout column scroll-menu v-if="!isLastDim" pa-2
-          v-on:click="navDim(1)">
-          <v-tooltip top>
-            <v-layout pa-2 column slot="activator">
-              <v-icon dark>chevron_right</v-icon>
-            </v-layout>
-            Próxima dimensão
-          </v-tooltip>
-        </v-layout>
-        -->
-      </v-layout>
-    </v-layout>
     <v-layout  v-if="!unlockLoading" align-center justify-center row fill-height class= "loadingPanel">
       <v-progress-circular
         :size="120"
