@@ -261,6 +261,7 @@
           Alterar Localidade
         </v-tooltip>
       </v-btn>
+      <!--
       <v-btn
         tabindex="23"
         icon 
@@ -289,6 +290,7 @@
           {{ computedLoginLabel }} 
         </v-tooltip>
       </v-btn>
+      -->
       <v-tooltip bottom>
         <a 
           slot="activator"
@@ -749,7 +751,7 @@
         </v-card-text>
       </v-card>
     </v-dialog>
-
+    <!--
     <v-dialog 
       v-model="authMessageDialog"
       width="500px" 
@@ -780,6 +782,34 @@
               perm_identity
             </v-icon>
             Autenticar
+          </v-btn>
+        </v-layout>
+      </v-card>
+    </v-dialog>
+    -->
+    <v-dialog 
+      v-model="authMessageDialog"
+      width="500px" 
+    >
+      <v-card>
+        <v-card-title class="headline-obs">
+          Identificação necessária
+        </v-card-title>
+        <v-card-text>
+          <p>Para baixar os microdados, você precisa se identificar mediante nome de usuário e senha. Em breve, a funcionalidade estará disponível.</p>
+        </v-card-text>
+        <v-layout 
+          align-center 
+          justify-center 
+          row 
+          fill-height
+        >
+          <v-btn 
+            class="theme--light mb-3 mt-0" 
+            color="accent" 
+            @click="authMessageDialog = false"
+          >
+            Fechar
           </v-btn>
         </v-layout>
       </v-card>
