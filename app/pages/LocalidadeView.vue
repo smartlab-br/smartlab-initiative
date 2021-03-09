@@ -174,36 +174,35 @@
                       v-html="card.title.fixed">
                     </v-layout>
                     <flpo-story-card-autofill
-                      v-else-if="card.autoFill && topologyUfLoaded  && topology && ((indexSecao*100) + cardIndex <= visibleCardMaxIndex)"
+                      v-else-if="card.autoFill && topology && ((indexSecao*100) + cardIndex <= visibleCardMaxIndex)"
                       :structure="card"
                       :custom-params = "customParams"
                       :custom-functions = "custom_functions"
                       :topology = "topology"
-                      :topology-uf = "topology_uf"
                       :section-index="indexSecao"
                       @showSnackbar="snackAlert">
                     </flpo-story-card-autofill>
                     <flpo-story-card-multiple-charts
-                      v-else-if="card.type && card.type == 'multiple-charts' && topologyUfLoaded  && topology && ((indexSecao*100) + cardIndex  <= visibleCardMaxIndex)"
+                      v-else-if="card.type && card.type == 'multiple-charts' && topology && ((indexSecao*100) + cardIndex  <= visibleCardMaxIndex)"
                       :structure="card"
                       :custom-params = "customParams"
                       :custom-functions = "custom_functions"
                       :topology = "topology"
-                      :topology-uf = "topology_uf"
                       :section-index="indexSecao"
                       @showBugDialog="openBugDialog"
-                      @showSnackbar="snackAlert">
+                      @showSnackbar="snackAlert"
+                      @showAuthenticatioDialog="openAuthenticatioDialog">
                     </flpo-story-card-multiple-charts>
                     <flpo-story-card
-                      v-else-if="topologyUfLoaded  && topology && ((indexSecao*100) + cardIndex  <= visibleCardMaxIndex)"
+                      v-else-if="topology && ((indexSecao*100) + cardIndex  <= visibleCardMaxIndex)"
                       :structure="card"
                       :custom-params = "customParams"
                       :custom-functions = "custom_functions"
                       :topology = "topology"
-                      :topology-uf = "topology_uf"
                       :section-index="indexSecao"
                       @showBugDialog="openBugDialog"
-                      @showSnackbar="snackAlert">
+                      @showSnackbar="snackAlert"
+                      @showAuthenticatioDialog="openAuthenticatioDialog">
                     </flpo-story-card>
                   </v-layout>
                 </v-flex>
@@ -215,41 +214,6 @@
     </v-container>
     <!-- Navegação lateral em dots pelos dimensoes e seções -->
     <flpo-dot-nav :sections="sections"></flpo-dot-nav>
-    <v-layout text-xs-center pa-0 ma-0
-      class="footer-nav white--text">
-      <v-layout row wrap caption class="cursor-pointer">
-        <!--
-        <v-layout column scroll-menu v-if="!isFirstDim" pa-2
-          v-on:click="navDim(-1)">
-          <v-tooltip top>
-            <v-layout pa-2 column slot="activator">
-              <v-icon dark>chevron_left</v-icon>
-            </v-layout>
-            Dimensão anterior
-          </v-tooltip>
-        </v-layout>
-        -->
-        <v-layout column scroll-menu v-if="!isPageBottom" pa-2 v-on:click="scrollDown()">
-          Leia mais
-          <v-icon dark>keyboard_arrow_down</v-icon>
-        </v-layout>
-        <v-layout column scroll-menu v-if="isPageBottom" pa-2 v-on:click="navDim(0)">
-          <v-icon dark>keyboard_arrow_up</v-icon>
-          Para o topo
-        </v-layout>
-        <!--
-        <v-layout column scroll-menu v-if="!isLastDim" pa-2
-          v-on:click="navDim(1)">
-          <v-tooltip top>
-            <v-layout pa-2 column slot="activator">
-              <v-icon dark>chevron_right</v-icon>
-            </v-layout>
-            Próxima dimensão
-          </v-tooltip>
-        </v-layout>
-        -->
-      </v-layout>
-    </v-layout>
     <v-layout  v-if="!unlockLoading" align-center justify-center row fill-height class= "loadingPanel">
       <v-progress-circular
         :size="120"
@@ -336,8 +300,6 @@
         dimensoes: [],
         customParams: {},
         topology: null,
-        topology_uf: null,
-        topologyUfLoaded: false,
         isPageBottom: true,
         cardLinks: [],
         totalLinksSections: 0,
@@ -357,8 +319,6 @@
         presentation_compare: null,
         ind_principais_compare:[],
         topology_compare: null,
-        topology_uf_compare: null,
-        topologyUfLoaded_compare: false,
         thematicDatasets: [],
 
         // Functions
@@ -405,19 +365,19 @@
           calc_percentage_val1: function(val1,val2) { return val1 / (val1 + val2) * 100},
           calc_percentage_2values: function(val1,val2,total) { return (val1 + val2) / total * 100},
           calc_proportion: function(dividendo, divisor) { return dividendo / divisor; },
-          calc_proportion_ds: function(d,dividendo, divisor) { return dividendo / divisor; },
+          calc_proportion_ds: function(d,dividendo, divisor) { return divisor==0 ? null:dividendo / divisor; },
           get_flag_value: function(d) {return (d.vl_indicador == 0) ? d.ds_indicador_radical + ": NÃO" : d.ds_indicador_radical + ": SIM";},
+          get_flag_number: function(d,a){ return a>=0 ? 'Positivo':'Negativo'; },
           get_te_label: function(d,campo) {
               switch(d[campo]) {
                   case 'te_nat':
-                      return 'Vítimas que nasceram na localidade'
-                      break;
+                      return 'Vítimas que nasceram na localidade';
                   case 'te_res':
-                      return 'Vítimas que residem na localidade'
-                      break;
+                      return 'Vítimas que residem na localidade';
                   case 'te_rgt':
-                      return 'Vítimas resgatadas na localidade'
-                      break;
+                      return 'Vítimas resgatadas na localidade';
+                  case 'te_sit_trab_resgatados':
+                      return 'Vítimas resgatadas na localidade';
                   default:
                       return d[campo];
               }
@@ -434,13 +394,31 @@
             },
           get_proportional_indicator_uf: function(d,campo='vl_indicador', media="media_uf") { return Math.log(((d[campo] - d[media]) / d[media]) + 1.01); },
           get_log: function(d,campo='vl_indicador') { return Math.log(d[campo] + 0.01); },
+          get_number: function(d,val) { 
+            return parseFloat(val); 
+          },
+          get_week_status: function(d, reg_week){
+            Date.prototype.getWeekNumber = function(){
+              let dt = new Date(Date.UTC(this.getFullYear(), this.getMonth(), this.getDate()));
+              let dayNum = dt.getUTCDay() || 7;
+              dt.setUTCDate(dt.getUTCDate() + 4 - dayNum);
+              let yearStart = new Date(Date.UTC(dt.getUTCFullYear(),0,1));
+              return Math.ceil((((dt - yearStart) / 86400000) + 1)/7)
+            };
+            if (reg_week == new Date().getWeekNumber()){
+              return "Semana corrente";
+            } else {
+              return "Semana completa";
+            }
+          },
           get_bipolar_scale: function(d, prop, origin = 0) {
+            if (d[prop] == null) return null;
             let val = d[prop] - origin;
             if (val > 0) {
               return Math.log(val / d.maxVal + 1.0001);
             }
             if (val < 0) {
-              return -Math.log(Math.abs(val) / Math.abs(d.minVal) + 1.0001);
+               return d.minVal == 0 ? -Math.log(Math.abs(val) + 1.0001) : -Math.log(Math.abs(val) / Math.abs(d.minVal) + 1.0001);
             }
             return 0;
           },
@@ -484,10 +462,34 @@
             if (d.vl_indicador < 0.8) return 4; // Alto
             return 5;
           },
+          get_uti_level: (d, value) => {
+            if (value == null) return "Não informado";
+            if (value < 1) return "Abaixo do recomendado"; 
+            if (value <= 3) return "Dentro do recomendado"; 
+            if (value > 3) return "Acima do recomendado"; 
+          },          
           remove_year: function(d){ return String(d.ds_indicador_radical).replace(d.nu_competencia,"").replace("  "," ")},
           absolute: function(d, campo="vl_indicador") { return Math.abs(d[campo]); },
+          to_upper_ds: function(d,value_field){
+            return d[value_field].toUpperCase();
+          },
+          format_month_ds: function(d,month_ym){
+            let ym = typeof(month_ym) == "number"? month_ym.toString(): month_ym;
+            return ym.substr(4,2) + "/" + ym.substr(0,4);
+          },
+          format_quarter_ds: function(d,quarter_yq){
+            let yq = typeof(quarter_yq) == "number"? quarter_yq.toString(): quarter_yq;
+            return yq.substr(5,1) + "º Trimestre " + yq.substr(0,4);
+          },
+          format_quarter_ds_short: function(d,quarter_yq){
+            let yq = typeof(quarter_yq) == "number"? quarter_yq.toString(): quarter_yq;
+            return yq.substr(5,1) + "º T " + yq.substr(0,4);
+          },
           concat_descriptions: function(d) {
             return d.desc_indicador + " - " + d.ds_indicador_radical;
+          },
+          replace_text: function(d,field,text,text_replace){
+            return d[field].replace(text,text_replace);
           },
           replace_text_namepercent: function(data, options) {
             return data[options.name_field] + " (" + data[options.pct_field] + ")"; 
@@ -650,28 +652,21 @@
       }
       
       this.checkCurrentAnalysisUnit();
-      window.addEventListener('scroll', this.assessPageBottom);
       window.addEventListener('scroll', this.setVisibleCardMaxIndex);
-      this.assessPageBottom();
       window.addEventListener('resize', this.resizeFirstSection);
       this.resizeFirstSection();
 
       this.$analysisUnitModel.isCurrent(this.$route.params.idLocalidade);
     },
     beforeDestroy () {
-      window.removeEventListener('scroll', this.assessPageBottom);
       window.removeEventListener('scroll', this.setVisibleCardMaxIndex);
       window.removeEventListener('resize', this.resizeFirstSection);
     },
     methods: {
-      scrollDown(){
-        window.scrollBy(0, window.innerHeight / 2);        
-      },
-
       setSiblingDimensions(content) {
         let dimensoesTmp = [];
         for (let dim of content.dimensoes) {
-          if (dim.status != 'EM BREVE') {
+          if (!dim.blocked) {
             dimensoesTmp.push(dim);
           }
         }
@@ -714,14 +709,14 @@
                    this.$route.params.idLocalidade.includes("ptm") || this.$route.params.idLocalidade.includes("PTM")) {
           this.selectCoords("uf", "municipio", this.$analysisUnitModel.getUFFromPlace(this.$route.params.idLocalidade));
         } else if (this.$route.params.idLocalidade.length == 1){ //Região
-          this.selectCoords("br", "uf", 0);
+          this.selectCoords("regiao", "uf",this.$route.params.idLocalidade);
           // this.selectCoords("/static/topojson/regiao.json");
         } else if (this.$route.params.idLocalidade.length == 2){ //Estado
-          this.selectCoords("uf", "municipio", this.$route.params.idLocalidade.substring(0, 2));
+          this.selectCoords("uf", "municipio", this.$route.params.idLocalidade);
         } else if (this.$route.params.idLocalidade.length == 4){ //Mesorregião
-          this.selectCoords("uf", "uf", this.$route.params.idLocalidade);
+          this.selectCoords("uf", "mesorregiao", this.$route.params.idLocalidade.substring(0, 2));
         } else if (this.$route.params.idLocalidade.length == 5){ //Microrregião
-          this.selectCoords("mesorregiao", "uf", this.$route.params.idLocalidade);
+          this.selectCoords("uf", "microrregiao", this.$route.params.idLocalidade.substring(0, 2));
         } else {
           this.selectCoords("uf", "municipio", this.$route.params.idLocalidade.substring(0, 2));
         }
@@ -737,14 +732,14 @@
                     this.$route.query.compare.includes("ptm") || this.$route.query.compare.includes("PTM")) {
             this.selectCoords("uf", "municipio", this.getUFFromPlace(this.$route.query.compare), "_compare");
           } else if (this.$route.query.compare.length == 1){ //Região
-            this.selectCoords("br", "uf", 0, "_compare");
+            this.selectCoords("regiao", "uf",this.$route.params.idLocalidade, "_compare");
             // this.selectCoords("/static/topojson/regiao.json");
           } else if (this.$route.query.compare.length == 2){ //Estado
-            this.selectCoords("uf", "municipio", this.$route.query.compare.substring(0, 2), "_compare");
+            this.selectCoords("uf", "municipio", this.$route.query.compare, "_compare");
           } else if (this.$route.query.compare.length == 4){ //Mesorregião
-            this.selectCoords("uf", "uf", this.$route.query.compare, "_compare");
+            this.selectCoords("uf", "mesorregiao", this.$route.query.compare.substring(0, 2), "_compare");
           } else if (this.$route.query.compare.length == 5){ //Microrregião
-            this.selectCoords("mesorregiao", "uf", this.$route.query.compare, "_compare");
+            this.selectCoords("uf", "microrregiao", this.$route.query.compare.substring(0, 2), "_compare");
           } else {
             this.selectCoords("uf", "municipio", this.$route.query.compare.substring(0, 2), "_compare");
           }
@@ -922,7 +917,7 @@
           url = "/municipios?categorias=cd_unidade,nm_unidade,cd_uf&agregacao=distinct&filtros=eq-cd_unidade-" + idLocalidade.substring(3);
           axios(this.$axiosCallSetupService.getAxiosOptions(url))
             .then(result => {
-              var infoUnidade = JSON.parse(result.data).dataset;
+              var infoUnidade = result.data.dataset;
               if (infoUnidade.length > 0) {
                 localidade = {
                   id_localidade: infoUnidade[0].cd_unidade,
@@ -949,10 +944,10 @@
           this[nm_var] = localidade;
           this.customParams[nm_var] = localidade;
         } else if (idLocalidade.length == 2){ //Estado
-          url = "/municipios?categorias=cd_uf,nm_uf&filtros=eq-cd_uf-" + idLocalidade;
+          url = "/municipios?categorias=cd_uf,nm_uf&agregacao=distinct&filtros=eq-cd_uf-" + idLocalidade;
           axios(this.$axiosCallSetupService.getAxiosOptions(url))
             .then(result => {
-              localidade = JSON.parse(result.data).dataset[0];
+              localidade = result.data.dataset[0];
               localidade.id_localidade = localidade.cd_uf;
               localidade.nm_localidade = localidade.nm_uf;
               localidade.tipo = 'UF';
@@ -965,10 +960,10 @@
               this.sendError("Falha ao buscar dados do município");
             });
         } else if (idLocalidade.length == 4){ //Mesorregião
-          url = "/municipios?categorias=cd_mesorregiao,nm_mesorregiao&filtros=eq-cd_mesorregiao-" + idLocalidade;
+          url = "/municipios?categorias=cd_mesorregiao,nm_mesorregiao&agregacao=distinct&filtros=eq-cd_mesorregiao-" + idLocalidade;
           axios(this.$axiosCallSetupService.getAxiosOptions(url))
             .then(result => {
-              localidade = JSON.parse(result.data).dataset[0];
+              localidade = result.data.dataset[0];
               localidade.id_localidade = localidade.cd_mesorregiao;
               localidade.nm_localidade = localidade.nm_mesorregiao;
               localidade.tipo = 'Mesorregião';
@@ -981,10 +976,10 @@
               this.sendError("Falha ao buscar dados da mesorregião");
             });
         } else if (idLocalidade.length == 5){ //Microrregião
-          url = "/municipios?categorias=cd_microrregiao,nm_microrregiao,latitude,longitude&filtros=eq-cd_microrregiao-" + idLocalidade;
+          url = "/municipios?categorias=cd_microrregiao,nm_microrregiao&agregacao=distinct&filtros=eq-cd_microrregiao-" + idLocalidade;
           axios(this.$axiosCallSetupService.getAxiosOptions(url))
             .then(result => {
-              localidade = JSON.parse(result.data).dataset[0];
+              localidade = result.data.dataset[0];
               localidade.id_localidade = localidade.cd_microrregiao;
               localidade.nm_localidade = localidade.nm_microrregiao;
               localidade.tipo = 'Microrregião';
@@ -1000,7 +995,7 @@
           url = "/municipio/" + idLocalidade;
           axios(this.$axiosCallSetupService.getAxiosOptions(url))
             .then(result => {
-              localidade = JSON.parse(result.data)[0];
+              localidade = result.data[0];
               localidade.id_localidade = localidade.cd_municipio_ibge_dv;
               localidade.nm_localidade = localidade.nm_municipio_uf;
               localidade.tipo = 'Município';
@@ -1058,7 +1053,6 @@
         switch (this.dimensoes.length) {
           case 6:
             return 'xs4 sm2';
-            break;
           case 8:
             let clz = 'xs3 sm1';
             if (dimIndx == 0) {
@@ -1126,18 +1120,6 @@
             // this.sendInvalidInterpol
             // )
         }
-      },
-
-      assessPageBottom() {
-        this.isPageBottom = false;
-        if (window && document) {
-          if (window.scrollY == 0){ //início
-            this.isPageBottom = false;
-          }
-          else{
-            this.isPageBottom = (window.innerHeight + window.scrollY) >= document.body.offsetHeight-1;
-          }
-        } 
       },
 
       navDim(delta) {

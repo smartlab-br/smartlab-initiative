@@ -201,21 +201,21 @@
         if (this.structure.api_reactive && this.customParams[this.structure.api_reactive.args[0].named_prop]) {
           apiUrl = this.$textTransformService.applyInterpol(this.structure.api_reactive, this.customParams, this.customFunctions);
         } else {
-          apiUrl = this.$textTransformService.applyInterpol(this.structure.api, this.customParams, this.customFunctions);
+          apiUrl = this.$textTransformService.applyInterpol(this.structure.apiBase?this.structure.apiBase:this.structure.api, this.customParams, this.customFunctions);
         }
         apiUrl = apiUrl + filterUrl;
         axios(this.$axiosCallSetupService.getAxiosOptions(apiUrl))
         .then(result => {
           this.fillMinicard(
             this.reformDataset(
-              JSON.parse(result.data).dataset,
+              result.data.dataset,
               this.structure.api.options,
               this.customFunctions
             ),
             this.structure.args,
             this.structure,
             null,
-            JSON.parse(result.data).metadata
+            result.data.metadata
           );
         }).catch(error => { this.sendDataStructureError("Falha ao carregar dados do componente."); });
       },

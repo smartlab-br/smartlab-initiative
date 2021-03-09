@@ -81,6 +81,19 @@ class ColorsService {
       background: "#EFEFEF",
       background2: colors.grey.lighten2
     },
+    cov: {
+      primary: colors.deepOrange.darken4,
+      secondary: colors.deepOrange.lighten4,
+      accent: colors.teal.accent4,
+      error: colors.red.base,
+      warning: colors.amber.base,
+      info: colors.blue.base,
+      success: colors.green.base,
+      // Custom
+      toolbar: colors.deepOrange.darken4,
+      background: "#EFEFEF",
+      background2: colors.grey.lighten2
+    },    
     est: {
       primary: colors.blueGrey.darken4,
       secondary: colors.blueGrey.lighten4,
@@ -117,6 +130,13 @@ class ColorsService {
     }
 
     let scl = d3chrom["scheme" + scale];
+    if (scl === null || scl === undefined) {
+      if (type == 'categorical') scale = 'Set3';
+      if (type == 'singleHue') scale = 'Blues';
+      if (type == 'divergent') scale = 'RdYlBu';
+      scl = d3chrom["scheme" + scale];
+    }
+
     if (size) scl = scl[size];
     if (order == 'desc') {
       let scl2 = [];

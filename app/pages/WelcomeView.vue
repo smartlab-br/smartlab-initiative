@@ -6,7 +6,7 @@
       </transition>
       <v-layout xs12 class="bg-home-shadow ma-0"></v-layout>
       <v-layout row wrap fill-height align-center justify-center pa-0 class="parallax-content-home">
-        <v-flex id="screenTitle" xs12 class="white--text text-xs-center" style="line-height: normal;">
+        <v-flex id="screenTitle" xs12 class="white--text text-xs-center py-4 my-5" style="line-height: normal;">
           <div class="display-4-obs ubuntu">Iniciativa SmartLab</div>
           <div class="display-1-obs ubuntu-condensed">Promoção do Trabalho Decente Guiada por Dados</div>
         </v-flex>
@@ -18,46 +18,26 @@
             pa-3>
             <!--
               :icon = "observatorio.icon"
-              :app-icon = "observatorio.appIcon"
+              :app-icon = "observatorio.app_icon"
               :media = "observatorio.media"
               :bg-color = "$observatories.getTheme(observatorio.id).primary"
             -->
             <flpo-linked-view-card
-              :index-tab = "30 + indxObs"
-              :tagColor = "observatorio.tagColor"
-              :status = "observatorio.status"
-              :to = "observatorio.to"
-              :external = "observatorio.external"
-              :title = "observatorio.short_desc"
-              :ripple-color = "$observatories.getTheme(observatorio.id).primary"
-              :title-color = "'white'"
-              :blocked = "observatorio.status == 'EM BREVE'">
-            </flpo-linked-view-card>
-          </v-flex>
-          <v-flex :class="obsSliceClass" pa-3>
-            <flpo-linked-view-card
-              :index-tab = "40"
-              tagColor = "success"
-              to = "/saibamais/smartlab"
-              :external = "false"
-              title = "Conheça"
-              ripple-color = "grey--text darken-3"
-              title-color = "white">
-            </flpo-linked-view-card>
+              :index-tab="30 + indxObs"
+              :tagColor="observatorio.tagColor"
+              :status="observatorio.status"
+              :to="observatorio.to"
+              :external="observatorio.external"
+              :title="observatorio.short_desc"
+              :ripple-color="$observatories.getTheme(observatorio.id).primary"
+              :title-color="'white'"
+              :blocked="observatorio.blocked"
+              @showSnackbar="snackAlert"
+            />
           </v-flex>
         </v-layout>
       </v-layout>
     </v-flex>
-    <v-layout text-xs-center pa-0 ma-0
-      class="footer-nav white--text">
-      <v-layout row wrap caption>
-        <v-layout column scroll-menu v-if="!isPageBottom" pa-2
-          v-on:click="scrollDown()">
-          Veja mais
-          <v-icon dark>keyboard_arrow_down</v-icon>
-        </v-layout>
-      </v-layout>
-    </v-layout>
   </v-layout>
 </template>
 
@@ -124,8 +104,6 @@
     mounted: function() {
       this.checkCurrentAnalysisUnit();
 
-      // window.addEventListener('scroll', this.assessPageBottom);
-      // this.assessPageBottom();
       this.$emit('alterToolbar', null);
       this.resizeFirstSection();
       window.addEventListener('resize', this.resizeFirstSection);
@@ -149,22 +127,6 @@
           this.parallaxFile = this.background_images[this.idParallaxfile];
           this.backgroundVisible = true;
           }, 2000);
-      },
-      
-      assessPageBottom() {
-        this.isPageBottom = false;
-        if (window && document) {
-          if (window.scrollY == 0){ //início
-            this.isPageBottom = false;
-          }
-          else{
-            this.isPageBottom = (window.innerHeight + window.scrollY) >= document.body.offsetHeight-1;
-          }
-        } 
-      },
-
-      scrollDown(){
-        window.scrollBy(0, window.innerHeight / 2);        
       },
       
       customFilter (item, queryText, itemText) {

@@ -43,32 +43,37 @@ export function createRouter () {
         route('/sst', 'Observatorio'),
         route('/trabalhoescravo', 'Observatorio'),
         route('/trabalhoinfantil', 'Observatorio'),
+        // route('/covid', 'Observatorio'),
         
         route('/trabalhodecente/localidade/:idLocalidade', 'Localidade'),
         route('/diversidade/localidade/:idLocalidade', 'Localidade'),
         route('/sst/localidade/:idLocalidade', 'Localidade'),
         route('/trabalhoescravo/localidade/:idLocalidade', 'Localidade'),
         route('/trabalhoinfantil/localidade/:idLocalidade', 'Localidade'),
+        // route('/covid/localidade/:idLocalidade', 'Localidade'),
 
         route('/trabalhodecente/localidadecompare/:idLocalidade', 'LocalidadeCompare'),
         route('/diversidade/localidadecompare/:idLocalidade', 'LocalidadeCompare'),
         route('/sst/localidadecompare/:idLocalidade', 'LocalidadeCompare'),
         route('/trabalhoescravo/localidadecompare/:idLocalidade', 'LocalidadeCompare'),
         route('/trabalhoinfantil/localidadecompare/:idLocalidade', 'LocalidadeCompare'),
+        // route('/covid/localidadecompare/:idLocalidade', 'LocalidadeCompare'),
 
         route('/trabalhodecente/smartmap', 'ObservatorioMapa'),
         route('/diversidade/smartmap', 'ObservatorioMapa'),
         route('/sst/smartmap', 'ObservatorioMapa'),
         route('/trabalhoescravo/smartmap', 'ObservatorioMapa'),
         route('/trabalhoinfantil/smartmap', 'ObservatorioMapa'),
+        // route('/covid/smartmap', 'ObservatorioMapa'),
 
         route('/trabalhodecente/embreve', 'ObservatorioEmBreve'),
         route('/diversidade/embreve', 'ObservatorioEmBreve'),
         route('/sst/embreve', 'ObservatorioEmBreve'),
         route('/trabalhoescravo/embreve', 'ObservatorioEmBreve'),
         route('/trabalhoinfantil/embreve', 'ObservatorioEmBreve'),
+        // route('/covid/embreve', 'ObservatorioEmBreve'),
 
-        route('/login', 'Login'),
+        route('/perfil', 'Perfil'),
 
         // Provisórias
         route('/mapa/:nmIndicador', 'Mapa'),

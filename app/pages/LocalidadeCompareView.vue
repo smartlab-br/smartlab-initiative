@@ -234,35 +234,32 @@
                         v-html="card.title.fixed">
                       </v-layout>
                       <flpo-story-card-autofill
-                        v-else-if="card.autoFill && topologyUfLoaded  && topology && ((indexSecao*100) + cardIndex <= visibleCardMaxIndex)"
+                        v-else-if="card.autoFill && topology && ((indexSecao*100) + cardIndex <= visibleCardMaxIndex)"
                         :structure="card"
                         :custom-params = "customParams"
                         :custom-functions = "custom_functions"
                         :topology = "topology"
-                        :topology-uf = "topology_uf"
                         :section-index="indexSecao"
                         @showSnackbar="snackAlert">
                       </flpo-story-card-autofill>
                       <flpo-story-card-multiple-charts
-                        v-else-if="card.type && card.type == 'multiple-charts' && topologyUfLoaded  && topology && ((indexSecao*100) + cardIndex  <= visibleCardMaxIndex)"
+                        v-else-if="card.type && card.type == 'multiple-charts' && topology && ((indexSecao*100) + cardIndex  <= visibleCardMaxIndex)"
                         :structure="card"
                         chart-position= "bottom"
                         :custom-params = "customParams"
                         :custom-functions = "custom_functions"
                         :topology = "topology"
-                        :topology-uf = "topology_uf"
                         :section-index="indexSecao"
                         @showBugDialog="openBugDialog"
                         @showSnackbar="snackAlert">
                       </flpo-story-card-multiple-charts>
                       <flpo-story-card
-                        v-else-if="topologyUfLoaded  && topology && ((indexSecao*100) + cardIndex  <= visibleCardMaxIndex)"
+                        v-else-if="topology && ((indexSecao*100) + cardIndex  <= visibleCardMaxIndex)"
                         :structure="card"
                         chart-position= "bottom"
                         :custom-params = "customParams"
                         :custom-functions = "custom_functions"
                         :topology = "topology"
-                        :topology-uf = "topology_uf"
                         :section-index="indexSecao"
                         @showBugDialog="openBugDialog"
                         @showSnackbar="snackAlert">
@@ -289,37 +286,34 @@
                         v-html="sections_compare[indexSecao].cards[cardIndex].title.fixed">
                       </v-layout>
                       <flpo-story-card-autofill
-                        v-else-if="sections_compare[indexSecao].cards[cardIndex].autoFill && topologyUfLoaded_compare  && topology_compare && ((indexSecao*100) + cardIndex <= visibleCardMaxIndex)"
+                        v-else-if="sections_compare[indexSecao].cards[cardIndex].autoFill && topology_compare && ((indexSecao*100) + cardIndex <= visibleCardMaxIndex)"
                         :structure="sections_compare[indexSecao].cards[cardIndex]"
                         :custom-params = "customParams"
                         :custom-functions = "custom_functions"
                         :topology = "topology_compare"
-                        :topology-uf = "topology_uf_compare"
                         :section-index="indexSecao"
                         @showSnackbar="snackAlert">
                       </flpo-story-card-autofill>
                       <flpo-story-card-multiple-charts
-                        v-else-if="sections_compare[indexSecao].cards[cardIndex].type && sections_compare[indexSecao].cards[cardIndex].type == 'multiple-charts' && topologyUfLoaded_compare  && topology_compare && ((indexSecao*100) + cardIndex  <= visibleCardMaxIndex)"
+                        v-else-if="sections_compare[indexSecao].cards[cardIndex].type && sections_compare[indexSecao].cards[cardIndex].type == 'multiple-charts' && topology_compare && ((indexSecao*100) + cardIndex  <= visibleCardMaxIndex)"
                         :structure="sections_compare[indexSecao].cards[cardIndex]"
                         chart-position= "bottom"
                         :selected-place="customParams.idLocalidade_compare"
                         :custom-params = "customParams"
                         :custom-functions = "custom_functions"
                         :topology = "topology_compare"
-                        :topology-uf = "topology_uf_compare"
                         :section-index="indexSecao"
                         @showBugDialog="openBugDialog"
                         @showSnackbar="snackAlert">
                       </flpo-story-card-multiple-charts>
                       <flpo-story-card
-                        v-else-if="topologyUfLoaded_compare  && topology_compare && ((indexSecao*100) + cardIndex  <= visibleCardMaxIndex)"
+                        v-else-if="topology_compare && ((indexSecao*100) + cardIndex  <= visibleCardMaxIndex)"
                         :structure="sections_compare[indexSecao].cards[cardIndex]"
                         chart-position= "bottom"
                         :selected-place="customParams.idLocalidade_compare"
                         :custom-params = "customParams"
                         :custom-functions = "custom_functions"
                         :topology = "topology_compare"
-                        :topology-uf = "topology_uf_compare"
                         :section-index="indexSecao"
                         @showBugDialog="openBugDialog"
                         @showSnackbar="snackAlert">
@@ -336,43 +330,6 @@
     </v-container>
     <!-- Navegação lateral em dots pelos dimensoes e seções -->
     <flpo-dot-nav :sections="sections"></flpo-dot-nav>
-    <v-layout text-xs-center pa-0 ma-0
-      class="footer-nav white--text">
-      <v-layout row wrap caption class="cursor-pointer">
-        <!--
-        <v-layout column scroll-menu v-if="!isFirstDim" pa-2
-          v-on:click="navDim(-1)">
-          <v-tooltip top>
-            <v-layout pa-2 column slot="activator">
-              <v-icon dark>chevron_left</v-icon>
-            </v-layout>
-            Dimensão anterior
-          </v-tooltip>
-        </v-layout>
-        -->
-        <v-layout column scroll-menu v-if="!isPageBottom" pa-2
-          v-on:click="scrollDown()">
-          Leia mais
-          <v-icon dark>keyboard_arrow_down</v-icon>
-        </v-layout>
-        <v-layout column scroll-menu v-if="isPageBottom" pa-2
-          v-on:click="navDim(0)">
-          <v-icon dark>keyboard_arrow_up</v-icon>
-          Para o topo
-        </v-layout>
-        <!--
-        <v-layout column scroll-menu v-if="!isLastDim" pa-2
-          v-on:click="navDim(1)">
-          <v-tooltip top>
-            <v-layout pa-2 column slot="activator">
-              <v-icon dark>chevron_right</v-icon>
-            </v-layout>
-            Próxima dimensão
-          </v-tooltip>
-        </v-layout>
-        -->
-      </v-layout>
-    </v-layout>
     <v-layout  v-if="!unlockLoading" align-center justify-center row fill-height class= "loadingPanel">
       <v-progress-circular
         :size="120"
@@ -441,7 +398,7 @@
               }
               if (card.description){
                 for (let itemDesc of card.description){
-                  if (itemDesc.type == "select" && itemDesc.selection){
+                  if ((itemDesc.type == "select" || itemDesc.type == "radio") && itemDesc.selection){
                     if (itemDesc.selection.rules.api && itemDesc.selection.rules.api.template){
                       for (let argApiSelect of itemDesc.selection.rules.api.args){
                         if (argApiSelect.named_prop == "cd_uf"){

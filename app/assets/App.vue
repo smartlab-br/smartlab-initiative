@@ -1,71 +1,60 @@
 <template>
   <v-app>
     <v-navigation-drawer
+      v-if="observatorios"
+      v-model="drawer"
       :mini-variant="miniVariant"
       clipped
-      v-model="drawer"
       fixed
       disable-resize-watcher
-      app>
-      <!-- <v-layout hidden-md-and-up 
-        v-if="miniLeftDrawerTitle"
-        column primary pa-3>
-        <v-toolbar-title 
-          class="white--text font-weight-bold"
-          v-text="computedMiddleTitle">
-        </v-toolbar-title>
-        <v-flex caption white--text>
-          {{ computedMiddleSubtitle }}
-        </v-flex>
-      </v-layout> 
-      <v-layout hidden-md-and-up 
-        v-if="miniLeftDrawerTitle"
-        column primary pa-3>
-        <v-toolbar-title 
-          class="white--text font-weight-bold"
-          v-text="computedTitle">
-        </v-toolbar-title>
-        <v-flex caption white--text>
-          {{ computedSubtitle }}
-        </v-flex>
-      </v-layout>
-      <v-divider></v-divider>
-      -->
+      app
+    >
       <v-list>
         <!-- Item acrescentado para solucionar problema nos displays xs, sm e md, onde o primeiro item desaparecia -->
         <v-list-tile class="hidden-lg-and-up">
           <v-list-tile-content>
-            <v-list-tile-title></v-list-tile-title>
+            <v-list-tile-title />
           </v-list-tile-content>
         </v-list-tile>
 
         <v-list-tile 
-          v-on:click="itemClick(item)"
-          :ripple="{ class: item.rippleColor }"
+          v-for="(item, i) in computedMenuItems"
           :key="i"
-          v-for="(item, i) in items"
-          v-ripple
+          v-ripple="{ class: item.rippleColor }"
           exact
-          :tabindex = "drawer ? 10 + i : ''"
-          @keyup.enter = "itemClick(item)"
-          >
+          :tabindex="drawer ? 10 + i : ''"
+          @click="itemClick(item)"
+          @keyup.enter="itemClick(item)"
+        >
           <v-list-tile-action>
-            <v-icon v-if="item.icon" v-html="item.icon" :title="item.title"></v-icon>
-            <app-icon v-else-if="item.app_icon"
-              :title="item.title" :icon="item.app_icon">
-            </app-icon>
+            <v-tooltip bottom>
+              <v-icon 
+                v-if="item.icon" 
+                slot="activator"
+                :title="item.short_title" 
+                v-html="item.icon" 
+                :color="$observatories.getTheme(item.id).primary"
+              />
+              <app-icon 
+                v-else-if="item.app_icon"
+                slot="activator"
+                :title="item.short_title" 
+                :icon="item.app_icon"
+                :fill="$observatories.getTheme(item.id).primary"
+              />
+              {{ item.short_title }}
+            </v-tooltip>
           </v-list-tile-action>
           <v-list-tile-content>
-            <v-list-tile-title v-text="item.title"></v-list-tile-title>
+            <v-list-tile-title v-text="item.short_title" />
           </v-list-tile-content>
         </v-list-tile>
       </v-list>
-      <v-divider></v-divider>
+      <v-divider />
       <v-list>
         <v-list-tile @click.native.stop="miniVariant = !miniVariant">
           <v-list-tile-action>
-            <v-icon v-html="miniVariant ? 'chevron_right' : 'chevron_left'">
-            </v-icon>
+            <v-icon v-html="miniVariant ? 'chevron_right' : 'chevron_left'" />
           </v-list-tile-action>
           <v-list-tile-content>
             <v-list-tile-title>Apenas ícones</v-list-tile-title>
@@ -73,125 +62,178 @@
         </v-list-tile>
       </v-list>
     </v-navigation-drawer>
-    <!--
-    <v-toolbar fixed>
-      <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-    </v-toolbar>
-    -->
-    <v-toolbar dark fixed app clipped-left :style="'background-color:'+toolbarColor">
-      <v-toolbar-side-icon @click.stop="drawer = !drawer" 
-      aria-label="Menu Principal"
-      tabindex = "1">
-      </v-toolbar-side-icon>
-      <!-- <v-btn
-        icon
-        @click.native.stop="fixed = !fixed"
-      >
-        <v-icon>remove</v-icon>
-      </v-btn> -->
+
+    <v-toolbar 
+      dark 
+      fixed 
+      app 
+      clipped-left 
+      :style="'background-color:'+toolbarColor"
+    >
+      <v-toolbar-side-icon 
+        aria-label="Menu Principal"
+        tabindex="1"
+        @click.stop="drawer = !drawer" 
+      />
+
       <v-toolbar-title class="ml-2">
-        <v-layout pa-0 row align-center>
-          <v-flex pr-2 pt-2 hidden-xs-only>
+        <v-layout 
+          pa-0 
+          row 
+          align-center
+        >
+          <v-flex 
+            pr-2 
+            pt-2 
+            hidden-xs-only
+          >
             <img 
-              tabindex = "20"
-              @keyup.enter = "$navigationManager.constructor.pushRoute($router, '/', false)"
-              v-on:click="$navigationManager.constructor.pushRoute($router, '/', false)" src="/static/icons/smartlab_labeled-30.png" class="cursor-pointer"
-              alt="Smartlab"/> 
+              tabindex="20"
+              src="/static/icons/smartlab_labeled-30.png" 
+              class="cursor-pointer"
+              alt="Smartlab"
+              @click="$navigationManager.constructor.pushRoute($router, '/', false)"
+              @keyup.enter="$navigationManager.constructor.pushRoute($router, '/', false)"
+            /> 
           </v-flex>
-          <v-flex pr-2 pt-2 hidden-sm-and-up>
+          <v-flex 
+            pr-2 
+            pt-2 
+            hidden-sm-and-up
+          >
             <img 
-              tabindex = "20"
-              v-on:click="$navigationManager.constructor.pushRoute($router, '/', false)" src="/static/icons/smartlab-icon-30x30.png" class="cursor-pointer"
-              alt="Smartlab"/> 
+              tabindex="20"
+              src="/static/iconssmartlab-icon-30x30.png" 
+              class="cursor-pointer"
+              alt="Smartlab"
+              @click="$navigationManager.constructor.pushRoute($router, '/', false)" 
+            /> 
           </v-flex>
-          <v-divider v-show="computedTitle" vertical class="mx-2" style="background-color:rgba(255,255,255,0.7)"></v-divider>
-          <v-flex text-xs-right class="line-height-1">
-            <v-flex v-on:click="$navigationManager.constructor.pushRoute($router, ($route && ($route.path.indexOf('localidade') != -1)) ? '../' : ($route && ($route.path.indexOf('estudo') != -1 || $route.path.indexOf('smartmap') != -1)) ? './' : '', false);" class="cursor-pointer" pa-0>{{ computedTitle }}</v-flex>
-            <v-flex pa-0 caption>{{ computedSubtitle }}</v-flex>
+          <v-divider 
+            v-show="computedTitle" 
+            vertical 
+            class="mx-2" 
+            style="background-color:rgba(255,255,255,0.7)"
+          />
+          <v-flex 
+            class="line-height-1"
+          >
+            <v-flex 
+              text-xs-right 
+              class="cursor-pointer" 
+              pa-0
+              @click="$navigationManager.constructor.pushRoute($router, ($route && ($route.path.indexOf('localidade') != -1)) ? '../' : ($route && ($route.path.indexOf('estudo') != -1 || $route.path.indexOf('smartmap') != -1)) ? './' : '', false);" 
+            >
+              {{ computedTitle }}
+            </v-flex>
+            <v-flex 
+              text-xs-right 
+              pa-0 
+              caption
+            >
+              <a 
+                class="white--text"                 
+                @click="$navigationManager.constructor.pushRoute($router, 'https://www.instagram.com/smartlab_br/', true)"
+              >
+                {{ computedHashTag }}
+              </a>
+            </v-flex>
           </v-flex>
-          <v-divider v-show="computedPlaceTitle" vertical class="mx-2" style="background-color:rgba(255,255,255,0.7)"></v-divider>
-          <v-flex v-if="currentAnalysisUnit" pl-2 v-on:mousedown="seen = true" v-on:click="focusChangePlace()" class="cursor-pointer line-height-1">
+          <v-divider 
+            v-show="computedPlaceTitle" 
+            vertical 
+            class="mx-2" 
+            style="background-color:rgba(255,255,255,0.7)"
+          />
+          <v-flex 
+            v-if="currentAnalysisUnit" 
+            pl-2 
+            class="cursor-pointer line-height-1"
+            @mousedown="seen = true" 
+            @click="focusChangePlace()" 
+          >
             <v-flex>{{ computedPlaceTitle }}</v-flex>
-            <v-flex pa-0 caption>{{ currentPlaceType }}</v-flex>
+            <v-flex 
+              pa-0 
+              caption
+            >
+              {{ computedPlaceType }}
+            </v-flex>
           </v-flex>
         </v-layout>
       </v-toolbar-title>
       
-      <v-spacer></v-spacer>
-      <!-- <v-spacer>
-        <v-container hidden-sm-and-down column pa-0>
-          <v-toolbar-title 
-            class="text-xs-center accent--text font-weight-bold"
-            v-text="computedMiddleTitle">
-          </v-toolbar-title>
-          <v-flex text-xs-center accent--text caption>
-            {{ computedMiddleSubtitle }}
-          </v-flex>
-        </v-container>
-      </v-spacer> -->
+      <v-spacer />
       
       <div width="20rem">
-        <!--:hint="hintAutocomplete"
-            append-icon="search"
-        -->
         <v-autocomplete
-          :menu-props="{minWidth:'380px'}"
-          tabindex = "21"
-          ref = "autocompleteChangePlace"
           v-if="auOptions.length > 0"
-          :items="auOptions"
           v-show="seen"
-          persistent-hint
+          ref="autocompleteChangePlace"
           v-model="gsItemBusca"
+          tabindex="21"
+          class="input-group--focused global-search"
+          persistent-hint
           item-text="label"
           placeholder="Mudar localidade"
           item-value="id"
+          return-object
+          :items="auOptions"
+          :menu-props="{minWidth:'380px'}"
           :filter="customFilter"
-          @blur="gsItemBusca = null"
           :loading="gsLoadingStatusSearchOptions == 'LOADING' ? true : false"
-          :color="gsLoadingStatusSearchOptions == 'ERROR' ? 'error' :
-                  (gsLoadingStatusSearchOptions == 'LOADING' ? 'warning' : 'accent')"
-          class="input-group--focused global-search"
-          return-object>
-          <template slot="item" slot-scope="data">
+          :color="gsLoadingStatusSearchOptions == 'ERROR' ? 'error' : (gsLoadingStatusSearchOptions == 'LOADING' ? 'warning' : 'accent')"
+          @blur="gsItemBusca = null"
+        >
+          <template 
+            slot="item" 
+            slot-scope="data"
+          >
             <template v-if="auOptions.length < 2">
               <v-list-tile-content>
-                <v-progress-circular :size="20" indeterminate color="primary">
-                </v-progress-circular>
+                <v-progress-circular 
+                  :size="20" 
+                  indeterminate 
+                  color="primary"
+                />
               </v-list-tile-content>
             </template>
-            <template v-else >
-              <!--
-              <v-list-tile-avatar>
-                <v-icon>{{ data.item.icon }}</v-icon>
-              </v-list-tile-avatar>
-              -->
+            <template v-else>
               <v-list-tile-content>
-                <v-list-tile-title v-on:click="changeAnalysisUnit($router, data.item)" v-html="data.item.label + (data.item.scope == 'uf'? ' (UF)': '')"></v-list-tile-title>
-                <!--<v-list-tile-sub-title v-html="data.item.detail"></v-list-tile-sub-title>-->
+                <v-list-tile-title 
+                  @click="changeAnalysisUnit($router, data.item)" 
+                  v-html="data.item.label + (data.item.scope == 'uf'? ' (UF)': '')"
+                />
               </v-list-tile-content>
-              <v-list-tile-action style="min-width: 120px" >
+              <v-list-tile-action style="min-width: 120px">
                 <v-layout row>
-                  <v-layout v-for="(search_item, indxSearch) in $observatories.getObservatoriesSearchOptions()"
-                  :key="'search_item_obs_' + indxSearch"
-                  v-on:click="changeAnalysisUnit($router, data.item, search_item.id)">
-                    <v-layout column wrap align-center
-                      v-if="data.item.exclude_from == null || data.item.exclude_from == undefined || !data.item.exclude_from.includes(search_item.id)"
-                      >
-                     <v-tooltip bottom>
-                     
-                        <v-icon v-if="search_item.icon"
-                          small :class="search_item.color"
+                  <v-layout 
+                    v-for="(search_item, indxSearch) in $observatories.getObservatories()"
+                    :key="'search_item_obs_' + indxSearch"
+                    @click="changeAnalysisUnit($router, data.item, search_item.id)"
+                  >
+                    <v-layout 
+                      v-if="!search_item.blocked && (data.item.exclude_from == null || data.item.exclude_from == undefined || !data.item.exclude_from.includes(search_item.id))"
+                      column 
+                      wrap 
+                      align-center
+                    >
+                      <v-tooltip bottom>
+                        <v-icon 
+                          v-if="search_item.icon"
+                          slot="activator"
+                          small 
+                          :color="$observatories.getTheme(search_item.id).primary"
                           v-html="search_item.icon"
-                          slot="activator">
-                        </v-icon>
-                        <app-icon v-else-if="search_item.app_icon"
-                          size="16" :fill="search_item.color"
+                        />
+                        <app-icon 
+                          v-else-if="search_item.app_icon"
+                          slot="activator"
+                          size="16" 
+                          :fill="$observatories.getTheme(search_item.id).primary"
                           :icon="search_item.app_icon"
-                          slot="activator">
-                        </app-icon>
-                        <v-layout v-html="search_item.title"> 
-                        </v-layout>
+                        />
+                        <v-layout v-html="search_item.tooltip" /> 
                       </v-tooltip>
                     </v-layout>
                   </v-layout>
@@ -203,42 +245,80 @@
       </div>
       
       <v-btn
-        tabindex = "22"
-        icon class="ml-0"
+        tabindex="22"
+        icon 
+        class="ml-0"
         aria-label="Alterar Localidade"
-        @click="seen = !seen">
+        @click="seen = !seen"
+      >
         <v-tooltip bottom>
-          <v-icon color="white" slot="activator">place</v-icon>
+          <v-icon 
+            slot="activator"
+            color="white" 
+          >
+            place
+          </v-icon>
           Alterar Localidade
         </v-tooltip>
       </v-btn>
       <!--
       <v-btn
-        tabindex = "23"
-        icon class="ml-0"
+        tabindex="23"
+        icon 
+        class="ml-0"
         aria-label="Identifique-se"
-        @click="$navigationManager.constructor.pushRoute($router, '/login', false)">
+        @click="handleAvatarClick()"
+      >
         <v-tooltip bottom>
-          <v-icon color="white" slot="activator">perm_identity</v-icon>
-          Identifique-se
-        </v-tooltip>
-      </v-btn>
-      <v-btn
-        icon class="ml-0"
-        @click.native.stop="rightDrawer = !rightDrawer">
-        <v-tooltip bottom>
-          <v-icon  color="white" slot="activator">settings</v-icon>
-          Configurações
+          <v-avatar
+            slot="activator"
+            size="36px"
+          >
+            <img
+              v-if="this.$store.state.user && this.$store.state.user.picture"
+              alt="Foto"
+              :src="this.$store.state.user.picture"
+            >
+            <v-icon 
+              v-else 
+              slot="activator"
+              color="white" 
+            >
+              perm_identity
+            </v-icon>
+          </v-avatar>
+          {{ computedLoginLabel }} 
         </v-tooltip>
       </v-btn>
       -->
+      <v-tooltip bottom>
+        <a 
+          slot="activator"
+          class="white--text mx-2" 
+          @click="$navigationManager.constructor.pushRoute($router, 'https://www.instagram.com/smartlab_br/', true)"
+        >
+          <span v-html="renderIcon('fab','faInstagram','Instagram')" />
+        </a>
+        Instagram
+      </v-tooltip>
     </v-toolbar>
     <v-content>
-      <v-container fluid class="pa-0 fill-height">
-        <router-view :key="reRenderPath" @showSnackbar="snackAlert"
-          @showLocationDialog="showLocationDialog" @showBugDialog="showBugDialog" @alterToolbar="changeToolbar" @alterMiddleToolbar="changeMiddleToolbar" ref="currentRoute"></router-view>
-        <v-slide-y-transition mode="out-in">
-        </v-slide-y-transition>
+      <v-container 
+        fluid 
+        class="pa-0 fill-height"
+      >
+        <router-view 
+          :key="reRenderPath" 
+          ref="currentRoute"
+          @userChanged="updateUser" 
+          @showSnackbar="snackAlert"
+          @showLocationDialog="showLocationDialog" 
+          @showAuthenticatioDialog="showAuthenticatioDialog" 
+          @showBugDialog="showBugDialog" 
+          @alterToolbar="changeToolbar" 
+          @alterMiddleToolbar="changeMiddleToolbar" 
+        />
+        <v-slide-y-transition mode="out-in" />
       </v-container>
     </v-content>
     <!--
@@ -300,219 +380,370 @@
       </v-list>
     </v-navigation-drawer>
     -->
-    <!--<v-container fluid grid-list-lg align-start xs12 primary class="white--text footer" app>-->
-      <v-layout row wrap primary align-center class="white--text"
-       :class="{'px-2 py-4': $vuetify.breakpoint.xsAndup, 
-                'px-3 py-4': $vuetify.breakpoint.mdAndDown, 
-                'px-5 py-5': $vuetify.breakpoint.lgAndUp}" app>
-        <v-flex xs2 sm1 md1 lg2 xl2 :class="{'pt-5 pb-3': $vuetify.breakpoint.smAndDown }" >
-             <v-layout row wrap class="text-xs-left">
-               <v-flex xs12>
-                <a class="white--text" v-on:click="$navigationManager.constructor.pushRoute($router, '/saibamais/smartlab', false)">
-                  <img  src="/static/smartlab/smartlab-small.svg" alt="Smartlab" height="25px" style="margin-bottom: -5px;"/><span class="ml-3">Sobre</span>
-                </a>
-               </v-flex>
-             </v-layout>
-        </v-flex>
-        <v-flex xs10 sm11 md7 lg5 xl4 class="text-xs-right text-md-center" :class="{'pt-5 pb-3': $vuetify.breakpoint.smAndDown }">
-          <!-- TODO Devolver os ajustes de tamanho depois do lançamento
-            max-height="80%"
-            min-height="50%" -->
+    <v-layout 
+      row 
+      wrap 
+      primary 
+      align-center 
+      class="white--text"
+      :class="{'px-2 py-4': $vuetify.breakpoint.xsAndup, 
+               'px-3 py-4': $vuetify.breakpoint.mdAndDown, 
+               'px-5 py-5': $vuetify.breakpoint.lgAndUp}" 
+      app
+    >
+      <v-flex 
+        class="xs2 sm1 md1 lg2 xl2"
+        :class="{'pt-5 pb-3': $vuetify.breakpoint.mdAndDown }" 
+      >
+        <v-layout 
+          row 
+          wrap 
+          class="text-xs-left"
+        >
+          <v-flex xs12>
+            <a 
+              class="white--text" 
+              @click="$navigationManager.constructor.pushRoute($router, '/saibamais/smartlab', false)"
+            >
+              <img  
+                src="/static/smartlab/smartlab-small.svg" 
+                alt="Smartlab" 
+                height="25px" 
+                style="margin-bottom: -5px;"
+              />
+              <span class="ml-3">Sobre</span>
+            </a>
+          </v-flex>
+        </v-layout>
+      </v-flex>
+      <v-flex  
+        class="xs10 sm11 md11 lg8 xl4 text-xs-right text-md-center" 
+        :class="{'pt-5 pb-3': $vuetify.breakpoint.mdAndDown }"
+      >
+        <v-layout 
+          align-center 
+          justify-center
+          wrap
+        >
           <img 
-            v-on:click="$navigationManager.constructor.pushRoute($router, 'https://mpt.mp.br', true)" 
             src="/static/smartlab/mpt.svg"
-            class="cursor-pointer mr-2" alt="Ministério Público do Trabalho"
+            class="cursor-pointer mr-2" 
+            alt="Ministério Público do Trabalho"
             height="50px"
+            @click="$navigationManager.constructor.pushRoute($router, 'https://mpt.mp.br', true)" 
           />
           <img 
-            v-on:click="$navigationManager.constructor.pushRoute($router, 'https://ilo.org', true)" 
-            src="/static/smartlab/oit_100anos.png"
-            class="cursor-pointer mr-2 ml-2" alt="Organização Internacional do Trabalho"
-            height="50px"
+            src="/static/smartlab/oit.png"
+            class="cursor-pointer mr-2 ml-2" 
+            alt="Organização Internacional do Trabalho"
+            height="40px"
+            @click="$navigationManager.constructor.pushRoute($router, 'https://ilo.org', true)" 
           />
-          
-          <!-- <hr class="mx-2 v-divider v-divider--vertical theme--dark" style="background-color: rgba(255, 255, 255, 0.7);"> -->
           <img
-            v-on:click="$navigationManager.constructor.pushRoute($router, 'http://cnmp.mp.br', true)" 
             src="/static/smartlab/cnmp.svg"
-            class="cursor-pointer mb-1 ml-2" alt="Conselho Nacional do Ministério Público"
+            class="cursor-pointer mb-1 ml-2" 
+            alt="Conselho Nacional do Ministério Público"
             max-height="80%"
             min-height="50%"
             style="border-left: 1px solid white; padding-left: 10px;"
+            @click="$navigationManager.constructor.pushRoute($router, 'http://cnmp.mp.br', true)" 
           />
-          <img v-if="$observatories.constructor.identifyObservatory($route.path.split('/')[1]) == 'ti'"
-            v-on:click="$navigationManager.constructor.pushRoute('https://fnpeti.org.br', true)" 
-            src="/static/smartlab/fnpeti.svg"
-            class="cursor-pointer mb-1 ml-0" alt="Fórum Nacional de Prevenção e Erradicação do Trabalho Infantil"
-            max-height="80%"
-            min-height="50%"
-          />
-          <img v-if="$observatories.constructor.identifyObservatory($route.path.split('/')[1]) == 'ti' || this.$observatories.constructor.identifyObservatory(this.$route.path.split('/')[1]) == 'td'"
-            v-on:click="$navigationManager.constructor.pushRoute('http:///ibge.gov.br', true)" 
-            src="/static/smartlab/ibge.png"
-            class="cursor-pointer mb-1 ml-0" alt="Instituto Brasileiro de Geografia e Estatística"
+          <img 
+            src="/static/smartlab/mdh.png"
+            class="cursor-pointer mr-2 ml-2" 
+            alt="Ouvidoria Nacional dos Direitos Humanos"
             height="50px"
+            @click="$navigationManager.constructor.pushRoute($router, 'https://ouvidoria.mdh.gov.br/portal', true)" 
           />
-          <img v-if="$observatories.constructor.identifyObservatory($route.path.split('/')[1]) == 'des'"
-            v-on:click="$navigationManager.constructor.pushRoute('https://www.pactoglobal.org.br', true)" 
-            src="/static/smartlab/pacto.svg"
-            class="cursor-pointer mb-1 ml-0" alt="Pacto Global - Rede Brasil"
+          <img 
+            v-if="currentObs == 'ti'"
+            src="/static/smartlab/fnpeti.svg"
+            class="cursor-pointer mb-1 ml-0" 
+            alt="Fórum Nacional de Prevenção e Erradicação do Trabalho Infantil"
             max-height="80%"
             min-height="50%"
+            @click="$navigationManager.constructor.pushRoute('https://fnpeti.org.br', true)" 
           />
-          <img v-if="$observatories.constructor.identifyObservatory($route.path.split('/')[1]) == 'des'"
-            v-on:click="$navigationManager.constructor.pushRoute('http://www.onumulheres.org.br/', true)" 
+          <img 
+            v-if="currentObs == 'ti' || currentObs == 'td'"
+            src="/static/smartlab/ibge.png"
+            class="cursor-pointer mb-1 ml-0" 
+            alt="Instituto Brasileiro de Geografia e Estatística"
+            height="50px"
+            @click="$navigationManager.constructor.pushRoute('http:///ibge.gov.br', true)" 
+          />
+          <img 
+            v-if="currentObs == 'des'"
+            src="/static/smartlab/pacto.svg"
+            class="cursor-pointer mb-1 ml-0" 
+            alt="Pacto Global - Rede Brasil"
+            max-height="80%"
+            min-height="50%"
+            @click="$navigationManager.constructor.pushRoute('https://www.pactoglobal.org.br', true)" 
+          />
+          <img 
+            v-if="currentObs == 'des'"
             src="/static/smartlab/onumulheres.svg"
-            class="cursor-pointer ml-2" alt="ONU Mulheres"
-            height="20px" style="margin-bottom: 12px;"
+            class="cursor-pointer ml-2" 
+            alt="ONU Mulheres"
+            height="20px" 
+            @click="$navigationManager.constructor.pushRoute('http://www.onumulheres.org.br/', true)" 
           />
-          
-        </v-flex>
-        <v-flex xs6 sm6 md2 lg3 xl3 class="text-xs-left text-sm-left text-md-center subheading"
-            :class="{'pt-5 pb-3': $vuetify.breakpoint.smAndDown }" >
-              <a class="white--text mr-3" v-on:click="$navigationManager.constructor.pushRoute($router, 'https://github.com/smartlab-br', true)"><span v-html="renderIcon('fab','faGithub','GitHub')"/></a>
-              <a class="white--text mr-3" v-on:click="$navigationManager.constructor.pushRoute($router, 'https://hub.docker.com/u/smartlab/', true)"><span v-html="renderIcon('fab','faDocker','Docker')"/></a>
-              <a class="white--text mr-3" v-on:click="$navigationManager.constructor.pushRoute($router, '', true)"><span v-html="renderIcon('fab','faFacebook','Facebook')"/></a>
-              <a class="white--text" v-on:click="$navigationManager.constructor.pushRoute($router, '', true)"><span v-html="renderIcon('fab','faTwitter','Twitter')"/></a>
-        </v-flex>
-        <v-flex xs6 sm6 md2 lg2 xl3 class="text-xs-right subheading" 
-            :class="{'pt-5 pb-3': $vuetify.breakpoint.smAndDown }" >
-              <div class="caption mr-1 mb-1">Licenças</div>
-              <a class="white--text mx-2" v-on:click="$navigationManager.constructor.pushRoute($router, 'https://creativecommons.org/licences/by-nc-sa/4.0/', true)"><span v-html="renderIcon('fab','faCreativeCommons','CC BY 4.0')"/></a>
-              <a class="white--text" v-on:click="$navigationManager.constructor.pushRoute($router, 'https://opensource.org/licenses/MIT', true)"><span v-html="renderIcon('fab','faOsi','MIT - Open Source Initiative')"/></a>
-        </v-flex>
-      </v-layout>
-    <!--</v-container>-->
-    <v-snackbar :timeout="snack_timeout" :top="snack_y === 'top'" :bottom="snack_y === 'bottom'"
-      :right="snack_x === 'right'" :left="snack_x === 'left'" :multi-line="snack_mode === 'multi-line'"
-      :vertical="snack_mode === 'vertical'" :color = "snack_color" v-model="snackbar">
+        </v-layout>       
+      </v-flex>
+      <v-flex  
+        class="xs6 sm6 md6 lg1 xl3 text-md-left text-lg-center subheading"
+        :class="{'pt-5 pb-3 ': $vuetify.breakpoint.mdAndDown }" 
+      >
+        <a 
+          class="white--text mr-2" 
+          @click="$navigationManager.constructor.pushRoute($router, 'https://www.instagram.com/smartlab_br/', true)"
+        >
+          <span v-html="renderIcon('fab','faInstagram','Instagram')" />
+        </a>
+        <a 
+          class="white--text mr-2" 
+          @click="$navigationManager.constructor.pushRoute($router, 'https://github.com/smartlab-br', true)"
+        >
+          <span v-html="renderIcon('fab','faGithub','GitHub')" />
+        </a>
+        <a 
+          class="white--text mr-2" 
+          @click="$navigationManager.constructor.pushRoute($router, 'https://hub.docker.com/u/smartlab/', true)"
+        >
+          <span v-html="renderIcon('fab','faDocker','Docker')" />
+        </a>
+      </v-flex>
+      <v-flex  
+        class="xs6 sm6 md6 lg1 xl3 text-xs-right subheading" 
+        :class="{'pt-5 pb-3': $vuetify.breakpoint.mdAndDown }" 
+      >
+        <div class="caption mr-1 mb-1">
+          Licenças
+        </div>
+        <a 
+          class="white--text mx-2" 
+          @click="$navigationManager.constructor.pushRoute($router, 'https://creativecommons.org/licences/by-nc-sa/4.0/', true)"
+        >
+          <span v-html="renderIcon('fab','faCreativeCommons','CC BY 4.0')" />
+        </a>
+        <a 
+          class="white--text" 
+          @click="$navigationManager.constructor.pushRoute($router, 'https://opensource.org/licenses/MIT', true)"
+        >
+          <span v-html="renderIcon('fab','faOsi','MIT - Open Source Initiative')" />
+        </a>
+      </v-flex>
+    </v-layout>
+
+    <v-snackbar 
+      v-model="snackbar"
+      :timeout="snack_timeout" 
+      :top="snack_y === 'top'" 
+      :bottom="snack_y === 'bottom'"
+      :right="snack_x === 'right'" 
+      :left="snack_x === 'left'" 
+      :multi-line="snack_mode === 'multi-line'"
+      :vertical="snack_mode === 'vertical'" 
+      :color="snack_color" 
+    >
       {{ snackText }}
-      <v-btn flat color="white" @click.native="snackbar = false">Fechar</v-btn>
+      <v-btn 
+        flat 
+        color="white" 
+        @click.native="snackbar = false"
+      >
+        Fechar
+      </v-btn>
     </v-snackbar>
-    <v-snackbar bottom multi-line :timeout="0" color = "blue-grey darken2" v-model="snackbarCookies">
+
+    <v-snackbar  
+      v-model="snackbarCookies"
+      bottom
+      multi-line 
+      :timeout="0" 
+      color="blue-grey darken2" 
+    >
       Este site utiliza cookies para registrar as preferências de navegação do usuário. Ao navegar no site, você aceita a utilização dos cookies.
-      <v-btn flat color="white" @click.native="setCookieAccept">Fechar</v-btn>
+      <v-btn 
+        flat 
+        color="white" 
+        @click.native="setCookieAccept"
+      >
+        Fechar
+      </v-btn>
     </v-snackbar>
-    <v-dialog width="500px" v-model="bugDialog">
-        <v-card>
-          <v-card-title class="headline-obs">Relate um problema</v-card-title>
-          <v-card-text>
-            <v-form ref="bugForm" v-model="valid">
-              <v-container>
-                <v-layout column>
-                  <v-flex py-0>
-                    <v-text-field class="py-0"
-                      v-model="computedTitle"
-                      label="Observatório"
-                      readonly
-                    ></v-text-field>
-                  </v-flex>
+    
+    <v-dialog 
+      v-model="bugDialog"
+      width="500px" 
+    >
+      <v-card>
+        <v-card-title 
+          class="headline-obs py-1"
+        >
+          Relate um problema
+        </v-card-title>
+        <v-card-text py-1>
+          <v-form 
+            ref="bugForm" 
+            v-model="valid"
+          >
+            <v-container>
+              <v-layout column>
+                <v-flex py-0>
+                  <v-text-field 
+                    v-model="computedTitle"
+                    class="py-0"
+                    label="Observatório"
+                    readonly
+                  />
+                </v-flex>
 
-                  <v-flex py-0>
-                    <v-text-field class="py-0"
-                      v-model="computedSubtitle"
-                      label="Dimensão"
-                      readonly
-                    ></v-text-field>
-                  </v-flex>
+                <v-flex py-0>
+                  <v-text-field 
+                    v-model="computedSubtitle"
+                    class="py-0"
+                    label="Dimensão"
+                    readonly
+                  />
+                </v-flex>
 
-                  <v-flex py-0>
-                    <v-text-field class="py-0"
-                      v-model="computedPlaceTitle"
-                      label="Localidade"
-                      readonly
-                    ></v-text-field>
-                  </v-flex>
+                <v-flex py-0>
+                  <v-text-field 
+                    v-model="computedPlaceTitle"
+                    class="py-0"
+                    label="Localidade"
+                    readonly
+                  />
+                </v-flex>
 
-                  <v-flex py-0>
-                    <v-text-field class="py-0"
-                      v-model="bugCard"
-                      label="Card"
-                      readonly
-                    ></v-text-field>
-                  </v-flex>
+                <v-flex py-0>
+                  <v-text-field 
+                    v-model="bugCard"
+                    class="py-0"
+                    label="Card"
+                    readonly
+                  />
+                </v-flex>
 
-                  <v-flex>
-                    <v-textarea v-if="bugDialog"
-                      v-model="bugText"
-                      ref="bugText"
-                      label="Relate um problema"
-                      :rules= "bugTextRules"                      
-                      autofocus
-                      required>
-                    </v-textarea>
-                  </v-flex>
+                <v-flex py-0>
+                  <v-textarea 
+                    v-if="bugDialog"
+                    ref="bugText"
+                    v-model="bugText"
+                    class="py-0"
+                    label="Relate um problema"
+                    :rules="bugTextRules"                      
+                    autofocus
+                    required
+                  />
+                </v-flex>
 
-                  <v-flex>
-                    <v-text-field class="py-0"
-                      :rules= "bugEmailRules" 
-                      ref="bugEmail"                     
-                      v-model="bugEmail"
-                      label="E-mail contato"
-                      required
-                    ></v-text-field>
-                  </v-flex>
+                <v-flex>
+                  <v-text-field 
+                    ref="bugEmail"                     
+                    v-model="bugEmail"
+                    class="py-0"
+                    :rules="bugEmailRules" 
+                    label="E-mail contato"
+                    required
+                  />
+                </v-flex>
 
-                  <v-layout py-0 row>
-                    <v-layout pa-0 v-show="sendingMail">
-                      <v-progress-circular indeterminate
-                        color="accent">
-                      </v-progress-circular>
-                      <span class="pl-2 align-self-center">Enviando...</span>
-                    </v-layout>
-                    <v-spacer></v-spacer>
-                    <v-layout justify-end pa-0>
-                      <v-btn small flat  class="mb-0 mr-2"
-                        @click="sendBugReport">
-                        <span class="hidden-sm-and-down body">Enviar</span>
-                        <v-icon right>send</v-icon> 
-                      </v-btn>
-                      <v-btn small flat  class="mb-0 mx-0"
-                        @click="closeBugDialog">
-                        <span class="hidden-sm-and-down body">Fechar</span>
-                        <v-icon right>close</v-icon> 
-                      </v-btn>
-                    </v-layout>
+                <v-layout 
+                  py-0 
+                  row
+                >
+                  <v-layout 
+                    v-show="sendingMail"
+                    pa-0 
+                  >
+                    <v-progress-circular 
+                      indeterminate
+                      color="accent"
+                    />
+                    <span class="pl-2 align-self-center">Enviando...</span>
                   </v-layout>
+                  <v-spacer />
+                  <v-layout 
+                    justify-end 
+                    pa-0
+                  >
+                    <v-btn 
+                      small 
+                      flat  
+                      class="mb-0 mr-2"
+                      @click="sendBugReport"
+                    >
+                      <span class="hidden-sm-and-down body">Enviar</span>
+                      <v-icon right>
+                        send
+                      </v-icon> 
+                    </v-btn>
+                    <v-btn
+                      small 
+                      flat 
+                      class="mb-0 mx-0"
+                      @click="closeBugDialog"
+                    >
+                      <span class="hidden-sm-and-down body">Fechar</span>
+                      <v-icon right>
+                        close
+                      </v-icon> 
+                    </v-btn>
+                  </v-layout>
+                </v-layout>
               </v-layout>
-              </v-container>
-            </v-form>
+            </v-container>
+          </v-form>
         </v-card-text>
       </v-card>
     </v-dialog>
-    <v-dialog width="500px" v-model="locationDialog" persistent>
-        <v-card>
-          <v-card-title class="headline-obs">Informe o município a ser visualizado ou sua localidade:</v-card-title>
-          <v-card-text>
+    <v-dialog 
+      v-model="locationDialog" 
+      width="500px" 
+      persistent
+    >
+      <v-card>
+        <v-card-title 
+          class="headline-obs"
+        >
+          Informe o município a ser visualizado ou sua localidade:
+        </v-card-title>
+        <v-card-text>
           <v-autocomplete
             v-if="auOptions.length > 0"
-            :items="computedSearchItemsMunicipio"
-            persistent-hint
             v-model="gsFavLocation"
+            persistent-hint
             item-text="label"
             placeholder="Município"
             item-value="id"
+            class="input-group--focused global-search"
+            return-object
+            :items="computedSearchItemsMunicipio"
             :filter="customFilter"
-            @blur="gsFavLocation = null"
             :loading="gsLoadingStatusSearchOptions == 'LOADING' ? true : false"
             :color="gsLoadingStatusSearchOptions == 'ERROR' ? 'error' :
-                    (gsLoadingStatusSearchOptions == 'LOADING' ? 'warning' : 'accent')"
-            class="input-group--focused global-search"
-            return-object>
-            <template slot="item" slot-scope="data">
+            (gsLoadingStatusSearchOptions == 'LOADING' ? 'warning' : 'accent')"
+            @blur="gsFavLocation = null"
+          >
+            <template 
+              slot="item" 
+              slot-scope="data"
+            >
               <template v-if="auOptions.length < 2">
                 <v-list-tile-content>
-                  <v-progress-circular :size="20" indeterminate color="primary">
-                  </v-progress-circular>
+                  <v-progress-circular 
+                    :size="20" 
+                    indeterminate 
+                    color="primary"
+                  />
                 </v-list-tile-content>
               </template>
               <template v-else>
-                <!--<v-list-tile-avatar>
-                  <v-icon>{{ data.item.icon }}</v-icon>
-                </v-list-tile-avatar>-->
                 <v-list-tile-content>
-                  <v-list-tile-title v-html="data.item.label"></v-list-tile-title>
-                  <!--<v-list-tile-sub-title v-html="data.item.detail"></v-list-tile-sub-title>-->
+                  <v-list-tile-title v-html="data.item.label" />
                 </v-list-tile-content>
               </template>
             </template>  
@@ -520,6 +751,84 @@
         </v-card-text>
       </v-card>
     </v-dialog>
+    <!--
+    <v-dialog 
+      v-model="authMessageDialog"
+      width="500px" 
+    >
+      <v-card>
+        <v-card-title class="headline-obs">
+          Autenticação necessária
+        </v-card-title>
+        <v-card-text>
+          <p>Para baixar os dados, é necessário que você se autentique.</p>
+          <p>Clique no botão abaixo e faça o login na plataforma utilizando sua conta do Google ou Facebook.</p>
+        </v-card-text>
+        <v-layout 
+          align-center 
+          justify-center 
+          row 
+          fill-height
+        >
+          <v-btn 
+            class="theme--light mb-3 mt-0" 
+            color="accent" 
+            @click="handleAuthClick()"
+          >
+            <v-icon 
+              left 
+              color="white"
+            >
+              perm_identity
+            </v-icon>
+            Autenticar
+          </v-btn>
+        </v-layout>
+      </v-card>
+    </v-dialog>
+    -->
+    <v-dialog 
+      v-model="authMessageDialog"
+      width="500px" 
+    >
+      <v-card>
+        <v-card-title class="headline-obs">
+          Identificação necessária
+        </v-card-title>
+        <v-card-text>
+          <p>Para baixar os microdados, você precisa se identificar mediante nome de usuário e senha. Em breve, a funcionalidade estará disponível.</p>
+        </v-card-text>
+        <v-layout 
+          align-center 
+          justify-center 
+          row 
+          fill-height
+        >
+          <v-btn 
+            class="theme--light mb-3 mt-0" 
+            color="accent" 
+            @click="authMessageDialog = false"
+          >
+            Fechar
+          </v-btn>
+        </v-layout>
+      </v-card>
+    </v-dialog>
+    <v-layout text-xs-center pa-0 ma-0
+      class="footer-nav white--text">
+      <v-layout row wrap caption class="cursor-pointer">
+        <v-layout column scroll-menu v-if="!isPageBottom" pa-2
+          v-on:click="scrollDown()">
+          Leia mais
+          <v-icon dark>keyboard_arrow_down</v-icon>
+        </v-layout>
+        <v-layout column scroll-menu v-if="isPageBottom" pa-2
+          v-on:click="scrollTop()">
+          <v-icon dark>keyboard_arrow_up</v-icon>
+          Para o topo
+        </v-layout>
+       </v-layout>
+    </v-layout>
   </v-app>
 </template>
 
@@ -530,8 +839,7 @@
   import fontawesome from '@fortawesome/fontawesome'
   import fa_brands from '@fortawesome/fontawesome-free-brands'
   import fa_solid from '@fortawesome/fontawesome-free-solid'
-  // import fa_regular from '@fortawesome/fontawesome-free-regular'
-
+  
   export default {
     mixins: [Meta],
     data () {
@@ -544,32 +852,12 @@
         seen: false,
         drawer: false,
         fixed: false,
-        items: [
-          { icon: 'apps', title: 'Início', to: '/', external: false },
+        isPageBottom: true,
+        menuItems: [
+          { icon: 'apps', short_title: 'Início', to: '/', external: false },
           // { icon: 'stars', title: 'Destaques', to: '/', external: false },
           // { icon: 'map', title: 'Mapa Exploratório', to: '/mapa/0', external: false },
           // { icon: 'map', title: 'Mapa Exploratório', to: '/mapa/06_02_03_04?type=bubbles', external: false },
-          { app_icon: 'td', title: 'Trabalho Decente',
-            to: '/trabalhodecente', external: false,
-            rippleColor: 'grey--text darken-3' },
-          { app_icon: 'coord-02', title: 'Trabalho Escravo',
-            to: '/trabalhoescravo', external: false,
-            blocked: false,
-            rippleColor: 'brown--text darken-3' },
-          { app_icon: 'coord-01', title: 'Segurança e Saúde',
-            to: '/sst', external: false,
-            blocked: false,
-            rippleColor: 'teal--text darken-3' },
-          { app_icon: 'coord-07', title: 'Trabalho Infantil',
-            to: '/trabalhoinfantil', external: false,
-            blocked: false,
-            rippleColor: 'indigo--text darken-3' },
-          { app_icon: 'coord-06', title: 'Diversidade no Trabalho',
-            to: '/diversidade', external: false,
-            blocked: false,
-            rippleColor: 'deep-purple--text darken-2' },
-          // { icon: 'flight_takeoff', title: 'Migrações e Trabalho',
-          //   to: '/', external: false }
         ],
         miniVariant: false,
         right: true,
@@ -587,6 +875,7 @@
         gsLoadingStatusSearchOptions: 'LOADING',
         auOptions: [],
         locationDialog: false,
+        authMessageDialog: false,
         //Formulário Relate um problema
         valid: true,
         bugDialog: false,
@@ -607,48 +896,19 @@
         miniLeftDrawerTitle: false,
         hintAutocomplete: '',
         currentAnalysisUnit: null,
-        currentPlaceType: null,
         observatorios: null,
+        currentObs: null,
         dim: { label: null }
       }
     },
-    created () {    
-      let tmpObs = this.$observatories.getObservatories();
-      if (tmpObs instanceof Promise) {
-        tmpObs.then((result) => { this.observatorios = result });
-      } else {
-        this.observatorios = tmpObs;
-      }
-
-      this.dim = { label: null };
-      let observ = this.$observatories.constructor.identifyObservatory(this.$route.path.split('/')[1]);
-      if (observ != null && (this.$route.query.dimensao || this.$route.params.idLocalidade)) {
-        this.$dimensions.getDimensionByObservatoryAndId(observ, this.$route.query.dimensao)
-          .then((result) => { this.dim = result; });
-      }
-
-      Promise.all(this.$analysisUnitModel.buildAllSearchOptions())
-        .then((results) => {
-          let hasLoading = false;
-          for (let eachResult in results) {
-              if (eachResult == 'ERROR') {
-                this.gsLoadingStatusSearchOptions = eachResult;
-                return;
-              }
-              if (eachResult == 'LOADING') hasLoading = true;
-          }
-          this.gsLoadingStatusSearchOptions = hasLoading ? 'LOADING' : 'SUCCESS';
-          this.auOptions = this.$analysisUnitModel.getOptions();
-        })
-        .catch((error) => {
-          this.gsLoadingStatusSearchOptions = 'ERROR';
-          this.auOptions = this.$analysisUnitModel.getOptions();
-          this.sendError("Falha ao buscar lista das localidades");
-        });
-
-      this.themeEval();
-    },
     computed: {
+      computedLoginLabel: function(){
+        if (this.$store.state.user){
+          return "Visualizar perfil";
+        } else {
+          return "Identifique-se"
+        }
+      },
       toolbarColor: function() {
         return this.$vuetify.theme.toolbar;
       },
@@ -667,7 +927,7 @@
         };
 
         if (this.observatorios) {
-          let tmpObs = this.$observatories.getObservatoryById(this.$observatories.constructor.identifyObservatory(this.$route.path.split('/')[1]));
+          let tmpObs = this.$observatories.getObservatoryById(this.currentObs);
           if (tmpObs) {
             observ = tmpObs;
           } else if (this.$route.path.indexOf("saibamais") != -1){ //Sobre
@@ -677,27 +937,42 @@
             };
           }
         }
-
-        if (!this.visibleTitle || (this.$route && (this.$route.path.indexOf("localidade") != -1 || 
-                                   this.$route.path.indexOf("estudo") != -1 || 
-                                   this.$route.path.indexOf("saibamais") != -1 || 
-                                   this.$route.path.indexOf("smartmap") != -1
-                                   ))){
-          if (this.$vuetify.breakpoint.smAndDown) {
-            return observ.short_title;
+        
+        // if (!this.visibleTitle || (this.$route && (this.$route.path.indexOf("localidade") != -1 || 
+        //                     this.$route.path.indexOf("localidade") != -1 || 
+        //                     this.$route.path.indexOf("estudo") != -1 || 
+        //                     this.$route.path.indexOf("saibamais") != -1 || 
+        //                     this.$route.path.indexOf("smartmap") != -1
+        //                     )))
+        // {
+        if (this.$vuetify.breakpoint.mdAndDown) {
+          return observ.short_title;
+        }
+        return observ.title;
+        // } 
+        // return '';
+      },
+      computedHashTag: function() {
+        let hashTag = '';
+        if (this.computedTitle != ''){
+          if (this.computedTitle == "Sobre"){
+            hashTag = "#TrabalhoDecente";
+          } else if (this.observatorios) {
+            let observ = this.$observatories.getObservatoryById(this.currentObs);
+            if (observ) {
+                hashTag = "#"+ observ.hash_tag;
+            } 
           }
-          return observ.title;
-        } 
-        return '';
+        }
+        return hashTag;
       },
       computedSubtitle: function() {
-        let observ = this.$observatories.constructor.identifyObservatory(this.$route.path.split('/')[1]);
 
         if (!this.visibleTitle && this.dim && this.dim.short_desc){
           return this.dim.short_desc;
         }
 
-        if (observ != null && this.$route.params.idEstudo ){
+        if (this.currentObs != null && this.$route.params.idEstudo ){
           return "Estudos temáticos";
         }
 
@@ -706,13 +981,15 @@
         }
         
           
-        // if (this.$route.params.tab ){
-        //   return "Sobre";
-        // }
-          
         return '';
       },
       computedPlaceTitle: function() {
+        if (this.currentAnalysisUnit) {
+          return this.currentAnalysisUnit.nm_localidade;
+        }
+        return null;
+      },
+      computedPlaceType: function() {
         if (this.currentAnalysisUnit) {
           let tipoLocalidade = "Seleção Atual"
           if (this.currentAnalysisUnit.tipo == 'Município'){
@@ -720,8 +997,7 @@
           } else if (this.currentAnalysisUnit.tipo == 'UF'){
             tipoLocalidade = "UF Selecionada";
           } 
-          this.currentPlaceType = tipoLocalidade;
-          return this.currentAnalysisUnit.nm_localidade;
+          return tipoLocalidade;
         }
         return null;
       },
@@ -746,40 +1022,61 @@
         return items.filter(function(el) {
           return el.scope == "mun";
         })
+      },
+      computedMenuItems: function() {
+        if (this.observatorios) {
+          return [].concat(this.menuItems, this.observatorios);
+        } else {
+          return this.menuItems;
+        }
       }
     },
-    mounted: function() {
-      // this.checkCurrentAnalysisUnit();
+    created () {    
+      // console.log(process.env.GRAVITEE_AM_URL_BASE)
 
-      if (!this.$cookies.isKey("cookieAccept")){
-        this.snackbarCookies = true;
+      let tmpObs = this.$observatories.getObservatories();
+      if (tmpObs instanceof Promise) {
+        tmpObs.then((result) => { 
+          this.observatorios = result;
+        });
+      } else {
+        this.observatorios = tmpObs;
       }
 
-      let findLoc = this.$analysisUnitModel.findCurrentPlace();
-      if (findLoc && (findLoc instanceof Promise || findLoc.then)) {
-        findLoc.then(response => {
-          // console.log(response);
-          this.changeMiddleToolbar(response);
-          if (response.id_localidade && response.id_localidade.length > 5) this.localidade = response;
+      this.dim = { label: null };
+      this.currentObs = this.$observatories.constructor.identifyObservatory(this.$route.path.split('/')[1]);
+      if (this.currentObs != null && (this.$route.query.dimensao || this.$route.params.idLocalidade)) {
+        this.$dimensions.getDimensionByObservatoryAndId(this.currentObs, this.$route.query.dimensao)
+          .then((result) => { this.dim = result; });
+      }
+
+      Promise.all(this.$analysisUnitModel.buildAllSearchOptions())
+        .then((results) => {
+          let hasLoading = false;
+          for (let eachResult in results) {
+              if (eachResult == 'ERROR') {
+                this.gsLoadingStatusSearchOptions = eachResult;
+                return;
+              }
+              if (eachResult == 'LOADING') hasLoading = true;
+          }
+          this.gsLoadingStatusSearchOptions = hasLoading ? 'LOADING' : 'SUCCESS';
+          this.auOptions = this.$analysisUnitModel.getOptions();
         })
-        .catch(error => { this.sendError(error); });
-      } else if (findLoc){
-        this.changeMiddleToolbar(findLoc);
-        if (findLoc.id_localidade && findLoc.id_localidade.length > 5) this.localidade = findLoc;
-      }
-    
-      this.langs = this.$translationModel.findAllLocales();
-      this.lang = this.$translationModel.findBrowserLocale(this);
+        .catch((error) => {
+          this.gsLoadingStatusSearchOptions = 'ERROR';
+          this.auOptions = this.$analysisUnitModel.getOptions();
+          this.sendError("Falha ao buscar lista das localidades");
+        });
 
-      window.addEventListener('scroll', this.assessVisibleTitle);
-      window.addEventListener('scroll', this.assessVisibleLeftDrawerTitle);
+      this.themeEval();
     },
     watch: {
       '$route.fullPath': function(newVal, oldVal) {
+        this.currentObs = this.$observatories.constructor.identifyObservatory(this.$route.path.split('/')[1]);
         this.dim = { label: null }
-        let observ = this.$observatories.constructor.identifyObservatory(this.$route.path.split('/')[1]);
-        if (observ != null && (this.$route.query.dimensao || this.$route.params.idLocalidade)) {
-          this.$dimensions.getDimensionByObservatoryAndId(observ, this.$route.query.dimensao)
+        if (this.currentObs != null && (this.$route.query.dimensao || this.$route.params.idLocalidade)) {
+          this.$dimensions.getDimensionByObservatoryAndId(this.currentObs, this.$route.query.dimensao)
             .then((result) => { this.dim = result; });
         }
       },
@@ -808,10 +1105,59 @@
         }
       }
     },
+    mounted: function() {
+
+      if (!this.$cookies.isKey("cookieAccept")){
+        this.snackbarCookies = true;
+      }
+
+      let findLoc = this.$analysisUnitModel.findCurrentPlace();
+      if (findLoc && (findLoc instanceof Promise || findLoc.then)) {
+        findLoc.then(response => {
+          this.changeMiddleToolbar(response);
+          if (response.id_localidade && response.id_localidade.length > 5) this.localidade = response;
+        })
+        .catch(error => { this.sendError(error); });
+      } else if (findLoc){
+        this.changeMiddleToolbar(findLoc);
+        if (findLoc.id_localidade && findLoc.id_localidade.length > 5) this.localidade = findLoc;
+      }
+    
+      this.langs = this.$translationModel.findAllLocales();
+      this.lang = this.$translationModel.findBrowserLocale(this);
+
+      window.addEventListener('scroll', this.assessPageBottom);
+      this.assessPageBottom();
+
+      window.addEventListener('scroll', this.assessVisibleTitle);
+      window.addEventListener('scroll', this.assessVisibleLeftDrawerTitle);
+    },
     methods: {
+      assessPageBottom() {
+        this.isPageBottom = false;
+        if (window && document) {
+          if (window.scrollY == 0){ //início
+            this.isPageBottom = false;
+          }
+          else{
+            this.isPageBottom = (window.innerHeight + window.scrollY) >= document.body.offsetHeight-1;
+          }
+        } 
+      },
+
+      scrollDown(){
+        window.scrollBy(0, window.innerHeight / 2);        
+      },
+
+      scrollTop(){
+        window.scrollTo(0,0);
+      },
+
       itemClick(item) {
         if (!item.blocked){
           this.$navigationManager.constructor.pushRoute(this.$router, item.to, item.external);
+        } else {
+          this.snackAlert({ color : 'orange darken-4', text: "Esse observatório estará disponível em breve." })
         }
       },
       customFilter (item, queryText, itemText) {
@@ -820,6 +1166,7 @@
         return itemText.indexOf(queryText) > -1 
       },      
       snackAlert(params) {
+        this.snack_mode = params.snack_mode || '';
         this.snack_color = params.color;
         this.snackText = params.text;
         this.snackbar = true;
@@ -833,7 +1180,7 @@
         }
       },
       themeEval: function() {
-        let theme = this.$observatories.getTheme(this.$observatories.constructor.identifyObservatory(this.$route.path.split('/')[1]));
+        let theme = this.$observatories.getTheme(this.currentObs);
         if (theme) this.$vuetify.theme = theme; // Changes only if 
       },
       changeMiddleToolbar: function(params) {
@@ -848,6 +1195,71 @@
 
       showLocationDialog: function(){
           this.locationDialog = true;
+      },
+
+      showAuthenticatioDialog: function() {
+        this.authMessageDialog = true;
+      },
+
+      handleAuthClick: function() {
+        this.showLoginDialog();
+        this.authMessageDialog = false;
+      },
+
+      handleAvatarClick: function() {
+        if (this.$store.state.user) {
+          this.$navigationManager.constructor.pushRoute(this.$router, '/perfil', false)
+        } else {
+          this.showLoginDialog()
+        }
+      },
+
+      showLoginDialog: function(){
+        var loginUrl = `${process.env.GRAVITEE_AM_BASE_URL}/oauth/authorize?client_id=${process.env.GRAVITEE_AM_CLIENT_ID}&response_type=token&redirect_uri=${process.env.GRAVITEE_AM_REDIRECT_URL}`;
+        var popup = window.open(loginUrl, '_blank', 'width=550,height=450,resizable=no,scrollbars=yes')
+
+        var this_ = this;
+        var poolingInterval = setInterval(function () {
+          if (!popup || popup.closed || popup.closed === undefined) {
+            clearInterval(poolingInterval);
+            poolingInterval = null;
+            throw new Error('Pop-up de login fechado.');
+          }
+          try {
+            var popupWindowPath = popup.location;             
+            if (popupWindowPath.hash) {
+              var params = popupWindowPath.hash.split("access_token=")[1]
+              var access_token = params.split("&")[0]
+
+              var bearer = 'Bearer ' + access_token
+              axios({
+                method: "GET",
+                url: `${process.env.GRAVITEE_AM_BASE_URL}/oidc/userinfo`,
+                data: {},
+                headers: {'Authorization': bearer}
+              }).then(function (response) {
+                let graviteeUser = {};
+                graviteeUser.name = response.data.name;
+                graviteeUser.email = response.data.email;
+                graviteeUser.picture = response.data.picture;
+                this_.updateUser(graviteeUser)
+                this_.snackAlert({ color : 'success', text: "Login realizado com sucesso." });
+              }).catch(function(error) {
+                // handle error
+                console.log(error)
+                throw new Error('Erro ao buscar informações do usuário.');
+              });
+
+              clearInterval(poolingInterval);
+              poolingInterval = null;
+              popup.close();
+            }
+          } catch(e) {
+            console.log(e.message)
+            // Ignore DOMException: Blocked a frame with origin from accessing a cross-origin frame.
+          }
+        }, 250);
+
       },
 
       focusChangePlace(){
@@ -874,7 +1286,6 @@
       // },
       
       assessVisibleTitle() {
-        // const vHeight = (window.innerHeight || document.documentElement.clientHeight);
         if (document.getElementById("screenTitle")) {
           var { top, bottom } = document.getElementById("screenTitle").getBoundingClientRect();
           if (top < 0 && bottom < 0) {
@@ -888,7 +1299,6 @@
       },
 
       assessVisibleLeftDrawerTitle() {
-        // const vHeight = (window.innerHeight || document.documentElement.clientHeight);
         if (document.getElementById("screenTitle")) {
           var { top, bottom } = document.getElementById("screenTitle").getBoundingClientRect();
           if (top < 0 && bottom < 0) {
@@ -901,7 +1311,6 @@
 
       showBugDialog(cardTitle){
         this.bugCard = cardTitle;
-        // this.$refs.inputProblem.focus();
         this.bugDialog = true;
       },
 
@@ -924,13 +1333,10 @@
                         "\nDescrição do problema: " + this.$refs.bugText.value +
                         "\nE-mail contato: " + this.$refs.bugEmail.value;
           
-          let mailerUrl = this.$store.state.MAILER_API_BASE_URL ? this.$store.state.MAILER_API_BASE_URL : process.env.MAILER_API_BASE_URL;
-          //mailerUrl += '/mail';
-
+          
           let snackAlert = this.snackAlert;
           let finishMailSend = () => { this.sendingMail = false; };
           let closeBugDialog = () => { this.bugDialog = false; };
-          let mailer_key = this.$store.state.MAILER_APP_KEY;
 
           axios({
             method: "POST",
@@ -982,6 +1388,10 @@
         console.log("Icon not found: " + icon);
         return null;
         
+      },
+
+      updateUser(user){
+        this.$store.commit('setUser', user)
       }
       
     }
@@ -1389,4 +1799,5 @@
   }  
   -->
   */
+
 </style>

@@ -66,21 +66,23 @@
             <!--
               :media = "dimension.media"
               :icon = "dimension.icon"
-              :app-icon = "dimension.appIcon"
+              :app-icon = "dimension.app_icon"
               icon-color = "white"
               :bg-color = "$vuetify.theme.secondary"
             -->
             <flpo-linked-view-card
-              :index-tab = "30 + indxDim"
-              :tagColor = "dimension.tagColor"
-              :ripple-color = "$vuetify.theme.primary"
-              :status = "dimension.status"
-              :to = "changeToGeoIP(dimension.to)"
-              :external = "dimension.external"
-              :title = "dimension.label"
-              :title-color = "'white'"
-              :detail = "dimension.sub">
-            </flpo-linked-view-card>
+              :index-tab="30 + indxDim"
+              :tagColor="dimension.tagColor"
+              :ripple-color="$vuetify.theme.primary"
+              :status="dimension.status"
+              :to="changeToGeoIP(dimension.to)"
+              :external="dimension.external"
+              :title="dimension.label"
+              :title-color="'white'"
+              :detail="dimension.sub"
+              :blocked="dimension.blocked"
+              @showSnackbar="snackAlert"
+            />
           </v-flex>
         </v-layout>
       </v-layout>
@@ -119,10 +121,25 @@
           -->
         </v-flex>
 
+        <v-flex pt-0 sm12 v-if="observatorio && observatorio.prevalencia && observatorio.prevalencia.main_title">
+          <v-layout column>
+            <v-flex pa-0 class=""
+              style="background-color:black;color:white"
+            >
+              <flpo-composite-text
+                :id = "'story_home_prevalencia_main_title_' + idObservatorio"
+                :structure="observatorio.prevalencia.main_title"
+                :custom-params="customParams"
+                :custom-functions="customFunctions"
+              />
+            </v-flex>
+          </v-layout>
+        </v-flex>
+
         <v-flex sm12 md4 lg3>
           <v-layout column>
             <v-layout row align-end fill-height wrap pl-3 pt-3 pr-2 class="subheading mb-0" 
-              v-on:mousedown="!mapEnabled ? dialogMapLoading = true : dialogMapLoading = false"
+              v-on:mouseup="!mapEnabled ? dialogMapLoading = true : dialogMapLoading = false"
               v-on:click="enableMap">
               <v-flex class="headline-obs card-title pb-0 pl-3">
                 {{ cmpTitle ? cmpTitle : '' }}
@@ -152,8 +169,8 @@
                 :reactive-filter="reactiveFilter"
                 :custom-filters="customParams"
                 v-on:selection="triggerSelect"
-                @showSnackbar="snackAlert">
-              </flpo-composite-text>
+                @showSnackbar="snackAlert"
+              />
 
               <v-layout column wrap pl-2>
                 <div v-if="sourceDesc && !sourceLink" class="caption pt-2 px-2 pl-3 bottom-30 data-source">Fonte: {{ sourceDesc }}</div>
@@ -178,8 +195,7 @@
                 :custom-functions="customFunctions"
                 :custom-filters="customParams"
                 @showSnackbar="snackAlert"
-                >
-              </flpo-composite-text>
+              />
 
             </v-layout>
           </v-layout>
@@ -203,7 +219,6 @@
             </v-layout>
             <v-layout fill-height style="position: absolute"
               v-if="dataset !== null && observatorio && observatorio.prevalencia &&
-                    observatorio.prevalencia.chart_type == 'MAP_BUBBLES' &&
                     observatorio.prevalencia.chart_options"
               ref = "chartRef"
               :class = "leafletBasedCharts.includes(observatorio.prevalencia.chart_type) ? 'map_geo' : ''"
@@ -215,8 +230,8 @@
               <flpo-ranking-list v-for="(ranking, index) in observatorio.ranking_cards" :key="index"
                 :structure="ranking" :customFunctions="customFunctions"
                 :customParams="customParams"
-                @showSnackbar="snackAlert">
-              </flpo-ranking-list>
+                @showSnackbar="snackAlert"
+              />
             </v-layout>
             <flpo-composite-text
               v-if="observatorio && observatorio.prevalencia && observatorio.prevalencia.description_bottom"
@@ -225,8 +240,8 @@
               section-class = 'pa-0'
               :custom-params="customParams"
               :custom-functions="customFunctions"
-              @showSnackbar="snackAlert">
-            </flpo-composite-text>
+              @showSnackbar="snackAlert"
+            />
           </v-flex>
         </v-flex>
 
@@ -238,8 +253,8 @@
             :structure="observatorio.prevalencia.description_right"
             :custom-params="customParams"
             :custom-functions="customFunctions"
-            @showSnackbar="snackAlert">
-          </flpo-composite-text>
+            @showSnackbar="snackAlert"
+          />
         </v-flex>
 
       </v-layout>
@@ -257,14 +272,15 @@
             :custom-functions="customFunctions"
             :custom-filters="customParams"
             section-class="pa-0"
-            @showSnackbar="snackAlert">
-          </flpo-composite-text>
+            @showSnackbar="snackAlert"
+          />
         </v-flex>
         <v-flex px-4 id="sparklines" style="min-height:630px">
           <v-layout row wrap v-if="visibleSparklines" >
             <v-flex pt-3 pb-0 v-for="(strSparklines, index) in observatorio.sparklines.tables" :key="index" :class="strSparklines.cls?strSparklines.cls:'xs12'" text-xs-center>
-              {{ strSparklines.title }}
               <flpo-sparklines 
+                :custom-params="customParams"
+                :custom-functions="customFunctions"
                 :dataset = "dataset"
                 :structure = "strSparklines">
               </flpo-sparklines>
@@ -273,22 +289,6 @@
         </v-flex>
       </v-layout>
     </v-container>
-
-    <v-layout text-xs-center pa-0 ma-0
-      class="footer-nav white--text">
-      <v-layout row wrap caption class="cursor-pointer">
-        <v-layout column scroll-menu v-if="!isPageBottom" pa-2
-          v-on:click="scrollDown()">
-          Leia mais
-          <v-icon dark>keyboard_arrow_down</v-icon>
-        </v-layout>
-        <v-layout column scroll-menu v-if="isPageBottom" pa-2
-          v-on:click="scrollTop()">
-          <v-icon dark>keyboard_arrow_up</v-icon>
-          Para o topo
-        </v-layout>
-       </v-layout>
-    </v-layout>
 
     <!--
     <v-container fluid ma-0 pa-5 :style="'background-color:' + $colorsService.constructor.assessZebraBG(1, $vuetify.theme) + ';'">
@@ -388,15 +388,12 @@
     mounted: function() {
       this.resizeFirstSection();
       window.addEventListener('resize', this.resizeFirstSection);
-      window.addEventListener('scroll', this.assessPageBottom);
       window.addEventListener('scroll', this.setVisibleSparklines);
-      this.assessPageBottom();
       this.idLocalidade = this.$analysisUnitModel.getCurrentAnalysisUnit();
       this.mapEnabled = false;
       this.checkCurrentAnalysisUnit();
     },
     beforeDestroy () {
-      window.removeEventListener('scroll', this.assessPageBottom);
       window.removeEventListener('scroll', this.setVisibleSparklines);
     },
     computed: {
@@ -432,30 +429,10 @@
         }
       },
       
-      assessPageBottom() {
-        this.isPageBottom = false;
-        if (window && document) {
-          if (window.scrollY == 0){ //início
-            this.isPageBottom = false;
-          }
-          else{
-            this.isPageBottom = (window.innerHeight + window.scrollY) >= document.body.offsetHeight-1;
-          }
-        } 
-      },
-
-      scrollDown(){
-        window.scrollBy(0, window.innerHeight / 2);        
-      },
-
-      scrollTop(){
-        window.scrollTo(0,0);
-      },
-
       scrollTo(anchor) {
         var el = this.$el.querySelector("#" + anchor);
         el.scrollIntoView();
-        window.scrollBy(0,-120);
+        window.scrollBy(0,-60);
       },
 
       resizeFirstSection(){
@@ -529,7 +506,7 @@
           }
         } else {
           var endpoint = this.$textTransformService.applyInterpol(payload.rules.api, this.customParams, this.customFunctions, payload.item);
-          this.fetchData(endpoint);
+          this.fetchMapData(endpoint);
         }
       },
 

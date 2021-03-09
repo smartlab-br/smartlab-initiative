@@ -79,6 +79,9 @@ const NavigationManager = {
         },
         openBugDialog(cardTitle){
           this.$emit('showBugDialog', cardTitle);
+        },
+        openAuthenticatioDialog() {
+          this.$emit('showAuthenticatioDialog');
         }
       }
     })

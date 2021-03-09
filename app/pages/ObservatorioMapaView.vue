@@ -71,8 +71,8 @@
           <v-layout style="display:block;">
             <v-layout fill-height>
               <v-layout fill-height
-                v-if="dataset !== null && observatorio && observatorio.prevalencia &&
-                  observatorio.prevalencia.chart_type == 'MAP_BUBBLES' && observatorio.prevalencia.chart_options"
+                v-if="dataset !== null && observatorio && observatorio.prevalencia 
+                 && observatorio.prevalencia.chart_options"
                 ref = "chartRef"
                 :class = "leafletBasedCharts.includes(observatorio.prevalencia.chart_type) ? 'map_geo' : ''"
                 id="observatorio_home_prevalencia_map">
@@ -202,13 +202,21 @@
           let item_value = "";
           let value = "";
           let value_label = "";
+
+          let itemCustomFilterName = "";
+          if (!Array.isArray(payload.rules.api)){
+            itemCustomFilterName = payload.rules.api.args[0].named_prop;
+          } else {
+            itemCustomFilterName = payload.rules.api[0].args[0].named_prop;
+          }
+
           if (payload.item == null || payload.item == undefined){
-            this.customParams[payload.rules.api.args[0].named_prop] = null;
+            this.customParams[itemCustomFilterName] = null;
           } else {
             if (Array.isArray(payload.item)){
               let i = 0
               for (let item of payload.item){
-                item_value = item[payload.rules.api.args[0].named_prop];
+                item_value = item[itemCustomFilterName];
                 if(typeof item_value === 'string'){
                   //substitui a vírgula e o hífen por '\,' e '\-'
                   item_value = item_value.replace(/,/g,"\\,"); 
@@ -233,7 +241,7 @@
                 i++;
               }
             } else {
-              item_value = payload.item[payload.rules.api.args[0].named_prop];
+              item_value = payload.item[itemCustomFilterName];
               if(typeof item_value === 'string'){
                 //substitui a vírgula e o hífen por '\,' e '\-'
                 item_value = item_value.replace(/,/g,"\\,"); 
@@ -245,16 +253,18 @@
           }
 
           if (payload.rules.filter) {
-              this.customParams[payload.rules.api.args[0].named_prop] = value;
-              this.customParams[payload.rules.api.args[0].named_prop + "_label"] = value_label;
+              this.customParams[itemCustomFilterName] = value;
+              this.customParams[itemCustomFilterName + "_label"] = value_label;
           }
           else {
             let item = {}
-            item[payload.rules.api.args[0].named_prop] = value;
-            this.customParams[payload.rules.api.args[0].named_prop] = value;
-            let grp = {}
-            grp[payload.rules.group] = true;
-            this.customParams.enabled = grp;
+            item[itemCustomFilterName] = value;
+            this.customParams[itemCustomFilterName] = value;
+            if (payload.rules.group){
+              let grp = {}
+              grp[payload.rules.group] = true;
+              this.customParams.enabled = grp;
+            }
             this.customParams.baseApi = this.$textTransformService.applyInterpol(payload.rules.api, item, this.customFunctions, this.customParams);
           }
 
@@ -307,11 +317,15 @@
       applyFilters() {
 
         let apiObject = this.observatorio.prevalencia.api;
+        if (this.observatorio.prevalencia.apiBase){
+          apiObject = this.observatorio.prevalencia.apiBase;
+        }
+
         let apiUrl = ""
         if (Array.isArray(apiObject)){
-          apiUrl = this.observatorio.prevalencia.api[0].fixed;
+          apiUrl = apiObject[0].fixed;
         } else {
-          apiUrl = this.observatorio.prevalencia.api.fixed;
+          apiUrl = apiObject.fixed;
         }
         if (this.customParams.baseApi){
           apiUrl = this.customParams.baseApi;
@@ -319,40 +333,49 @@
 
         let baseUrl = apiUrl;
         let filterText = "";
+        let filterApiArgs = "";
+        this.customParams.filterUrl = "";
+        this.customParams.filterText = "";
         for (let filter of this.observatorio.prevalencia.mapa_filtros) {
           if (filter.group == null || filter.group == undefined || filter.group == this.activeGroup){
             if (filter.type == "slider" || filter.type == "select"){
-              if (this.customParams[filter.selection.rules.api.args[0].named_prop] && filter.selection.rules.filter){
+                if (!Array.isArray(filter.selection.rules.api)){
+                  filterApiArgs = filter.selection.rules.api.args;
+                } else {
+                  filterApiArgs = filter.selection.rules.api[0].args;
+                }
+
+              if (this.customParams[filterApiArgs[0].named_prop] && filter.selection.rules.filter){
                 filter.selection.rules.api.template = apiUrl + filter.selection.rules.filter
                 apiUrl = this.$textTransformService.applyInterpol(filter.selection.rules.api, {}, this.customFunctions, this.customParams);
                 filterText += "<br/>" + (filter.title ? filter.title : filter.label) + ": ";
                 if (filter.type == "slider"){
-                  if (filter.selection.rules.api.args.length > 1){
-                    if (this.customParams[filter.selection.rules.api.args[0].named_prop] != this.customParams[filter.selection.rules.api.args[1].named_prop]) {
-                      filterText += this.customParams[filter.selection.rules.api.args[0].named_prop] + " a " + this.customParams[filter.selection.rules.api.args[1].named_prop];
+                  if (filterApiArgs.length > 1){
+                    if (this.customParams[filterApiArgs[0].named_prop] != this.customParams[filterApiArgs[1].named_prop]) {
+                      filterText += this.customParams[filterApiArgs[0].named_prop] + " a " + this.customParams[filterApiArgs[1].named_prop];
                     } else {
-                      filterText += this.customParams[filter.selection.rules.api.args[0].named_prop];
+                      filterText += this.customParams[filterApiArgs[0].named_prop];
                     }
                   } else {
-                    filterText += this.customParams[filter.selection.rules.api.args[0].named_prop];
+                    filterText += this.customParams[filterApiArgs[0].named_prop];
                   }
                 } else {
-                  filterText += this.customParams[filter.selection.rules.api.args[0].named_prop + "_label"];
+                  filterText += this.customParams[filterApiArgs[0].named_prop + "_label"];
                 }
               }
+              this.customParams.filterUrl = apiUrl.replace(baseUrl,"");
+              this.customParams.filterText = filterText;
             }
           }
         }
 
-        this.customParams.filterUrl = apiUrl.replace(baseUrl,"");
-        this.customParams.filterText = filterText;
         // this.reactiveFilter = apiUrl + this.customParams.filterUrl;
 
 
-        let aApiUrl = [apiUrl];
+        let aApiUrl = [];
         if (Array.isArray(apiObject)){
-          for (let i = 1; i < apiObject.length; i++){
-            aApiUrl.push(apiObject[i].fixed + this.customParams.filterUrl);
+          for (let apiItem of apiObject){
+            aApiUrl.push(apiItem.fixed + this.customParams.filterUrl);
           }
           return aApiUrl;
         } else {

@@ -18,15 +18,13 @@ const config = merge(base, {
       'process.env.VUE_ENV': '"client"',
       // 'process.env.DATAHUB_API_BASE_URL': JSON.stringify(process.env.DATAHUB_API_BASE_URL || 'http://localhost:8080'),
       // 'process.env.DATAHUB_APP_KEY': JSON.stringify(process.env.DATAHUB_APP_KEY || 'key'),
-      'process.env.MAILER_API_BASE_URL': JSON.stringify(process.env.MAILER_API_BASE_URL || 'http://localhost:8080'),
-      'process.env.MAILER_APP_KEY': JSON.stringify(process.env.MAILER_APP_KEY || 'key'),
+      // 'process.env.MAILER_API_BASE_URL': JSON.stringify(process.env.MAILER_API_BASE_URL || 'http://localhost:8080'),
+      // 'process.env.MAILER_APP_KEY': JSON.stringify(process.env.MAILER_APP_KEY || 'key'),
       // 'process.env.ACIDENTOMETROS_API_BASE_URL': JSON.stringify(process.env.ACIDENTOMETROS_API_BASE_URL || 'http://localhost:8080'),
       // 'process.env.ACIDENTOMETROS_APP_KEY': JSON.stringify(process.env.ACIDENTOMETROS_APP_KEY || 'key'),
-      'process.env.GOOGLE_CLIENTID': JSON.stringify(process.env.GOOGLE_CLIENTID | 'key'),
-      'process.env.GOOGLE_CLIENTSECRET': JSON.stringify(process.env.GOOGLE_CLIENTSECRET || 'key'),
-      'process.env.FACEBOOK_CLIENTID': JSON.stringify(process.env.FACEBOOK_CLIENTID || 'key'),
-      'process.env.FACEBOOK_CLIENTSECRET': JSON.stringify(process.env.FACEBOOK_CLIENTSECRET || 'key')
-      
+      'process.env.GRAVITEE_AM_BASE_URL': JSON.stringify(process.env.GRAVITEE_AM_BASE_URL),
+      'process.env.GRAVITEE_AM_CLIENT_ID': JSON.stringify(process.env.GRAVITEE_AM_CLIENT_ID),
+      'process.env.GRAVITEE_AM_REDIRECT_URL': JSON.stringify(process.env.GRAVITEE_AM_REDIRECT_URL)
     }),
     // extract vendor chunks for better caching
     new webpack.optimize.CommonsChunkPlugin({

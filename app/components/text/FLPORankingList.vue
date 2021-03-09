@@ -1,10 +1,10 @@
 <template>
   <v-flex :class="cls ? cls : 'xs12'">
     <v-layout column wrap ml-2 mb-2>
-      <v-flex x12 px-0 class="display-1-obs ranking-list-title pb-2"> {{ title}} </v-flex>
+      <v-flex x12 px-0 class="display-1-obs ranking-list-title pb-2" v-html="title"></v-flex>
       <v-flex v-if="errorMessage" x12 px-0 class="display-1-obs ranking-list-text pb-2"> {{ errorMessage }} </v-flex>
       <v-flex xs12 class="ranking-list pa-0" v-for="(item, itemIndx) in ranking" :key="itemIndx">      
-        <div class="ranking-list-text"><span>{{item.rank? item.rank: itemIndx+1}}. </span>{{item.localidade + " " + item.vl_indicador}}</div>
+        <div class="ranking-list-text" v-html="'<span>' + (item.rank? item.rank: itemIndx+1) + '. </span>'+ item.localidade + ' ' + item.vl_indicador"/>
       </v-flex>
       <!--
       <v-layout py-2 class="ranking-list-title"> {{title}} </v-layout>      
@@ -78,13 +78,21 @@
       },
       updateReactiveDataStructure(filterUrl){
         let structReactive = Object.assign({},this.structure);
-        structReactive.api = Object.assign({},this.structure.api);
+        structReactive.api = JSON.parse(JSON.stringify(this.structure.apiBase?this.structure.apiBase:this.structure.api));
 
-        if (structReactive.api && structReactive.api.fixed){
-          structReactive.api.fixed += filterUrl
-        } else if (structReactive.api && structReactive.api.template){
-          structReactive.api.template += filterUrl
+        if (structReactive.api){
+          if (!Array.isArray(structReactive.api)){
+            structReactive.api = [structReactive.api];
+          }
+          for(let struct of structReactive.api){
+            if (struct.fixed){
+              struct.fixed += filterUrl
+            } else if (struct.template){
+              struct.template += filterUrl
+            }
+          }
         }
+        
         this.fillDataStructure(
           structReactive, this.customParams,
           this.customFunctions, this.fillRankingList

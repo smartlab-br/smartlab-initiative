@@ -20,6 +20,25 @@
         customParams: {},
         customFunctions: {
           calc_subtraction: function(a, b) {  return a - b; },
+          calc_subtraction_ds: function(d, a, b) {  
+            return d[a] - d[b]; 
+          },
+          calc_addition_ds: function(d, a, b) { return a*1 + b; },
+          calc_proportion_ds: function(d,dividendo, divisor) { return divisor==0 ? null:dividendo / divisor; },
+          calc_percentage: function(parte,total) { return parte / total * 100},
+          calc_date_diff: function(dias, data = new Date()){
+              dias = (24*60*60*1000) * dias;
+              return new Date(data - dias).toISOString().substring(0,10).replace(/-/g,'\\-');
+          },
+          format_month_ds: function(d,month_ym){
+            let ym = typeof(month_ym) == "number"? month_ym.toString(): month_ym;
+            return ym.substr(4,2) + "/" + ym.substr(0,4);
+          },
+          format_quarter_ds: function(d,quarter_yq){
+            let yq = typeof(quarter_yq) == "number"? quarter_yq.toString(): quarter_yq;
+            return yq.substr(5,1) + "º Trimestre " + yq.substr(0,4);
+          }
+
         },
         topology: null,
 
@@ -50,8 +69,13 @@
           this.obsSliceSize = 1;
         }
       }
-
-      
+      // let topoFile = "/static/topojson/br-municipio.json";
+      // // this['topologyBrLoaded'+ suffix] = true;
+      // axios.get(topoFile)
+      //   .then(response => {
+      //     this['topology'] = response.data;
+      //   });
+     
     },
     beforeDestroy: function() {
       window.removeEventListener('resize', this.resizeFirstSection);

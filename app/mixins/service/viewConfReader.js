@@ -6,7 +6,8 @@ const ViewConfReader = {
 		Vue.mixin({
 			data() {
 				return {
-					errorMessage: null
+					errorMessage: null,
+					leafletBasedCharts: ['MAP_BUBBLES', 'MAP_HEAT', 'MAP_CLUSTER', 'MAP_MIGRATION', 'MAP_POLYGON', 'MIXED_MAP']
 				}
 			},
 			methods: {
@@ -85,14 +86,14 @@ const ViewConfReader = {
 								.then(result => {
 									cbFunction(
 										this.reformDataset(
-											JSON.parse(result.data).dataset,
+											result.data.dataset,
 											structure.api.options,
 											customFunctions
 										),
 										structure.args,
 										structure,
 										addedParams,
-										JSON.parse(result.data).metadata
+										result.data.metadata
 									);
 								}
 							 	).catch(error => { 
@@ -113,7 +114,7 @@ const ViewConfReader = {
 											.then(result => {
 												resolve(
 													fnReformDataset(
-														JSON.parse(result.data).dataset,
+														result.data.dataset,
 														structure.api[indexApi].options,
 														customFunctions
 													)
@@ -134,6 +135,13 @@ const ViewConfReader = {
 										let fullDS = [];
 										for (let dataset of datasets) {
 											fullDS = fullDS.concat(dataset);
+										}
+										if (structure.api_options) {
+											fullDS = fnReformDataset(
+												fullDS,
+												structure.api_options,
+												customFunctions
+											)											
 										}
 										cbFunction(
 											fullDS,
@@ -160,14 +168,14 @@ const ViewConfReader = {
 							.then(result => {
 								cbFunction(
 									this.reformDataset(
-										JSON.parse(result.data).dataset,
+										result.data.dataset,
 										structure.api_reactive.options,
 										customFunctions
 									),
 									structure.args,
 									structure,
 									addedParams,
-									JSON.parse(result.data).metadata
+									result.data.metadata
 								);
 							}).catch(error => { 
 								console.log(error);
@@ -229,14 +237,14 @@ const ViewConfReader = {
 								.then(result => {
 									cbFunction(
 										this.reformDataset(
-											JSON.parse(result.data).dataset,
+											result.data.dataset,
 											structure.api.options,
 											customFunctions
 										),
 										structure.args,
 										structure,
 										addedParams,
-										JSON.parse(result.data).metadata
+										result.data.metadata
 									);
 								}).catch(error => { 
 									console.log(error);
@@ -256,7 +264,7 @@ const ViewConfReader = {
 											.then(result => {
 												resolve(
 													fnReformDataset(
-														JSON.parse(result.data).dataset,
+														result.data.dataset,
 														eachApi.options,
 														customFunctions
 													)
@@ -277,6 +285,13 @@ const ViewConfReader = {
 										let fullDS = [];
 										for (let dataset of datasets) {
 											fullDS = fullDS.concat(dataset);
+										}
+										if (structure.api_options) {
+											fullDS = fnReformDataset(
+												fullDS,
+												structure.api_options,
+												customFunctions
+											)											
 										}
 										cbFunction(
 											fullDS,
@@ -547,13 +562,13 @@ const ViewConfReader = {
 				},
 
 				setDataset(dataset, rules, structure, addedParams, metadata) {
-					let limCoords = { xmin: null, ymin: null, xmax: null, ymax: null }; // Obtém coordenadas limítrofes (se mapa)
 				
 					let options = structure.chart_options;
 					if (options === null || options === undefined) {
 					  options = structure.options;
 					}
-				
+
+					let limCoords = { xmin: null, ymin: null, xmax: null, ymax: null }; // Obtém coordenadas limítrofes (se mapa)
 					for (var eachRow in dataset) {
 					  if (options.pct_field !== null && options.pct_field !== undefined) {
 						dataset[eachRow].pct_indicador = dataset[eachRow][options.pct_field];
@@ -566,35 +581,80 @@ const ViewConfReader = {
 						}
 					  }
 				
-					  // Obtém coordenadas limítrofes (se mapa)
-					  if (['MAP_BUBBLES', 'MAP_HEAT', 'MAP_CLUSTER'].includes(structure.chart_type)) { // Só avalia as coordenadas caso o gráfico seja um mapa.
-						// Ignora os pontos 0x0
-						if (parseFloat(dataset[eachRow][options.long]) != 0 && 
-							parseFloat(dataset[eachRow][options.long]) != 0) {
-						  if (limCoords.xmin === null || limCoords.xmin === undefined) { // Primeiro valor de indicador
-							limCoords.xmin = parseFloat(dataset[eachRow][options.long]);
-							limCoords.xmax = parseFloat(dataset[eachRow][options.long]);
-							limCoords.ymin = parseFloat(dataset[eachRow][options.lat]);
-							limCoords.ymax = parseFloat(dataset[eachRow][options.lat]);
-						  } else {
-							var lat = parseFloat(dataset[eachRow][options.lat]);
-							var long = parseFloat(dataset[eachRow][options.long]);
-							if (limCoords.xmin > long) {
-							  limCoords.xmin = long;
+					  // Obtém coordenadas limítrofes (se mapa leaflet)
+					  if (this.leafletBasedCharts.includes(structure.chart_type)) { 
+							let lat = 0
+							let long = 0
+							let lat_source = 0
+							let long_source = 0
+							if (structure.chart_type == 'MAP_MIGRATION'){
+								lat = parseFloat(dataset[eachRow][options.target.lat]);
+								long = parseFloat(dataset[eachRow][options.target.long]);
+								lat_source = parseFloat(dataset[eachRow][options.source.lat]);
+								long_source = parseFloat(dataset[eachRow][options.source.long]);
+							} else {
+								lat = parseFloat(dataset[eachRow][options.lat]);
+								long = parseFloat(dataset[eachRow][options.long]);
 							}
-							if (limCoords.xmax < long) {
-							  limCoords.xmax = long;
+							// Ignora os pontos 0x0
+							if (lat != 0 && long != 0) {
+								if (limCoords.xmin === null || limCoords.xmin === undefined) { // Primeiro valor de indicador
+									limCoords.xmin = long;
+									limCoords.xmax = long;
+									limCoords.ymin = lat;
+									limCoords.ymax = lat;
+								} else {
+									if (limCoords.xmin > long) {
+										limCoords.xmin = long;
+									}
+									if (limCoords.xmax < long) {
+										limCoords.xmax = long;
+									}
+									if (limCoords.ymin > lat) {
+										limCoords.ymin = lat;
+									}
+									if (limCoords.ymax < lat) {
+										limCoords.ymax = lat;
+									}
+								}
 							}
-							if (limCoords.ymin > lat) {
-							  limCoords.ymin = lat;
-							}
-							if (limCoords.ymax < lat) {
-							  limCoords.ymax = lat;
-							}
-						  }
-						}
-						this.customParams.limCoords = limCoords;
+							if (lat_source != 0 && long_source != 0){
+								if (limCoords.xmin === null || limCoords.xmin === undefined) { // Primeiro valor de indicador
+									limCoords.xmin = long_source;
+									limCoords.xmax = long_source;
+									limCoords.ymin = lat_source;
+									limCoords.ymax = lat_source;
+								} else {								
+									if (limCoords.xmin > long_source) {
+										limCoords.xmin = long_source;
+									}
+									if (limCoords.xmax < long_source) {
+										limCoords.xmax = long_source;
+									}
+									if (limCoords.ymin > lat_source) {
+										limCoords.ymin = lat_source;
+									}
+									if (limCoords.ymax < lat_source) {
+										limCoords.ymax = lat_source;
+									}
+								}
+							}							
 					  }
+					}
+					// caso o gráfico seja um mapa leaflet 
+					if (this.leafletBasedCharts.includes(structure.chart_type)) {
+						//zoom out se coordenadas de um único ponto
+						if ((limCoords.xmin == limCoords.xmax) && (limCoords.ymin == limCoords.ymax)){
+							limCoords.xmin = limCoords.xmin - 3
+							limCoords.xmax = limCoords.xmax + 3
+							limCoords.ymin = limCoords.ymin - 3
+							limCoords.ymax = limCoords.ymax + 3
+						}
+						if (this.limCoords){
+							this.limCoords = limCoords;
+						} else {
+							this.customParams.limCoords = limCoords;
+						}
 					}
 				
 					if (options.order_field !== null && options.order_field !== undefined) {
@@ -602,7 +662,12 @@ const ViewConfReader = {
 					}
 				
 					if (addedParams && addedParams.id) {
-					  // Múltiplos gráficos
+					  //Mixed_map
+					  if (this.dataset == null){
+						  this.dataset = [];
+						  this.metadata = [];
+					  }
+					  // Múltiplos gráficos ou mixed_map
 					  this.dataset[addedParams.id] = dataset;
 					  this.metadata[addedParams.id] = metadata;
 					  this.triggerChartUpdates(addedParams.id, dataset, metadata);

@@ -9,14 +9,16 @@
         :value="item.value"
         v-on:change="toggleRadio(item)">
         <template slot="label">
-          <v-layout v-html="item.label ? item.label : ''"> 
+          <v-layout align-center>
+            <v-flex v-html="item.label ? item.label : ''"> 
+            </v-flex> 
+            <flpo-minicard v-for="(miniCard, index) in item.minicards" :key="index"
+              :structure="miniCard" :customFunctions="customFunctions"
+              :customParams="customParams"
+              rowClass="pa-1"
+              @showSnackbar="snackAlert">
+            </flpo-minicard>
           </v-layout>
-          <flpo-minicard v-for="(miniCard, index) in item.minicards" :key="index"
-            :structure="miniCard" :customFunctions="customFunctions"
-            :customParams="customParams"
-            rowClass="pa-1"
-            @showSnackbar="snackAlert">
-          </flpo-minicard>
         </template>
       </v-radio>
     </v-radio-group>
@@ -48,7 +50,11 @@
             this.selection[item.value] = false;
           }
         }
-        this.$emit(this.structure.event, { id: this.id, type: 'radio', enabled: this.selection, item: chosen});
+        this.$emit(this.structure.event ? this.structure.event : this.structure.selection.event, 
+                  { id: this.structure.id, type: 'radio', enabled: this.selection, 
+                    item: chosen,
+                    rules: this.structure.selection ? this.structure.selection.rules : null}
+                  );
       },
     }
   }

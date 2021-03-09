@@ -8,13 +8,17 @@ const SnackbarManager = {
     Vue.mixin({
       data() {
         return {
-          validCharts: ['MAP_TOPOJSON', 'LINE', 'STACKED', 'BAR', 'TREEMAP', 'SCATTERPLOT', 'BOXPLOT', 'CALENDAR', 'SANKEYD3', 'MAP_BUBBLES', 'MAP_HEAT', 'MAP_CLUSTER', 'MAP_MIGRATION'],
-          leafletBasedCharts: ['MAP_BUBBLES', 'MAP_HEAT', 'MAP_CLUSTER', 'MAP_MIGRATION']
+          validCharts: ['MAP_TOPOJSON', 'LINE', 'STACKED', 'BAR', 'TREEMAP', 'SCATTERPLOT', 'BOXPLOT', 'CALENDAR', 'SANKEYD3', 'MAP_BUBBLES', 'MAP_HEAT', 'MAP_CLUSTER', 'MAP_MIGRATION', 'MAP_POLYGON', 'MIXED_MAP'],
+          leafletBasedCharts: ['MAP_BUBBLES', 'MAP_HEAT', 'MAP_CLUSTER', 'MAP_MIGRATION', 'MAP_POLYGON', 'MIXED_MAP']
         }
       },
       methods: {
-        sendError(message) {
-          this.$emit('showSnackbar', { color : 'error', text: message });
+        sendError(err) {
+          if (typeof err == 'string'){
+            this.$emit('showSnackbar', { color : 'error', text: err });
+          } else {
+            this.$emit('showSnackbar', { color : 'error', text: "Houve uma falha. - " + err.message });
+          }
         },
         
         snackAlert(params) {
@@ -24,18 +28,46 @@ const SnackbarManager = {
         openBugDialog(cardTitle){
           this.$emit('showBugDialog', cardTitle);
         },
+
+        openAuthenticatioDialog() {
+          this.$emit('showAuthenticatioDialog');
+        },
         
         chartGen(id, chartType, structure, chartOptions, dataset, metadata, sectionIndex = 0) {
           if (structure && chartOptions && this.validCharts.includes(chartType)) {
-            let additionalOptions = this.buildChartAdditionalOptions(id, chartType, structure, chartOptions, dataset, metadata, sectionIndex);
-  
-            return ChartBuilderService.generateChart(
-              chartType, 
-              id,
-              dataset,
-              chartOptions,
-              additionalOptions
-            );
+            if (chartOptions.from_api){
+              let idObservatorio = this.$parent.idObservatorio;
+              let dimension = this.$parent.dimensao_ativa_id;
+              let idLocalidade = this.$parent.idLocalidade;
+              let scope = this.getEscopo(idLocalidade);
+              let url = "/chart?from_viewconf=S&au="+ idLocalidade +
+                        "&card_id="+structure.id+"&observatory="+ idObservatorio +
+                        "&dimension="+dimension+"&scope="+scope+"&as_image=N";
+              return new Promise((resolve, reject) => {
+                axios(this.$axiosCallSetupService.getAxiosOptions(url))
+                .then(result => {
+                  let container = document.getElementById(id);
+                  if (container) {
+                      container.innerHTML = result.data;
+                      container.style.display = 'inline';
+                  }
+                  resolve();
+                }).catch(error => { 
+                  this.sendDataStructureError("Falha ao buscar dados do card " + cardTitle); 
+                  reject();
+                });
+              });
+            } else {
+              let additionalOptions = this.buildChartAdditionalOptions(id, chartType, structure, chartOptions, dataset, metadata, sectionIndex);
+    
+              return ChartBuilderService.generateChart(
+                chartType, 
+                id,
+                dataset,
+                chartOptions,
+                additionalOptions
+              );
+            }
           }
         },
         chartRegen(chartHandler, id, chartType, structure, chartOptions, dataset, metadata, sectionIndex = 0) {
@@ -61,11 +93,10 @@ const SnackbarManager = {
             idAU: idAnalysisUnit,
             theme: this.$vuetify.theme,
             sectionIndex: sectionIndex,
-            topology: this.topology,
-            topologyUf: this.topologyUf,
             headers: structure.headers,
             route: this.$route,
             context: this,
+            fnSendError: this.sendError,
             navigate: {
               fnNav: (router, placeId) => {
                 try {         
@@ -84,18 +115,33 @@ const SnackbarManager = {
             cleanLabel: TooltipBuildingService.removeFromLabel,
             axesStrokeClass: ColorsService.assessZebraAxesColor(sectionIndex, this.$vuetify.theme)
           }
+
+          additionalOptions.topology = this.selectedTopology;
+
           if (idAnalysisUnit) additionalOptions.au = this.$analysisUnitModel.findPlaceByID(idAnalysisUnit);
           if (chartType == 'SANKEYD3') additionalOptions.metadata = metadata;
+          if (chartOptions.colorScale && chartOptions.colorScale.scale_name_value && chartOptions.colorScale.color_array){
+            if (this.customFilters && this.customFilters[chartOptions.colorScale.scale_name_value]){
+              additionalOptions.colorScaleSelectedName = chartOptions.colorScale.color_array[this.customFilters[chartOptions.colorScale.scale_name_value]];
+            }
+          }
           if (this.leafletBasedCharts.includes(chartType)) {
               if (chartOptions.tooltip_function == null) additionalOptions.tooltipFunction = TooltipBuildingService.defaultLeafletTooltip; 
 
-              if (this.customParams && this.customParams.limCoords) {
+              if (this.limCoords){
+                additionalOptions.limCoords = this.limCoords;
+              } else if (this.customParams && this.customParams.limCoords) {
                 additionalOptions.limCoords = this.customParams.limCoords;
               }
               
+              if (chartType == "MAP_MIGRATION"){
+                additionalOptions.targetTooltipFunction = chartOptions.target.tooltip_function ? this[chartOptions.target.tooltip_function] : TooltipBuildingService.defaultLeafletTooltip;
+              }
               // Prepares the layers
               let visibleLayers = {}
-              if (this.customParams.enabled) {
+              if (this.customFilters && this.customFilters.enabled) {
+                visibleLayers = this.customFilters.enabled;
+              } else if (this.customParams.enabled) {
                 visibleLayers = this.customParams.enabled;
               } else {
                 if (chartOptions.indicadores) {
@@ -121,7 +167,7 @@ const SnackbarManager = {
         },
         
         obsTETooltip(target, route, tooltip_list = [], removed_text_list = [], options = null){
-          let url = "/te/indicadoresmunicipais/rerank?categorias=cd_mun_ibge,cd_uf,cd_indicador,nm_municipio_uf,nu_competencia_max,nu_competencia_min&valor=vl_indicador&agregacao=sum&filtros=nn-vl_indicador,and,in-cd_indicador-'te_ope'-'te_rgt'-'te_nat'-'te_res'-'te_inspecoes'-'te_insp_rgt',and,post-eq-cd_mun_ibge-"+ target.options.rowData.cd_mun_ibge;
+          let url = "/te/indicadoresmunicipais/rerank?categorias=cd_mun_ibge,cd_uf,cd_indicador,nm_municipio_uf,nu_competencia_max,nu_competencia_min&valor=vl_indicador&agregacao=sum&filtros=nn-vl_indicador,and,in-cd_indicador-'te_ope'-'te_sit_trab_resgatados'-'te_nat'-'te_res'-'te_inspecoes'-'te_insp_rgt',and,post-eq-cd_mun_ibge-"+ target.options.rowData.cd_mun_ibge;
           // let url = "/te/indicadoresmunicipais?categorias=cd_mun_ibge,nm_municipio_uf,nu_competencia_max,nu_competencia_min&valor=vl_indicador&agregacao=sum&pivot=cd_indicador&filtros=nn-vl_indicador,and,in-cd_indicador-'te_ope'-'te_rgt'-'te_nat'-'te_res'-'te_inspecoes',and,eq-cd_mun_ibge-"+ target.options.rowData.cd_mun_ibge;
           let urlIndicadores = "/indicadoresmunicipais?categorias=cd_indicador,ds_indicador_radical,nu_competencia,nu_competencia_max,nu_competencia_min,vl_indicador&filtros=nn-vl_indicador,and,in-cd_indicador-'06_01_09_01'-'01_16_02_00'-'01_15_01_00'-'01_14_13_00',and,eq-cd_mun_ibge-"+ target.options.rowData.cd_mun_ibge+",and,eq-nu_competencia-nu_competencia_max&ordenacao=ds_indicador_radical";
           let text = "";
@@ -132,19 +178,25 @@ const SnackbarManager = {
             url = url + this.customParams.filterUrl;
             text += "Considerados os seguintes filtros: " + this.customParams.filterText;
           }
+          if (this.customFilters && this.customFilters.filterUrl && this.customFilters.filterUrl != ""){
+            url = url + this.customFilters.filterUrl;
+            text += "Considerados os seguintes filtros: " + this.customFilters.filterText;
+          }
           this.changeCursor(target.options.customOptions.containerId, 'wait');
           axios.all([axios(this.$axiosCallSetupService.getAxiosOptions(url)),
                      axios(this.$axiosCallSetupService.getAxiosOptions(urlIndicadores))])
             .then(axios.spread((result, resultIndicadores) => {
-              let dt = JSON.parse(result.data).dataset;
-              let dtIndicadores = JSON.parse(resultIndicadores.data).dataset;
-              // let source = JSON.parse(result.data).metadata.fonte;
-              let ano_min = this.customParams.value_min ? this.customParams.value_min : dt[0].nu_competencia_min;
-              let ano_max = this.customParams.value_max ? this.customParams.value_max : dt[0].nu_competencia_max;
+              let dt = result.data.dataset;
+              let dtIndicadores = resultIndicadores.data.dataset;
+              // let source = result.data).metadata.fonte;
+              let ano_min;
+              let ano_max;
   
               text += "<p class='headline-obs'>Município: <b>" + dt[0].nm_municipio_uf + "</b></p>";
               text += "<table width='100%'>";
               let vl_ope = 0;
+              let vl_ope_nu_competencia_min;
+              let vl_ope_nu_competencia_max;
               let vl_inspecoes = 0;
               let vl_insp_rgt = 0;
               let vl_rgt = 0;
@@ -152,20 +204,30 @@ const SnackbarManager = {
               let vl_rgt_pct_uf = 0;
               let vl_rgt_rank_br = 0;
               let vl_rgt_pct_br = 0;
+              let vl_rgt_nu_competencia_min;
+              let vl_rgt_nu_competencia_max;
               let vl_nat = 0;
               let vl_nat_rank_uf = 0;
               let vl_nat_pct_uf = 0;
               let vl_nat_rank_br = 0;
               let vl_nat_pct_br = 0;
+              let vl_nat_nu_competencia_min;
+              let vl_nat_nu_competencia_max;
               let vl_res = 0;
               let vl_res_rank_uf = 0;
               let vl_res_pct_uf = 0;
               let vl_res_rank_br = 0;
               let vl_res_pct_br = 0;
+              let vl_res_nu_competencia_min;
+              let vl_res_nu_competencia_max;
               for (let item of dt){
                 switch(item.cd_indicador){
                   case "te_ope": // Operações
+                    vl_ope_nu_competencia_max = item.nu_competencia_max ? item.nu_competencia_max : null;
+                    vl_ope_nu_competencia_min = item.nu_competencia_min ? item.nu_competencia_min : null;
                     vl_ope = item.agr_sum_vl_indicador ? item.agr_sum_vl_indicador : 0;
+                    vl_ope_nu_competencia_max = item.nu_competencia_max ? item.nu_competencia_max : null;
+                    vl_ope_nu_competencia_min = item.nu_competencia_min ? item.nu_competencia_min : null;
                   break;
                   case "te_inspecoes": // Inspeções
                     vl_inspecoes = item.agr_sum_vl_indicador ? item.agr_sum_vl_indicador : 0;
@@ -173,7 +235,9 @@ const SnackbarManager = {
                   case "te_insp_rgt": // Inspeções com resgate
                     vl_insp_rgt = item.agr_sum_vl_indicador ? item.agr_sum_vl_indicador : 0;
                   break;
-                  case "te_rgt": // Resgates
+                  case "te_sit_trab_resgatados": // Resgates
+                    vl_rgt_nu_competencia_max = item.nu_competencia_max ? item.nu_competencia_max : null;
+                    vl_rgt_nu_competencia_min = item.nu_competencia_min ? item.nu_competencia_min : null;
                     vl_rgt = item.agr_sum_vl_indicador ? item.agr_sum_vl_indicador : 0;
                     vl_rgt_rank_uf = item.rerank_rank_uf ? this.$numberTransformService.constructor.formatNumber(item.rerank_rank_uf,"inteiro") : 0;
                     vl_rgt_rank_br = item.rerank_rank_br ? this.$numberTransformService.constructor.formatNumber(item.rerank_rank_br,"inteiro") : 0;
@@ -181,6 +245,8 @@ const SnackbarManager = {
                     vl_rgt_pct_br = item.rerank_rank_br ? this.$numberTransformService.constructor.formatNumber(item.rerank_perc_br,"porcentagem",3,100) : 0;
                   break;
                   case "te_nat": // Resgatados Naturais
+                    vl_nat_nu_competencia_max = item.nu_competencia_max ? item.nu_competencia_max : null;
+                    vl_nat_nu_competencia_min = item.nu_competencia_min ? item.nu_competencia_min : null;
                     vl_nat = item.agr_sum_vl_indicador ? item.agr_sum_vl_indicador : 0;
                     vl_nat_rank_uf = item.rerank_rank_uf ? this.$numberTransformService.constructor.formatNumber(item.rerank_rank_uf,"inteiro") : 0;
                     vl_nat_rank_br = item.rerank_rank_br ? this.$numberTransformService.constructor.formatNumber(item.rerank_rank_br,"inteiro") : 0;
@@ -188,6 +254,8 @@ const SnackbarManager = {
                     vl_nat_pct_br = item.rerank_rank_br ? this.$numberTransformService.constructor.formatNumber(item.rerank_perc_br,"porcentagem",3,100) : 0;
                   break;
                   case "te_res": // Resgatados Residentes
+                    vl_res_nu_competencia_max = item.nu_competencia_max ? item.nu_competencia_max : null;
+                    vl_res_nu_competencia_min = item.nu_competencia_min ? item.nu_competencia_min : null;
                     vl_res = item.agr_sum_vl_indicador ? item.agr_sum_vl_indicador : 0;
                     vl_res_rank_uf = item.rerank_rank_uf ? this.$numberTransformService.constructor.formatNumber(item.rerank_rank_uf,"inteiro") : 0;
                     vl_res_rank_br = item.rerank_rank_br ? this.$numberTransformService.constructor.formatNumber(item.rerank_rank_br,"inteiro") : 0;
@@ -197,35 +265,51 @@ const SnackbarManager = {
                 }
               }
   
-              text += "<tr><td class='font-weight-bold green--text accent-4'>OPERAÇÕES E RESGATES</td></tr>";
-              text += "<tr><td>" + this.$numberTransformService.constructor.formatNumber(vl_ope,"inteiro") + " operações</td></tr>";
+              text += "<tr><td class='font-weight-bold green--text accent-4'>RESGATES</td></tr>";
               text += "<tr><td>" + this.$numberTransformService.constructor.formatNumber(vl_rgt,"inteiro") + " resgates</td></tr>";
               if (vl_rgt != 0){
                 text += "<tr><td>" + vl_rgt_rank_uf + "ª posição no Estado com " + vl_rgt_pct_uf + " do total</td></tr>";
                 text += "<tr><td>" + vl_rgt_rank_br + "ª posição no Brasil com " + vl_rgt_pct_br + " do total</td></tr>";
+                ano_min = this.customParams.value_min && this.customParams.value_min >= vl_rgt_nu_competencia_min ? this.customParams.value_min : vl_rgt_nu_competencia_min;
+                ano_max = this.customParams.value_max && this.customParams.value_max <= vl_rgt_nu_competencia_max? this.customParams.value_max : vl_rgt_nu_competencia_max;
+                text += "<tr><td>Fonte: Radar SIT - Painel de Informações e Estatísticas da Inspeção do Trabalho no Brasil</td></tr>";
+                text += "<tr><td>Período: "+ ano_min + (ano_min != ano_max ? " a "+ ano_max : "") +"<br/><br/></td></tr>";
               }
+              text += "<tr><td class='font-weight-bold accent-4'>OPERAÇÕES</td></tr>";
+              text += "<tr><td>" + this.$numberTransformService.constructor.formatNumber(vl_ope,"inteiro") + " operações</td></tr>";
               if (vl_ope != 0){
                 text += "<tr><td>" + this.$numberTransformService.constructor.formatNumber(vl_rgt/vl_ope,"real",2) + " resgates por operação (envolvendo " + vl_inspecoes + " inspeções/fiscalizações)</td></tr>";
               }
               if (vl_inspecoes != 0){
                 text += "<tr><td>" + this.$numberTransformService.constructor.formatNumber(vl_insp_rgt/vl_inspecoes,"real",2,100) + "% de inspeções/fiscalizações com resgates</td></tr>";
               }
+              if (vl_ope != 0){
+                ano_min = this.customParams.value_min && this.customParams.value_min >= vl_ope_nu_competencia_min ? this.customParams.value_min : vl_ope_nu_competencia_min;
+                ano_max = this.customParams.value_max && this.customParams.value_max <= vl_ope_nu_competencia_max? this.customParams.value_max : vl_ope_nu_competencia_max;
+                text += "<tr><td>Fonte: COETE</td></tr>";
+                text += "<tr><td>Período: "+ ano_min + (ano_min != ano_max ? " a "+ ano_max : "") +"<br/><br/></td></tr>";
+              }
               text += "<tr><td class='font-weight-bold red--text'>RESGATADOS NATURAIS</td></tr>";
               text += "<tr><td>" + this.$numberTransformService.constructor.formatNumber(vl_nat,"inteiro") + " trabalhadores regatados nascidos no município em destaque</td></tr>";
               if (vl_nat != 0){
                 text += "<tr><td>" + vl_nat_rank_uf + "ª posição no Estado com " + vl_nat_pct_uf + " do total</td></tr>";
                 text += "<tr><td>" + vl_nat_rank_br + "ª posição no Brasil com " + vl_nat_pct_br + " do total</td></tr>";
+                ano_min = this.customParams.value_min && this.customParams.value_min >= vl_nat_nu_competencia_min ? this.customParams.value_min : vl_nat_nu_competencia_min;
+                ano_max = this.customParams.value_max && this.customParams.value_max <= vl_nat_nu_competencia_max? this.customParams.value_max : vl_nat_nu_competencia_max;
+                text += "<tr><td>Fonte: Seguro Desemprego do Trabalhador Resgatado (MTb)</td></tr>";
+                text += "<tr><td>Período: "+ ano_min + (ano_min != ano_max ? " a "+ ano_max : "") +"<br/><br/></td></tr>";
               }
               text += "<tr><td class='font-weight-bold light-blue--text'>RESGATADOS RESIDENTES</td></tr>";
               text += "<tr><td>" + this.$numberTransformService.constructor.formatNumber(vl_res,"inteiro") + " trabalhadores resgatados que declararam residir, no momento do resgate, no município em destaque</td></tr>";
               if (vl_res != 0){
                 text += "<tr><td>" + vl_res_rank_uf + "ª posição no Estado com " + vl_res_pct_uf + " do total</td></tr>";
                 text += "<tr><td>" + vl_res_rank_br + "ª posição no Brasil com " + vl_res_pct_br + " do total</td></tr>";
+                ano_min = this.customParams.value_min && this.customParams.value_min >= vl_res_nu_competencia_min ? this.customParams.value_min : vl_res_nu_competencia_min;
+                ano_max = this.customParams.value_max && this.customParams.value_max <= vl_res_nu_competencia_max? this.customParams.value_max : vl_res_nu_competencia_max;
+                text += "<tr><td>Fonte: Seguro Desemprego do Trabalhador Resgatado (MTb)</td></tr>";
+                text += "<tr><td>Período: "+ ano_min + (ano_min != ano_max ? " a "+ ano_max : "") +"<br/><br/></td></tr>";
               }
-              // text += "<tr><td><br/>Fonte: "+ source +"</td></tr>";
-              text += "<tr><td><br/>Fonte: COETE e Seguro Desemprego do Trabalhador Resgatado (MTb)</td></tr>";
-              text += "<tr><td>Período: "+ ano_min + (ano_min != ano_max ? " a "+ ano_max : "") +"</td></tr>";
-  
+ 
               text += "<tr><td class='font-weight-bold'><br/>INDICADORES MUNICIPAIS:</td></tr>";
               for (let item of dtIndicadores){
                 switch(item.cd_indicador){
@@ -244,7 +328,7 @@ const SnackbarManager = {
                 }
               }
               text += "</table>";
-              target.bindPopup(text).openPopup();
+              target.bindPopup(text, {maxHeight: 300, minWidth: 400}).openPopup();
               this.changeCursor(target.options.customOptions.containerId, '');
             }, error => {
               this.changeCursor(target.options.customOptions.containerId, '');
@@ -299,15 +383,15 @@ const SnackbarManager = {
                                 resultMapear, 
                                 resultCenso, 
                                 resultCensoAgro) => {
-              // let dtSinan = JSON.parse(resultSinan.data).dataset[0];
-              let dtProvaBrasil = JSON.parse(resultProvaBrasil.data).dataset[0];
-              let dtCatMenores = JSON.parse(resultCatMenores.data).dataset[0];
-              let dtPotAprendizes = JSON.parse(resultPotAprendizes.data).dataset[0];
-              let dtTENascimento = JSON.parse(resultTENascimento.data).dataset[0];
-              // let dtTEResidencia = JSON.parse(resultTEResidencia.data).dataset[0];
-              let dtMapear = JSON.parse(resultMapear.data).dataset[0];
-              let dtCenso = JSON.parse(resultCenso.data).dataset[0];
-              let dtCensoAgro = JSON.parse(resultCensoAgro.data).dataset[0];
+              // let dtSinan = resultSinan.data.dataset[0];
+              let dtProvaBrasil = resultProvaBrasil.data.dataset[0];
+              let dtCatMenores = resultCatMenores.data.dataset[0];
+              let dtPotAprendizes = resultPotAprendizes.data.dataset[0];
+              let dtTENascimento = resultTENascimento.data.dataset[0];
+              // let dtTEResidencia = resultTEResidencia.data.dataset[0];
+              let dtMapear = resultMapear.data.dataset[0];
+              let dtCenso = resultCenso.data.dataset[0];
+              let dtCensoAgro = resultCensoAgro.data.dataset[0];
               let municipio = dtCenso && dtCenso.nm_municipio_uf ? dtCenso.nm_municipio_uf : dtProvaBrasil && dtProvaBrasil.nm_municipio_uf ? dtProvaBrasil.nm_municipio_uf : dtCatMenores && dtCatMenores.nm_municipio_uf ? dtCatMenores.nm_municipio_uf : dtSinan.nm_municipio_uf;
   
               text += "<p class='headline-obs ma-0'>Município: <b>" + municipio + "</b></p>";
@@ -342,7 +426,7 @@ const SnackbarManager = {
               text += "<tr><td>" + (dtPotAprendizes && dtPotAprendizes.agr_sum_vl_indicador ? this.$numberTransformService.constructor.formatNumber(dtPotAprendizes.agr_sum_vl_indicador,"inteiro") + " vagas de cotas de aprendizagem" : "Nenhuma vaga de cotas de aprendizagem") + "</td></tr>";
               text += "<tr><td>Fonte: RAIS/Ministério da Economia, 2019</td></tr>";
               text += "</table>";
-              target.bindPopup(text).openPopup();
+              target.bindPopup(text, {maxHeight: 300, minWidth: 400}).openPopup();
             }))
         },
   
@@ -359,7 +443,7 @@ const SnackbarManager = {
   //          }
             axios.all([axios(this.$axiosCallSetupService.getAxiosOptions(urlIndicadores))])
               .then(axios.spread((resultIndicadores) => {
-                let dtIndicadores = JSON.parse(resultIndicadores.data).dataset;
+                let dtIndicadores = resultIndicadores.data.dataset;
   
                 text += "<p class='headline-obs'>Município: <b>" + dtIndicadores[0].nm_municipio_uf + "</b></p>";
                 text += "<table width='100%'>";
@@ -370,7 +454,7 @@ const SnackbarManager = {
                 text += "<tr><td>Fonte: "+ dtIndicadores[0].ds_fonte +"</td></tr>";
                 text += "<tr><td>Período: 2012 a 2018</td></tr>";              
                 text += "</table>";
-                target.bindPopup(text).openPopup();
+                target.bindPopup(text, {maxHeight: 300, minWidth: 400}).openPopup();
               }, error => {
                 console.error(error.toString());
                 this.sendError("Erro ao carregar dataset tooltip");
@@ -425,11 +509,11 @@ const SnackbarManager = {
                      axios(this.$axiosCallSetupService.getAxiosOptions(urlObs2))])
             .then(axios.spread((resultPeriodo, resultTipo, resultAtividade, resultObs1, resultObs2) => {
   
-              let dtPeriodo = JSON.parse(resultPeriodo.data);
-              let dtTipo = JSON.parse(resultTipo.data).dataset;
-              let dtAtividade = JSON.parse(resultAtividade.data).dataset;
-              let dtObs1 = JSON.parse(resultObs1.data).dataset;
-              let dtObs2 = JSON.parse(resultObs2.data).dataset;
+              let dtPeriodo = resultPeriodo.data;
+              let dtTipo = resultTipo.data.dataset;
+              let dtAtividade = resultAtividade.data.dataset;
+              let dtObs1 = resultObs1.data.dataset;
+              let dtObs2 = resultObs2.data.dataset;
   
   
               text += "<p class='title-obs'>Município: <b>" + target.options.rowData.nm_municipio_uf + "</b></p>";
@@ -467,12 +551,102 @@ const SnackbarManager = {
               }
               text += "</table>";
   
-              target.bindPopup(text).openPopup();
+              target.bindPopup(text, {maxHeight: 300, minWidth: 400}).openPopup();
             }, error => {
               console.error(error.toString());
               this.sendError("Erro ao carregar dataset tooltip");
             }));
           }
+        },
+  
+        obsTDTooltip(target, route, tooltip_list = [], removed_text_list = [], options = null) {
+          let text = "";
+          if (options && options.clickable){
+            text += "<p class='text-xs-right ma-0'><a href='" + this.$tooltipBuildingService.constructor.getUrlByPlace(target.options.rowData.cd_municipio_ibge_dv, route) + "' class='primary--text font-weight-black'>IR PARA</a></p>";
+          }
+          let urlSaldoMunicipio = "/thematic/cagedtermometro?categorias=competencia_mov,nm_municipio_uf,saldo_municipio&valor=admitidos,desligados&agregacao=sum,sum&filtros=eq-termometro_grupo-'cbo',and,eq-competencia_mov-"+ target.options.rowData.competencia_mov +",and,eq-cd_municipio_ibge_dv-" + target.options.rowData.cd_municipio_ibge_dv;
+          let urlCBOAumento = "/thematic/cagedtermometro?categorias=termometro_codigo,termometro_descricao,saldo,admitidos,desligados&ordenacao=-saldo&limit=5&filtros=eq-termometro_grupo-'cbo',and,gt-saldo-0,and,eq-competencia_mov-"+ target.options.rowData.competencia_mov +",and,eq-cd_municipio_ibge_dv-" + target.options.rowData.cd_municipio_ibge_dv;
+          let urlCBODiminui = "/thematic/cagedtermometro?categorias=termometro_codigo,termometro_descricao,saldo,admitidos,desligados&ordenacao=saldo&limit=5&filtros=eq-termometro_grupo-'cbo',and,lt-saldo-0,and,eq-competencia_mov-"+ target.options.rowData.competencia_mov +",and,eq-cd_municipio_ibge_dv-" + target.options.rowData.cd_municipio_ibge_dv;
+          let urlCNAEAumento = "/thematic/cagedtermometro?categorias=termometro_codigo,termometro_descricao,saldo,admitidos,desligados&ordenacao=-saldo&limit=5&filtros=eq-termometro_grupo-'cnae_classe',and,nl-termometro_descricao-'CNAE NÃO IDENTIFICADO%25',and,gt-saldo-0,and,eq-competencia_mov-"+ target.options.rowData.competencia_mov +",and,eq-cd_municipio_ibge_dv-" + target.options.rowData.cd_municipio_ibge_dv;
+          let urlCNAEDiminui = "/thematic/cagedtermometro?categorias=termometro_codigo,termometro_descricao,saldo,admitidos,desligados&ordenacao=saldo&limit=5&filtros=eq-termometro_grupo-'cnae_classe',and,nl-termometro_descricao-'CNAE NÃO IDENTIFICADO%25',and,lt-saldo-0,and,eq-competencia_mov-"+ target.options.rowData.competencia_mov +",and,eq-cd_municipio_ibge_dv-" + target.options.rowData.cd_municipio_ibge_dv;
+          axios.all([axios(this.$axiosCallSetupService.getAxiosOptions(urlSaldoMunicipio)),
+                     axios(this.$axiosCallSetupService.getAxiosOptions(urlCBOAumento)),
+                     axios(this.$axiosCallSetupService.getAxiosOptions(urlCBODiminui)),
+                     axios(this.$axiosCallSetupService.getAxiosOptions(urlCNAEAumento)),
+                     axios(this.$axiosCallSetupService.getAxiosOptions(urlCNAEDiminui))
+                    ])
+            .then(axios.spread((resultSaldoMunicipio, resultCBOAumento, resultCBODiminui, resultCNAEAumento, resultCNAEDiminui) => {
+  
+              let dtSaldoMunicipio = resultSaldoMunicipio.data.dataset[0];
+              let dtCBOAumento = resultCBOAumento.data.dataset;
+              let dtCBODiminui = resultCBODiminui.data.dataset;
+              let dtCNAEAumento = resultCNAEAumento.data.dataset;
+              let dtCNAEDiminui = resultCNAEDiminui.data.dataset;
+ 
+              text += "<span class='title-obs'>Município: <b>" + target.options.rowData.nm_municipio_uf + "</b></span>" +
+                      "<table width='100%'>"+
+                      "<tr><td class='font-weight-bold text-lg-center title-obs' colspan='3'>Empregos Formais (CAGED)</td></tr>" +
+                      "<tr><td class='text-lg-center' colspan='3'>Competência da movimentação: "+
+                      dtSaldoMunicipio.competencia_mov.toString().substr(5,1) + "º Trimestre " + dtSaldoMunicipio.competencia_mov.toString().substr(0,4) +"</td></tr>" +
+                      "<tr style='border-bottom:1px solid rgba(0,0,0,0.12)'><td width='33%' class='font-weight-bold text-lg-center'>Admitidos</td>" +
+                      "<td width='33%' class='font-weight-bold text-lg-center'>Desligados</td>"+
+                      "<td width='34%' class='font-weight-bold text-lg-center'>Saldo</td></tr>" +
+                      "<tr><td class='text-lg-center'>" + this.$numberTransformService.constructor.formatNumber(dtSaldoMunicipio.agr_sum_admitidos,"inteiro") + 
+                      "</td><td class='text-lg-center'>" + this.$numberTransformService.constructor.formatNumber(dtSaldoMunicipio.agr_sum_desligados,"inteiro") + 
+                      "</td><td class='text-lg-center'>" + this.$numberTransformService.constructor.formatNumber(dtSaldoMunicipio.saldo_municipio,"inteiro") + "</td></tr>" +
+                      "</table>" +
+                      "<table width='100%' style='border-collapse: collapse;'>" + 
+                      "<tr><td colspan='4' class='title-obs font-weight-bold light-blue--text pt-3 pb-1'>Ocupações com Maior Ganho de Postos Formais</td></tr>" +
+                      "<tr style='border-bottom: 1px solid rgba(0,0,0,0.15);'><td width='55%' class='font-weight-bold'>Ocupação</td>"+
+                      "<td width='15%' class='font-weight-bold text-lg-center'>Admitidos</td>"+
+                      "<td width='15%' class='font-weight-bold text-lg-center'>Desligados</td>"+
+                      "<td width='15%' class='font-weight-bold text-lg-center'>Saldo</td></tr>";
+              for (let item of dtCBOAumento){
+                text += "<tr style='border-bottom: 1px solid rgba(0,0,0,0.15);'><td>" + item.termometro_descricao + 
+                "</td><td class='text-lg-center'>" + this.$numberTransformService.constructor.formatNumber(item.admitidos,"inteiro") + 
+                "</td><td class='text-lg-center'>" + this.$numberTransformService.constructor.formatNumber(item.desligados,"inteiro") + 
+                "</td><td class='text-lg-center'>" + this.$numberTransformService.constructor.formatNumber(item.saldo,"inteiro") + "</td></tr>";
+              }
+              text += "<tr><td colspan='4' class='title-obs font-weight-bold red--text pt-3 pb-1'>Ocupações com Maior Perda de Postos Formais</td></tr>" +
+                      "<tr style='border-bottom: 1px solid rgba(0,0,0,0.15);'><td class='font-weight-bold'>Ocupação</td>"+
+                      "<td class='font-weight-bold text-lg-center'>Admitidos</td>"+
+                      "<td class='font-weight-bold text-lg-center'>Desligados</td>"+
+                      "<td class='font-weight-bold text-lg-center'>Saldo</td></tr>";
+              for (let item of dtCBODiminui){
+                text += "<tr style='border-bottom: 1px solid rgba(0,0,0,0.15);'><td>" + item.termometro_descricao + 
+                "</td><td class='text-lg-center'>" + this.$numberTransformService.constructor.formatNumber(item.admitidos,"inteiro") + 
+                "</td><td class='text-lg-center'>" + this.$numberTransformService.constructor.formatNumber(item.desligados,"inteiro") + 
+                "</td><td class='text-lg-center'>" + this.$numberTransformService.constructor.formatNumber(item.saldo,"inteiro") + "</td></tr>";
+              }
+              text += "<tr><td colspan='4' class='title-obs font-weight-bold light-blue--text pt-3 pb-1'>Atividades Econômicas com Maior Ganho de Postos Formais</td></tr>" +
+                      "<tr style='border-bottom: 1px solid rgba(0,0,0,0.15);'><td class='font-weight-bold'>Atividade</td>"+
+                      "<td class='font-weight-bold text-lg-center'>Admitidos</td>"+
+                      "<td class='font-weight-bold text-lg-center'>Desligados</td>"+
+                      "<td class='font-weight-bold text-lg-center'>Saldo</td></tr>";
+              for (let item of dtCNAEAumento){
+                text += "<tr style='border-bottom: 1px solid rgba(0,0,0,0.15);'><td>" + item.termometro_descricao + 
+                "</td><td class='text-lg-center'>" + this.$numberTransformService.constructor.formatNumber(item.admitidos,"inteiro") + 
+                "</td><td class='text-lg-center'>" + this.$numberTransformService.constructor.formatNumber(item.desligados,"inteiro") + 
+                "</td><td class='text-lg-center'>" + this.$numberTransformService.constructor.formatNumber(item.saldo,"inteiro") + "</td></tr>";
+              }
+              text += "<tr><td colspan='4' class='title-obs font-weight-bold red--text pt-3 pb-1'>Atividades Econômicas com Maior Perda de Postos Formais</td></tr>" +
+                      "<tr style='border-bottom: 1px solid rgba(0,0,0,0.15);'><td class='font-weight-bold'>Atividade</td>"+
+                      "<td class='font-weight-bold text-lg-center'>Admitidos</td>"+
+                      "<td class='font-weight-bold text-lg-center'>Desligados</td>"+
+                      "<td class='font-weight-bold text-lg-center'>Saldo</td></tr>";
+              for (let item of dtCNAEDiminui){
+                text += "<tr style='border-bottom: 1px solid rgba(0,0,0,0.15);'><td>" + item.termometro_descricao + 
+                "</td><td class='text-lg-center'>" + this.$numberTransformService.constructor.formatNumber(item.admitidos,"inteiro") + 
+                "</td><td class='text-lg-center'>" + this.$numberTransformService.constructor.formatNumber(item.desligados,"inteiro") + 
+                "</td><td class='text-lg-center'>" + this.$numberTransformService.constructor.formatNumber(item.saldo,"inteiro") + "</td></tr>";
+              }
+              text += "</table>";
+  
+              target.bindPopup(text, {maxHeight: 300, minWidth: 400}).openPopup();
+            }, error => {
+              console.error(error.toString());
+              this.sendError("Erro ao carregar dataset tooltip");
+            }));
         },
   
         tooltipLinkGoogleStreetView(target, route, tooltip_list = [], removed_text_list = [], options = null) { 
@@ -483,6 +657,145 @@ const SnackbarManager = {
           target.unbindPopup();
           target.bindPopup(text).openPopup();
         },
+
+        obsCovidMunicipioTooltip(target, route, tooltip_list = [], removed_text_list = [], options = null) { 
+          let urlCovidMunicipio = "/thematic/covidcasos?categorias=cd_municipio_ibge_dv,nm_municipio_uf,last_available_date,last_available_deaths,last_available_confirmed,last_available_death_rate&filtros=eq-place_type-'city',and,eq-is_last-TRUE,and,ne-latitude-0,and,ne-longitude-0,and,eq-cd_municipio_ibge_dv-"+ target.options.rowData.cd_mun_ibge;
+          let urlDenunciaMPT = "/thematic/coviddenunciampt?categorias=cd_municipio_ibge_dv,nm_municipio_uf&agregacao=COUNT&filtros=eq-cd_municipio_ibge_dv-"+ target.options.rowData.cd_mun_ibge;
+          let urlAcoesMPT = "/thematic/coviddocumentompt?categorias=descricao_tipodocumento&agregacao=COUNT&filtros=in-tipodocumento-'ACPs'-'TAC'-'RECOMENDAÇÃO',and,eq-cd_municipio_ibge_dv-"+ target.options.rowData.cd_mun_ibge;
+          let urlDestinacaoMPT = "/thematic/coviddestinacaompt?categorias=1&valor=destinacaovalor&agregacao=SUM&filtros=eq-cd_municipio_ibge_dv-"+ target.options.rowData.cd_mun_ibge;
+          axios.all([axios(this.$axiosCallSetupService.getAxiosOptions(urlCovidMunicipio)),
+                    axios(this.$axiosCallSetupService.getAxiosOptions(urlDenunciaMPT)),
+                    axios(this.$axiosCallSetupService.getAxiosOptions(urlAcoesMPT)),
+                    axios(this.$axiosCallSetupService.getAxiosOptions(urlDestinacaoMPT))])
+          .then(axios.spread((resultCovidMun, resultDenunciaMPT, resultAcoesMPT, resultDestinacaoMPT) => {
+            let dtCovidMun = resultCovidMun.data.dataset[0];
+            let dtDenunciaMPT = resultDenunciaMPT.data.dataset[0];
+            let dtAcoesMPT = resultAcoesMPT.data.dataset;
+            let dtDestinacaoMPT = resultDestinacaoMPT.data.dataset[0];
+            let total_acoes = 0;
+            if(dtAcoesMPT){
+              for (let item of dtAcoesMPT){
+                total_acoes += item.agr_count;
+              }
+            }
+           
+            let text = "";
+            if (options && options.clickable){
+              text += "<p class='text-xs-right ma-0'><a href='" + this.$tooltipBuildingService.constructor.getUrlByPlace(target.options.rowData.cd_mun_ibge, route) + "' class='primary--text font-weight-black'>IR PARA</a></p>";
+            }
+            text += "<p class='headline-obs'>Município: <b>" + dtCovidMun.nm_municipio_uf + "</b></p>";
+            text += "<table width='100%'>";
+            if(dtDenunciaMPT){
+              text += "<tr><td class='text-xs-center font-weight-bold red--text accent-4' colspan='2'>DENÚNCIAS AO MPT</td></tr>";
+              text += "<tr><td nowrap class='font-weight-bold'>Total de Denúncias:</td>";
+              text += "<td class='text-xs-right'>"+ this.$numberTransformService.constructor.formatNumber(dtDenunciaMPT.agr_count,"inteiro") +"</td></tr>";
+            }
+            // if(dtAcoesMPT.length > 0){
+            //   text += "<tr><td class='text-xs-center font-weight-bold green--text' colspan='2'>ATUAÇÃO MPT</td></tr>";
+            //   for (let item of dtAcoesMPT){
+            //     text += "<tr><td><b>" + item.descricao_tipodocumento + "</b> :</td><td class='text-xs-right'>" + this.$numberTransformService.constructor.formatNumber(item.agr_count,"inteiro") + "</td></tr>";
+            //   }
+            //   text += "<tr><td><b>TOTAL</b>:</td><td class='text-xs-right'><b>" + this.$numberTransformService.constructor.formatNumber(total_acoes,"inteiro") + "</b></td></tr>";
+            // }
+            // if(dtDestinacaoMPT){
+            //   text += "<tr><td class='text-xs-center font-weight-bold light-blue--text accent-4' colspan='2'>RECURSOS DESTINADOS PELO MPT PARA AÇÕES DE COMBATE À COVID-19</td></tr>";
+            //   text += "<tr><td nowrap class='font-weight-bold'>Total de recursos:</td>";
+            //   text += "<td class='text-xs-right'>"+ this.$numberTransformService.constructor.formatNumber(dtDestinacaoMPT.agr_sum_destinacaovalor,"monetario",2) +"</td></tr>";
+            // }
+            text += "<tr><td class='text-xs-center font-weight-bold brown--text' colspan='2'>COVID-19</td></tr>";
+            text += "<tr><td nowrap class='font-weight-bold'>Data coleta:</td>";
+            text += "<td>"+ this.$numberTransformService.constructor.formatNumber(dtCovidMun.last_available_date,"dataDMY") +"</td></tr>";
+            text += "<tr><td nowrap class='font-weight-bold'>Casos confirmados:</td>";
+            text += "<td class='text-xs-right'>"+ this.$numberTransformService.constructor.formatNumber(dtCovidMun.last_available_confirmed,"inteiro") +"</td></tr>";
+            text += "<tr><td nowrap class='font-weight-bold'>Óbitos confirmados:</td>";
+            text += "<td class='text-xs-right'>"+ this.$numberTransformService.constructor.formatNumber(dtCovidMun.last_available_deaths,"inteiro") +"</td></tr>";
+            text += "<tr><td nowrap class='font-weight-bold'>Letalidade:</td>";
+            text += "<td class='text-xs-right'>"+ this.$numberTransformService.constructor.formatNumber(dtCovidMun.last_available_death_rate,"porcentagem",1,100) +"</td></tr>";
+            text += "</table>";
+            target.unbindPopup();
+            target.bindPopup(text, {maxHeight: 400}).openPopup();
+
+          }, error => {
+            console.error(error.toString());
+            this.sendError("Erro ao carregar dataset tooltip");
+          }));
+
+        },
+
+        obsCovidRegicTooltip(target, route, tooltip_list = [], removed_text_list = [], options = null) { 
+          this.obsCovidRegicTextTooltip(target);
+        },
+
+        obsCovidRegicUTITooltip(target, route, tooltip_list = [], removed_text_list = [], options = null) { 
+          this.obsCovidRegicTextTooltip(target, true);
+        },
+
+        obsCovidRegicTextTooltip(target, showDadosSaude = false){
+          let urlRegic = "/thematic/covidarranjoregic?categorias=nm_municipio_uf_origem,populacao_estimada_mun_origem&ordenacao=nm_municipio_uf_origem&filtros=eq-cd_municipio_ibge_alta_complex-"+ target.options.rowData.target_cd_mun;
+          let urlArranjo = "/thematic/covidarranjoregic?categorias=nm_municipio_uf_alta_complex,qt_leitos_uti_arranjo,qt_leitos_outros_arranjo,qt_respiradores_arranjo,qt_respiradores_uso_arranjo,qt_estabelecimentos_arranjo,dt_coleta_covid_arranjo,qt_casos_covid_arranjo,qt_mortes_covid_arranjo,proporcao_mortes_covid_arranjo,populacao_aglomerados_subnormais_arranjo,proporcao_leitos_uti_10k_arranjo,proporcao_respiradores_uso_10k_arranjo,proporcao_respiradores_uso_arranjo&limit=1&filtros=eq-cd_municipio_ibge_alta_complex-"+ target.options.rowData.target_cd_mun;
+          axios.all([axios(this.$axiosCallSetupService.getAxiosOptions(urlRegic)),
+                    axios(this.$axiosCallSetupService.getAxiosOptions(urlArranjo))])
+          .then(axios.spread((resultRegic, resultArranjo) => {
+            let dtRegic = resultRegic.data.dataset;
+            let dtArranjo = resultArranjo.data.dataset[0];
+            let pop = 0;
+            let municipios = "";
+            let total_mun = dtRegic.length;
+            for (let item of dtRegic){
+              municipios += item.nm_municipio_uf_origem + ", ";
+              pop += item.populacao_estimada_mun_origem;
+            }
+            municipios = municipios.substring(0,municipios.length-2);
+            let text = "";
+            text = "<p class='headline-obs text-xs-center'>Pólo de Alta Complexidade<br/>" + 
+                    "<b>Arranjo Populacional de " + dtArranjo.nm_municipio_uf_alta_complex + "</b></p>" +
+                    "<table width='100%'>" +
+                    "<tr><td class='font-weight-bold'>Municípios Atendidos:</td>" +
+                    "<td>"+ total_mun +"</td></tr>" +
+                    "<tr><td nowrap class='font-weight-bold'>População atendida:</td>" +
+                    "<td>"+ this.$numberTransformService.constructor.formatNumber(pop,"inteiro") +"</td></tr>" +
+                    "<tr><td class='font-weight-bold'>População aglomerados subnormais (2010):</td>" +
+                    "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.populacao_aglomerados_subnormais_arranjo,"inteiro") +"</td></tr>";
+            if (showDadosSaude){
+              text += "<tr><td class='font-weight-bold'>Qt hospitais:</td>" +
+                      "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.qt_estabelecimentos_arranjo,"inteiro") +"</td></tr>" +
+                      "<tr><td class='font-weight-bold'>Qt leitos UTI:</td>" +
+                      "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.qt_leitos_uti_arranjo,"inteiro") +"</td></tr>" +
+                      "<tr><td class='font-weight-bold'>Qt leitos outros:</td>" +
+                      "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.qt_leitos_outros_arranjo,"inteiro") +"</td></tr>" +
+                      "<tr><td class='font-weight-bold'>Leitos UTI/10.000 hab.:</td>" +
+              //         "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.qt_leitos_uti_arranjo/pop*10000,"real") +"</td></tr>" +
+                      "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.proporcao_leitos_uti_10k_arranjo,"real") +"</td></tr>" +
+                      "<tr><td class='font-weight-bold'>Qt respiradores:</td>" +
+                      "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.qt_respiradores_arranjo,"inteiro") +"</td></tr>" +
+                      "<tr><td class='font-weight-bold'>Qt respiradores em condições de uso:</td>" +
+                      "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.qt_respiradores_uso_arranjo,"inteiro") +"</td></tr>" +
+                      "<tr><td class='font-weight-bold'>Respiradores em condições de uso (%):</td>" +
+              //         "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.qt_respiradores_uso_arranjo/dtArranjo.qt_respiradores_arranjo,"real",1,100) +"%</td></tr>" +
+                      "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.proporcao_respiradores_uso_arranjo,"real",1,100) +"%</td></tr>" +
+                      "<tr><td class='font-weight-bold'>Respiradores em condições de uso/10.000 hab.:</td>" +
+              //         "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.qt_respiradores_uso_arranjo/pop*10000,"real") +"</td></tr>" +
+                      "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.proporcao_respiradores_uso_10k_arranjo,"real") +"</td></tr>";
+            }
+            text += "<tr><td colspan='2'class='font-weight-bold text-xs-center'>COVID-19</td></tr>" +
+                    "<tr><td nowrap class='font-weight-bold'>Data coleta:</td>" +
+                    "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.dt_coleta_covid_arranjo,"dataDMY") +"</td></tr>" +
+                    "<tr><td nowrap class='font-weight-bold'>Casos confirmados:</td>" +
+                    "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.qt_casos_covid_arranjo,"inteiro") +"</td></tr>" +
+                    "<tr><td nowrap class='font-weight-bold'>Óbitos confirmados:</td>" +
+                    "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.qt_mortes_covid_arranjo,"inteiro") +"</td></tr>" +
+                    "<tr><td nowrap class='font-weight-bold'>Letalidade:</td>" +
+                    "<td>"+ this.$numberTransformService.constructor.formatNumber(dtArranjo.proporcao_mortes_covid_arranjo,"porcentagem",1,100) +"</td></tr>" +
+                    "<tr><td colspan='2'class='font-weight-bold text-xs-center'>Municípios</td></tr>" +
+                    "<tr><td colspan='2'>"+ municipios +"</td></tr>" +
+                    "</table>";
+            target.unbindPopup();
+            target.bindPopup(text, {maxHeight: 350}).openPopup();
+          }, error => {
+            console.error(error.toString());
+            this.sendError("Erro ao carregar dataset tooltip");
+          }));
+        }
       }
     })
   }
