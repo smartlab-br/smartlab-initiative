@@ -392,7 +392,12 @@
             returnStr = String(returnStr).replace('(', '').replace(')', '');
             return returnStr;
             },
-          get_proportional_indicator_uf: function(d,campo='vl_indicador', media="media_uf") { return Math.log(((d[campo] - d[media]) / d[media]) + 1.01); },
+          get_proportional_indicator_uf: function(d,campo='vl_indicador', media="media_uf", except_ind=null) { 
+            if (except_ind && d.cd_indicador == except_ind) {
+              return d[campo];
+            }
+            return Math.log(((d[campo] - d[media]) / d[media]) + 1.01); 
+          },
           get_log: function(d,campo='vl_indicador') { return Math.log(d[campo] + 0.01); },
           get_number: function(d,val) { 
             return parseFloat(val); 
