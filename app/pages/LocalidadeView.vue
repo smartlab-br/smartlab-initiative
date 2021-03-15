@@ -392,7 +392,12 @@
             returnStr = String(returnStr).replace('(', '').replace(')', '');
             return returnStr;
             },
-          get_proportional_indicator_uf: function(d,campo='vl_indicador', media="media_uf") { return Math.log(((d[campo] - d[media]) / d[media]) + 1.01); },
+          get_proportional_indicator_uf: function(d,campo='vl_indicador', media="media_uf", except_ind=null) { 
+            if (except_ind && d.cd_indicador == except_ind) {
+              return d[campo];
+            }
+            return Math.log(((d[campo] - d[media]) / d[media]) + 1.01); 
+          },
           get_log: function(d,campo='vl_indicador') { return Math.log(d[campo] + 0.01); },
           get_number: function(d,val) { 
             return parseFloat(val); 
@@ -405,11 +410,16 @@
               let yearStart = new Date(Date.UTC(dt.getUTCFullYear(),0,1));
               return Math.ceil((((dt - yearStart) / 86400000) + 1)/7)
             };
-            if (reg_week == new Date().getWeekNumber()){
+            let week = new Date().getFullYear() * 100 + new Date().getWeekNumber()
+            if (reg_week == week){
               return "Semana corrente";
             } else {
               return "Semana completa";
             }
+          },
+          get_week_year: function(d, week, week_start){
+            let wee_start_ISO = new Date(week_start).toISOString().substring(0,10);
+            return  wee_start_ISO.substring(0,4) + '-' + week.toString().padStart(2, '0');
           },
           get_bipolar_scale: function(d, prop, origin = 0) {
             if (d[prop] == null) return null;

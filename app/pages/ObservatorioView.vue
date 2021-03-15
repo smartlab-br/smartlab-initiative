@@ -121,6 +121,21 @@
           -->
         </v-flex>
 
+        <v-flex pt-0 sm12 v-if="observatorio && observatorio.prevalencia && observatorio.prevalencia.main_title">
+          <v-layout column>
+            <v-flex pa-0 class=""
+              style="background-color:black;color:white"
+            >
+              <flpo-composite-text
+                :id = "'story_home_prevalencia_main_title_' + idObservatorio"
+                :structure="observatorio.prevalencia.main_title"
+                :custom-params="customParams"
+                :custom-functions="customFunctions"
+              />
+            </v-flex>
+          </v-layout>
+        </v-flex>
+
         <v-flex sm12 md4 lg3>
           <v-layout column>
             <v-layout row align-end fill-height wrap pl-3 pt-3 pr-2 class="subheading mb-0" 
@@ -417,7 +432,7 @@
       scrollTo(anchor) {
         var el = this.$el.querySelector("#" + anchor);
         el.scrollIntoView();
-        window.scrollBy(0,-120);
+        window.scrollBy(0,-60);
       },
 
       resizeFirstSection(){
