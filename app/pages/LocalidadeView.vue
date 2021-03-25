@@ -382,6 +382,34 @@
                       return d[campo];
               }
           },
+          get_salary_label: function(d,campo="vl_indicador") {
+              switch(d[campo]) {
+                  case 1:
+                      return 'Até 1 salário mínimo';
+                  case 2:
+                      return 'De 1 até 1,5 salário mínimo';
+                  case 3:
+                      return 'De 1,5 até 2 salários mínimos';
+                  case 4:
+                      return 'De 2 até 3 salários mínimos';
+                  case 5:
+                      return 'De 3 até 4 salários mínimos';
+                  case 6:
+                      return 'De 4 até 5 salários mínimos';
+                  case 7:
+                      return 'De 5 até 7 salários mínimos';
+                  case 8:
+                      return 'De 7 até 10 salários mínimos';
+                  case 9:
+                      return 'De 10 até 15 salários mínimos';
+                  case 10:
+                      return 'De 15 até 20 salários mínimos';
+                  case 11:
+                      return 'Mais de 20 salários mínimos';
+                  default:
+                      return d[campo];
+              }
+          },
           get_period_from_string: function(str){ 
             let reg = /de \d{4} a \d{4}/g;
             return str.match(reg);
