@@ -426,7 +426,12 @@
             }
             return Math.log(((d[campo] - d[media]) / d[media]) + 1.01); 
           },
-          get_log: function(d,campo='vl_indicador') { return Math.log(d[campo] + 0.01); },
+          get_log: function(d,campo='vl_indicador', except_ind=null) { 
+            if (except_ind && d.cd_indicador == except_ind) {
+              return d[campo];
+            }
+            return Math.log(d[campo] + 0.01); 
+          },
           get_number: function(d,val) { 
             return parseFloat(val); 
           },
