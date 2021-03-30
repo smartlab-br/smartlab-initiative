@@ -63,7 +63,7 @@
             </v-flex>
             <v-flex pt-0>    
               <v-layout row wrap :style="structure.type != 'headline' && structure.type != 'text' ? 'min-height:500px;' : ''">
-                <v-flex xs12 :class="chartPosition != 'bottom' ? 'md3 position-relative': 'position-relative'" column>
+                <v-flex xs12 :class="chartPosition != 'bottom' ? 'md3 position-relative pr-4': 'position-relative'" column>
                   <v-flex column pt-0 slot="description">
                     <flpo-composite-text
                       v-if="!invalidInterpol"
