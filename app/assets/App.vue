@@ -17,7 +17,7 @@
           </v-list-tile-content>
         </v-list-tile>
 
-        <v-list-tile 
+        <v-list-tile
           v-for="(item, i) in computedMenuItems"
           :key="i"
           v-ripple="{ class: item.rippleColor }"
@@ -28,17 +28,17 @@
         >
           <v-list-tile-action>
             <v-tooltip bottom>
-              <v-icon 
-                v-if="item.icon" 
+              <v-icon
+                v-if="item.icon"
                 slot="activator"
-                :title="item.short_title" 
-                v-html="item.icon" 
+                :title="item.short_title"
+                v-html="item.icon"
                 :color="$observatories.getTheme(item.id).primary"
               />
-              <app-icon 
+              <app-icon
                 v-else-if="item.app_icon"
                 slot="activator"
-                :title="item.short_title" 
+                :title="item.short_title"
                 :icon="item.app_icon"
                 :fill="$observatories.getTheme(item.id).primary"
               />
@@ -63,98 +63,98 @@
       </v-list>
     </v-navigation-drawer>
 
-    <v-toolbar 
-      dark 
-      fixed 
-      app 
-      clipped-left 
+    <v-toolbar
+      dark
+      fixed
+      app
+      clipped-left
       :style="'background-color:'+toolbarColor"
     >
-      <v-toolbar-side-icon 
+      <v-toolbar-side-icon
         aria-label="Menu Principal"
         tabindex="1"
-        @click.stop="drawer = !drawer" 
+        @click.stop="drawer = !drawer"
       />
 
       <v-toolbar-title class="ml-2">
-        <v-layout 
-          pa-0 
-          row 
+        <v-layout
+          pa-0
+          row
           align-center
         >
-          <v-flex 
-            pr-2 
-            pt-2 
+          <v-flex
+            pr-2
+            pt-2
             hidden-xs-only
           >
-            <img 
+            <img
               tabindex="20"
-              src="/static/icons/smartlab_labeled-30.png" 
+              src="/static/icons/smartlab_labeled-30.png"
               class="cursor-pointer"
               alt="Smartlab"
               @click="$navigationManager.constructor.pushRoute($router, '/', false)"
               @keyup.enter="$navigationManager.constructor.pushRoute($router, '/', false)"
-            /> 
+            />
           </v-flex>
-          <v-flex 
-            pr-2 
-            pt-2 
+          <v-flex
+            pr-2
+            pt-2
             hidden-sm-and-up
           >
-            <img 
+            <img
               tabindex="20"
-              src="/static/iconssmartlab-icon-30x30.png" 
+              src="/static/iconssmartlab-icon-30x30.png"
               class="cursor-pointer"
               alt="Smartlab"
-              @click="$navigationManager.constructor.pushRoute($router, '/', false)" 
-            /> 
+              @click="$navigationManager.constructor.pushRoute($router, '/', false)"
+            />
           </v-flex>
-          <v-divider 
-            v-show="computedTitle" 
-            vertical 
-            class="mx-2" 
+          <v-divider
+            v-show="computedTitle"
+            vertical
+            class="mx-2"
             style="background-color:rgba(255,255,255,0.7)"
           />
-          <v-flex 
+          <v-flex
             class="line-height-1"
           >
-            <v-flex 
-              text-xs-right 
-              class="cursor-pointer" 
+            <v-flex
+              text-xs-right
+              class="cursor-pointer"
               pa-0
-              @click="$navigationManager.constructor.pushRoute($router, ($route && ($route.path.indexOf('localidade') != -1)) ? '../' : ($route && ($route.path.indexOf('estudo') != -1 || $route.path.indexOf('smartmap') != -1)) ? './' : '', false);" 
+              @click="$navigationManager.constructor.pushRoute($router, ($route && ($route.path.indexOf('localidade') != -1)) ? '../' : ($route && ($route.path.indexOf('estudo') != -1 || $route.path.indexOf('smartmap') != -1)) ? './' : '', false);"
             >
               {{ computedTitle }}
             </v-flex>
-            <v-flex 
-              text-xs-right 
-              pa-0 
+            <v-flex
+              text-xs-right
+              pa-0
               caption
             >
-              <a 
-                class="white--text"                 
+              <a
+                class="white--text"
                 @click="$navigationManager.constructor.pushRoute($router, 'https://www.instagram.com/smartlab_br/', true)"
               >
                 {{ computedHashTag }}
               </a>
             </v-flex>
           </v-flex>
-          <v-divider 
-            v-show="computedPlaceTitle" 
-            vertical 
-            class="mx-2" 
+          <v-divider
+            v-show="computedPlaceTitle"
+            vertical
+            class="mx-2"
             style="background-color:rgba(255,255,255,0.7)"
           />
-          <v-flex 
-            v-if="currentAnalysisUnit" 
-            pl-2 
+          <v-flex
+            v-if="currentAnalysisUnit"
+            pl-2
             class="cursor-pointer line-height-1"
-            @mousedown="seen = true" 
-            @click="focusChangePlace()" 
+            @mousedown="seen = true"
+            @click="focusChangePlace()"
           >
             <v-flex>{{ computedPlaceTitle }}</v-flex>
-            <v-flex 
-              pa-0 
+            <v-flex
+              pa-0
               caption
             >
               {{ computedPlaceType }}
@@ -162,9 +162,9 @@
           </v-flex>
         </v-layout>
       </v-toolbar-title>
-      
+
       <v-spacer />
-      
+
       <div width="20rem">
         <v-autocomplete
           v-if="auOptions.length > 0"
@@ -185,76 +185,76 @@
           :color="gsLoadingStatusSearchOptions == 'ERROR' ? 'error' : (gsLoadingStatusSearchOptions == 'LOADING' ? 'warning' : 'accent')"
           @blur="gsItemBusca = null"
         >
-          <template 
-            slot="item" 
+          <template
+            slot="item"
             slot-scope="data"
           >
             <template v-if="auOptions.length < 2">
               <v-list-tile-content>
-                <v-progress-circular 
-                  :size="20" 
-                  indeterminate 
+                <v-progress-circular
+                  :size="20"
+                  indeterminate
                   color="primary"
                 />
               </v-list-tile-content>
             </template>
             <template v-else>
               <v-list-tile-content>
-                <v-list-tile-title 
-                  @click="changeAnalysisUnit($router, data.item)" 
+                <v-list-tile-title
+                  @click="changeAnalysisUnit($router, data.item)"
                   v-html="data.item.label + (data.item.scope == 'uf'? ' (UF)': '')"
                 />
               </v-list-tile-content>
               <v-list-tile-action style="min-width: 120px">
                 <v-layout row>
-                  <v-layout 
+                  <v-layout
                     v-for="(search_item, indxSearch) in $observatories.getObservatories()"
                     :key="'search_item_obs_' + indxSearch"
                     @click="changeAnalysisUnit($router, data.item, search_item.id)"
                   >
-                    <v-layout 
+                    <v-layout
                       v-if="!search_item.blocked && (data.item.exclude_from == null || data.item.exclude_from == undefined || !data.item.exclude_from.includes(search_item.id))"
-                      column 
-                      wrap 
+                      column
+                      wrap
                       align-center
                     >
                       <v-tooltip bottom>
-                        <v-icon 
+                        <v-icon
                           v-if="search_item.icon"
                           slot="activator"
-                          small 
+                          small
                           :color="$observatories.getTheme(search_item.id).primary"
                           v-html="search_item.icon"
                         />
-                        <app-icon 
+                        <app-icon
                           v-else-if="search_item.app_icon"
                           slot="activator"
-                          size="16" 
+                          size="16"
                           :fill="$observatories.getTheme(search_item.id).primary"
                           :icon="search_item.app_icon"
                         />
-                        <v-layout v-html="search_item.tooltip" /> 
+                        <v-layout v-html="search_item.tooltip" />
                       </v-tooltip>
                     </v-layout>
                   </v-layout>
                 </v-layout>
               </v-list-tile-action>
             </template>
-          </template>  
+          </template>
         </v-autocomplete>
       </div>
-      
+
       <v-btn
         tabindex="22"
-        icon 
+        icon
         class="ml-0"
         aria-label="Alterar Localidade"
         @click="seen = !seen"
       >
         <v-tooltip bottom>
-          <v-icon 
+          <v-icon
             slot="activator"
-            color="white" 
+            color="white"
           >
             place
           </v-icon>
@@ -264,7 +264,7 @@
       <!--
       <v-btn
         tabindex="23"
-        icon 
+        icon
         class="ml-0"
         aria-label="Identifique-se"
         @click="handleAvatarClick()"
@@ -279,22 +279,22 @@
               alt="Foto"
               :src="this.$store.state.user.picture"
             >
-            <v-icon 
-              v-else 
+            <v-icon
+              v-else
               slot="activator"
-              color="white" 
+              color="white"
             >
               perm_identity
             </v-icon>
           </v-avatar>
-          {{ computedLoginLabel }} 
+          {{ computedLoginLabel }}
         </v-tooltip>
       </v-btn>
       -->
       <v-tooltip bottom>
-        <a 
+        <a
           slot="activator"
-          class="white--text mx-2" 
+          class="white--text mx-2"
           @click="$navigationManager.constructor.pushRoute($router, 'https://www.instagram.com/smartlab_br/', true)"
         >
           <span v-html="renderIcon('fab','faInstagram','Instagram')" />
@@ -303,20 +303,20 @@
       </v-tooltip>
     </v-toolbar>
     <v-content>
-      <v-container 
-        fluid 
+      <v-container
+        fluid
         class="pa-0 fill-height"
       >
-        <router-view 
-          :key="reRenderPath" 
+        <router-view
+          :key="reRenderPath"
           ref="currentRoute"
-          @userChanged="updateUser" 
+          @userChanged="updateUser"
           @showSnackbar="snackAlert"
-          @showLocationDialog="showLocationDialog" 
-          @showAuthenticatioDialog="showAuthenticatioDialog" 
-          @showBugDialog="showBugDialog" 
-          @alterToolbar="changeToolbar" 
-          @alterMiddleToolbar="changeMiddleToolbar" 
+          @showLocationDialog="showLocationDialog"
+          @showAuthenticatioDialog="showAuthenticatioDialog"
+          @showBugDialog="showBugDialog"
+          @alterToolbar="changeToolbar"
+          @alterMiddleToolbar="changeMiddleToolbar"
         />
         <v-slide-y-transition mode="out-in" />
       </v-container>
@@ -349,8 +349,8 @@
               v-model="lang"
               label="Select"
               item-text="lbl"
-              item-value="value" 
-              class="input-group--focused" 
+              item-value="value"
+              class="input-group--focused"
               return-object
               v-on:change="changeLocale()">
               <template slot="selection" slot-scope="data">
@@ -380,35 +380,35 @@
       </v-list>
     </v-navigation-drawer>
     -->
-    <v-layout 
-      row 
-      wrap 
-      primary 
-      align-center 
-      class="white--text"
-      :class="{'px-2 py-4': $vuetify.breakpoint.xsAndup, 
-               'px-3 py-4': $vuetify.breakpoint.mdAndDown, 
-               'px-5 py-5': $vuetify.breakpoint.lgAndUp}" 
+    <v-layout
+      row
+      wrap
+      primary
+      align-center
+      class="white--text hidden-print-only"
+      :class="{'px-2 py-4': $vuetify.breakpoint.xsAndup,
+               'px-3 py-4': $vuetify.breakpoint.mdAndDown,
+               'px-5 py-5': $vuetify.breakpoint.lgAndUp}"
       app
     >
-      <v-flex 
+      <v-flex
         class="xs2 sm1 md1 lg2 xl2"
-        :class="{'pt-5 pb-3': $vuetify.breakpoint.mdAndDown }" 
+        :class="{'pt-5 pb-3': $vuetify.breakpoint.mdAndDown }"
       >
-        <v-layout 
-          row 
-          wrap 
+        <v-layout
+          row
+          wrap
           class="text-xs-left"
         >
           <v-flex xs12>
-            <a 
-              class="white--text" 
+            <a
+              class="white--text"
               @click="$navigationManager.constructor.pushRoute($router, '/saibamais/smartlab', false)"
             >
-              <img  
-                src="/static/smartlab/smartlab-small.svg" 
-                alt="Smartlab" 
-                height="25px" 
+              <img
+                src="/static/smartlab/smartlab-small.svg"
+                alt="Smartlab"
+                height="25px"
                 style="margin-bottom: -5px;"
               />
               <span class="ml-3">Sobre</span>
@@ -416,119 +416,119 @@
           </v-flex>
         </v-layout>
       </v-flex>
-      <v-flex  
-        class="xs10 sm11 md11 lg8 xl4 text-xs-right text-md-center" 
+      <v-flex
+        class="xs10 sm11 md11 lg8 xl4 text-xs-right text-md-center"
         :class="{'pt-5 pb-3': $vuetify.breakpoint.mdAndDown }"
       >
-        <v-layout 
-          align-center 
+        <v-layout
+          align-center
           justify-center
           wrap
         >
-          <img 
+          <img
             src="/static/smartlab/mpt.svg"
-            class="cursor-pointer mr-2" 
+            class="cursor-pointer mr-2"
             alt="Ministério Público do Trabalho"
             height="50px"
-            @click="$navigationManager.constructor.pushRoute($router, 'https://mpt.mp.br', true)" 
+            @click="$navigationManager.constructor.pushRoute($router, 'https://mpt.mp.br', true)"
           />
-          <img 
+          <img
             src="/static/smartlab/oit.png"
-            class="cursor-pointer mr-2 ml-2" 
+            class="cursor-pointer mr-2 ml-2"
             alt="Organização Internacional do Trabalho"
             height="40px"
-            @click="$navigationManager.constructor.pushRoute($router, 'https://ilo.org', true)" 
+            @click="$navigationManager.constructor.pushRoute($router, 'https://ilo.org', true)"
           />
           <img
             src="/static/smartlab/cnmp.svg"
-            class="cursor-pointer mb-1 ml-2" 
+            class="cursor-pointer mb-1 ml-2"
             alt="Conselho Nacional do Ministério Público"
             max-height="80%"
             min-height="50%"
             style="border-left: 1px solid white; padding-left: 10px;"
-            @click="$navigationManager.constructor.pushRoute($router, 'http://cnmp.mp.br', true)" 
+            @click="$navigationManager.constructor.pushRoute($router, 'http://cnmp.mp.br', true)"
           />
-          <img 
+          <img
             src="/static/smartlab/mdh.png"
-            class="cursor-pointer mr-2 ml-2" 
+            class="cursor-pointer mr-2 ml-2"
             alt="Ouvidoria Nacional dos Direitos Humanos"
             height="50px"
-            @click="$navigationManager.constructor.pushRoute($router, 'https://ouvidoria.mdh.gov.br/portal', true)" 
+            @click="$navigationManager.constructor.pushRoute($router, 'https://ouvidoria.mdh.gov.br/portal', true)"
           />
-          <img 
+          <img
             v-if="currentObs == 'ti'"
             src="/static/smartlab/fnpeti.svg"
-            class="cursor-pointer mb-1 ml-0" 
+            class="cursor-pointer mb-1 ml-0"
             alt="Fórum Nacional de Prevenção e Erradicação do Trabalho Infantil"
             max-height="80%"
             min-height="50%"
-            @click="$navigationManager.constructor.pushRoute('https://fnpeti.org.br', true)" 
+            @click="$navigationManager.constructor.pushRoute('https://fnpeti.org.br', true)"
           />
-          <img 
+          <img
             v-if="currentObs == 'ti' || currentObs == 'td'"
             src="/static/smartlab/ibge.png"
-            class="cursor-pointer mb-1 ml-0" 
+            class="cursor-pointer mb-1 ml-0"
             alt="Instituto Brasileiro de Geografia e Estatística"
             height="50px"
-            @click="$navigationManager.constructor.pushRoute('http:///ibge.gov.br', true)" 
+            @click="$navigationManager.constructor.pushRoute('http:///ibge.gov.br', true)"
           />
-          <img 
+          <img
             v-if="currentObs == 'des'"
             src="/static/smartlab/pacto.svg"
-            class="cursor-pointer mb-1 ml-0" 
+            class="cursor-pointer mb-1 ml-0"
             alt="Pacto Global - Rede Brasil"
             max-height="80%"
             min-height="50%"
-            @click="$navigationManager.constructor.pushRoute('https://www.pactoglobal.org.br', true)" 
+            @click="$navigationManager.constructor.pushRoute('https://www.pactoglobal.org.br', true)"
           />
-          <img 
+          <img
             v-if="currentObs == 'des'"
             src="/static/smartlab/onumulheres.svg"
-            class="cursor-pointer ml-2" 
+            class="cursor-pointer ml-2"
             alt="ONU Mulheres"
-            height="20px" 
-            @click="$navigationManager.constructor.pushRoute('http://www.onumulheres.org.br/', true)" 
+            height="20px"
+            @click="$navigationManager.constructor.pushRoute('http://www.onumulheres.org.br/', true)"
           />
-        </v-layout>       
+        </v-layout>
       </v-flex>
-      <v-flex  
+      <v-flex
         class="xs6 sm6 md6 lg1 xl3 text-md-left text-lg-center subheading"
-        :class="{'pt-5 pb-3 ': $vuetify.breakpoint.mdAndDown }" 
+        :class="{'pt-5 pb-3 ': $vuetify.breakpoint.mdAndDown }"
       >
-        <a 
-          class="white--text mr-2" 
+        <a
+          class="white--text mr-2"
           @click="$navigationManager.constructor.pushRoute($router, 'https://www.instagram.com/smartlab_br/', true)"
         >
           <span v-html="renderIcon('fab','faInstagram','Instagram')" />
         </a>
-        <a 
-          class="white--text mr-2" 
+        <a
+          class="white--text mr-2"
           @click="$navigationManager.constructor.pushRoute($router, 'https://github.com/smartlab-br', true)"
         >
           <span v-html="renderIcon('fab','faGithub','GitHub')" />
         </a>
-        <a 
-          class="white--text mr-2" 
+        <a
+          class="white--text mr-2"
           @click="$navigationManager.constructor.pushRoute($router, 'https://hub.docker.com/u/smartlab/', true)"
         >
           <span v-html="renderIcon('fab','faDocker','Docker')" />
         </a>
       </v-flex>
-      <v-flex  
-        class="xs6 sm6 md6 lg1 xl3 text-xs-right subheading" 
-        :class="{'pt-5 pb-3': $vuetify.breakpoint.mdAndDown }" 
+      <v-flex
+        class="xs6 sm6 md6 lg1 xl3 text-xs-right subheading"
+        :class="{'pt-5 pb-3': $vuetify.breakpoint.mdAndDown }"
       >
         <div class="caption mr-1 mb-1">
           Licenças
         </div>
-        <a 
-          class="white--text mx-2" 
+        <a
+          class="white--text mx-2"
           @click="$navigationManager.constructor.pushRoute($router, 'https://creativecommons.org/licences/by-nc-sa/4.0/', true)"
         >
           <span v-html="renderIcon('fab','faCreativeCommons','CC BY 4.0')" />
         </a>
-        <a 
-          class="white--text" 
+        <a
+          class="white--text"
           @click="$navigationManager.constructor.pushRoute($router, 'https://opensource.org/licenses/MIT', true)"
         >
           <span v-html="renderIcon('fab','faOsi','MIT - Open Source Initiative')" />
@@ -536,63 +536,63 @@
       </v-flex>
     </v-layout>
 
-    <v-snackbar 
+    <v-snackbar
       v-model="snackbar"
-      :timeout="snack_timeout" 
-      :top="snack_y === 'top'" 
+      :timeout="snack_timeout"
+      :top="snack_y === 'top'"
       :bottom="snack_y === 'bottom'"
-      :right="snack_x === 'right'" 
-      :left="snack_x === 'left'" 
+      :right="snack_x === 'right'"
+      :left="snack_x === 'left'"
       :multi-line="snack_mode === 'multi-line'"
-      :vertical="snack_mode === 'vertical'" 
-      :color="snack_color" 
+      :vertical="snack_mode === 'vertical'"
+      :color="snack_color"
     >
       {{ snackText }}
-      <v-btn 
-        flat 
-        color="white" 
+      <v-btn
+        flat
+        color="white"
         @click.native="snackbar = false"
       >
         Fechar
       </v-btn>
     </v-snackbar>
 
-    <v-snackbar  
+    <v-snackbar
       v-model="snackbarCookies"
       bottom
-      multi-line 
-      :timeout="0" 
-      color="blue-grey darken2" 
+      multi-line
+      :timeout="0"
+      color="blue-grey darken2"
     >
       Este site utiliza cookies para registrar as preferências de navegação do usuário. Ao navegar no site, você aceita a utilização dos cookies.
-      <v-btn 
-        flat 
-        color="white" 
+      <v-btn
+        flat
+        color="white"
         @click.native="setCookieAccept"
       >
         Fechar
       </v-btn>
     </v-snackbar>
-    
-    <v-dialog 
+
+    <v-dialog
       v-model="bugDialog"
-      width="500px" 
+      width="500px"
     >
       <v-card>
-        <v-card-title 
+        <v-card-title
           class="headline-obs py-1"
         >
           Relate um problema
         </v-card-title>
         <v-card-text py-1>
-          <v-form 
-            ref="bugForm" 
+          <v-form
+            ref="bugForm"
             v-model="valid"
           >
             <v-container>
               <v-layout column>
                 <v-flex py-0>
-                  <v-text-field 
+                  <v-text-field
                     v-model="computedTitle"
                     class="py-0"
                     label="Observatório"
@@ -601,7 +601,7 @@
                 </v-flex>
 
                 <v-flex py-0>
-                  <v-text-field 
+                  <v-text-field
                     v-model="computedSubtitle"
                     class="py-0"
                     label="Dimensão"
@@ -610,7 +610,7 @@
                 </v-flex>
 
                 <v-flex py-0>
-                  <v-text-field 
+                  <v-text-field
                     v-model="computedPlaceTitle"
                     class="py-0"
                     label="Localidade"
@@ -619,7 +619,7 @@
                 </v-flex>
 
                 <v-flex py-0>
-                  <v-text-field 
+                  <v-text-field
                     v-model="bugCard"
                     class="py-0"
                     label="Card"
@@ -628,69 +628,69 @@
                 </v-flex>
 
                 <v-flex py-0>
-                  <v-textarea 
+                  <v-textarea
                     v-if="bugDialog"
                     ref="bugText"
                     v-model="bugText"
                     class="py-0"
                     label="Relate um problema"
-                    :rules="bugTextRules"                      
+                    :rules="bugTextRules"
                     autofocus
                     required
                   />
                 </v-flex>
 
                 <v-flex>
-                  <v-text-field 
-                    ref="bugEmail"                     
+                  <v-text-field
+                    ref="bugEmail"
                     v-model="bugEmail"
                     class="py-0"
-                    :rules="bugEmailRules" 
+                    :rules="bugEmailRules"
                     label="E-mail contato"
                     required
                   />
                 </v-flex>
 
-                <v-layout 
-                  py-0 
+                <v-layout
+                  py-0
                   row
                 >
-                  <v-layout 
+                  <v-layout
                     v-show="sendingMail"
-                    pa-0 
+                    pa-0
                   >
-                    <v-progress-circular 
+                    <v-progress-circular
                       indeterminate
                       color="accent"
                     />
                     <span class="pl-2 align-self-center">Enviando...</span>
                   </v-layout>
                   <v-spacer />
-                  <v-layout 
-                    justify-end 
+                  <v-layout
+                    justify-end
                     pa-0
                   >
-                    <v-btn 
-                      small 
-                      flat  
+                    <v-btn
+                      small
+                      flat
                       class="mb-0 mr-2"
                       @click="sendBugReport"
                     >
                       <span class="hidden-sm-and-down body">Enviar</span>
                       <v-icon right>
                         send
-                      </v-icon> 
+                      </v-icon>
                     </v-btn>
                     <v-btn
-                      small 
-                      flat 
+                      small
+                      flat
                       class="mb-0 mx-0"
                       @click="closeBugDialog"
                     >
                       <span class="hidden-sm-and-down body">Fechar</span>
                       <v-icon right>
                         close
-                      </v-icon> 
+                      </v-icon>
                     </v-btn>
                   </v-layout>
                 </v-layout>
@@ -700,13 +700,13 @@
         </v-card-text>
       </v-card>
     </v-dialog>
-    <v-dialog 
-      v-model="locationDialog" 
-      width="500px" 
+    <v-dialog
+      v-model="locationDialog"
+      width="500px"
       persistent
     >
       <v-card>
-        <v-card-title 
+        <v-card-title
           class="headline-obs"
         >
           Informe o município a ser visualizado ou sua localidade:
@@ -728,15 +728,15 @@
             (gsLoadingStatusSearchOptions == 'LOADING' ? 'warning' : 'accent')"
             @blur="gsFavLocation = null"
           >
-            <template 
-              slot="item" 
+            <template
+              slot="item"
               slot-scope="data"
             >
               <template v-if="auOptions.length < 2">
                 <v-list-tile-content>
-                  <v-progress-circular 
-                    :size="20" 
-                    indeterminate 
+                  <v-progress-circular
+                    :size="20"
+                    indeterminate
                     color="primary"
                   />
                 </v-list-tile-content>
@@ -746,15 +746,15 @@
                   <v-list-tile-title v-html="data.item.label" />
                 </v-list-tile-content>
               </template>
-            </template>  
+            </template>
           </v-autocomplete>
         </v-card-text>
       </v-card>
     </v-dialog>
     <!--
-    <v-dialog 
+    <v-dialog
       v-model="authMessageDialog"
-      width="500px" 
+      width="500px"
     >
       <v-card>
         <v-card-title class="headline-obs">
@@ -764,19 +764,19 @@
           <p>Para baixar os dados, é necessário que você se autentique.</p>
           <p>Clique no botão abaixo e faça o login na plataforma utilizando sua conta do Google ou Facebook.</p>
         </v-card-text>
-        <v-layout 
-          align-center 
-          justify-center 
-          row 
+        <v-layout
+          align-center
+          justify-center
+          row
           fill-height
         >
-          <v-btn 
-            class="theme--light mb-3 mt-0" 
-            color="accent" 
+          <v-btn
+            class="theme--light mb-3 mt-0"
+            color="accent"
             @click="handleAuthClick()"
           >
-            <v-icon 
-              left 
+            <v-icon
+              left
               color="white"
             >
               perm_identity
@@ -787,9 +787,9 @@
       </v-card>
     </v-dialog>
     -->
-    <v-dialog 
+    <v-dialog
       v-model="authMessageDialog"
-      width="500px" 
+      width="500px"
     >
       <v-card>
         <v-card-title class="headline-obs">
@@ -798,15 +798,15 @@
         <v-card-text>
           <p>Para baixar os microdados, você precisa se identificar mediante nome de usuário e senha. Em breve, a funcionalidade estará disponível.</p>
         </v-card-text>
-        <v-layout 
-          align-center 
-          justify-center 
-          row 
+        <v-layout
+          align-center
+          justify-center
+          row
           fill-height
         >
-          <v-btn 
-            class="theme--light mb-3 mt-0" 
-            color="accent" 
+          <v-btn
+            class="theme--light mb-3 mt-0"
+            color="accent"
             @click="authMessageDialog = false"
           >
             Fechar
@@ -839,7 +839,7 @@
   import fontawesome from '@fortawesome/fontawesome'
   import fa_brands from '@fortawesome/fontawesome-free-brands'
   import fa_solid from '@fortawesome/fontawesome-free-solid'
-  
+
   export default {
     mixins: [Meta],
     data () {
@@ -871,7 +871,7 @@
         snack_color: 'info',
         snackText: 'Hello, I\'m a snackbar',
         gsItemBusca: null,
-        gsFavLocation: null, 
+        gsFavLocation: null,
         gsLoadingStatusSearchOptions: 'LOADING',
         auOptions: [],
         locationDialog: false,
@@ -888,7 +888,7 @@
         bugEmail: "",
         bugEmailRules: [
           v => /.+@.+/.test(v) || 'Informe um e-mail válido'
-        ],        
+        ],
         //
         langs: [],
         lang: null,
@@ -937,11 +937,11 @@
             };
           }
         }
-        
-        // if (!this.visibleTitle || (this.$route && (this.$route.path.indexOf("localidade") != -1 || 
-        //                     this.$route.path.indexOf("localidade") != -1 || 
-        //                     this.$route.path.indexOf("estudo") != -1 || 
-        //                     this.$route.path.indexOf("saibamais") != -1 || 
+
+        // if (!this.visibleTitle || (this.$route && (this.$route.path.indexOf("localidade") != -1 ||
+        //                     this.$route.path.indexOf("localidade") != -1 ||
+        //                     this.$route.path.indexOf("estudo") != -1 ||
+        //                     this.$route.path.indexOf("saibamais") != -1 ||
         //                     this.$route.path.indexOf("smartmap") != -1
         //                     )))
         // {
@@ -949,7 +949,7 @@
           return observ.short_title;
         }
         return observ.title;
-        // } 
+        // }
         // return '';
       },
       computedHashTag: function() {
@@ -961,7 +961,7 @@
             let observ = this.$observatories.getObservatoryById(this.currentObs);
             if (observ) {
                 hashTag = "#"+ observ.hash_tag;
-            } 
+            }
           }
         }
         return hashTag;
@@ -979,8 +979,8 @@
         if(this.$route.path.indexOf("smartmap") != -1){ //página de Smartlab
           return "SmartMap - Mapa Avançado";
         }
-        
-          
+
+
         return '';
       },
       computedPlaceTitle: function() {
@@ -996,7 +996,7 @@
             tipoLocalidade = "Município Selecionado";
           } else if (this.currentAnalysisUnit.tipo == 'UF'){
             tipoLocalidade = "UF Selecionada";
-          } 
+          }
           return tipoLocalidade;
         }
         return null;
@@ -1031,12 +1031,12 @@
         }
       }
     },
-    created () {    
+    created () {
       // console.log(process.env.GRAVITEE_AM_URL_BASE)
 
       let tmpObs = this.$observatories.getObservatories();
       if (tmpObs instanceof Promise) {
-        tmpObs.then((result) => { 
+        tmpObs.then((result) => {
           this.observatorios = result;
         });
       } else {
@@ -1084,7 +1084,7 @@
         if (newVal) {
           this.$analysisUnitModel.setCurrentAnalysisUnit(newVal.id);
           this.locationDialog = false;
-          
+
           let findLoc = this.$analysisUnitModel.findPlaceByID(newVal.id);
           if (findLoc instanceof Promise || findLoc.then) {
             findLoc.then(response => {
@@ -1122,7 +1122,7 @@
         this.changeMiddleToolbar(findLoc);
         if (findLoc.id_localidade && findLoc.id_localidade.length > 5) this.localidade = findLoc;
       }
-    
+
       this.langs = this.$translationModel.findAllLocales();
       this.lang = this.$translationModel.findBrowserLocale(this);
 
@@ -1142,11 +1142,11 @@
           else{
             this.isPageBottom = (window.innerHeight + window.scrollY) >= document.body.offsetHeight-1;
           }
-        } 
+        }
       },
 
       scrollDown(){
-        window.scrollBy(0, window.innerHeight / 2);        
+        window.scrollBy(0, window.innerHeight / 2);
       },
 
       scrollTop(){
@@ -1163,8 +1163,8 @@
       customFilter (item, queryText, itemText) {
         queryText = this.$textTransformService.replaceSpecialCharacters(queryText).toLowerCase();
         itemText = this.$textTransformService.replaceSpecialCharacters(itemText).toLowerCase();
-        return itemText.indexOf(queryText) > -1 
-      },      
+        return itemText.indexOf(queryText) > -1
+      },
       snackAlert(params) {
         this.snack_mode = params.snack_mode || '';
         this.snack_color = params.color;
@@ -1181,7 +1181,7 @@
       },
       themeEval: function() {
         let theme = this.$observatories.getTheme(this.currentObs);
-        if (theme) this.$vuetify.theme = theme; // Changes only if 
+        if (theme) this.$vuetify.theme = theme; // Changes only if
       },
       changeMiddleToolbar: function(params) {
         if (params && params.localidade) {
@@ -1226,7 +1226,7 @@
             throw new Error('Pop-up de login fechado.');
           }
           try {
-            var popupWindowPath = popup.location;             
+            var popupWindowPath = popup.location;
             if (popupWindowPath.hash) {
               var params = popupWindowPath.hash.split("access_token=")[1]
               var access_token = params.split("&")[0]
@@ -1284,7 +1284,7 @@
       //     idLocalidade
       //   );
       // },
-      
+
       assessVisibleTitle() {
         if (document.getElementById("screenTitle")) {
           var { top, bottom } = document.getElementById("screenTitle").getBoundingClientRect();
@@ -1324,7 +1324,7 @@
       sendBugReport(){
         if (this.$refs.bugForm.validate()) {
           this.sendingMail = true;
-          
+
           let content = "Smartlab - Relate um problema" +
                         "\nObservatório: " + this.computedTitle +
                         "\nDimensão: " + this.computedSubtitle +
@@ -1332,8 +1332,8 @@
                         "\nCard: " + this.bugCard +
                         "\nDescrição do problema: " + this.$refs.bugText.value +
                         "\nE-mail contato: " + this.$refs.bugEmail.value;
-          
-          
+
+
           let snackAlert = this.snackAlert;
           let finishMailSend = () => { this.sendingMail = false; };
           let closeBugDialog = () => { this.bugDialog = false; };
@@ -1384,23 +1384,23 @@
         //   if (fa_regular[icon]){
         //     return fontawesome.icon(fa_regular[icon],{classes: [icon_size], title: icon_title}).html[0];
         //   }
-        } 
+        }
         console.log("Icon not found: " + icon);
         return null;
-        
+
       },
 
       updateUser(user){
         this.$store.commit('setUser', user)
       }
-      
+
     }
   }
 </script>
 
 <style>
   @import "../node_modules/@fortawesome/fontawesome/styles.css";
-  
+
   .v-toolbar {
     z-index: 101 !important;
   }
@@ -1479,15 +1479,15 @@
     margin: 0 !important;
     width: 100%;
     min-height: 100% !important;
-    background-position: center center; 
-    background-size: cover;    
+    background-position: center center;
+    background-size: cover;
 
     -webkit-animation: bg-zoom 40s ease-out 0s infinite;
     -moz-animation: bg-zoom 40s ease-out 0s infinite;
     -o-animation: bg-zoom 40s ease-out 0s infinite;
     animation: bg-zoom 40s ease-out 0s infinite;
   }
-  
+
   .fade-enter-active, .fade-leave-active {
     transition: opacity 2s;
   }
@@ -1534,8 +1534,8 @@
     z-index: 4 !important;
   }
   .map_geo {
-    height: 400px; 
-    width: 100%; 
+    height: 400px;
+    width: 100%;
     position: relative;
     /* border: 1px solid #BDBDBD; */
   }
@@ -1562,7 +1562,7 @@
       stroke-dashoffset: 100%
     }
     to{
-      stroke-dashoffset: 0%    
+      stroke-dashoffset: 0%
     }
   }
 
@@ -1570,7 +1570,7 @@
   /* @import url('https://fonts.googleapis.com/css?family=Lato:300');   */
   /* @import url('https://fonts.googleapis.com/css?family=Roboto+Condensed'); */
   /* @import url('https://fonts.googleapis.com/css?family=Ubuntu|Ubuntu+Condensed');   */
-  
+
   @font-face {
     font-family: titulos-observatorio;
     src: local('titulos-observatorio'),
@@ -1608,7 +1608,7 @@
          url('/static/fonts/Ubuntu-Condensed.woff') format('woff'),
          url('/static/fonts/Ubuntu-Condensed.eot') format('eot');
   }
-  
+
 
   .display-4-obs, .display-3-obs, .display-2-obs, .display-1-obs, .headline-obs, .title-obs, .caption-obs {
     font-family: titulos-observatorio, Calibri, sans-serif !important;
@@ -1631,7 +1631,7 @@
   .link-obs {
     font-size: 1.429rem;
   }
-  
+
   .micro-caption {
     font-size: 0.625rem;
     line-height: 0.6875rem;
@@ -1785,19 +1785,343 @@
 
   .v-tabs__icon--next{
     background-color:  var(--v-accent-base) !important;
-    border-color:  var(--v-accent-base) !important;    
+    border-color:  var(--v-accent-base) !important;
   }
 
   .v-tabs__icon--prev{
     background-color:  var(--v-accent-base) !important;
-    border-color:  var(--v-accent-base) !important;    
+    border-color:  var(--v-accent-base) !important;
   }
   /*
   .v-btn--floating.v-btn--small {
       height: 25px;
       width: 25px;
-  }  
+  }
   -->
   */
+
+
+  @media only print {
+    *,
+    *::before,
+    *::after {
+      background: #fff !important;
+      color: #000 !important;
+      box-shadow: none !important;
+      text-shadow: none !important;
+      filter: none !important;
+      -ms-filter: none !important;
+      -webkit-print-color-adjust: exact !important;
+      color-adjust: exact !important;
+    }
+
+    a,
+    a:visited {
+      text-decoration: underline;
+    }
+
+    a[href]::after {
+      content: " (" attr(href) ")";
+      font-size: 90%;
+      word-wrap: break-word;
+    }
+
+    abbr[title]::after {
+      content: " (" attr(title) ")";
+      font-size: 90%;
+      word-wrap: break-word;
+    }
+
+    /* Don't show links that are fragment identifiers  or use the `javascript:` pseudo protocol */
+    a[href^="#"]::after,
+    a[href^="javascript:"]::after {
+      content: "";
+    }
+
+    pre {
+      white-space: pre-wrap !important;
+    }
+
+    pre,
+    blockquote {
+      border: 1px solid #999;
+      page-break-inside: avoid;
+    }
+
+    thead {
+      display: table-header-group;
+    }
+
+    tr,
+    img {
+      page-break-inside: avoid;
+    }
+
+    p,
+    h2,
+    h3 {
+      orphans: 3;
+      widows: 3;
+    }
+
+    h2,
+    h3 {
+      page-break-after: avoid;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      line-height: 1.4em;
+    }
+
+    @page {
+      margin: 2cm 0.5cm;
+    	/* size: A4 portrait; */
+    }
+/*
+    @page {
+      @bottom-left {
+        margin: 10pt 0 30pt 0;
+        border-top: .25pt solid #666;
+        font-size: 9pt;
+        color: #333;
+        content: "Atlas SmartLab";
+      }
+    }
+    @page {
+      @bottom-right {
+        margin: 10pt 0 30pt 0;
+        border-top: .25pt solid #666;
+        font-size: 9pt;
+        color: #333;
+        content: counter(page);
+      }
+    }
+*/
+
+    img.print, svg.print {
+      display: block;
+      max-width: 100%;
+    }
+
+    .print-page-break {
+       page-break-after: always;
+    }
+
+    .v-content, .container {
+      padding: 0 !important;
+    }
+
+    nav.v-toolbar, .footer-nav, aside.v-navigation-drawer, .dim-menu, .left_nav, .v-menu__content, .v-tooltip__content {
+      display: none !important;
+    }
+
+    /* .container.first-section {
+      max-height: 8cm;
+      min-height: 8cm;
+    } */
+
+    .v-card, .v-card__text  {
+      box-shadow: none;
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+
+    .white--text {
+      color: #000 !important;
+    }
+
+    div.display-2-obs br {
+        content: "";
+    }
+    div.display-2-obs br:after {
+        content: " ";
+    }
+
+    .display-3-obs, .display-2-obs {
+      font-weight: 500 !important;
+    }
+
+    .flex.po1 {
+      flex-basis: 8.333333333333332%;
+      flex-grow: 0;
+      max-width: 8.333333333333332%;
+    }
+    .flex.po2 {
+      flex-basis: 16.666666666666664%;
+      flex-grow: 0;
+      max-width: 16.666666666666664%;
+    }
+    .flex.po3 {
+      flex-basis: 25%;
+      flex-grow: 0;
+      max-width: 25%;
+    }
+    .flex.po4 {
+      flex-basis: 33.33333333333333%;
+      flex-grow: 0;
+      max-width: 33.33333333333333%;
+    }
+    .flex.po5 {
+      flex-basis: 41.66666666666667%;
+      flex-grow: 0;
+      max-width: 41.66666666666667%;
+    }
+    .flex.po6 {
+      flex-basis: 50%;
+      flex-grow: 0;
+      max-width: 50%;
+    }
+    .flex.po7 {
+      flex-basis: 58.333333333333336%;
+      flex-grow: 0;
+      max-width: 58.333333333333336%;
+    }
+    .flex.po8 {
+      flex-basis: 66.66666666666666%;
+      flex-grow: 0;
+      max-width: 66.66666666666666%;
+    }
+    .flex.po9 {
+      flex-basis: 75%;
+      flex-grow: 0;
+      max-width: 75%;
+    }
+    .flex.po10 {
+      flex-basis: 83.33333333333334%;
+      flex-grow: 0;
+      max-width: 83.33333333333334%;
+    }
+    .flex.po11 {
+      flex-basis: 91.66666666666666%;
+      flex-grow: 0;
+      max-width: 91.66666666666666%;
+    }
+    .flex.po12 {
+      flex-basis: 100%;
+      flex-grow: 0;
+      max-width: 100%;
+    }
+
+    .flex.order-po1 { order: 1; }
+    .flex.order-po2 { order: 2; }
+    .flex.order-po3 { order: 3; }
+    .flex.order-po4 { order: 4; }
+    .flex.order-po5 { order: 5; }
+    .flex.order-po6 { order: 6; }
+    .flex.order-po7 { order: 7; }
+    .flex.order-po8 { order: 8; }
+    .flex.order-po9 { order: 9; }
+    .flex.order-po10 { order: 10; }
+    .flex.order-po11 { order: 11; }
+    .flex.order-po12 { order: 12; }
+
+    .flex.offset-po0 {  margin-left: 0%; }
+    .flex.offset-po1 { margin-left: 8.333333333333332%; }
+    .flex.offset-po2 { margin-left: 16.666666666666664%; }
+    .flex.offset-po3 { margin-left: 25%; }
+    .flex.offset-po4 { margin-left: 33.33333333333333%; }
+    .flex.offset-po5 { margin-left: 41.66666666666667%; }
+    .flex.offset-po6 { margin-left: 50%; }
+    .flex.offset-po7 { margin-left: 58.333333333333336%; }
+    .flex.offset-po8 { margin-left: 66.66666666666666%; }
+    .flex.offset-po9 { margin-left: 75%; }
+    .flex.offset-po10 { margin-left: 83.33333333333334%; }
+    .flex.offset-po11 { margin-left: 91.66666666666666%; }
+    .flex.offset-po12 { margin-left: 100%; }
+
+    .ma-0-po { margin: 0 !important; }
+    .ma-1-po { margin: 4px !important; }
+    .ma-2-po { margin: 8px !important; }
+    .ma-3-po { margin: 16px !important; }
+    .ma-4-po { margin: 24px !important; }
+    .ma-5-po { margin: 48px !important; }
+    .mt-0-po { margin-top: 0 !important; }
+    .mt-1-po { margin-top: 4px !important; }
+    .mt-2-po { margin-top: 8px !important; }
+    .mt-3-po { margin-top: 16px !important; }
+    .mt-4-po { margin-top: 24px !important; }
+    .mt-5-po { margin-top: 48px !important; }
+    .mb-0-po { margin-bottom: 0 !important; }
+    .mb-1-po { margin-bottom: 4px !important; }
+    .mb-2-po { margin-bottom: 8px !important; }
+    .mb-3-po { margin-bottom: 16px !important; }
+    .mb-4-po { margin-bottom: 24px !important; }
+    .mb-5-po { margin-bottom: 48px !important; }
+    .ml-0-po { margin-left: 0 !important; }
+    .ml-1-po { margin-left: 4px !important; }
+    .ml-2-po { margin-left: 8px !important; }
+    .ml-3-po { margin-left: 16px !important; }
+    .ml-4-po { margin-left: 24px !important; }
+    .ml-5-po { margin-left: 48px !important; }
+    .mr-0-po { margin-right: 0 !important; }
+    .mr-1-po { margin-right: 4px !important; }
+    .mr-2-po { margin-right: 8px !important; }
+    .mr-3-po { margin-right: 16px !important; }
+    .mr-4-po { margin-right: 24px !important; }
+    .mr-5-po { margin-right: 48px !important; }
+    .mx-0-po { margin-left: 0 !important;   margin-right: 0 !important; }
+    .mx-1-po { margin-left: 4px !important;   margin-right: 4px !important; }
+    .mx-2-po { margin-left: 8px !important;   margin-right: 8px !important; }
+    .mx-3-po { margin-left: 16px !important;  margin-right: 16px !important; }
+    .mx-4-po { margin-left: 24px !important;  margin-right: 24px !important; }
+    .mx-5-po { margin-left: 48px !important;  margin-right: 48px !important; }
+    .my-0-po { margin-top: 0 !important;   margin-bottom: 0 !important; }
+    .my-1-po { margin-top: 4px !important;   margin-bottom: 4px !important; }
+    .my-2-po { margin-top: 8px !important;   margin-bottom: 8px !important; }
+    .my-3-po { margin-top: 16px !important;  margin-bottom: 16px !important; }
+    .my-4-po { margin-top: 24px !important;  margin-bottom: 24px !important; }
+    .my-5-po { margin-top: 48px !important;  margin-bottom: 48px !important; }
+
+    .pa-0-po { padding: 0 !important; }
+    .pa-1-po { padding: 4px !important; }
+    .pa-2-po { padding: 8px !important; }
+    .pa-3-po { padding: 16px !important; }
+    .pa-4-po { padding: 24px !important; }
+    .pa-5-po { padding: 48px !important; }
+    .pt-0-po { padding-top: 0 !important; }
+    .pt-1-po { padding-top: 4px !important; }
+    .pt-2-po { padding-top: 8px !important; }
+    .pt-3-po { padding-top: 16px !important; }
+    .pt-4-po { padding-top: 24px !important; }
+    .pt-5-po { padding-top: 48px !important; }
+    .pb-0-po { padding-bottom: 0 !important; }
+    .pb-1-po { padding-bottom: 4px !important; }
+    .pb-2-po { padding-bottom: 8px !important; }
+    .pb-3-po { padding-bottom: 16px !important; }
+    .pb-4-po { padding-bottom: 24px !important; }
+    .pb-5-po { padding-bottom: 48px !important; }
+    .pl-0-po { padding-left: 0 !important; }
+    .pl-1-po { padding-left: 4px !important; }
+    .pl-2-po { padding-left: 8px !important; }
+    .pl-3-po { padding-left: 16px !important; }
+    .pl-4-po { padding-left: 24px !important; }
+    .pl-5-po { padding-left: 48px !important; }
+    .pr-0-po { padding-right: 0 !important; }
+    .pr-1-po { padding-right: 4px !important; }
+    .pr-2-po { padding-right: 8px !important; }
+    .pr-3-po { padding-right: 16px !important; }
+    .pr-4-po { padding-right: 24px !important; }
+    .pr-5-po { padding-right: 48px !important; }
+    .px-0-po { padding-left: 0 !important;   padding-right: 0 !important; }
+    .px-1-po { padding-left: 4px !important;   padding-right: 4px !important; }
+    .px-2-po { padding-left: 8px !important;   padding-right: 8px !important; }
+    .px-3-po { padding-left: 16px !important;  padding-right: 16px !important; }
+    .px-4-po { padding-left: 24px !important;  padding-right: 24px !important; }
+    .px-5-po { padding-left: 48px !important;  padding-right: 48px !important; }
+    .py-0-po { padding-top: 0 !important;   padding-bottom: 0 !important; }
+    .py-1-po { padding-top: 4px !important;   padding-bottom: 4px !important; }
+    .py-2-po { padding-top: 8px !important;   padding-bottom: 8px !important; }
+    .py-3-po { padding-top: 16px !important;  padding-bottom: 16px !important; }
+    .py-4-po { padding-top: 24px !important;  padding-bottom: 24px !important; }
+    .py-5-po { padding-top: 48px !important;  padding-bottom: 48px !important; }
+
+    .text-po-left { text-align: left !important; }
+    .text-po-center { text-align: center !important; }
+    .text-po-right { text-align: right !important; }
+    .text-po-justify { text-align: justify !important; }
+
+  }
 
 </style>

@@ -11,13 +11,13 @@
           <v-bottom-nav :value="true" :active.sync="dimensao_ativa.id"
             class="pa-3 toolbar" shift style="height:auto; opacity:0.75;">
             <v-layout row wrap justify-center>
-              <v-flex text-xs-center column 
+              <v-flex text-xs-center column
                 v-on:click="changeDim(dimensao.id, idLocalidade, idObservatorio)"
                 :class="getGridPositionDimensao(dimensao, dimIndx)"
                 v-for="(dimensao, dimIndx) in dimensoes" :key="dimensao.id">
                 <v-tooltip bottom>
                   <v-layout pa-2 column slot="activator">
-                    <v-icon dark 
+                    <v-icon dark
                       :color="dimensao.id == dimensao_ativa.id ? 'accent' : ''">
                       {{ dimensao.icon }}
                     </v-icon>
@@ -40,9 +40,9 @@
             dark>
             <v-tabs-slider></v-tabs-slider>
             <!-- Headers -->
-            <v-tab 
-              v-for="dimensao in dimensoes" 
-              :key="dimensao.id" 
+            <v-tab
+              v-for="dimensao in dimensoes"
+              :key="dimensao.id"
               :href="'#'+dimensao.id"
               v-on:click="changeDim(dimensao.id, idLocalidade, idObservatorio)"
               ripple
@@ -50,16 +50,16 @@
                {{ dimensao.short_desc }}
             </v-tab>
           </v-tabs>
-        </v-flex>        
-        <v-flex column pt-1 px-5 xs12 >
+        </v-flex>
+        <v-flex column pt-1 px-5 xs12>
           <v-flex v-if="ind_principais && ind_principais.length == 0 && localidade != null" class="text-xs-center pa-0">
-            <v-progress-circular indeterminate color="primary"></v-progress-circular>        
+            <v-progress-circular indeterminate color="primary"></v-progress-circular>
           </v-flex>
           <v-flex pt-5></v-flex>
-          <v-flex id="screenTitle" class="white--text text-xs-center pa-5 line-height-1">
+          <v-flex id="screenTitle" class="white--text text-xs-center pa-5 line-height-1 px-2-po py-0-po text-po-left">
             <div class="display-3-obs">
                 {{ localidade != null ? localidade.nm_localidade : '' }}
-                <v-tooltip v-if="presentation" bottom class="icon-vertical-align-middle">
+                <v-tooltip v-if="presentation" bottom class="icon-vertical-align-middle hidden-print-only">
                   <v-icon color="accent"
                     class="pb-1"
                     slot="activator">
@@ -83,7 +83,7 @@
             </div>
             <v-layout pa-1 justify-center class="subheading master-indicator" v-if="masterIndicator" v-html="masterIndicator">
             </v-layout>
-            <v-layout justify-center v-if='idLocalidade != 0'>
+            <v-layout justify-center v-if='idLocalidade != 0' class="hidden-print-only">
               <v-btn small class="accent--text" color="transparent"
                 @click.native="openCompareDialog()">
                 <v-icon left>add</v-icon>
@@ -97,9 +97,9 @@
             {{ currentContext }}
           </div> -->
           <v-layout row wrap justify-center pt-4>
-            <v-flex white--text subheading xs12 md4 lg3 :class="{'px-3': $vuetify.breakpoint.mdAndDown, 'px-4': $vuetify.breakpoint.lgAndUp}" v-html="dimensao_ativa.description">
+            <v-flex white--text subheading xs12 md4 lg3 class="po12 text-po-justify" :class="{'px-3': $vuetify.breakpoint.mdAndDown, 'px-4': $vuetify.breakpoint.lgAndUp}" v-html="dimensao_ativa.description">
             </v-flex>
-            <v-flex text-xs-center xs12 md3 :class="{'px-3': $vuetify.breakpoint.mdAndDown, 'px-4': $vuetify.breakpoint.lgAndUp}" >
+            <v-flex text-xs-center xs12 md3 class="hidden-print-only" :class="{'px-3': $vuetify.breakpoint.mdAndDown, 'px-4': $vuetify.breakpoint.lgAndUp}" >
               <v-layout v-if="ind_principais && ind_principais.length > 0 && unlockLoading" row wrap justify-center>
                 <flpo-minicard
                   v-for="(miniCardPrincipal, indexMinicardsPrincipal) in ind_principais"
@@ -110,8 +110,8 @@
                 </flpo-minicard>
               </v-layout>
             </v-flex>
-            <v-flex xs12 md4 lg3 :class="{'px-3': $vuetify.breakpoint.mdAndDown, 'px-4': $vuetify.breakpoint.lgAndUp}">
-              <v-flex pt-0 column wrap v-if="sections && sections.length > 0" > 
+            <v-flex xs12 md4 lg3 class="hidden-print-only" :class="{'px-3': $vuetify.breakpoint.mdAndDown, 'px-4': $vuetify.breakpoint.lgAndUp}">
+              <v-flex pt-0 column wrap v-if="sections && sections.length > 0" >
                 <v-flex v-for="(cardLink, cardLinkIndx) in cardLinks"
                   :key="cardLink.id ? cardLink.id : ('sec' + cardLinkIndx)" py-0>
                   <!--<v-icon color="accent">arrow_right</v-icon>-->
@@ -131,19 +131,19 @@
     <!-- Indicadores principais: Empregadores, Vínculos Formais, Municípios, Estabelecimentos, % MEI e EPPs -->
     <v-container fluid  xs12  class="pa-0 ma-0">
       <v-layout v-if="sections && sections.length > 0" class="bg-page grey lighten-2" column pa-0 ma-0>
-        <v-layout v-for="(secao, indexSecao) in sections"  
+        <v-layout v-for="(secao, indexSecao) in sections"
           :key="secao.id"
           row wrap>
           <v-layout column :id="secao.id" :style="'background-color:' + $colorsService.constructor.assessZebraBG(indexSecao, $vuetify.theme) + ';'">
             <v-flex xs12>
               <div
-                :class="'display-2-obs pt-5 pb-3  ml-5 pl-3 font-weight-bold ' + $colorsService.constructor.assessZebraTitle(indexSecao, $vuetify.theme)">
+                :class="'display-2-obs pt-5 pb-3  ml-5 pl-3 font-weight-bold hidden-print-only' + $colorsService.constructor.assessZebraTitle(indexSecao, $vuetify.theme)">
                 {{ secao.name }}
               </div>
             </v-flex>
             <!-- <v-container fluid grid-list-md py-0>
               <v-layout row wrap align-end justify-center>
-                <flpo-leadcard v-if="secao.indicadores.length > 0" 
+                <flpo-leadcard v-if="secao.indicadores.length > 0"
                   v-for="(secindicador, indx) in secao.indicadores"
                   :key="indx"
                   :structure="secindicador"
@@ -154,7 +154,7 @@
             </v-container> -->
             <v-container fluid grid-list-lg py-2 px-1>
               <v-layout column v-if="unlockLoading && secao.cards && secao.cards.length > 0 && customParams.localidade">
-                <v-flex xs12 
+                <v-flex xs12
                   v-for="(card, cardIndex) in secao.cards"
                   :key="card.id">
                   <v-layout :id="'anchor_' + card.id" ma-0 pa-0
@@ -170,7 +170,7 @@
                     </v-layout>
                     <v-layout v-else-if="card.type && card.type == 'headline'"
                       pt-5 pb-3 ml-5 pl-2
-                      :class="'display-2-obs font-weight-bold ' + $colorsService.constructor.assessZebraTitle(indexSecao, $vuetify.theme)"
+                      :class="'display-2-obs font-weight-bold hidden-print-only' + $colorsService.constructor.assessZebraTitle(indexSecao, $vuetify.theme)"
                       v-html="card.title.fixed">
                     </v-layout>
                     <flpo-story-card-autofill
@@ -257,7 +257,7 @@
                       <!--<v-list-tile-sub-title v-html="data.item.detail"></v-list-tile-sub-title>-->
                     </v-list-tile-content>
                   </template>
-                </template>  
+                </template>
               </v-autocomplete>
             </v-flex>
             <v-flex xs12 text-xs-right>
@@ -382,25 +382,25 @@
                       return d[campo];
               }
           },
-          get_period_from_string: function(str){ 
+          get_period_from_string: function(str){
             let reg = /de \d{4} a \d{4}/g;
             return str.match(reg);
             },
-          get_text_from_parentheses_ds: function(d, str){ 
+          get_text_from_parentheses_ds: function(d, str){
             let reg = /\(.*\)/;
             var returnStr = String(str).match(reg);
             returnStr = String(returnStr).replace('(', '').replace(')', '');
             return returnStr;
             },
-          get_proportional_indicator_uf: function(d,campo='vl_indicador', media="media_uf", except_ind=null) { 
+          get_proportional_indicator_uf: function(d,campo='vl_indicador', media="media_uf", except_ind=null) {
             if (except_ind && d.cd_indicador == except_ind) {
               return d[campo];
             }
-            return Math.log(((d[campo] - d[media]) / d[media]) + 1.01); 
+            return Math.log(((d[campo] - d[media]) / d[media]) + 1.01);
           },
           get_log: function(d,campo='vl_indicador') { return Math.log(d[campo] + 0.01); },
-          get_number: function(d,val) { 
-            return parseFloat(val); 
+          get_number: function(d,val) {
+            return parseFloat(val);
           },
           get_week_status: function(d, reg_week){
             Date.prototype.getWeekNumber = function(){
@@ -434,7 +434,7 @@
           concat_ds_vl: function(d, formato, casasDecimais) {
             let valor = null;
             if(d.vl_indicador === null || d.vl_indicador == undefined){
-              valor = "-"; 
+              valor = "-";
             } else {
               valor = parseFloat(d.vl_indicador);
               if(casasDecimais === null || casasDecimais === undefined) {
@@ -469,10 +469,10 @@
           },
           get_uti_level: (d, value) => {
             if (value == null) return "Não informado";
-            if (value < 1) return "Abaixo do recomendado"; 
-            if (value <= 3) return "Dentro do recomendado"; 
-            if (value > 3) return "Acima do recomendado"; 
-          },          
+            if (value < 1) return "Abaixo do recomendado";
+            if (value <= 3) return "Dentro do recomendado";
+            if (value > 3) return "Acima do recomendado";
+          },
           remove_year: function(d){ return String(d.ds_indicador_radical).replace(d.nu_competencia,"").replace("  "," ")},
           absolute: function(d, campo="vl_indicador") { return Math.abs(d[campo]); },
           to_upper_ds: function(d,value_field){
@@ -497,7 +497,7 @@
             return d[field].replace(text,text_replace);
           },
           replace_text_namepercent: function(data, options) {
-            return data[options.name_field] + " (" + data[options.pct_field] + ")"; 
+            return data[options.name_field] + " (" + data[options.pct_field] + ")";
           },
           replace_value_by_zero(show_value, value){
             if (show_value){
@@ -509,7 +509,7 @@
           fn_in_interpol_functions: function(a, b) { return "args " + a + " " + b; },
           calc_proportion_by_month: function(dividendo, divisor) { return dividendo / divisor / 12; },
           calc_average_by_year: function(total1, ano1, total2, ano2) { return (total2-total1) / ((parseInt(ano2)- parseInt(ano1)) + 1); },
-          calc_class_idh: function(idh, showIdh = false, showParentheses = false, letterCaption = true) { 
+          calc_class_idh: function(idh, showIdh = false, showParentheses = false, letterCaption = true) {
             var returText = "";
             // showIdh = (String(showIdh) == 'true');
             // showParentheses = (String(showParentheses) == 'true');
@@ -534,19 +534,19 @@
         }
       }
     },
-   
+
     created () {
       let tmpIdObs = this.$observatories.constructor.identifyObservatory(this.$route.path.split('/')[1]);
       this.$dimensions.getDimensions(tmpIdObs)
         .then((result) => this.setSiblingDimensions(result));
       this.idObservatorio = tmpIdObs;
-      
+
       this.$yamlFetcherService.loadYaml("br/observatorio/" + tmpIdObs)
-        .then((result) => { 
+        .then((result) => {
           let scope = this.getEscopo(this.$route.params.idLocalidade);
           let auId = this.getIdLocalidadeFromRoute(this.$route.params.idLocalidade);
           let msgErro = this.getMensagemErro(this.$route.params.idLocalidade);
-        
+
           let compareScope, compareAuId;
           if (this.$route.query.compare) {
             compareScope = this.getEscopo(this.$route.query.compare);
@@ -559,12 +559,12 @@
               thematicDatasets.push(result.tematicos[indxTematico].dataset);
             }
           }
-          
+
           let indicadoresTematicos = this.$indicatorsModel.getMultipleGlobalDatasets(thematicDatasets, scope, auId);
           let datasetPromises = [];
 
           if (indicadoresTematicos instanceof Promise || indicadoresTematicos.then) datasetPromises.push(indicadoresTematicos);
-          
+
           if (this.$route.query.compare) {
             let indicadoresTematicosCompare = this.$indicatorsModel.getMultipleGlobalDatasets(thematicDatasets, compareScope, compareAuId, "_compare");
             if (indicadoresTematicosCompare instanceof Promise || indicadoresTematicosCompare.then) datasetPromises.push(indicadoresTematicosCompare);
@@ -610,7 +610,7 @@
         return this.idLocalidade.toString().substring(0,2); //sem dígito
       },
       // currentContext: function() {
-      //   return this.localidade !== null && this.localidade !== undefined && this.localidade.tipo !== null && this.localidade.tipo !== undefined ? 
+      //   return this.localidade !== null && this.localidade !== undefined && this.localidade.tipo !== null && this.localidade.tipo !== undefined ?
       //     (this.localidade.tipo == 'Município' ? 'Indicadores Municipais' : 'PNAD Contínua') :
       //     '';
       // },
@@ -649,13 +649,13 @@
           }
         }
       },
-      
+
     },
     mounted: function() {
       if (!this.$analysisUnitModel.isCurrent(this.$route.params.idLocalidade)) {
         this.$analysisUnitModel.setCurrentAnalysisUnit(this.$route.params.idLocalidade);
       }
-      
+
       this.checkCurrentAnalysisUnit();
       window.addEventListener('scroll', this.setVisibleCardMaxIndex);
       window.addEventListener('resize', this.resizeFirstSection);
@@ -687,19 +687,19 @@
               let sectionCardIndex = indexSection * 100 + parseInt(cardIndex);
               if (document.getElementById('anchor_' + section.cards[cardIndex].id) != null) {
                 var { top, bottom } = document.getElementById('anchor_' + section.cards[cardIndex].id).getBoundingClientRect();
-                if ((top > 0 || bottom > 0) && (top < vHeight) && (sectionCardIndex > this.visibleCardMaxIndex)) {  
+                if ((top > 0 || bottom > 0) && (top < vHeight) && (sectionCardIndex > this.visibleCardMaxIndex)) {
                   this.visibleCardMaxIndex = sectionCardIndex + 1;
-                } 
-              } 
+                }
+              }
             }
           }
           indexSection++;
         }
       },
-      
+
       keepLoading() {
         let tmpIdObs = this.$observatories.constructor.identifyObservatory(this.$route.path.split('/')[1]);
-        
+
         this.setActiveDim(this.$route.params.idLocalidade, tmpIdObs, this.$route.query.dimensao);
 
         // this.$yamlFetcherService.loadYaml("br/autocard").then((result) => { this.customParams.deck = result; });
@@ -810,7 +810,7 @@
           { main: "br/" + observatorioDir + "localidade/" + escopo + "/base", alt: "br/" + observatorioDir + "localidade/default/base" },
           { main: "br/" + observatorioDir + "localidade/" + escopo + "/" + idDimensao, alt: "br/" + observatorioDir + "localidade/default/" + idDimensao }
         ];
-        
+
         this.loadYamlArray({}, baseStructYamls, this.setDimension);
       },
 
@@ -833,7 +833,7 @@
 
         if (this.$route.query.compare) {
           let indicadoresTematicosCompare = this.$indicatorsModel.getMultipleGlobalDatasets(thematicDatasets, escopo, this.idLocalidade_compare, "_compare");
-          if (indicadoresTematicosCompare instanceof Promise || indicadoresTematicosCompare.then) datasetPromises.push(indicadoresTematicosCompare); 
+          if (indicadoresTematicosCompare instanceof Promise || indicadoresTematicosCompare.then) datasetPromises.push(indicadoresTematicosCompare);
         }
 
         if (datasetPromises.length == 0) {
@@ -851,7 +851,7 @@
         this.ind_principais_per_row = (this.dimStruct.principais_options && this.dimStruct.principais_options.per_row) ? this.dimStruct.principais_options.per_row : 3;
         this.ind_principais = this.dimStruct.principais;
         this.presentation = this.dimStruct.presentation;
-            
+
         this.totalLinksSections = 0;
         for (let section of this.sections) {
           if (section.name != '') {
@@ -871,7 +871,7 @@
           this.sections_compare = this.changeToCompareStructure(this.sections);
           this.ind_principais_compare = this.changeToCompareStructure(this.ind_principais);
           this.presentation_compare = JSON.parse(JSON.stringify(this.dimStruct.presentation).replace(/centralindicadores/g,"centralindicadores_compare").replace(/idLocalidade/g,"idLocalidade_compare"));
-            
+
           let dimStructMasterCompare = JSON.parse(JSON.stringify(this.dimStruct.master).replace(/centralindicadores/g,"centralindicadores_compare").replace(/idLocalidade/g,"idLocalidade_compare"));
           this.fillDataStructure(
             dimStructMasterCompare, this.customParams,
@@ -957,7 +957,7 @@
               localidade.nm_localidade = localidade.nm_uf;
               localidade.tipo = 'UF';
               localidade.img = "/static/thumbs/municipios/" + idLocalidade + ".jpg";
-              
+
               this[nm_var] = localidade;
               this.customParams[nm_var] = localidade;
             }, error => {
@@ -973,7 +973,7 @@
               localidade.nm_localidade = localidade.nm_mesorregiao;
               localidade.tipo = 'Mesorregião';
               localidade.img = "/static/thumbs/municipios/" + idLocalidade + ".jpg";
-              
+
               this[nm_var] = localidade;
               this.customParams[nm_var] = localidade;
             }, error => {
@@ -989,7 +989,7 @@
               localidade.nm_localidade = localidade.nm_microrregiao;
               localidade.tipo = 'Microrregião';
               localidade.img = "/static/thumbs/municipios/" + idLocalidade + ".jpg";
-              
+
               this[nm_var] = localidade;
               this.customParams[nm_var] = localidade;
             }, error => {
@@ -1005,7 +1005,7 @@
               localidade.nm_localidade = localidade.nm_municipio_uf;
               localidade.tipo = 'Município';
               localidade.img = "/static/thumbs/municipios/" + idLocalidade + ".jpg";
-              
+
               this[nm_var] = localidade;
               this.customParams[nm_var] = localidade;
             }, error => {
@@ -1023,8 +1023,8 @@
           let finalText = this.$textTransformService.replaceArgs(
             structure.template,
             this.$indicatorsModel.indicatorsToValueArray(
-              rules, 
-              this.customFunctions, 
+              rules,
+              this.customFunctions,
               base_object_list,
               this.sendInvalidInterpol
             ),
@@ -1043,14 +1043,14 @@
             this.dimensao_ativa_id = this.dimensao_ativa.id;
             idDimensao = this.dimensoes[indxDim].id;
             break;
-          } else if (this.dimensoes[indxDim].id == idDimensao) { 
+          } else if (this.dimensoes[indxDim].id == idDimensao) {
             // Se estiver em dimensão pela rota, tentar o match
             this.dimensao_ativa = this.dimensoes[indxDim];
             this.dimensao_ativa_id = this.dimensao_ativa.id;
             break;
           }
         }
-        
+
         this.loadLayout(idLocalidade, idDimensao, idObservatorio);
       },
 
@@ -1117,8 +1117,8 @@
             // title: this.$textTransformService.replaceArgs(
             //   structure.template,
             //   this.$indicatorsModel.indicatorsToValueArray(
-            //     structure.args, 
-            //     this.customFunctions, 
+            //     structure.args,
+            //     this.customFunctions,
             //     base_object_list,
             //     this.sendInvalidInterpol
             //   ),
@@ -1163,7 +1163,7 @@
                 this.sendError("Falha ao buscar lista das localidades");
               });
           } else {
-            this.auOptions = auOptions;  
+            this.auOptions = auOptions;
             this.compareDialog = true;
           }
         } else {
@@ -1207,9 +1207,9 @@
   .dim-menu .flex:hover .hidden {
     display: block;
   }
-  
+
   .dim-menu .flex { cursor: pointer; }
-  
+
   .bg-black {
     background-color: black;
   }
@@ -1234,9 +1234,9 @@
   }
 
   .loadingPanel {
-    width: 100%; 
-    background-color: rgba(33, 33, 33, 0.9); 
-    position: absolute; 
+    width: 100%;
+    background-color: rgba(33, 33, 33, 0.9);
+    position: absolute;
     z-index:99;
   }
 

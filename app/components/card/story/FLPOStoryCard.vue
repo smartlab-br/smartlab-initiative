@@ -19,7 +19,7 @@
                           refresh
                         </v-icon>
                     </v-btn>
-                    Recarregar              
+                    Recarregar
                   </v-tooltip>
             </v-flex>
           </v-layout>
@@ -30,7 +30,7 @@
               <v-layout row fill-height wrap pl-3 pt-3 pb-0 pr-0 class="display-1-obs mb-0">
                 <v-flex xs10 class="card-title">
                   {{ cmpTitle ? cmpTitle : '' }}
-                  <v-tooltip v-if="structure && structure.info" bottom max-width="700px" close-delay="1000">
+                  <v-tooltip v-if="structure && structure.info" bottom max-width="700px" close-delay="1000" class="hidden-print-only" >
                     <v-icon color="accent"
                       class="pb-1"
                       slot="activator">
@@ -54,14 +54,14 @@
                 </v-btn> -->
                 <v-flex xs2 text-xs-right pr-4>
                 <v-btn small flat :color="$colorsService.constructor.assessZebraTitleColor(this.sectionIndex, this.$vuetify.theme)"
-                  @click.native="dialog = true" style="margin: 0px;">
+                  @click.native="dialog = true" style="margin: 0px;" class="hidden-print-only">
                   <span :class="chartPosition == 'bottom'?'hidden-md-and-down body': 'hidden-sm-and-down body'">Dados</span>
                   <v-icon right>view_list</v-icon> <!-- list -->
                 </v-btn>
                 </v-flex>
               </v-layout>
             </v-flex>
-            <v-flex pt-0>    
+            <v-flex pt-0>
               <v-layout row wrap :style="structure.type != 'headline' && structure.type != 'text' ? 'min-height:500px;' : ''">
                 <v-flex xs12 :class="chartPosition != 'bottom' ? 'md3 position-relative': 'position-relative'" column>
                   <v-flex column pt-0 slot="description">
@@ -88,13 +88,13 @@
 
                   <div v-if="sourceDesc && !sourceLink" class="caption pb-0 pt-3 px-2 pl-3 bottom-30 data-source">Fonte: {{ sourceDesc }}</div>
                   <div v-else-if="sourceDesc && sourceLink" class="caption pb-0 px-2 pt-3 pl-3 bottom-30 data-source">
-                    Fonte: 
+                    Fonte:
                     <a class="accent--text" v-on:click="openLinkFonte">{{ sourceDesc }}</a>
                   </div>
 
                   <div v-if="analysisDesc && !analysisLink" class="caption pt-0 px-2 pl-3 bottom-30 data-source">Tratamento e análise: {{ analysisDesc }}</div>
                   <div v-else-if="analysisDesc && analysisLink" class="caption px-2 pt-0 bottom-30 data-source">
-                    Tratamento e análise: 
+                    Tratamento e análise:
                     <a class="accent--text" v-on:click="openLinkAnalysis">{{ analysisDesc }}</a>
                   </div>
                 </v-flex>
@@ -143,7 +143,7 @@
                       :class="hdr.item_class != null ? hdr.item_class : ''">
                       {{ props.item[hdr.value] }}
                     </div>
-                  </td> 
+                  </td>
                 </template>
               </v-data-table>
             </div>
@@ -221,7 +221,7 @@
             this.customFilters[struct.id] = struct.items[0].value;
             break;
           }
-        } 
+        }
       }
       if (Object.keys(visibleLayers).length > 0){
         this.customFilters.enabled = visibleLayers;
@@ -267,7 +267,7 @@
     methods: {
       completeStructure() {
         this.setReferenceInStructure();
-        
+
         if (this.structure.chart_options.format_function !== null && this.structure.chart_options.format_function !== undefined) {
           this.structure.chart_options.format = this.customFunctions[this.structure.chart_options.format_function];
         }
@@ -277,7 +277,7 @@
         if (this.structure.chart_options.tooltip_function !== null && this.structure.chart_options.tooltip_function !== undefined && this.structure.chart_options.tooltip_function !== "default_tooltip") {
           if(this.customFunctions[this.structure.chart_options.tooltip_function]){
             this.structure.chart_options.tooltip_function = this.customFunctions[this.structure.chart_options.tooltip_function];
-          } 
+          }
         }
       },
       openLinkFonte() {
@@ -292,15 +292,15 @@
 
         if (payload.type && this.chartHandler && !this.chartHandler.topojson && (payload.type === 'switch-group' || payload.type === 'radio')) {
           this.chartHandler.adjustVisibleLayers(payload.enabled);
-        } 
-        
+        }
+
         if (payload.rules){
           if (payload.type && (payload.type === 'slider' || payload.type === 'check'|| payload.type === 'radio')) {
             if (payload.rules.filter){
               let apiUrl = this.$textTransformService.applyInterpol(this.structure.api, this.customParams, this.customFunctions);
               if (this.structure.apiBase){
                 apiUrl = this.$textTransformService.applyInterpol(this.structure.apiBase, this.customParams, this.customFunctions);// this.structure.apiBase;
-              } 
+              }
               let filters =  this.getFilters();
               if(!Array.isArray(apiUrl)){
                 endpoint = apiUrl + filters;
@@ -309,8 +309,8 @@
                 for (let item of apiUrl){
                   enpoint.push(item + filters);
                 }
-              } 
-                       
+              }
+
               this.structure.chart_options.filterText = this.customFilters.filterText;
             } else {
               endpoint = this.$textTransformService.applyInterpol(payload.rules.api, this.customParams, this.customFunctions, this.customFilters);
@@ -365,7 +365,7 @@
             for (let item of apiUrl){
               endpoint.push(item + filters);
             }
-          } 
+          }
           this.structure.chart_options.filterText = this.customFilters.filterText;
           this.fetchData(endpoint);
         } else if (payload.item){
@@ -395,7 +395,7 @@
                 this.customParams,
                 this.customFunctions,
                 this.setDataset,
-                { 
+                {
                   id: eachChart.id
                 }
               );
@@ -418,8 +418,8 @@
             this.sectionIndex
           ).then(
             (chartHandler) => { this.sendChartLoaded(chartHandler); },
-            (reject) => { 
-              console.log(reject); 
+            (reject) => {
+              console.log(reject);
               fnSendError("Falha ao carregar gráfico '"+ chartTitle +"'.");
             }
           );
@@ -434,8 +434,8 @@
             this.sectionIndex
           ).then(
             (chartHandler) => { this.sendChartLoaded(chartHandler); },
-            (reject) => { 
-              console.log(reject); 
+            (reject) => {
+              console.log(reject);
               fnSendError("Falha ao carregar gráfico do card '"+ chartTitle +"'.");
             }
           );
@@ -444,7 +444,7 @@
 
       sendChartLoaded(chartHandler) {
         this.chartHandler = chartHandler;
-        this.$emit('chart-loaded'); 
+        this.$emit('chart-loaded');
       },
 
       assessChartFooter(dataset, rules, structure, addedParams, metadata) {
@@ -479,7 +479,7 @@
           let datasetCsv = new Parser({delimiter: ';',withBOM: true}).parse(this.dataset);
           datasetCsv = datasetCsv.replace(/<span>/g,"").replace(/<\/span>/g,"")
           const csvBin = new Blob([datasetCsv]);
-          
+
           // Generates transient link
           let dynaLink = document.createElement("a");
           dynaLink.setAttribute("download", "dataset.csv");

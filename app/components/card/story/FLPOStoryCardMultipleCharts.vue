@@ -20,7 +20,7 @@
                           refresh
                         </v-icon>
                     </v-btn>
-                    Recarregar              
+                    Recarregar
                   </v-tooltip>
             </v-flex>
           </v-layout>
@@ -55,7 +55,7 @@
                 </v-btn> -->
                 <v-flex xs2 text-xs-right pr-4>
                 <v-btn small flat :color="$colorsService.constructor.assessZebraTitleColor(this.sectionIndex, $vuetify.theme)"
-                  @click.native="dialog = true" style="margin: 0px;">
+                  @click.native="dialog = true" style="margin: 0px;" class="hidden-print-only">
                   <span :class="chartPosition == 'bottom'?'hidden-md-and-down body': 'hidden-sm-and-down body'">Dados</span>
                   <v-icon right>view_list</v-icon> <!-- list -->
                 </v-btn>
@@ -97,7 +97,7 @@
                     </template>
                   </v-flex>
 
-                  <v-flex 
+                  <v-flex
                     v-if="cmpSources && cmpSources.length > 0"
                     class="caption pt-0 px-3 bottom-30 data-source">
                     Tratamento e análise:
@@ -170,7 +170,7 @@
                         <div :class="hdr.item_class != null ? hdr.item_class : ''">
                           {{ props.item[hdr.value] }}
                         </div>
-                      </td> 
+                      </td>
                     </template>
                   </v-data-table>
                 </div>
@@ -237,7 +237,7 @@
           var sources = [];
           loopCharts: for (var eachChart in this.structure.charts) {
             var src = {};
-            if (this.dataset[this.structure.charts[eachChart].id] && this.structure.charts[eachChart].source && 
+            if (this.dataset[this.structure.charts[eachChart].id] && this.structure.charts[eachChart].source &&
                 this.structure.charts[eachChart].source.desc_field && this.dataset[this.structure.charts[eachChart].id][0]) {
               src.desc = this.dataset[this.structure.charts[eachChart].id][0][this.structure.charts[eachChart].source.desc_field] != null ?
                 this.dataset[this.structure.charts[eachChart].id][0][this.structure.charts[eachChart].source.desc_field] :
@@ -246,7 +246,7 @@
               src.desc = this.metadata[this.structure.charts[eachChart].id].fonte;
             }
 
-            if (this.dataset[this.structure.charts[eachChart].id] && this.structure.charts[eachChart].link && 
+            if (this.dataset[this.structure.charts[eachChart].id] && this.structure.charts[eachChart].link &&
                 this.structure.charts[eachChart].source.link_field && this.dataset[this.structure.charts[eachChart].id][0]) {
               src.link = this.dataset[this.structure.charts[eachChart].id][0][this.structure.charts[eachChart].source.link_field] != null ?
                           this.dataset[this.structure.charts[eachChart].id][0][this.structure.charts[eachChart].source.link_field] :
@@ -264,10 +264,10 @@
             }
             sources.push(src);
           }
-          
+
           if (sources.length > 0) return sources;
           return [{ desc: "Sem Registros" }];
-        } 
+        }
       },
 
       cmpAnalysis: function() {
@@ -277,7 +277,7 @@
           var colAnalysis = [];
           loopCharts: for (var eachChart in this.structure.charts) {
             let nuAnalysis = {};
-            if (this.dataset[this.structure.charts[eachChart].id] && this.structure.charts[eachChart].analysis && 
+            if (this.dataset[this.structure.charts[eachChart].id] && this.structure.charts[eachChart].analysis &&
                 this.structure.charts[eachChart].analysis.desc_field && this.dataset[this.structure.charts[eachChart].id][0]) {
               nuAnalysis.desc = this.dataset[this.structure.charts[eachChart].id][0][this.structure.charts[eachChart].analysis.desc_field] != null ?
                 this.dataset[this.structure.charts[eachChart].id][0][this.structure.charts[eachChart].analysis.desc_field] :
@@ -285,8 +285,8 @@
             } else if (this.metadata && this.metadata[this.structure.charts[eachChart].id] && this.metadata[this.structure.charts[eachChart].id].analysis) {
               nuAnalysis.desc = this.metadata[this.structure.charts[eachChart].id].analysis;
             }
-            
-            if (this.dataset[this.structure.charts[eachChart].id] && this.structure.charts[eachChart].analysis && 
+
+            if (this.dataset[this.structure.charts[eachChart].id] && this.structure.charts[eachChart].analysis &&
                 this.structure.charts[eachChart].analysis.link_field && this.dataset[this.structure.charts[eachChart].id][0]) {
               nuAnalysis.link = this.dataset[this.structure.charts[eachChart].id][0][this.structure.charts[eachChart].analysis.link_field] != null ?
                           this.dataset[this.structure.charts[eachChart].id][0][this.structure.charts[eachChart].analysis.link_field] :
@@ -307,10 +307,10 @@
               colAnalysis.push(nuAnalysis);
             }
           }
-          
+
           if (colAnalysis.length > 0) return colAnalysis;
           return [{ desc: "SmartLab" }];
-        } 
+        }
       }
     },
     watch: {
@@ -350,7 +350,7 @@
                 this.customParams,
                 this.customFunctions,
                 this.setComplexFootnote,
-                { 
+                {
                   chartId: this.structure.charts[eachChart].id,
                   chartTitle: this.structure.charts[eachChart].title
                 }
@@ -395,7 +395,7 @@
       openLinkFonte(link) {
         window.open(link, '_blank');
       },
-      
+
       updateDataStructure(payload) {
         this.dataset = {};
         this.datasetsComplete = 0;
@@ -515,7 +515,7 @@
           let datasetCsv = new Parser({delimiter: ';',withBOM: true}).parse(this.dataset[indexDS]);
           datasetCsv = datasetCsv.replace(/<span>/g,"").replace(/<\/span>/g,"")
           const csvBin = new Blob([datasetCsv]);
-          
+
           // Generates transient link
           let dynaLink = document.createElement("a");
           dynaLink.setAttribute("download", indexDS + ".csv");
@@ -553,5 +553,5 @@
   .bg-card{
     background-color: transparent !important;
   }
-  
+
 </style>
