@@ -29,9 +29,9 @@
           <v-layout column>
             <v-flex pb-0>
               <v-layout row align-end fill-height wrap pl-3 pt-3 pb-0 pr-0 class="display-1-obs mb-0">
-                <v-flex xs10 class="card-title">
+                <v-flex xs10 class="card-title po12">
                   {{ cmpTitle ? cmpTitle : '' }}
-                  <v-tooltip v-if="structure && structure.info" bottom max-width="700px" close-delay="1000">
+                  <v-tooltip v-if="structure && structure.info" bottom max-width="700px" close-delay="1000" class="hidden-print-only">
                     <v-icon color="accent"
                       class="pb-1"
                       slot="activator">
@@ -53,9 +53,9 @@
                   <span class="hidden-sm-and-down body">Baixar gráfico</span>
                   <v-icon right>file_download</v-icon>
                 </v-btn> -->
-                <v-flex xs2 text-xs-right pr-4>
+                <v-flex xs2 text-xs-right pr-4 class="hidden-print-only">
                 <v-btn small flat :color="$colorsService.constructor.assessZebraTitleColor(this.sectionIndex, $vuetify.theme)"
-                  @click.native="dialog = true" style="margin: 0px;" class="hidden-print-only">
+                  @click.native="dialog = true" style="margin: 0px;">
                   <span :class="chartPosition == 'bottom'?'hidden-md-and-down body': 'hidden-sm-and-down body'">Dados</span>
                   <v-icon right>view_list</v-icon> <!-- list -->
                 </v-btn>

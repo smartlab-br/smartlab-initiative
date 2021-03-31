@@ -55,43 +55,52 @@
           <v-flex v-if="ind_principais && ind_principais.length == 0 && localidade != null" class="text-xs-center pa-0">
             <v-progress-circular indeterminate color="primary"></v-progress-circular>
           </v-flex>
-          <v-flex pt-5></v-flex>
+          <v-flex class="hidden-print-only" pt-5></v-flex>
+          <v-flex xs12 class="hidden-screen-only pt-0-po pb-4-po" v-if="customParams.cd_uf">
+            <img class="print imgTitle" :src="'/static/parallax/uf/' + this.customParams.cd_uf + '.jpg'">
+          </v-flex>
           <v-flex id="screenTitle" class="white--text text-xs-center pa-5 line-height-1 px-2-po py-0-po text-po-left">
-            <div class="display-3-obs">
-                {{ localidade != null ? localidade.nm_localidade : '' }}
-                <v-tooltip v-if="presentation" bottom class="icon-vertical-align-middle hidden-print-only">
-                  <v-icon color="accent"
-                    class="pb-1"
-                    slot="activator">
-                    info
-                  </v-icon>
-                  <flpo-text-builder
-                    :custom-params="customParams"
-                    :custom-functions="custom_functions"
-                    :structure="presentation">
-                  </flpo-text-builder>
-                </v-tooltip>
-                <!--
-                <span class="icon-vertical-align-middle">
-                  <v-icon :color="isFavorite ? 'amber' : 'grey'"
-                    class="pb-1"
-                    v-on:click="toggleFavorite">
-                    star
-                  </v-icon>
-                </span>
-                -->
-            </div>
-            <v-layout pa-1 justify-center class="subheading master-indicator" v-if="masterIndicator" v-html="masterIndicator">
+            <v-layout row wrap justify-space-between>
+              <v-flex xs12 pb-1 class="po6 shrink-po text-po-right order-po2">
+                <div class="display-3-obs">
+                    {{ localidade != null ? localidade.nm_localidade : '' }}
+                    <v-tooltip v-if="presentation" bottom class="icon-vertical-align-middle hidden-print-only">
+                      <v-icon color="accent"
+                        class="pb-1"
+                        slot="activator">
+                        info
+                      </v-icon>
+                      <flpo-text-builder
+                        :custom-params="customParams"
+                        :custom-functions="custom_functions"
+                        :structure="presentation">
+                      </flpo-text-builder>
+                    </v-tooltip>
+                    <!--
+                    <span class="icon-vertical-align-middle">
+                      <v-icon :color="isFavorite ? 'amber' : 'grey'"
+                        class="pb-1"
+                        v-on:click="toggleFavorite">
+                        star
+                      </v-icon>
+                    </span>
+                    -->
+                </div>
+                <div class="pt-1 subheading master-indicator comment--text--po" v-if="masterIndicator" v-html="masterIndicator">
+                </div>
+              </v-flex>
+              <v-flex xs12 py-0 v-if='idLocalidade != 0' class="text-xs-center hidden-print-only">
+                <v-btn small class="accent--text" color="transparent"
+                  @click.native="openCompareDialog()">
+                  <v-icon left>add</v-icon>
+                  Comparar
+                </v-btn>
+              </v-flex>
+              <v-flex xs12 pt-3 class="pt-2-po po6 grow-po text-po-left order-po1">
+                <div class="display-2-obs" v-html="dimensao_ativa != null ? (dimensao_ativa.title != null ? dimensao_ativa.title : dimensao_ativa.label) : ''">
+                </div>
+              </v-flex>
             </v-layout>
-            <v-layout justify-center v-if='idLocalidade != 0' class="hidden-print-only">
-              <v-btn small class="accent--text" color="transparent"
-                @click.native="openCompareDialog()">
-                <v-icon left>add</v-icon>
-                Comparar
-              </v-btn>
-            </v-layout>
-            <div class="display-2-obs pt-3" v-html="dimensao_ativa != null ? (dimensao_ativa.title != null ? dimensao_ativa.title : dimensao_ativa.label) : ''">
-            </div>
           </v-flex>
           <!-- <div v-if="localidade !== null && localidade.tipo !== null" class="display-1-obs white--text text-xs-center pb-5">
             {{ currentContext }}
