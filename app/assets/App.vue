@@ -1845,7 +1845,9 @@
     pre,
     blockquote {
       border: 1px solid #999;
+      -webkit-column-break-inside: avoid;
       page-break-inside: avoid;
+      break-inside: avoid;
     }
 
     thead {
@@ -1853,8 +1855,11 @@
     }
 
     tr,
-    img {
+    img,
+    svg {
+      -webkit-column-break-inside: avoid;
       page-break-inside: avoid;
+      break-inside: avoid;
     }
 
     p,
@@ -1866,7 +1871,9 @@
 
     h2,
     h3 {
+       -webkit-column-break-after: avoid;
       page-break-after: avoid;
+      break-after: avoid;
     }
 
     body {
@@ -1877,7 +1884,7 @@
 
     @page {
       margin: 2cm 0.5cm;
-    	/* size: A4 portrait; */
+    	size: A4 portrait;
     }
 /*
     @page {
@@ -1905,14 +1912,21 @@
       width: 100%;
     }
 
-    img.print.imgTitle {
+    img.print.img-title {
       filter: opacity(88%) !important;
       max-height: 8cm;
       object-fit: cover;
     }
 
     .print-page-break {
-       page-break-after: always;
+      display: block;
+      -webkit-column-break-after: always;
+      page-break-after: always;
+      break-after: always;
+    }
+
+    .dimension-description {
+      /* min-height: 13cm; */
     }
 
     .v-content, .container {
@@ -1928,11 +1942,12 @@
       min-height: 8cm;
     } */
 
-    .v-card, .v-card__text  {
+    /* .v-card, .v-card__text  {
       box-shadow: none;
-      break-inside: avoid;
+      -webkit-column-break-inside: avoid;
       page-break-inside: avoid;
-    }
+      break-inside: avoid;
+    } */
 
     .white--text {
       color: #000 !important;

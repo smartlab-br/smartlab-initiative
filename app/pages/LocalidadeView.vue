@@ -57,7 +57,7 @@
           </v-flex>
           <v-flex class="hidden-print-only" pt-5></v-flex>
           <v-flex xs12 class="hidden-screen-only pt-0-po pb-4-po" v-if="customParams.cd_uf">
-            <img class="print imgTitle" :src="'/static/parallax/uf/' + this.customParams.cd_uf + '.jpg'">
+            <img class="print img-title" :src="'/static/parallax/uf/' + this.customParams.cd_uf + '.jpg'">
           </v-flex>
           <v-flex id="screenTitle" class="white--text text-xs-center pa-5 line-height-1 px-2-po py-0-po text-po-left">
             <v-layout row wrap justify-space-between>
@@ -106,7 +106,7 @@
             {{ currentContext }}
           </div> -->
           <v-layout row wrap justify-center pt-4>
-            <v-flex white--text subheading xs12 md4 lg3 class="po12 text-po-justify" :class="{'px-3': $vuetify.breakpoint.mdAndDown, 'px-4': $vuetify.breakpoint.lgAndUp}" v-html="dimensao_ativa.description">
+            <v-flex white--text subheading xs12 md4 lg3 class="po12 text-po-justify dimension-description" :class="{'px-3': $vuetify.breakpoint.mdAndDown, 'px-4': $vuetify.breakpoint.lgAndUp}" v-html="dimensao_ativa.description">
             </v-flex>
             <v-flex text-xs-center xs12 md3 class="hidden-print-only" :class="{'px-3': $vuetify.breakpoint.mdAndDown, 'px-4': $vuetify.breakpoint.lgAndUp}" >
               <v-layout v-if="ind_principais && ind_principais.length > 0 && unlockLoading" row wrap justify-center>
@@ -137,6 +137,7 @@
         </v-flex>
       </v-layout>
     </v-container>
+    <div class="print-page-break hidden-screen-only"></div>
     <!-- Indicadores principais: Empregadores, Vínculos Formais, Municípios, Estabelecimentos, % MEI e EPPs -->
     <v-container fluid  xs12  class="pa-0 ma-0">
       <v-layout v-if="sections && sections.length > 0" class="bg-page grey lighten-2" column pa-0 ma-0>
