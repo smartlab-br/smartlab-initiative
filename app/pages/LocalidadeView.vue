@@ -811,6 +811,19 @@
         }
       },
 
+      loadDimCustomParams(params){
+        for (let param of params){
+          this.fillDataStructure(
+            param, this.customParams,
+            this.customFunctions, this.addDimCustomParams
+          );          
+        }
+      },
+
+      addDimCustomParams(dataset, args, structure, addedParams, metadata){
+        this.customParams[structure.name] = dataset[0];
+      },
+
       flagThematicLoaded() {
         ++this.thematicLoaded;
       },
@@ -856,6 +869,10 @@
       setDimension(content) {
         let escopo = this.getEscopo(this.idLocalidade);
         this.dimStruct = content;
+
+        if (content.params){
+          this.loadDimCustomParams(content.params);
+        }
 
         let thematicDatasets = ['centralindicadores'];
         if (content && content.tematicos) {

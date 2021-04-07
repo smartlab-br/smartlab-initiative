@@ -100,7 +100,7 @@ const ViewConfReader = {
 									console.log(error);
 									fnSendDataStructureError(msgError); 
 								});
-						} else {
+							} else {
 								// If the structure defines a single API call, execute the
 								// callback after all the axios calls are resolved.
 								let promises = [];
