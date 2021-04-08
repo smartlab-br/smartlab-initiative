@@ -43,7 +43,11 @@ class TextTransformService {
               }
               if (iterArg === null || iterArg === undefined){
                 if(struct.args[indx].base_object){
-                  iterArg = customParams[struct.args[indx].base_object][struct.args[indx].named_prop];
+                  if (customParams[struct.args[indx].base_object]){
+                    iterArg = customParams[struct.args[indx].base_object][struct.args[indx].named_prop];
+                  } else if (base_object[struct.args[indx].base_object]){
+                    iterArg = base_object[struct.args[indx].base_object][struct.args[indx].named_prop];
+                  }
                 } else {
                   iterArg = customParams[struct.args[indx].named_prop];
                 }
