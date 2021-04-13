@@ -101,7 +101,7 @@ class NumberTransformService {
       }
     }
     
-    casasDecimais = casasDecimais ? casasDecimais : 1;
+    casasDecimais = (casasDecimais !== undefined && casasDecimais !== null) ? casasDecimais : 1;
     // Define a configuração do locale
     let localeConfig = {
       maximumFractionDigits: casasDecimais
