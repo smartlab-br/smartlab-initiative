@@ -335,6 +335,18 @@
             }
             return d[prop_val];
           },
+          get_bin: function(d,value,bins){
+            for (let i in bins){
+              if (value <= bins[i]) {
+                if (i == 0){
+                  return "Até " + bins[i];
+                } else {
+                  return "De " + (bins[i-1]+1) + " a " + bins[i];
+                }
+              }
+            }
+            return "Mais de " + bins[bins.length-1];
+          },
           get_bin_faixa_etaria: function(d, age_prop) {
             if (d[age_prop] <= 17) return '01'; // < 18
             if (d[age_prop] <= 24) return '02'; // 18-24
