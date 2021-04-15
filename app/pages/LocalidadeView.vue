@@ -335,6 +335,21 @@
             }
             return d[prop_val];
           },
+          get_bin: function(d,value,bins=[10,50,100,500,1000,2000,5000,10000,20000,40000,50000,100000,200000,300000,400000,500000,600000,700000,800000]){
+            if (value == 0){
+              return "Nenhum"
+            }
+            for (let i in bins){
+              if (value <= bins[i]) {
+                if (i == 0){
+                  return "Até " + bins[i].toLocaleString('pt-br', {maximumFractionDigits: 0});
+                } else {
+                  return "De " + (bins[i-1]+1).toLocaleString('pt-br', {maximumFractionDigits: 0}) + " a " + bins[i].toLocaleString('pt-br', {maximumFractionDigits: 0});
+                }
+              }
+            }
+            return "Mais de " + bins[bins.length-1].toLocaleString('pt-br', {maximumFractionDigits: 0});
+          },
           get_bin_faixa_etaria: function(d, age_prop) {
             if (d[age_prop] <= 17) return '01'; // < 18
             if (d[age_prop] <= 24) return '02'; // 18-24
