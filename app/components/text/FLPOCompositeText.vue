@@ -221,6 +221,7 @@
       },
 
       triggerDefaultSelect(payload) {
+        this.reactiveParent = payload.id;
         this.$emit('default-selection', payload);
       },
 
