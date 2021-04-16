@@ -3,6 +3,10 @@ class NumberTransformService {
   
   static formatNumber(valor, formato, casasDecimais, multiplier = 1, collapse = null, signed = false, uiTags = true){
 
+    if (isNaN(valor)){
+      return valor;
+    }
+    
     if (formato == 'cep'){
       valor = ('00000000' + valor.toString()).slice(-8);
       valor = valor.slice(0,5) + '-' + valor.slice(-3);
