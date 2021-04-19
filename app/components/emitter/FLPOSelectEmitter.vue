@@ -44,6 +44,8 @@
 
           if (structure.default.fixed != null && structure.default.fixed != undefined) {
             defaultValue = structure.default.fixed;
+          } else if (structure.default.base_object && this.customParams[structure.default.base_object]) {
+            defaultValue = this.customParams[structure.default.base_object][structure.default.named_prop];
           } else {
             defaultValue = this.customParams[structure.default.named_prop];
           }
