@@ -203,7 +203,9 @@
         } else {
           apiUrl = this.$textTransformService.applyInterpol(this.structure.apiBase?this.structure.apiBase:this.structure.api, this.customParams, this.customFunctions);
         }
-        apiUrl = apiUrl + filterUrl;
+        if (filterUrl){
+          apiUrl = apiUrl + filterUrl;
+        }
         axios(this.$axiosCallSetupService.getAxiosOptions(apiUrl))
         .then(result => {
           this.fillMinicard(
