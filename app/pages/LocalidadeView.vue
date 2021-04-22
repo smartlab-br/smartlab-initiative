@@ -804,7 +804,7 @@
         for (let param of params){
           this.fillDataStructure(
             param, this.customParams,
-            this.customFunctions, this.addDimCustomParams
+            this.custom_functions, this.addDimCustomParams
           );          
         }
       },
