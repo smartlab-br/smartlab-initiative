@@ -457,7 +457,7 @@
 
         switch (content.dimensoes.length) {
           case 12:
-            this.slicing = "xs12 sm6 md4";
+            this.slicing = "xs12 sm6 md4 xl3";
             break;
           case 10:
             this.slicing = "xs12 sm6 md4 xl3";
@@ -481,13 +481,13 @@
             this.slicing = "xs12 sm6 md4";
             break;
           case 2:
-            this.slicing = "xs12 sm6";
+            this.slicing = "xs12 sm6 md4";
             break;
           case 1:
             this.slicing = "xs12";
             break;
           default:
-            this.slicing = "xs12 sm6 md4 xl2";
+            this.slicing = "xs12 sm6 md4 xl3";
             break;
         }
       },

@@ -44,4 +44,9 @@
 </script>
 
 <style>
+
+.v-input--selection-controls {
+    margin-top: 0px;
+}
+
 </style>

@@ -71,7 +71,7 @@ export function createRouter () {
         route('/sst/embreve', 'ObservatorioEmBreve'),
         route('/trabalhoescravo/embreve', 'ObservatorioEmBreve'),
         route('/trabalhoinfantil/embreve', 'ObservatorioEmBreve'),
-        // route('/covid/embreve', 'ObservatorioEmBreve'),
+        route('/covid/embreve', 'ObservatorioEmBreve'),
 
         route('/perfil', 'Perfil'),
 

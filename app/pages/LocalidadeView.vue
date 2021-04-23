@@ -335,6 +335,23 @@
             }
             return d[prop_val];
           },
+          get_bin: function(d,value,bins=[10,50,100,500]){
+            // [10,50,100,500,1000,2000,5000,10000,20000,40000,50000]
+            if (value == 0){
+              return "Nenhum"
+            }
+            for (let i in bins){
+              if (value <= bins[i]) {
+                if (i == 0){
+                  return "Até " + bins[i].toLocaleString('pt-br', {maximumFractionDigits: 0});
+                } else {
+                  return "De " + (bins[i-1]+1).toLocaleString('pt-br', {maximumFractionDigits: 0}) + " a " + bins[i].toLocaleString('pt-br', {maximumFractionDigits: 0});
+                }
+              }
+            }
+            // return "Mais de " + bins[bins.length-1].toLocaleString('pt-br', {maximumFractionDigits: 0});
+            return value;
+          },
           get_bin_faixa_etaria: function(d, age_prop) {
             if (d[age_prop] <= 17) return '01'; // < 18
             if (d[age_prop] <= 24) return '02'; // 18-24
@@ -361,6 +378,7 @@
           },
           calc_subtraction_ds: function(d, a, b) { return a - b; },
           calc_addition_ids_ds: function(d, a, b, multiplier=10000000) { return a*multiplier + b; },
+          calc_addition: function(a, b) { return a + b; },
           calc_percentage: function(parte,total) { return parte / total * 100},
           calc_percentage_val1: function(val1,val2) { return val1 / (val1 + val2) * 100},
           calc_percentage_2values: function(val1,val2,total) { return (val1 + val2) / total * 100},
@@ -398,7 +416,12 @@
             }
             return Math.log(((d[campo] - d[media]) / d[media]) + 1.01); 
           },
-          get_log: function(d,campo='vl_indicador') { return Math.log(d[campo] + 0.01); },
+          get_log: function(d,campo='vl_indicador', except_ind=null) { 
+            if (except_ind && d.cd_indicador == except_ind) {
+              return d[campo];
+            }
+            return Math.log(d[campo] + 0.01); 
+          },
           get_number: function(d,val) { 
             return parseFloat(val); 
           },
@@ -410,11 +433,16 @@
               let yearStart = new Date(Date.UTC(dt.getUTCFullYear(),0,1));
               return Math.ceil((((dt - yearStart) / 86400000) + 1)/7)
             };
-            if (reg_week == new Date().getWeekNumber()){
+            let week = new Date().getFullYear() * 100 + new Date().getWeekNumber()
+            if (reg_week == week){
               return "Semana corrente";
             } else {
               return "Semana completa";
             }
+          },
+          get_week_year: function(d, week, week_start){
+            let wee_start_ISO = new Date(week_start).toISOString().substring(0,10);
+            return  wee_start_ISO.substring(0,4) + '-' + week.toString().padStart(2, '0');
           },
           get_bipolar_scale: function(d, prop, origin = 0) {
             if (d[prop] == null) return null;
@@ -772,6 +800,19 @@
         }
       },
 
+      loadDimCustomParams(params){
+        for (let param of params){
+          this.fillDataStructure(
+            param, this.customParams,
+            this.custom_functions, this.addDimCustomParams
+          );          
+        }
+      },
+
+      addDimCustomParams(dataset, args, structure, addedParams, metadata){
+        this.customParams[structure.name] = dataset[0];
+      },
+
       flagThematicLoaded() {
         ++this.thematicLoaded;
       },
@@ -817,6 +858,10 @@
       setDimension(content) {
         let escopo = this.getEscopo(this.idLocalidade);
         this.dimStruct = content;
+
+        if (content.params){
+          this.loadDimCustomParams(content.params);
+        }
 
         let thematicDatasets = ['centralindicadores'];
         if (content && content.tematicos) {

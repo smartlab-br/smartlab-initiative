@@ -384,6 +384,8 @@
 
       triggerDefaultSelect(payload){
         this.setFilter(payload);
+        this.getFilters();
+        this.reactiveFilter = payload.item ? payload.item : payload.value;
       },
 
       triggerSelect(payload) {
