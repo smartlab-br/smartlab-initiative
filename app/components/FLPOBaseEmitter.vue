@@ -50,7 +50,7 @@
             eachItem[rules[ruleIndx].prop] = rules[ruleIndx].fixed;
           } else if (rules[ruleIndx].named_prop !== null && rules[ruleIndx].named_prop !== undefined) {
             let value = eachRow[rules[ruleIndx].named_prop];
-            if (rules[ruleIndx].null_value && (value == "null" || value == null)){
+            if (rules[ruleIndx].null_value && (value == "null" || value == null || value == '')){
               value = rules[ruleIndx].null_value;
             }
             eachItem[rules[ruleIndx].prop] = value;
