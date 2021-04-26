@@ -500,7 +500,7 @@ const SnackbarManager = {
             txtColor = "light-blue--text"
             urlAtividade = "/sst/beneficios?categorias=ds_cnae_classe-nm_atividade&agregacao=COUNT&filtros=ne-ds_cnae_classe-'',and,eq-cd_especie_beneficio-91,and,eq-cd_municipio_ibge-" + target.options.rowData.cd_mun_ibge + filtro +  "&ordenacao=-agr_count&limit=5";
             // urlObs1 = "/sst/beneficios?categorias=cd_municipio_ibge&valor=qt_despesa_total&agregacao=SUM&filtros=eq-cd_municipio_ibge-" + target.options.rowData.cd_mun_ibge + ",and,eq-cd_especie_beneficio-91"+ filtro ;
-            urlObs1 = "/indicadoresmunicipais?categorias=cd_municipio_ibge&valor=vl_indicador&agregacao=SUM&filtros=eq-cd_municipio_ibge-" + target.options.rowData.cd_mun_ibge + ",and,ge-nu_competencia-'2012',and,eq-cd_indicador-'10_11_01_03'"+ filtro ;
+            urlObs1 = "/indicadoresmunicipais?categorias=cd_municipio_ibge&valor=vl_indicador&agregacao=SUM&filtros=eq-cd_municipio_ibge-" + target.options.rowData.cd_mun_ibge + ",and,ge-nu_competencia-'2012',and,eq-cd_indicador-'10_11_01_03'";
             urlObs2 = "/sst/beneficios?categorias=cd_municipio_ibge&valor=qt_dias_perdidos&agregacao=SUM&filtros=eq-cd_municipio_ibge-" + target.options.rowData.cd_mun_ibge + ",and,eq-cd_especie_beneficio-91"+ filtro ;
           }
           axios.all([axios(this.$axiosCallSetupService.getAxiosOptions(urlPeriodo)),
@@ -546,7 +546,11 @@ const SnackbarManager = {
               } else {
                 ano_min = this.customParams.value_min_ano_beneficio ? this.customParams.value_min_ano_beneficio : dtPeriodo.dataset[0].agr_min_ano_beneficio;
                 ano_max = this.customParams.value_max_ano_beneficio ? this.customParams.value_max_ano_beneficio : dtPeriodo.dataset[0].agr_max_ano_beneficio;
-                text += "<tr><td colspan='2'>O impacto previdenciário dos afastamentos acidentários no município foi de " + this.$numberTransformService.constructor.formatNumber(dtObs1[0].agr_sum_vl_indicador,"monetario",2) +" , com a perda de "+ this.$numberTransformService.constructor.formatNumber(dtObs2[0].agr_sum_qt_dias_perdidos,"inteiro") +" dias de trabalho.</td></tr>";
+                if (filtro){
+                  text += "<tr><td colspan='2'>O impacto previdenciário dos afastamentos acidentários no município ocasionou perda de "+ this.$numberTransformService.constructor.formatNumber(dtObs2[0].agr_sum_qt_dias_perdidos,"inteiro") +" dias de trabalho.</td></tr>";
+                }else {
+                  text += "<tr><td colspan='2'>O impacto previdenciário dos afastamentos acidentários no município foi de " + this.$numberTransformService.constructor.formatNumber(dtObs1[0].agr_sum_vl_indicador,"monetario",2) +" , com a perda de "+ this.$numberTransformService.constructor.formatNumber(dtObs2[0].agr_sum_qt_dias_perdidos,"inteiro") +" dias de trabalho.</td></tr>";
+                }
                 text += "<tr><td colspan='2'><br/>Fonte: "+ dtPeriodo.metadata.fonte +"</td></tr>";
                 text += "<tr><td colspan='2'>Período: " + ano_min + (ano_min != ano_max ? " a " + ano_max : "") +"</td></tr>";
               }
