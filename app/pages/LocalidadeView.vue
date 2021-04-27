@@ -422,6 +422,9 @@
             }
             return Math.log(d[campo] + 0.01); 
           },
+          get_round: function(d, a) { 
+            return Math.round(a); 
+          },
           get_number: function(d,val) { 
             return parseFloat(val); 
           },
