@@ -110,6 +110,18 @@
                         :class = "leafletBasedCharts.includes(structure.chart_type) ? 'map_geo' : ''"
                         :id="chartId">
                       </v-layout>
+                      <v-layout fill-height
+                        v-if="structure && structure.component_options !== null && structure.component_type == 'SPARKLINES'">
+                        <flpo-sparklines 
+                          :custom-params="customParams"
+                          :custom-functions="customFunctions"
+                          :custom-filters="customFilters"
+                          :refresh-component="refreshComponent"
+                          :structure="Object.assign({}, structure.component_options, (({ api, headers }) => ({ api, headers }))(structure))"
+                          v-on:dataset-loaded="triggerDatasetUpdate"
+                        >
+                        </flpo-sparklines>
+                      </v-layout>
                     </v-flex>
                     <v-layout v-if="chartFooter" xs12 pt-0 justify-center chart-footer>
                       {{ chartFooter }}
@@ -192,7 +204,8 @@
         footnote: null,
         chartFooter: null,
         chart: null,
-        renderComponent: true
+        renderComponent: true,
+        refreshComponent: true
       }
     },
     created() {
@@ -268,13 +281,13 @@
       completeStructure() {
         this.setReferenceInStructure();
         
-        if (this.structure.chart_options.format_function !== null && this.structure.chart_options.format_function !== undefined) {
+        if (this.structure.chart_options && this.structure.chart_options.format_function !== null && this.structure.chart_options.format_function !== undefined) {
           this.structure.chart_options.format = this.customFunctions[this.structure.chart_options.format_function];
         }
-        if (this.structure.chart_options.y_function !== null && this.structure.chart_options.y_function !== undefined) {
+        if (this.structure.chart_options && this.structure.chart_options.y_function !== null && this.structure.chart_options.y_function !== undefined) {
           this.structure.chart_options.y = this.customFunctions[this.structure.chart_options.y_function];
         }
-        if (this.structure.chart_options.tooltip_function !== null && this.structure.chart_options.tooltip_function !== undefined && this.structure.chart_options.tooltip_function !== "default_tooltip") {
+        if (this.structure.chart_options && this.structure.chart_options.tooltip_function !== null && this.structure.chart_options.tooltip_function !== undefined && this.structure.chart_options.tooltip_function !== "default_tooltip") {
           if(this.customFunctions[this.structure.chart_options.tooltip_function]){
             this.structure.chart_options.tooltip_function = this.customFunctions[this.structure.chart_options.tooltip_function];
           } 
@@ -311,7 +324,9 @@
                 }
               } 
                        
-              this.structure.chart_options.filterText = this.customFilters.filterText;
+              if (this.structure.chart_options){
+                this.structure.chart_options.filterText = this.customFilters.filterText;
+              } 
             } else {
               endpoint = this.$textTransformService.applyInterpol(payload.rules.api, this.customParams, this.customFunctions, this.customFilters);
             }
@@ -378,7 +393,7 @@
 
       fetchData(endpoint = null) {
         this.assessChartFooter();
-        if (this.structure.chart_type != "MIXED_MAP"){
+        if (this.structure.chart_type && this.structure.chart_type != "MIXED_MAP"){
           this.fillDataStructure(
             this.structure, this.customParams,
             this.customFunctions, this.setDataset,
@@ -388,6 +403,18 @@
               "fnCallback": this.triggerChartUpdates
             }
           );
+        } else if (this.structure.component_options) {
+          this.dataset = true;
+          this.triggerComponentUpdates();
+          // this.fillDataStructure(
+          //   this.structure, this.customParams,
+          //   this.customFunctions, this.setDataset,
+          //   {
+          //     "endpoint": endpoint,
+          //     "msgError": "Falha ao carregar dados do gráfico " + this.chartFooter,
+          //     "fnCallback": this.triggerComponentUpdates
+          //   }
+          // );
         } else {
           for (var eachChart of this.structure.chart_options.layers) {
               this.fillDataStructure(
@@ -402,7 +429,9 @@
           }
         }
       },
-
+      triggerComponentUpdates() {
+        this.refreshComponent = !this.refreshComponent;
+      },
       triggerChartUpdates() {
         let fnSendError = this.sendError;
         let chartTitle = this.chartFooter;
@@ -496,6 +525,10 @@
 
       downloadChart() {
         this.$refs.chart.download();
+      },
+
+      triggerDatasetUpdate(dataset){
+        this.dataset = dataset;
       }
     }
   }
