@@ -1,6 +1,11 @@
 <template>
   <v-layout column pa-2 max-width="100%">
     <v-card>
+        <v-progress-linear v-show="!loaded"
+          height="3"
+          :indeterminate="!loaded"
+          color="info">
+        </v-progress-linear>
         <v-card-title>
         <v-text-field
             v-model="search"
@@ -14,9 +19,8 @@
           height="40"
           :indeterminate="!dataset"
           color="info">
-          <p class="headline-obs">{{structure.title}}</p>
+          <p class="headline-obs text-xs-center">{{structure.title}}</p>
         </v-progress-linear>
-        <!--@update:pagination="triggerChartUpdates()"-->
         <v-data-table 
             v-if="dataset && structure.headers"
             :headers="removeFormatItems(structure.headers)"
@@ -119,12 +123,20 @@ export default {
             numberTransformService: NumberTransformService,
             pagination: {}, 
             first_cat: {},
-            last_cat: {}        
+            last_cat: {},
+            loaded: true     
         }
     },
+    props: ['refreshComponent', 'customFilters'],
     created () {
         this.fillDataStructure(this.structure, this.customParams,
         this.customFunctions, this.fillFromDataset, {});
+    },
+    watch: {
+        refreshComponent: function(newVal, oldVal) {
+            this.loaded = false;
+            this.updateDataStructure(this.customFilters.filterUrl);
+        }
     },
     methods: {
         customSort(items, index, isDesc) {
@@ -272,7 +284,8 @@ export default {
 
             hierarchicalDS.sort(fnSorter);
             this.dataset = hierarchicalDS;
-
+            this.loaded = true;
+            this.$emit('dataset-loaded', this.dataset);
         },
 
         createSparklineFields(dataset, seriesList, series_first_cat, series_last_cat, sourceStructure, fillZeros = true){
@@ -352,6 +365,7 @@ export default {
                     }
 
                     if(series){
+                        row['series_length_' + series_value] = series.length;
                         row['last_value_' + series_value] = sparkline_values[sparkline_values.length-1];
                         row['higher_value_str_' + series_value] = NumberTransformService.formatNumber(higher_value, "inteiro") + " (" + higher_cat + ")";
                     } else {
@@ -380,62 +394,7 @@ export default {
 
             }
 
-            // return dataset;
-
         },
-
-        // triggerChartUpdates() {
-        //     // Transform color array into a dictionary
-        //     let colorDict = {};
-        //     if (this.structure.chart_options.colorArray && this.structure.chart_options.indicadores) {
-        //         for (let indx in this.structure.chart_options.indicadores) {
-        //             colorDict[this.structure.chart_options.indicadores[indx]] = this.structure.chart_options.colorArray[indx];
-        //         }
-        //     }
-
-        //     // Generate charts
-        //     setTimeout(() => {
-
-        //         let chart_headers = [
-        //                                 {"text": "", "value": "cat_value"},
-        //                                 {"text": "", "value": "value"}
-        //                             ]
-        //         let structChart = Object.assign({}, this.structure);
-        //         structChart.headers = chart_headers;
-
-        //         for (let sparkline of this.$el.getElementsByClassName("spark")) {
-        //             let splitElementId = sparkline.id.split("_");
-        //             let idFromElementId = splitElementId[splitElementId.length - 1];
-        //             for (let row of this.dataset) {
-        //                 if (row.id == idFromElementId) { // Id from row matches element id on page
-        //                     let seriesFromElementId = splitElementId.slice(1, splitElementId.length -1).join('_');
-        //                     if (row[seriesFromElementId] == null) break; // Break if series dataset is non-existent
-
-        //                     let options = Object.assign({}, this.structure.chart_options);
-
-        //                     if (Object.keys(colorDict).length > 0) {
-        //                         delete options.colorArray;
-        //                         delete options.indicadores;
-        //                         options.color = colorDict[seriesFromElementId].toString();
-        //                     }
-                            
-        //                     this.chartGen(
-        //                         sparkline.id,
-        //                         this.structure.chart_type,
-        //                         structChart,
-        //                         options,
-        //                         row[seriesFromElementId],
-        //                         this.metadata,
-        //                         this.sectionIndex ? this.sectionIndex : 0
-        //                     ).then(
-        //                         (chartHandler) => {},
-        //                         (reject) => { this.sendError(reject); }
-        //                     );
-        //                 }
-        //             }
-        //         }
-        //     }, 0);
-        // },
         
         removeFormatItems(headers){
             let items = JSON.parse(JSON.stringify(headers));
@@ -444,6 +403,28 @@ export default {
             }
             return items;
         },
+
+        updateDataStructure(filterUrl){
+            let structReactive = Object.assign({},this.structure);
+            structReactive.api = JSON.parse(JSON.stringify(this.structure.apiBase?this.structure.apiBase:this.structure.api));
+
+            if (structReactive.api){
+                if (!Array.isArray(structReactive.api)){
+                    structReactive.api = [structReactive.api];
+                }
+                for(let struct of structReactive.api){
+                    if (struct.fixed){
+                    struct.fixed += filterUrl
+                    } else if (struct.template){
+                    struct.template += filterUrl
+                    }
+                }
+            }        
+            this.fillDataStructure(
+            structReactive, this.customParams,
+            this.customFunctions, this.fillFromDataset
+            );
+      }
     }
 }
 </script>
