@@ -365,6 +365,7 @@ export default {
                     }
 
                     if(series){
+                        row['series_length_' + series_value] = series.length;
                         row['last_value_' + series_value] = sparkline_values[sparkline_values.length-1];
                         row['higher_value_str_' + series_value] = NumberTransformService.formatNumber(higher_value, "inteiro") + " (" + higher_cat + ")";
                     } else {
