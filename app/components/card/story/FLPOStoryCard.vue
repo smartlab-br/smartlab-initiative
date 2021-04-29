@@ -99,8 +99,8 @@
                   </div>
                 </v-flex>
                 <v-flex xs12 :class="chartPosition != 'bottom' ? 'md9': ''" py-3>
-                  <v-layout fill-height row wrap>
-                    <v-flex xs12 fill-height :style="cmpStyle"
+                  <v-layout fill-height column>
+                    <v-flex grow fill-height :style="cmpStyle"
                       :class="{'mx-0 px-3': (this.$vuetify.breakpoint.smAndDown || chartPosition == 'bottom'), 'mx-0 pt-2 pr-4 pb-0': (this.$vuetify.breakpoint.mdAndUp && chartPosition != 'bottom')}">
                       <!-- Definition of all possible charts -->
                       <v-layout fill-height
@@ -123,9 +123,9 @@
                         </flpo-sparklines>
                       </v-layout>
                     </v-flex>
-                    <v-layout v-if="chartFooter" xs12 pt-0 justify-center chart-footer>
+                    <v-flex shrink v-if="chartFooter" xs12 pt-0 text-xs-center chart-footer>
                       {{ chartFooter }}
-                    </v-layout>
+                    </v-flex>
                   </v-layout>
                 </v-flex>
               </v-layout>
