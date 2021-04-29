@@ -406,15 +406,6 @@
         } else if (this.structure.component_options) {
           this.dataset = true;
           this.triggerComponentUpdates();
-          // this.fillDataStructure(
-          //   this.structure, this.customParams,
-          //   this.customFunctions, this.setDataset,
-          //   {
-          //     "endpoint": endpoint,
-          //     "msgError": "Falha ao carregar dados do gráfico " + this.chartFooter,
-          //     "fnCallback": this.triggerComponentUpdates
-          //   }
-          // );
         } else {
           for (var eachChart of this.structure.chart_options.layers) {
               this.fillDataStructure(
