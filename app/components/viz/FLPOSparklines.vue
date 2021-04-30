@@ -1,14 +1,16 @@
 <template>
   <v-layout column pa-2 max-width="100%">
     <v-card>
-        <v-card-title>
-        <v-text-field
-            v-model="search"
-            append-icon="search"
-            label="Procurar"
-            single-line
-            hide-details
-        />
+        <v-card-title
+            v-if="structure.search_position == top || structure.search_position == undefined"
+        >
+            <v-text-field
+                v-model="search"
+                append-icon="search"
+                label="Procurar"
+                single-line
+                hide-details
+            />
         </v-card-title>
         <v-progress-linear v-if="!dataset"
           height="40"
@@ -28,11 +30,32 @@
             :custom-sort="customSort"
             :pagination.sync="pagination"
             :loading="!loaded"
+        >
+            <template 
+                slot="headers" 
+                slot-scope="props"
             >
-
-            <template slot="headers" slot-scope="props">
             <tr>
-                <th scope="colgroup" class="headline-obs" :colspan="props.headers.length">{{structure.title}}</th>
+                <th 
+                    v-if="structure.search_position == 'left'"
+                    scope="colgroup" 
+                    class="caption" 
+                    colspan="2">
+                    <v-text-field
+                        v-model="search"
+                        append-icon="search"
+                        label="Procurar"
+                        single-line
+                        hide-details
+                    />
+                </th>
+                <th 
+                    scope="colgroup" 
+                    class="headline-obs" 
+                    :colspan="props.headers.length-(structure.search_position == 'left'?2:0)"
+                >
+                    {{structure.title}}
+                </th>
             </tr>
             <tr>
                 <th scope="colgroup" 
@@ -43,28 +66,49 @@
                     @click="changeSort(header.value)"
                 >
                     <v-icon small>arrow_upward</v-icon>
-                    {{ header.text }}
-
-                    <span v-if="header.type == 'spark'" v-html="'<br/>(' + first_cat[header.series] + ' a ' + last_cat[header.series] + ')'" />
-                    <span v-if="header.value.startsWith('rate_last_') && categories[categories.length - 2]" v-html="(header.text !== '' && header.text !== undefined?'<br/>':'') + '(' + categories[categories.length - 2] + '-' + categories[categories.length - 1] + ')'" />
-                    <span v-if="header.value.startsWith('value_2_last_')&& categories[categories.length - 2]" v-html="(header.text !== '' && header.text !== undefined?'<br/>':'') + categories[categories.length - 2]" />
-                    <span v-if="header.value.startsWith('value_last_')" v-html="(header.text !== '' && header.text !== undefined?'<br/>':'') + categories[categories.length - 1]" />
+                    <span class="word-wrap" v-html="header.text" />
                 </th>
             </tr>
             </template>            
-            <template :headers="structure.headers" slot="items" slot-scope="props">
+            <template 
+                :headers="structure.headers" 
+                slot="items" 
+                slot-scope="props"
+            >
                 <!-- v-for SEM BIND, pois está restrito ao contexto do template do data-table -->
-                <td pa-0 v-for="(hdr, idxHdr) in structure.headers" :key="idxHdr" :style="(hdr.item_align?'text-align:'+hdr.item_align:'')">
-                    <div px-2 class="sparkline" v-if="hdr.type && hdr.type == 'spark'">
-                        <v-layout row nowrap v-if="(hdr.show_labels == undefined || hdr.show_labels)"> 
-                            <v-flex v-if="props.item['sparkline_values_' + hdr.series].length > 1" 
-                                xs2 xl2 micro-caption text-xs-right :style="'color:'+hdr.bgColor">
+                <td 
+                    v-for="(hdr, idxHdr) in structure.headers" 
+                    :key="idxHdr" 
+                    :style="(hdr.item_align?'text-align:'+hdr.item_align:'')"
+                    pa-0 
+                >
+                    <div 
+                        v-if="hdr.type && hdr.type == 'spark'"
+                        px-2 
+                        class="sparkline" 
+                    >
+                        <v-layout 
+                            v-if="(hdr.show_labels == undefined || hdr.show_labels)"
+                            row 
+                            nowrap 
+                        > 
+                            <v-flex 
+                                v-if="props.item['sparkline_values_' + hdr.series].length > 1" 
+                                xs2 
+                                xl2 
+                                micro-caption 
+                                text-xs-right 
+                                :style="'color:'+hdr.bgColor"
+                            >
                                 {{ hdr.format ? numberTransformService.formatNumber(
                                                     props.item['sparkline_values_' + hdr.series][0], hdr.format, hdr.precision, hdr.multiplier, hdr.collapse, hdr.signed, hdr.uiTags ) 
                                                 : props.item['sparkline_values_' + hdr.series][0] 
                                 }}
                             </v-flex>
-                            <v-flex xs8 xl8>
+                            <v-flex 
+                                xs8 
+                                xl8
+                            >
                                 <v-sparkline 
                                     :value="props.item['sparkline_values_'+ hdr.series]"
                                     :color="hdr.bgColor"
@@ -73,10 +117,16 @@
                                     padding="8"
                                     height="45"
                                     smooth
-                                ></v-sparkline>
+                                />
                             </v-flex>
-                            <v-flex v-if="props.item['sparkline_values_' + hdr.series].length > 1" 
-                                xs2 xl2 micro-caption text-xs-left :style="'color:'+hdr.bgColor">
+                            <v-flex 
+                                v-if="props.item['sparkline_values_' + hdr.series].length > 1" 
+                                xs2 
+                                xl2 
+                                micro-caption 
+                                text-xs-left 
+                                :style="'color:'+hdr.bgColor"
+                            >
                                 {{ hdr.format ? numberTransformService.formatNumber(
                                                     props.item['sparkline_values_' + hdr.series][props.item['sparkline_values_' + hdr.series].length-1], 
                                                     hdr.format, hdr.precision, hdr.multiplier, hdr.collapse, hdr.signed, hdr.uiTags ) 
@@ -84,8 +134,14 @@
                                 }}
                             </v-flex>
                         </v-layout>
-                        <v-layout row nowrap v-else> 
-                            <v-flex xs12>
+                        <v-layout 
+                            v-else
+                            row 
+                            nowrap 
+                        > 
+                            <v-flex 
+                                xs12
+                            >
                                 <v-sparkline 
                                     :value="props.item['sparkline_values_'+ hdr.series]"
                                     :color="hdr.bgColor"
@@ -94,17 +150,25 @@
                                     padding="8"
                                     height="45"
                                     smooth
-                                ></v-sparkline>
+                                />
                             </v-flex>
                         </v-layout>
                     </div>
-                    <div v-else>
+                    <div 
+                        v-else
+                    >
                         {{ props.item['fmt_' + hdr.value] ? props.item['fmt_' + hdr.value]: props.item[hdr.value] }}
                     </div>
                 </td> 
             </template>
-            <template slot="no-results">
-                <v-alert :value="true" color="error" icon="warning">
+            <template 
+                slot="no-results"
+            >
+                <v-alert 
+                    :value="true" 
+                    color="error" 
+                    icon="warning"
+                >
                     Sua busca por "{{ search }}" não trouxe resultados.
                 </v-alert>
             </template>            
@@ -288,6 +352,19 @@ export default {
             }
 
             hierarchicalDS.sort(fnSorter);
+
+            //Adding categories in headers text
+            for (let header of this.structure.headers){
+                if (header.type == 'spark'){
+                    header.text += ' (' + this.first_cat[header.series] + ' a ' + this.last_cat[header.series] + ')';
+                } else if (header.value.startsWith('rate_last_') && this.categories[this.categories.length - 2]){
+                    header.text += (header.text !== '' && header.text !== undefined?' ':'') + '(' + this.categories[this.categories.length - 2] + '-' + this.categories[this.categories.length - 1] + ')';
+                } else if (header.value.startsWith('value_2_last_')&& this.categories[this.categories.length - 2]){
+                    header.text += (header.text !== '' && header.text !== undefined?' ':'') + this.categories[this.categories.length - 2];
+                } else if (header.value.startsWith('value_last_')){
+                    header.text += (header.text !== '' && header.text !== undefined?' ':'') + this.categories[this.categories.length - 1];
+                }
+            }
             this.dataset = hierarchicalDS;
             this.loaded = true;
             this.$emit('dataset-loaded', this.dataset);
