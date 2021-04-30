@@ -1,11 +1,6 @@
 <template>
   <v-layout column pa-2 max-width="100%">
     <v-card>
-        <v-progress-linear v-show="!loaded"
-          height="3"
-          :indeterminate="!loaded"
-          color="info">
-        </v-progress-linear>
         <v-card-title>
         <v-text-field
             v-model="search"
@@ -32,6 +27,7 @@
             :rows-per-page-items='[10,50,100,200,500,{"text":"$vuetify.dataIterator.rowsPerPageAll","value":-1}]'
             :custom-sort="customSort"
             :pagination.sync="pagination"
+            :loading="!loaded"
             >
 
             <template slot="headers" slot-scope="props">
@@ -40,15 +36,19 @@
             </tr>
             <tr>
                 <th scope="colgroup" 
-                v-for="header in props.headers"
-                :key="header.text"
-                :class="['column sortable', pagination.descending ? 'desc' : 'asc', header.value === pagination.sortBy ? 'active' : '']"
-                @click="changeSort(header.value)"
-                :width="header.width"
+                    v-for="header in props.headers"
+                    :key="header.value"
+                    :class="['column sortable', pagination.descending ? 'desc' : 'asc', header.value === pagination.sortBy ? 'active' : '']"
+                    :width="header.width"
+                    @click="changeSort(header.value)"
                 >
-                <v-icon small>arrow_upward</v-icon>
-                {{ header.text }}<br/>
-                {{ header.type == 'spark' ? "(" + first_cat[header.series] + " a " + last_cat[header.series] + ")" : "" }}
+                    <v-icon small>arrow_upward</v-icon>
+                    {{ header.text }}
+
+                    <span v-if="header.type == 'spark'" v-html="'<br/>(' + first_cat[header.series] + ' a ' + last_cat[header.series] + ')'" />
+                    <span v-if="header.value.startsWith('rate_last_') && categories[categories.length - 2]" v-html="(header.text !== '' && header.text !== undefined?'<br/>':'') + '(' + categories[categories.length - 2] + '-' + categories[categories.length - 1] + ')'" />
+                    <span v-if="header.value.startsWith('value_2_last_')&& categories[categories.length - 2]" v-html="(header.text !== '' && header.text !== undefined?'<br/>':'') + categories[categories.length - 2]" />
+                    <span v-if="header.value.startsWith('value_last_')" v-html="(header.text !== '' && header.text !== undefined?'<br/>':'') + categories[categories.length - 1]" />
                 </th>
             </tr>
             </template>            
@@ -69,8 +69,10 @@
                                     :value="props.item['sparkline_values_'+ hdr.series]"
                                     :color="hdr.bgColor"
                                     :line-width="hdr.stroke?hdr.stroke:3"
+                                    stroke-linecap="round"
                                     padding="8"
                                     height="45"
+                                    smooth
                                 ></v-sparkline>
                             </v-flex>
                             <v-flex v-if="props.item['sparkline_values_' + hdr.series].length > 1" 
@@ -88,8 +90,10 @@
                                     :value="props.item['sparkline_values_'+ hdr.series]"
                                     :color="hdr.bgColor"
                                     :line-width="hdr.stroke?hdr.stroke:3"
+                                    stroke-linecap="round"
                                     padding="8"
                                     height="45"
+                                    smooth
                                 ></v-sparkline>
                             </v-flex>
                         </v-layout>
@@ -124,6 +128,7 @@ export default {
             pagination: {}, 
             first_cat: {},
             last_cat: {},
+            categories: [],
             loaded: true     
         }
     },
@@ -294,7 +299,7 @@ export default {
                 for (let series_value of seriesList){
                     let series = row[series_value];
 
-                    // let sparkline_labels = [];
+                    let sparkline_labels = [];
                     let sparkline_values = [];
                     let higher_cat = series_first_cat[series_value];
                     let higher_value = 0;
@@ -312,13 +317,13 @@ export default {
                         if (fillZeros){
                             if (firstSeries.cat_value > series_first_cat[series_value]){
                                 for(let i = series_first_cat[series_value]; i < firstSeries.cat_value; i++){
-                                    // sparkline_labels.push(i);
+                                    sparkline_labels.push(i);
                                     sparkline_values.push(0);                                
                                 }
                             }
                         }
 
-                        // sparkline_labels.push(firstSeries.cat_value);
+                        sparkline_labels.push(firstSeries.cat_value);
                         sparkline_values.push(firstSeries.value);  
 
                         higher_value = firstSeries.value;
@@ -329,11 +334,11 @@ export default {
                             let seriesPrev = series[k-1];
                             if (fillZeros){
                                 for(let j = seriesPrev.cat_value + 1; j < series[k].cat_value; j++){
-                                    // sparkline_labels.push(j);
+                                    sparkline_labels.push(j);
                                     sparkline_values.push(0);                                
                                 }
                             }
-                            // sparkline_labels.push(series[k].cat_value);
+                            sparkline_labels.push(series[k].cat_value);
                             sparkline_values.push(series[k].value);    
                             total += series[k].value;
                             if (series[k].value > higher_value){
@@ -346,7 +351,7 @@ export default {
                             let lastSeries = series[series.length - 1];
                             if (lastSeries.cat_value < series_last_cat[series_value]){
                                 for(let i = lastSeries.cat_value + 1; i <= series_last_cat[series_value]; i++){
-                                    // sparkline_labels.push(i);
+                                    sparkline_labels.push(i);
                                     sparkline_values.push(0);                                
                                 }
                             }
@@ -356,10 +361,30 @@ export default {
                         row[series_value] = [];
                     }
 
-                    // row['sparkline_labels_' + series_value] = sparkline_labels;
+                    this.categories = sparkline_labels;
+                    row['sparkline_labels_' + series_value] = sparkline_labels;
                     row['sparkline_values_' + series_value] = sparkline_values;
                     row['total_' + series_value] = total;
                     row['higher_value_' + series_value] = higher_value;
+                    row['value_last_' + series_value] = sparkline_values[sparkline_values.length-1];
+                    row['value_2_last_' + series_value] = sparkline_values[sparkline_values.length-2];
+                    if (sparkline_values[sparkline_values.length-1] && sparkline_values[sparkline_values.length-1] !== 0 && 
+                        sparkline_values[sparkline_values.length-2] && sparkline_values[sparkline_values.length-2] !== 0){
+                            let rate = sparkline_values[sparkline_values.length-1]/sparkline_values[sparkline_values.length-2];
+                            if (rate < 1){
+                                row['fmt_rate_last_2_' + series_value] = '-' + NumberTransformService.formatNumber((1 - rate)*100, "real") + '%';
+                                row['rate_last_2_' + series_value] = (1 - rate)*100*-1;
+                            } else if (rate > 1){
+                                row['fmt_rate_last_2_' + series_value] = '+' + NumberTransformService.formatNumber((rate - 1)*100, "real") + '%';
+                                row['rate_last_2_' + series_value] = (rate - 1)*100;
+                            } else {
+                                row['fmt_rate_last_2_' + series_value] = '0%';
+                                row['rate_last_2_' + series_value] = 0;
+                            }                      
+                    }else {
+                        row['fmt_rate_last_2_' + series_value] = '';
+                        row['rate_last_2_' + series_value] = null;
+                    }
                     if (sourceStructure.category_type == "timestamp"){
                         higher_cat = new Date(higher_cat).toISOString().substring(0,10)
                     }
@@ -367,28 +392,18 @@ export default {
                     if(series){
                         row['series_length_' + series_value] = series.length;
                         row['last_value_' + series_value] = sparkline_values[sparkline_values.length-1];
-                        row['higher_value_str_' + series_value] = NumberTransformService.formatNumber(higher_value, "inteiro") + " (" + higher_cat + ")";
+                        row['fmt_higher_value_' + series_value] = NumberTransformService.formatNumber(higher_value, "inteiro") + " (" + higher_cat + ")";
                     } else {
                         row['last_value_' + series_value] = 0;
-                        row['higher_value_str_' + series_value] = "";
+                        row['fmt_higher_value_' + series_value] = "";
                     }
 
                     for (let header of this.structure.headers){
                         if (header.format){
-                            if (header.sort_field){
-                                row['fmt_'+ header.sort_field] = NumberTransformService.formatNumber(
-                                    row[header.sort_field], header.format, header.precision, header.multiplier, header.collapse, header.signed, header.uiTags );
-                            } else {
-                                row['fmt_'+ header.value] = NumberTransformService.formatNumber(
-                                    row[header.value], header.format, header.precision, header.multiplier, header.collapse, header.signed, header.uiTags );
-                            }
+                            row['fmt_'+ header.value] = NumberTransformService.formatNumber(
+                                row[header.value], header.format, header.precision, header.multiplier, header.collapse, header.signed, header.uiTags );
                         }
                     }
-
-                    if(series && row['fmt_higher_value_' + series_value]){
-                        row['higher_value_str_' + series_value] = row['fmt_higher_value_' + series_value] + " (" + higher_cat + ")";
-                    } 
-
 
                 }
 
@@ -451,4 +466,8 @@ export default {
   .sparklines-grid table.v-table tbody td{
     padding: 0 5px;
   }
+  table thead th span.word-wrap {
+    word-wrap: break-word;
+    white-space: normal; 
+  }  
 </style>
