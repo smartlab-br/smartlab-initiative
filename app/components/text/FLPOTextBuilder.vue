@@ -83,7 +83,7 @@
     },
     watch: {
       reactiveFilter: function(newVal, oldVal) {
-        if (newVal != oldVal) {
+        if (newVal != oldVal && this.structure.reactive) {
           this.fillDataStructure(
             this.structure, this.customParams,
             this.customFunctions, this.setTextContent,

@@ -422,6 +422,9 @@
             }
             return Math.log(d[campo] + 0.01); 
           },
+          get_round: function(d, campo='vl_indicador') { 
+            return Math.round(d[campo]); 
+          },
           get_number: function(d,val) { 
             return parseFloat(val); 
           },
@@ -804,7 +807,7 @@
         for (let param of params){
           this.fillDataStructure(
             param, this.customParams,
-            this.customFunctions, this.addDimCustomParams
+            this.custom_functions, this.addDimCustomParams
           );          
         }
       },
