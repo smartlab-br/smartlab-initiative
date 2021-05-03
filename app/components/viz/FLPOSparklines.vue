@@ -159,7 +159,7 @@
                         v-else
                         :class="getCellClass(hdr.value, props.item[hdr.value])"
                     >
-                        {{ props.item[hdr.value] }}
+                        {{ (hdr.format && props.item['fmt_' + hdr.value]) ? props.item['fmt_' + hdr.value]: props.item[hdr.value] }}
                     </div>
                 </td> 
             </template>
@@ -279,7 +279,7 @@ export default {
                     series_last_cat[serie] = new Date(series_last_cat[serie]).toISOString().substring(0,10)
                 }
             }
-            
+
             this.first_cat = series_first_cat
             this.last_cat = series_last_cat
 
