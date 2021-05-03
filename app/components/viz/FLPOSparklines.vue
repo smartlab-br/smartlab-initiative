@@ -1,20 +1,22 @@
 <template>
   <v-layout column pa-2 max-width="100%">
     <v-card>
-        <v-card-title>
-        <v-text-field
-            v-model="search"
-            append-icon="search"
-            label="Procurar"
-            single-line
-            hide-details
-        />
+        <v-card-title
+            v-if="structure.search_position == 'top' || structure.search_position == undefined"
+        >
+            <v-text-field
+                v-model="search"
+                append-icon="search"
+                label="Procurar"
+                single-line
+                hide-details
+            />
         </v-card-title>
         <v-progress-linear v-if="!dataset"
-          height="40"
-          :indeterminate="!dataset"
-          color="info">
-          <p class="headline-obs text-xs-center">{{structure.title}}</p>
+            height="40"
+            :indeterminate="!dataset"
+            color="info">
+            <p class="headline-obs text-xs-center">{{structure.title}}</p>
         </v-progress-linear>
         <v-data-table 
             v-if="dataset && structure.headers"
@@ -25,46 +27,89 @@
             class="sparklines-grid elevation-1"
             style="width: 100%;"
             :rows-per-page-items='[10,50,100,200,500,{"text":"$vuetify.dataIterator.rowsPerPageAll","value":-1}]'
-            :custom-sort="customSort"
             :pagination.sync="pagination"
             :loading="!loaded"
-            >
+            :filter="replaceSpecialCharacters"
 
-            <template slot="headers" slot-scope="props">
+        >
+            <template 
+                slot="headers" 
+                slot-scope="props"
+            >
             <tr>
-                <th scope="colgroup" class="headline-obs" :colspan="props.headers.length">{{structure.title}}</th>
+                <th 
+                    v-if="structure.search_position == 'left'"
+                    scope="colgroup" 
+                    class="caption" 
+                    colspan="2">
+                    <v-text-field
+                        v-model="search"
+                        append-icon="search"
+                        label="Procurar"
+                        single-line
+                        hide-details
+                    />
+                </th>
+                <th 
+                    scope="colgroup" 
+                    class="headline-obs" 
+                    :colspan="props.headers.length-(structure.search_position == 'left'?2:0)"
+                >
+                    {{structure.title}}
+                </th>
             </tr>
             <tr>
                 <th scope="colgroup" 
-                    v-for="header in props.headers"
-                    :key="header.value"
+                    v-for="(header, idxHeader) in props.headers"
+                    :key="idxHeader"
                     :class="['column sortable', pagination.descending ? 'desc' : 'asc', header.value === pagination.sortBy ? 'active' : '']"
                     :width="header.width"
                     @click="changeSort(header.value)"
                 >
                     <v-icon small>arrow_upward</v-icon>
-                    {{ header.text }}
-
-                    <span v-if="header.type == 'spark'" v-html="'<br/>(' + first_cat[header.series] + ' a ' + last_cat[header.series] + ')'" />
-                    <span v-if="header.value.startsWith('rate_last_') && categories[categories.length - 2]" v-html="(header.text !== '' && header.text !== undefined?'<br/>':'') + '(' + categories[categories.length - 2] + '-' + categories[categories.length - 1] + ')'" />
-                    <span v-if="header.value.startsWith('value_2_last_')&& categories[categories.length - 2]" v-html="(header.text !== '' && header.text !== undefined?'<br/>':'') + categories[categories.length - 2]" />
-                    <span v-if="header.value.startsWith('value_last_')" v-html="(header.text !== '' && header.text !== undefined?'<br/>':'') + categories[categories.length - 1]" />
+                    <span class="word-wrap" v-html="header.text" />
                 </th>
             </tr>
             </template>            
-            <template :headers="structure.headers" slot="items" slot-scope="props">
+            <template 
+                :headers="structure.headers" 
+                slot="items" 
+                slot-scope="props"
+            >
                 <!-- v-for SEM BIND, pois está restrito ao contexto do template do data-table -->
-                <td pa-0 v-for="(hdr, idxHdr) in structure.headers" :key="idxHdr" :style="(hdr.item_align?'text-align:'+hdr.item_align:'')">
-                    <div px-2 class="sparkline" v-if="hdr.type && hdr.type == 'spark'">
-                        <v-layout row nowrap v-if="(hdr.show_labels == undefined || hdr.show_labels)"> 
-                            <v-flex v-if="props.item['sparkline_values_' + hdr.series].length > 1" 
-                                xs2 xl2 micro-caption text-xs-right :style="'color:'+hdr.bgColor">
+                <td 
+                    v-for="(hdr, idxHdr) in structure.headers" 
+                    :key="idxHdr" 
+                    :style="(hdr.item_align?'text-align:'+hdr.item_align:'')"
+                    pa-0 
+                >
+                    <div 
+                        v-if="hdr.type && hdr.type == 'spark'"
+                        px-2 
+                        class="sparkline" 
+                    >
+                        <v-layout 
+                            v-if="(hdr.show_labels == undefined || hdr.show_labels)"
+                            row 
+                            nowrap 
+                        > 
+                            <v-flex 
+                                v-if="props.item['sparkline_values_' + hdr.series].length > 1" 
+                                xs2 
+                                xl2 
+                                micro-caption 
+                                text-xs-right 
+                                :style="'color:'+hdr.bgColor"
+                            >
                                 {{ hdr.format ? numberTransformService.formatNumber(
                                                     props.item['sparkline_values_' + hdr.series][0], hdr.format, hdr.precision, hdr.multiplier, hdr.collapse, hdr.signed, hdr.uiTags ) 
                                                 : props.item['sparkline_values_' + hdr.series][0] 
                                 }}
                             </v-flex>
-                            <v-flex xs8 xl8>
+                            <v-flex 
+                                xs8 
+                                xl8
+                            >
                                 <v-sparkline 
                                     :value="props.item['sparkline_values_'+ hdr.series]"
                                     :color="hdr.bgColor"
@@ -73,10 +118,16 @@
                                     padding="8"
                                     height="45"
                                     smooth
-                                ></v-sparkline>
+                                />
                             </v-flex>
-                            <v-flex v-if="props.item['sparkline_values_' + hdr.series].length > 1" 
-                                xs2 xl2 micro-caption text-xs-left :style="'color:'+hdr.bgColor">
+                            <v-flex 
+                                v-if="props.item['sparkline_values_' + hdr.series].length > 1" 
+                                xs2 
+                                xl2 
+                                micro-caption 
+                                text-xs-left 
+                                :style="'color:'+hdr.bgColor"
+                            >
                                 {{ hdr.format ? numberTransformService.formatNumber(
                                                     props.item['sparkline_values_' + hdr.series][props.item['sparkline_values_' + hdr.series].length-1], 
                                                     hdr.format, hdr.precision, hdr.multiplier, hdr.collapse, hdr.signed, hdr.uiTags ) 
@@ -84,8 +135,14 @@
                                 }}
                             </v-flex>
                         </v-layout>
-                        <v-layout row nowrap v-else> 
-                            <v-flex xs12>
+                        <v-layout 
+                            v-else
+                            row 
+                            nowrap 
+                        > 
+                            <v-flex 
+                                xs12
+                            >
                                 <v-sparkline 
                                     :value="props.item['sparkline_values_'+ hdr.series]"
                                     :color="hdr.bgColor"
@@ -94,17 +151,27 @@
                                     padding="8"
                                     height="45"
                                     smooth
-                                ></v-sparkline>
+                                />
                             </v-flex>
                         </v-layout>
                     </div>
-                    <div v-else>
-                        {{ props.item['fmt_' + hdr.value] ? props.item['fmt_' + hdr.value]: props.item[hdr.value] }}
+                    <div 
+                        v-else
+                        :class="getCellClass(hdr.value, props.item[hdr.value])"
+                    >
+                        {{ (hdr.format && props.item['fmt_' + hdr.value]) ? props.item['fmt_' + hdr.value]: props.item[hdr.value] }}
                     </div>
                 </td> 
             </template>
-            <template slot="no-results">
-                <v-alert :value="true" color="error" icon="warning">
+            <template 
+                slot="no-results"
+            >
+                <v-alert 
+                    :value="true" 
+                    color="error" 
+                    icon="warning"
+                    outline
+                >
                     Sua busca por "{{ search }}" não trouxe resultados.
                 </v-alert>
             </template>            
@@ -128,12 +195,14 @@ export default {
             pagination: {}, 
             first_cat: {},
             last_cat: {},
-            categories: [],
+            labels: {},
+            baseHeaders: null,
             loaded: true     
         }
     },
     props: ['refreshComponent', 'customFilters'],
     created () {
+        this.baseHeaders = this.structure.headers.map((x) => Object.assign({}, x));
         this.fillDataStructure(this.structure, this.customParams,
         this.customFunctions, this.fillFromDataset, {});
     },
@@ -144,25 +213,6 @@ export default {
         }
     },
     methods: {
-        customSort(items, index, isDesc) {
-            let sort_field = index;
-            if (index){
-                for(let header of this.structure.headers){
-                    if (header.value == index && header.sort_field){
-                        sort_field = header.sort_field;
-                        break;
-                    }
-                }
-                items.sort((a, b) => {
-                    if (!isDesc) {
-                        return (a[sort_field] > b[sort_field]) ? 1 : -1 ;
-                    } else {
-                        return (a[sort_field] < b[sort_field]) ? 1 : -1 ;
-                    }
-                });
-            }
-            return items;
-        },   
         changeSort (column) {
             if (this.pagination.sortBy === column) {
             this.pagination.descending = !this.pagination.descending
@@ -226,56 +276,15 @@ export default {
             if (sourceStructure.category_type == "timestamp"){
                 for(let serie of allSeries){
                     series_first_cat[serie] = new Date(series_first_cat[serie]).toISOString().substring(0,10)
-                }
-                for(let serie of allSeries){
                     series_last_cat[serie] = new Date(series_last_cat[serie]).toISOString().substring(0,10)
                 }
             }
+
             this.first_cat = series_first_cat
             this.last_cat = series_last_cat
-            
+
             if(sourceStructure.category_type == "timestamp" && sourceStructure.category_aggregation == "week"){
-                for(let reg of hierarchicalDS){
-                    for(let serie of allSeries){
-                        let new_serie = [];
-                        let sum_week = 0;
-                        let weekday;
-                        let first_reg = true;
-                        let day_before = null;
-                        let same_week = true;
-                        const _MS_PER_DAY = 1000 * 60 * 60 * 24;
-                        for (let item of reg[serie]){
-                            weekday = new Date(item.cat_value).getUTCDay();
-                            //TODO - acrescentar verificação para mesma semana date-7?
-                            if (day_before){
-                                let days_diff = Math.floor((new Date(item.cat_value) - day_before) / _MS_PER_DAY);                                
-                                if (new Date(item.cat_value) == day_before) {
-                                    same_week = true;
-                                } else if (weekday <= day_before.getUTCDay()){
-                                    same_week = false;
-                                } else if (days_diff > 6){
-                                    same_week = false;
-                                } else {
-                                    same_week = true;
-                                }
-                            }
-                            if (weekday == 0 || (day_before && !same_week) ){
-                                if (!first_reg){
-                                    new_serie.push(sum_week);
-                                } 
-                                sum_week = item.value;
-                            } else {
-                                sum_week += item.value;
-                            }
-                            first_reg = false;
-                            day_before = new Date(item.cat_value);
-                        }
-                        // não conta a última semana
-                        // new_serie.push(sum_week);
-                        reg['sparkline_values_' + serie] = new_serie;
-                        reg['last_value_' + serie] = new_serie[new_serie.length-1];
-                    }
-                }
+                this.executeTimestampCategoryAggregation(hierarchicalDS, allSeries);
             }
 
             //default order = last value in first series
@@ -288,6 +297,9 @@ export default {
             }
 
             hierarchicalDS.sort(fnSorter);
+
+            this.addHeadersLabels(allSeries);
+            
             this.dataset = hierarchicalDS;
             this.loaded = true;
             this.$emit('dataset-loaded', this.dataset);
@@ -299,7 +311,7 @@ export default {
                 for (let series_value of seriesList){
                     let series = row[series_value];
 
-                    let sparkline_labels = [];
+                    // let sparkline_labels = [];
                     let sparkline_values = [];
                     let higher_cat = series_first_cat[series_value];
                     let higher_value = 0;
@@ -317,13 +329,13 @@ export default {
                         if (fillZeros){
                             if (firstSeries.cat_value > series_first_cat[series_value]){
                                 for(let i = series_first_cat[series_value]; i < firstSeries.cat_value; i++){
-                                    sparkline_labels.push(i);
+                                    // sparkline_labels.push(i);
                                     sparkline_values.push(0);                                
                                 }
                             }
                         }
 
-                        sparkline_labels.push(firstSeries.cat_value);
+                        // sparkline_labels.push(firstSeries.cat_value);
                         sparkline_values.push(firstSeries.value);  
 
                         higher_value = firstSeries.value;
@@ -334,11 +346,11 @@ export default {
                             let seriesPrev = series[k-1];
                             if (fillZeros){
                                 for(let j = seriesPrev.cat_value + 1; j < series[k].cat_value; j++){
-                                    sparkline_labels.push(j);
+                                    // sparkline_labels.push(j);
                                     sparkline_values.push(0);                                
                                 }
                             }
-                            sparkline_labels.push(series[k].cat_value);
+                            // sparkline_labels.push(series[k].cat_value);
                             sparkline_values.push(series[k].value);    
                             total += series[k].value;
                             if (series[k].value > higher_value){
@@ -351,7 +363,7 @@ export default {
                             let lastSeries = series[series.length - 1];
                             if (lastSeries.cat_value < series_last_cat[series_value]){
                                 for(let i = lastSeries.cat_value + 1; i <= series_last_cat[series_value]; i++){
-                                    sparkline_labels.push(i);
+                                    // sparkline_labels.push(i);
                                     sparkline_values.push(0);                                
                                 }
                             }
@@ -361,41 +373,45 @@ export default {
                         row[series_value] = [];
                     }
 
-                    this.categories = sparkline_labels;
-                    row['sparkline_labels_' + series_value] = sparkline_labels;
+                    
+                    // row['sparkline_labels_' + series_value] = sparkline_labels;
                     row['sparkline_values_' + series_value] = sparkline_values;
                     row['total_' + series_value] = total;
                     row['higher_value_' + series_value] = higher_value;
-                    row['value_last_' + series_value] = sparkline_values[sparkline_values.length-1];
-                    row['value_2_last_' + series_value] = sparkline_values[sparkline_values.length-2];
-                    if (sparkline_values[sparkline_values.length-1] && sparkline_values[sparkline_values.length-1] !== 0 && 
-                        sparkline_values[sparkline_values.length-2] && sparkline_values[sparkline_values.length-2] !== 0){
-                            let rate = sparkline_values[sparkline_values.length-1]/sparkline_values[sparkline_values.length-2];
-                            if (rate < 1){
-                                row['fmt_rate_last_2_' + series_value] = '-' + NumberTransformService.formatNumber((1 - rate)*100, "real") + '%';
-                                row['rate_last_2_' + series_value] = (1 - rate)*100*-1;
-                            } else if (rate > 1){
-                                row['fmt_rate_last_2_' + series_value] = '+' + NumberTransformService.formatNumber((rate - 1)*100, "real") + '%';
-                                row['rate_last_2_' + series_value] = (rate - 1)*100;
-                            } else {
-                                row['fmt_rate_last_2_' + series_value] = '0%';
-                                row['rate_last_2_' + series_value] = 0;
-                            }                      
-                    }else {
-                        row['fmt_rate_last_2_' + series_value] = '';
-                        row['rate_last_2_' + series_value] = null;
-                    }
                     if (sourceStructure.category_type == "timestamp"){
                         higher_cat = new Date(higher_cat).toISOString().substring(0,10)
                     }
 
                     if(series){
                         row['series_length_' + series_value] = series.length;
-                        row['last_value_' + series_value] = sparkline_values[sparkline_values.length-1];
                         row['fmt_higher_value_' + series_value] = NumberTransformService.formatNumber(higher_value, "inteiro") + " (" + higher_cat + ")";
+                        let last_year_value = sparkline_values[sparkline_values.length-1];
+                        let last_2_year_value = sparkline_values[sparkline_values.length-2];
+                        row['last_value_' + series_value] = last_year_value;
+                        row['last_2_value_' + series_value] = last_2_year_value;
+                        if (last_year_value && last_year_value !== 0 && 
+                            last_2_year_value && last_2_year_value !== 0){
+                                let rate = last_year_value/last_2_year_value;
+                                if (rate < 1){
+                                    row['fmt_last_rate_' + series_value] = '-' + NumberTransformService.formatNumber((1 - rate)*100, "real") + '%';
+                                    row['last_rate_' + series_value] = (1 - rate)*100*-1;
+                                } else if (rate > 1){
+                                    row['fmt_last_rate_' + series_value] = '+' + NumberTransformService.formatNumber((rate - 1)*100, "real") + '%';
+                                    row['last_rate_' + series_value] = (rate - 1)*100;
+                                } else {
+                                    row['fmt_last_rate_' + series_value] = '0%';
+                                    row['last_rate_' + series_value] = 0;
+                                }                      
+                        }else {
+                            row['fmt_last_rate_' + series_value] = '';
+                            row['last_rate_' + series_value] = null;
+                        }
                     } else {
                         row['last_value_' + series_value] = 0;
+                        row['last_2_value_' + series_value] = 0;
                         row['fmt_higher_value_' + series_value] = "";
+                        row['fmt_last_rate_' + series_value] = '';
+                        row['last_rate_' + series_value] = null;
                     }
 
                     for (let header of this.structure.headers){
@@ -439,7 +455,99 @@ export default {
             structReactive, this.customParams,
             this.customFunctions, this.fillFromDataset
             );
-      }
+        },
+
+        getCellClass(columnField, value){
+            if (columnField.startsWith('fmt_last_rate_')){
+                if (value.substr(0,1) == "+"){
+                    return "green--text text--darken-2";
+                } else if (value.substr(0,1) == "-"){
+                    return "red--text";
+                }
+            } else if (columnField.startsWith('last_rate_')){
+                if (value > 0){
+                    return "green--text text--darken-2";
+                } else if (value < 0){
+                    return "red--text";
+                }
+            }
+            return '';
+        },
+
+        replaceSpecialCharacters (item, queryText) {
+            let itemText = item? item.toString(): "";
+            queryText = this.$textTransformService.replaceSpecialCharacters(queryText).toLowerCase();
+            itemText = this.$textTransformService.replaceSpecialCharacters(itemText).toLowerCase();
+            return itemText.indexOf(queryText) > -1 
+        },
+
+        addHeadersLabels(allSeries){
+            //Creating headers labels
+            for (let serie of allSeries){
+                let last_2_cat = this.last_cat[serie] - 1;
+                this.labels['last_value_'+ serie + '_label'] = this.last_cat[serie];
+                this.labels['last_2_value_'+ serie + '_label'] = last_2_cat;
+                this.labels['last_rate_'+ serie + '_label'] = '(' + last_2_cat + '-' + this.last_cat[serie] + ')';
+                this.labels['spark_'+ serie + '_label'] = ' (' + this.first_cat[serie] + ' a ' + this.last_cat[serie] + ')';
+            }
+            //Adding labels in headers text
+            let i = 0;
+            for (let header of this.structure.headers){
+                if (header.type == 'spark'){
+                    header.text = this.baseHeaders[i].text + this.labels['spark_' + header.series + '_label'];
+                } else if (this.labels[header.value.replace('fmt_','') + '_label']){
+                    header.text = this.baseHeaders[i].text + (this.baseHeaders[i].text !== '' && this.baseHeaders[i].text !== undefined?' ':'') + this.labels[header.value.replace('fmt_','')  + '_label'];
+                }
+                i++;
+            }
+
+        },
+
+        executeTimestampCategoryAggregation(hierarchicalDS, allSeries){
+            for(let reg of hierarchicalDS){
+                for(let serie of allSeries){
+                    let new_serie = [];
+                    let sum_week = 0;
+                    let weekday;
+                    let first_reg = true;
+                    let day_before = null;
+                    let same_week = true;
+                    const _MS_PER_DAY = 1000 * 60 * 60 * 24;
+                    for (let item of reg[serie]){
+                        weekday = new Date(item.cat_value).getUTCDay();
+                        //TODO - acrescentar verificação para mesma semana date-7?
+                        if (day_before){
+                            let days_diff = Math.floor((new Date(item.cat_value) - day_before) / _MS_PER_DAY);                                
+                            if (new Date(item.cat_value) == day_before) {
+                                same_week = true;
+                            } else if (weekday <= day_before.getUTCDay()){
+                                same_week = false;
+                            } else if (days_diff > 6){
+                                same_week = false;
+                            } else {
+                                same_week = true;
+                            }
+                        }
+                        if (weekday == 0 || (day_before && !same_week) ){
+                            if (!first_reg){
+                                new_serie.push(sum_week);
+                            } 
+                            sum_week = item.value;
+                        } else {
+                            sum_week += item.value;
+                        }
+                        first_reg = false;
+                        day_before = new Date(item.cat_value);
+                    }
+                    // não conta a última semana
+                    // new_serie.push(sum_week);
+                    reg['sparkline_values_' + serie] = new_serie;
+                    reg['last_value_' + serie] = new_serie[new_serie.length-1];
+                }
+            }
+        }
+
+
     }
 }
 </script>
@@ -464,6 +572,9 @@ export default {
     height: 100%;
   }
   .sparklines-grid table.v-table tbody td{
+    padding: 0 5px;
+  }
+  .sparklines-grid table.v-table thead th{
     padding: 0 5px;
   }
   table thead th span.word-wrap {
