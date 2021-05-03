@@ -27,7 +27,6 @@
             class="sparklines-grid elevation-1"
             style="width: 100%;"
             :rows-per-page-items='[10,50,100,200,500,{"text":"$vuetify.dataIterator.rowsPerPageAll","value":-1}]'
-            :custom-sort="customSort"
             :pagination.sync="pagination"
             :loading="!loaded"
             :filter="replaceSpecialCharacters"
@@ -214,26 +213,6 @@ export default {
         }
     },
     methods: {
-        customSort(items, index, isDesc) {
-
-            let sort_field = index;
-            if (index){
-                for(let header of this.structure.headers){
-                    if (header.value == index && header.sort_field){
-                        sort_field = header.sort_field;
-                        break;
-                    }
-                }
-                items.sort((a, b) => {
-                    if (!isDesc) {
-                        return (a[sort_field] > b[sort_field]) ? 1 : -1 ;
-                    } else {
-                        return (a[sort_field] < b[sort_field]) ? 1 : -1 ;
-                    }
-                });
-            }
-            return items;
-        },   
         changeSort (column) {
             if (this.pagination.sortBy === column) {
             this.pagination.descending = !this.pagination.descending
@@ -300,51 +279,12 @@ export default {
                     series_last_cat[serie] = new Date(series_last_cat[serie]).toISOString().substring(0,10)
                 }
             }
+            
             this.first_cat = series_first_cat
             this.last_cat = series_last_cat
 
             if(sourceStructure.category_type == "timestamp" && sourceStructure.category_aggregation == "week"){
-                for(let reg of hierarchicalDS){
-                    for(let serie of allSeries){
-                        let new_serie = [];
-                        let sum_week = 0;
-                        let weekday;
-                        let first_reg = true;
-                        let day_before = null;
-                        let same_week = true;
-                        const _MS_PER_DAY = 1000 * 60 * 60 * 24;
-                        for (let item of reg[serie]){
-                            weekday = new Date(item.cat_value).getUTCDay();
-                            //TODO - acrescentar verificação para mesma semana date-7?
-                            if (day_before){
-                                let days_diff = Math.floor((new Date(item.cat_value) - day_before) / _MS_PER_DAY);                                
-                                if (new Date(item.cat_value) == day_before) {
-                                    same_week = true;
-                                } else if (weekday <= day_before.getUTCDay()){
-                                    same_week = false;
-                                } else if (days_diff > 6){
-                                    same_week = false;
-                                } else {
-                                    same_week = true;
-                                }
-                            }
-                            if (weekday == 0 || (day_before && !same_week) ){
-                                if (!first_reg){
-                                    new_serie.push(sum_week);
-                                } 
-                                sum_week = item.value;
-                            } else {
-                                sum_week += item.value;
-                            }
-                            first_reg = false;
-                            day_before = new Date(item.cat_value);
-                        }
-                        // não conta a última semana
-                        // new_serie.push(sum_week);
-                        reg['sparkline_values_' + serie] = new_serie;
-                        reg['last_value_' + serie] = new_serie[new_serie.length-1];
-                    }
-                }
+                this.executeTimestampCategoryAggregation(hierarchicalDS, allSeries);
             }
 
             //default order = last value in first series
@@ -561,7 +501,52 @@ export default {
                 i++;
             }
 
+        },
+
+        executeTimestampCategoryAggregation(hierarchicalDS, allSeries){
+            for(let reg of hierarchicalDS){
+                for(let serie of allSeries){
+                    let new_serie = [];
+                    let sum_week = 0;
+                    let weekday;
+                    let first_reg = true;
+                    let day_before = null;
+                    let same_week = true;
+                    const _MS_PER_DAY = 1000 * 60 * 60 * 24;
+                    for (let item of reg[serie]){
+                        weekday = new Date(item.cat_value).getUTCDay();
+                        //TODO - acrescentar verificação para mesma semana date-7?
+                        if (day_before){
+                            let days_diff = Math.floor((new Date(item.cat_value) - day_before) / _MS_PER_DAY);                                
+                            if (new Date(item.cat_value) == day_before) {
+                                same_week = true;
+                            } else if (weekday <= day_before.getUTCDay()){
+                                same_week = false;
+                            } else if (days_diff > 6){
+                                same_week = false;
+                            } else {
+                                same_week = true;
+                            }
+                        }
+                        if (weekday == 0 || (day_before && !same_week) ){
+                            if (!first_reg){
+                                new_serie.push(sum_week);
+                            } 
+                            sum_week = item.value;
+                        } else {
+                            sum_week += item.value;
+                        }
+                        first_reg = false;
+                        day_before = new Date(item.cat_value);
+                    }
+                    // não conta a última semana
+                    // new_serie.push(sum_week);
+                    reg['sparkline_values_' + serie] = new_serie;
+                    reg['last_value_' + serie] = new_serie[new_serie.length-1];
+                }
+            }
         }
+
 
     }
 }
