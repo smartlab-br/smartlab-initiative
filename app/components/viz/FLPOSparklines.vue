@@ -2,7 +2,7 @@
   <v-layout column pa-2 max-width="100%">
     <v-card>
         <v-card-title
-            v-if="structure.search_position == top || structure.search_position == undefined"
+            v-if="structure.search_position == 'top' || structure.search_position == undefined"
         >
             <v-text-field
                 v-model="search"
@@ -30,6 +30,8 @@
             :custom-sort="customSort"
             :pagination.sync="pagination"
             :loading="!loaded"
+            :filter="replaceSpecialCharacters"
+
         >
             <template 
                 slot="headers" 
@@ -59,8 +61,8 @@
             </tr>
             <tr>
                 <th scope="colgroup" 
-                    v-for="header in props.headers"
-                    :key="header.value"
+                    v-for="(header, idxHeader) in props.headers"
+                    :key="idxHeader"
                     :class="['column sortable', pagination.descending ? 'desc' : 'asc', header.value === pagination.sortBy ? 'active' : '']"
                     :width="header.width"
                     @click="changeSort(header.value)"
@@ -156,8 +158,9 @@
                     </div>
                     <div 
                         v-else
+                        :class="getCellClass(hdr.value, props.item[hdr.value])"
                     >
-                        {{ props.item['fmt_' + hdr.value] ? props.item['fmt_' + hdr.value]: props.item[hdr.value] }}
+                        {{ props.item[hdr.value] }}
                     </div>
                 </td> 
             </template>
@@ -168,6 +171,7 @@
                     :value="true" 
                     color="error" 
                     icon="warning"
+                    outline
                 >
                     Sua busca por "{{ search }}" não trouxe resultados.
                 </v-alert>
@@ -192,12 +196,14 @@ export default {
             pagination: {}, 
             first_cat: {},
             last_cat: {},
-            categories: [],
+            labels: {},
+            baseHeaders: null,
             loaded: true     
         }
     },
     props: ['refreshComponent', 'customFilters'],
     created () {
+        this.baseHeaders = this.structure.headers.map((x) => Object.assign({}, x));
         this.fillDataStructure(this.structure, this.customParams,
         this.customFunctions, this.fillFromDataset, {});
     },
@@ -209,6 +215,7 @@ export default {
     },
     methods: {
         customSort(items, index, isDesc) {
+
             let sort_field = index;
             if (index){
                 for(let header of this.structure.headers){
@@ -290,14 +297,12 @@ export default {
             if (sourceStructure.category_type == "timestamp"){
                 for(let serie of allSeries){
                     series_first_cat[serie] = new Date(series_first_cat[serie]).toISOString().substring(0,10)
-                }
-                for(let serie of allSeries){
                     series_last_cat[serie] = new Date(series_last_cat[serie]).toISOString().substring(0,10)
                 }
             }
             this.first_cat = series_first_cat
             this.last_cat = series_last_cat
-            
+
             if(sourceStructure.category_type == "timestamp" && sourceStructure.category_aggregation == "week"){
                 for(let reg of hierarchicalDS){
                     for(let serie of allSeries){
@@ -353,18 +358,8 @@ export default {
 
             hierarchicalDS.sort(fnSorter);
 
-            //Adding categories in headers text
-            for (let header of this.structure.headers){
-                if (header.type == 'spark'){
-                    header.text += ' (' + this.first_cat[header.series] + ' a ' + this.last_cat[header.series] + ')';
-                } else if (header.value.startsWith('rate_last_') && this.categories[this.categories.length - 2]){
-                    header.text += (header.text !== '' && header.text !== undefined?' ':'') + '(' + this.categories[this.categories.length - 2] + '-' + this.categories[this.categories.length - 1] + ')';
-                } else if (header.value.startsWith('value_2_last_')&& this.categories[this.categories.length - 2]){
-                    header.text += (header.text !== '' && header.text !== undefined?' ':'') + this.categories[this.categories.length - 2];
-                } else if (header.value.startsWith('value_last_')){
-                    header.text += (header.text !== '' && header.text !== undefined?' ':'') + this.categories[this.categories.length - 1];
-                }
-            }
+            this.addHeadersLabels(allSeries);
+            
             this.dataset = hierarchicalDS;
             this.loaded = true;
             this.$emit('dataset-loaded', this.dataset);
@@ -376,7 +371,7 @@ export default {
                 for (let series_value of seriesList){
                     let series = row[series_value];
 
-                    let sparkline_labels = [];
+                    // let sparkline_labels = [];
                     let sparkline_values = [];
                     let higher_cat = series_first_cat[series_value];
                     let higher_value = 0;
@@ -394,13 +389,13 @@ export default {
                         if (fillZeros){
                             if (firstSeries.cat_value > series_first_cat[series_value]){
                                 for(let i = series_first_cat[series_value]; i < firstSeries.cat_value; i++){
-                                    sparkline_labels.push(i);
+                                    // sparkline_labels.push(i);
                                     sparkline_values.push(0);                                
                                 }
                             }
                         }
 
-                        sparkline_labels.push(firstSeries.cat_value);
+                        // sparkline_labels.push(firstSeries.cat_value);
                         sparkline_values.push(firstSeries.value);  
 
                         higher_value = firstSeries.value;
@@ -411,11 +406,11 @@ export default {
                             let seriesPrev = series[k-1];
                             if (fillZeros){
                                 for(let j = seriesPrev.cat_value + 1; j < series[k].cat_value; j++){
-                                    sparkline_labels.push(j);
+                                    // sparkline_labels.push(j);
                                     sparkline_values.push(0);                                
                                 }
                             }
-                            sparkline_labels.push(series[k].cat_value);
+                            // sparkline_labels.push(series[k].cat_value);
                             sparkline_values.push(series[k].value);    
                             total += series[k].value;
                             if (series[k].value > higher_value){
@@ -428,7 +423,7 @@ export default {
                             let lastSeries = series[series.length - 1];
                             if (lastSeries.cat_value < series_last_cat[series_value]){
                                 for(let i = lastSeries.cat_value + 1; i <= series_last_cat[series_value]; i++){
-                                    sparkline_labels.push(i);
+                                    // sparkline_labels.push(i);
                                     sparkline_values.push(0);                                
                                 }
                             }
@@ -438,41 +433,45 @@ export default {
                         row[series_value] = [];
                     }
 
-                    this.categories = sparkline_labels;
-                    row['sparkline_labels_' + series_value] = sparkline_labels;
+                    
+                    // row['sparkline_labels_' + series_value] = sparkline_labels;
                     row['sparkline_values_' + series_value] = sparkline_values;
                     row['total_' + series_value] = total;
                     row['higher_value_' + series_value] = higher_value;
-                    row['value_last_' + series_value] = sparkline_values[sparkline_values.length-1];
-                    row['value_2_last_' + series_value] = sparkline_values[sparkline_values.length-2];
-                    if (sparkline_values[sparkline_values.length-1] && sparkline_values[sparkline_values.length-1] !== 0 && 
-                        sparkline_values[sparkline_values.length-2] && sparkline_values[sparkline_values.length-2] !== 0){
-                            let rate = sparkline_values[sparkline_values.length-1]/sparkline_values[sparkline_values.length-2];
-                            if (rate < 1){
-                                row['fmt_rate_last_2_' + series_value] = '-' + NumberTransformService.formatNumber((1 - rate)*100, "real") + '%';
-                                row['rate_last_2_' + series_value] = (1 - rate)*100*-1;
-                            } else if (rate > 1){
-                                row['fmt_rate_last_2_' + series_value] = '+' + NumberTransformService.formatNumber((rate - 1)*100, "real") + '%';
-                                row['rate_last_2_' + series_value] = (rate - 1)*100;
-                            } else {
-                                row['fmt_rate_last_2_' + series_value] = '0%';
-                                row['rate_last_2_' + series_value] = 0;
-                            }                      
-                    }else {
-                        row['fmt_rate_last_2_' + series_value] = '';
-                        row['rate_last_2_' + series_value] = null;
-                    }
                     if (sourceStructure.category_type == "timestamp"){
                         higher_cat = new Date(higher_cat).toISOString().substring(0,10)
                     }
 
                     if(series){
                         row['series_length_' + series_value] = series.length;
-                        row['last_value_' + series_value] = sparkline_values[sparkline_values.length-1];
                         row['fmt_higher_value_' + series_value] = NumberTransformService.formatNumber(higher_value, "inteiro") + " (" + higher_cat + ")";
+                        let last_year_value = sparkline_values[sparkline_values.length-1];
+                        let last_2_year_value = sparkline_values[sparkline_values.length-2];
+                        row['last_value_' + series_value] = last_year_value;
+                        row['last_2_value_' + series_value] = last_2_year_value;
+                        if (last_year_value && last_year_value !== 0 && 
+                            last_2_year_value && last_2_year_value !== 0){
+                                let rate = last_year_value/last_2_year_value;
+                                if (rate < 1){
+                                    row['fmt_last_rate_' + series_value] = '-' + NumberTransformService.formatNumber((1 - rate)*100, "real") + '%';
+                                    row['last_rate_' + series_value] = (1 - rate)*100*-1;
+                                } else if (rate > 1){
+                                    row['fmt_last_rate_' + series_value] = '+' + NumberTransformService.formatNumber((rate - 1)*100, "real") + '%';
+                                    row['last_rate_' + series_value] = (rate - 1)*100;
+                                } else {
+                                    row['fmt_last_rate_' + series_value] = '0%';
+                                    row['last_rate_' + series_value] = 0;
+                                }                      
+                        }else {
+                            row['fmt_last_rate_' + series_value] = '';
+                            row['last_rate_' + series_value] = null;
+                        }
                     } else {
                         row['last_value_' + series_value] = 0;
+                        row['last_2_value_' + series_value] = 0;
                         row['fmt_higher_value_' + series_value] = "";
+                        row['fmt_last_rate_' + series_value] = '';
+                        row['last_rate_' + series_value] = null;
                     }
 
                     for (let header of this.structure.headers){
@@ -516,7 +515,54 @@ export default {
             structReactive, this.customParams,
             this.customFunctions, this.fillFromDataset
             );
+      },
+
+      getCellClass(columnField, value){
+        if (columnField.startsWith('fmt_last_rate_')){
+              if (value.substr(0,1) == "+"){
+                  return "green--text text--darken-2";
+              } else if (value.substr(0,1) == "-"){
+                  return "red--text";
+              }
+          } else if (columnField.startsWith('last_rate_')){
+              if (value > 0){
+                  return "green--text text--darken-2";
+              } else if (value < 0){
+                  return "red--text";
+              }
+          }
+          return '';
+      },
+
+      replaceSpecialCharacters (item, queryText) {
+        let itemText = item? item.toString(): "";
+        queryText = this.$textTransformService.replaceSpecialCharacters(queryText).toLowerCase();
+        itemText = this.$textTransformService.replaceSpecialCharacters(itemText).toLowerCase();
+        return itemText.indexOf(queryText) > -1 
+      },
+
+      addHeadersLabels(allSeries){
+        //Creating headers labels
+        for (let serie of allSeries){
+            let last_2_cat = this.last_cat[serie] - 1;
+            this.labels['last_value_'+ serie + '_label'] = this.last_cat[serie];
+            this.labels['last_2_value_'+ serie + '_label'] = last_2_cat;
+            this.labels['last_rate_'+ serie + '_label'] = '(' + last_2_cat + '-' + this.last_cat[serie] + ')';
+            this.labels['spark_'+ serie + '_label'] = ' (' + this.first_cat[serie] + ' a ' + this.last_cat[serie] + ')';
+        }
+        //Adding labels in headers text
+        let i = 0;
+        for (let header of this.structure.headers){
+            if (header.type == 'spark'){
+                header.text = this.baseHeaders[i].text + this.labels['spark_' + header.series + '_label'];
+            } else if (this.labels[header.value.replace('fmt_','') + '_label']){
+                header.text = this.baseHeaders[i].text + (this.baseHeaders[i].text !== '' && this.baseHeaders[i].text !== undefined?' ':'') + this.labels[header.value.replace('fmt_','')  + '_label'];
+            }
+            i++;
+        }
+
       }
+
     }
 }
 </script>
@@ -541,6 +587,9 @@ export default {
     height: 100%;
   }
   .sparklines-grid table.v-table tbody td{
+    padding: 0 5px;
+  }
+  .sparklines-grid table.v-table thead th{
     padding: 0 5px;
   }
   table thead th span.word-wrap {
