@@ -13,10 +13,10 @@
             />
         </v-card-title>
         <v-progress-linear v-if="!dataset"
-          height="40"
-          :indeterminate="!dataset"
-          color="info">
-          <p class="headline-obs text-xs-center">{{structure.title}}</p>
+            height="40"
+            :indeterminate="!dataset"
+            color="info">
+            <p class="headline-obs text-xs-center">{{structure.title}}</p>
         </v-progress-linear>
         <v-data-table 
             v-if="dataset && structure.headers"
@@ -515,53 +515,53 @@ export default {
             structReactive, this.customParams,
             this.customFunctions, this.fillFromDataset
             );
-      },
+        },
 
-      getCellClass(columnField, value){
-        if (columnField.startsWith('fmt_last_rate_')){
-              if (value.substr(0,1) == "+"){
-                  return "green--text text--darken-2";
-              } else if (value.substr(0,1) == "-"){
-                  return "red--text";
-              }
-          } else if (columnField.startsWith('last_rate_')){
-              if (value > 0){
-                  return "green--text text--darken-2";
-              } else if (value < 0){
-                  return "red--text";
-              }
-          }
-          return '';
-      },
-
-      replaceSpecialCharacters (item, queryText) {
-        let itemText = item? item.toString(): "";
-        queryText = this.$textTransformService.replaceSpecialCharacters(queryText).toLowerCase();
-        itemText = this.$textTransformService.replaceSpecialCharacters(itemText).toLowerCase();
-        return itemText.indexOf(queryText) > -1 
-      },
-
-      addHeadersLabels(allSeries){
-        //Creating headers labels
-        for (let serie of allSeries){
-            let last_2_cat = this.last_cat[serie] - 1;
-            this.labels['last_value_'+ serie + '_label'] = this.last_cat[serie];
-            this.labels['last_2_value_'+ serie + '_label'] = last_2_cat;
-            this.labels['last_rate_'+ serie + '_label'] = '(' + last_2_cat + '-' + this.last_cat[serie] + ')';
-            this.labels['spark_'+ serie + '_label'] = ' (' + this.first_cat[serie] + ' a ' + this.last_cat[serie] + ')';
-        }
-        //Adding labels in headers text
-        let i = 0;
-        for (let header of this.structure.headers){
-            if (header.type == 'spark'){
-                header.text = this.baseHeaders[i].text + this.labels['spark_' + header.series + '_label'];
-            } else if (this.labels[header.value.replace('fmt_','') + '_label']){
-                header.text = this.baseHeaders[i].text + (this.baseHeaders[i].text !== '' && this.baseHeaders[i].text !== undefined?' ':'') + this.labels[header.value.replace('fmt_','')  + '_label'];
+        getCellClass(columnField, value){
+            if (columnField.startsWith('fmt_last_rate_')){
+                if (value.substr(0,1) == "+"){
+                    return "green--text text--darken-2";
+                } else if (value.substr(0,1) == "-"){
+                    return "red--text";
+                }
+            } else if (columnField.startsWith('last_rate_')){
+                if (value > 0){
+                    return "green--text text--darken-2";
+                } else if (value < 0){
+                    return "red--text";
+                }
             }
-            i++;
-        }
+            return '';
+        },
 
-      }
+        replaceSpecialCharacters (item, queryText) {
+            let itemText = item? item.toString(): "";
+            queryText = this.$textTransformService.replaceSpecialCharacters(queryText).toLowerCase();
+            itemText = this.$textTransformService.replaceSpecialCharacters(itemText).toLowerCase();
+            return itemText.indexOf(queryText) > -1 
+        },
+
+        addHeadersLabels(allSeries){
+            //Creating headers labels
+            for (let serie of allSeries){
+                let last_2_cat = this.last_cat[serie] - 1;
+                this.labels['last_value_'+ serie + '_label'] = this.last_cat[serie];
+                this.labels['last_2_value_'+ serie + '_label'] = last_2_cat;
+                this.labels['last_rate_'+ serie + '_label'] = '(' + last_2_cat + '-' + this.last_cat[serie] + ')';
+                this.labels['spark_'+ serie + '_label'] = ' (' + this.first_cat[serie] + ' a ' + this.last_cat[serie] + ')';
+            }
+            //Adding labels in headers text
+            let i = 0;
+            for (let header of this.structure.headers){
+                if (header.type == 'spark'){
+                    header.text = this.baseHeaders[i].text + this.labels['spark_' + header.series + '_label'];
+                } else if (this.labels[header.value.replace('fmt_','') + '_label']){
+                    header.text = this.baseHeaders[i].text + (this.baseHeaders[i].text !== '' && this.baseHeaders[i].text !== undefined?' ':'') + this.labels[header.value.replace('fmt_','')  + '_label'];
+                }
+                i++;
+            }
+
+        }
 
     }
 }
