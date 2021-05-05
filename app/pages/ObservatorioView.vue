@@ -463,7 +463,7 @@
             this.slicing = "xs12 sm6 md4 xl3";
             break;
           case 9:
-            this.slicing = "xs12 sm6 md4";
+            this.slicing = "xs12 sm6 md4 xl3";
             break;
           case 8:
             this.slicing = "xs12 sm6 lg3";
