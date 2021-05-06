@@ -38,6 +38,60 @@
         </v-layout>
       </v-layout>
     </v-flex>
+    <v-flex class="black--background">
+    <v-layout v-for="(secao, indxSctn) in secoes"
+        :key="indxSctn"
+          px-5 row wrap v-show="secoes"
+          class="white--text section">
+      <v-flex v-if="!secao.complement" xs12>
+        <div class='section-title'>{{secao.title}}</div>
+        <div class='section-description' v-html="secao.description"></div>
+      </v-flex>
+      <v-flex v-if="secao.complement" :class="(secao.cls ? secao.cls : 'xs9')">
+        <div class='section-title'>{{secao.title}}</div>
+        <div class='section-description'  v-html="secao.description"></div>
+      </v-flex>
+      <v-flex v-if="secao.complement" class="section-complement" :class="(secao.complement.cls ? secao.complement.cls : 'xs3')">
+        <flpo-minicard
+          v-for="(miniCard, indexMinicard) in secao.complement.minicards"
+          :key="'minicard_'+indexMinicard"
+          :structure="miniCard" 
+          @showSnackbar="snackAlert">
+        </flpo-minicard>
+        
+
+        <v-flex  v-for="(image, indexImage) in secao.complement.images"
+          :key="'img_'+indexImage" pa-0 class="image-container">
+          <div v-if="image.tag" class="layout caption font-weight-bold pa-1 text-xs-center soon-tag warning black--text">
+            {{image.tag.text}}
+          </div>
+          <v-img 
+            :src="image.url"
+            :class="(image.link_disabled ? 'link_disabled' : '') + ' complement-image'"></v-img>
+        </v-flex>
+        
+      </v-flex>
+    </v-layout>
+
+
+    <div v-for="(observatorio, indxObs) in observatorios"
+        :key="'obs_section_'+indxObs">
+    <v-layout v-if="!observatorio.blocked"
+          px-5 row wrap class="white--text section">
+      <v-flex :class="(indxObs % 2 == 0 ? 'xs12 md6 px-3' : 'xs12 md6 px-3 order-md12')">
+        <div class='section-title'>{{observatorio.title}}</div>
+        <div class='section-description' v-html="observatorio.section_description"></div>
+      </v-flex>
+      <v-flex  class="section-complement" xs12 md6 px-3>      
+        <v-img :src="observatorio.section_image"
+          class="complement-image"
+          @click="$navigationManager.constructor.pushRoute($router, observatorio.to, observatorio.external)"
+        ></v-img>
+      </v-flex>  
+    </v-layout>
+      </div>
+
+    </v-flex>
   </v-layout>
 </template>
 
@@ -63,6 +117,8 @@
         obsSliceClass: 'xs12 sm6 md4 xl2',
         obsMaxSlice: 3,
 
+        secoes: null,
+
         parallaxFile: null,
         idParallaxfile: 0,
         background_images: [],
@@ -73,10 +129,21 @@
     created () {
       
       let tmpObs = this.$observatories.getObservatories();
+
       if ((tmpObs instanceof Promise) || tmpObs.then) {
         tmpObs.then((result) => { this.observatorios = result });
       } else {
         this.observatorios = tmpObs;
+      }
+
+      let tmpSections = this.$observatories.getSections();
+      if ((tmpSections instanceof Promise) || tmpSections.then) {
+        tmpSections.then((result) => { 
+          this.secoes = result 
+          }
+        );
+      } else {
+        this.secoes = tmpSections;
       }
 
       if (this.$vuetify.breakpoint.smAndDown) {
@@ -270,5 +337,63 @@
     background-color: rgba(0,0,0,0.6);
   }
 
+  .black--background {
+    background-color: black;
+  }
+  .section {
+    min-height: 95vh;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    margin: 30px;
+    padding-top: 30px;
+    margin-left: 8px;
+    margin-right: 8px;
+    /* margin-right: 50px; */
+  }
+  .section-title {
+    font-family: titulos-observatorio;
+    font-size: 3rem;
+    margin: 16px;
+    line-height: 1.1;
+    /* margin-bottom: 32px; */
+  }
+  .section-description {
+    font-size: 1.3rem;
+     margin: 16px;
+  }
+  .section-complement {
+    font-size: 1.3rem;
+     margin-top: 22px;
+  }
+  .complement-image {
+    border-color: rgba(255, 255, 255, 0.3);
+    border-width: 1px;
+    border-style: solid;
+    cursor: pointer;
+  }
+  .link_disabled {
+    cursor: default;
+  }
+
+  .section-complement .minicard-description {
+    font-size: 1rem !important;
+  }
+
+  .section-complement .minicard-comment {
+    font-size: 1rem !important;
+  }
+
+  .soon-tag {
+    display: block;
+    position: absolute;
+    width: 136px;
+    top: 24px;
+    right: -32px;
+    z-index: +1;
+    transform: rotate(45deg);
+  }
+  .image-container {
+    position: relative;
+    overflow: hidden;
+  }
 </style>
   
