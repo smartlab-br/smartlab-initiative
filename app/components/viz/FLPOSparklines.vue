@@ -502,17 +502,17 @@ export default {
         getCellClass(columnField, value){
             if (columnField.startsWith('fmt_last_rate_')){
                 if (value.substr(0,1) == "+" || value.startsWith('de 0')){
-                    return "green--text text--darken-2";
-                } else if (value.substr(0,1) == "-" || value.endsWith('para 0')){
                     return "red--text";
+                } else if (value.substr(0,1) == "-" || value.endsWith('para 0')){
+                    return "orange--text text--darken-1";
                 } else if (value == 'sem incidência'){
                     return "grey--text";
                 }
             } else if (columnField.startsWith('last_rate_')){
                 if (value > 0){
-                    return "green--text text--darken-2";
-                } else if (value < 0){
                     return "red--text";
+                } else if (value < 0){
+                    return "orange--text text--darken-2";
                 }
             }
             return '';
