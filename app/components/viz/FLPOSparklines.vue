@@ -26,11 +26,12 @@
             :search="search"
             class="sparklines-grid elevation-1"
             style="width: 100%;"
-            :rows-per-page-items='[10,50,100,200,500,{"text":"$vuetify.dataIterator.rowsPerPageAll","value":-1}]'
+            :rows-per-page-items='[10,50,100,200,500,{"text":"Todos","value":-1}]'
             :pagination.sync="pagination"
             :loading="!loaded"
             :filter="replaceSpecialCharacters"
-
+            no-data-text="Sem registros"
+            rows-per-page-text="Registros por página"
         >
             <template 
                 slot="headers" 
@@ -48,14 +49,29 @@
                         label="Procurar"
                         single-line
                         hide-details
+                        class='pa-2 ma-0'
                     />
                 </th>
                 <th 
                     scope="colgroup" 
                     class="headline-obs" 
-                    :colspan="props.headers.length-(structure.search_position == 'left'?2:0)"
+                    :colspan="props.headers.length-((structure.search_position == 'left' || structure.search_position == 'right')?2:0)"
                 >
                     {{structure.title}}
+                </th>
+                <th 
+                    v-if="structure.search_position == 'right'"
+                    scope="colgroup" 
+                    class="caption" 
+                    colspan="2">
+                    <v-text-field
+                        v-model="search"
+                        append-icon="search"
+                        label="Procurar"
+                        single-line
+                        hide-details
+                        class='pa-2 ma-0'
+                    />
                 </th>
             </tr>
             <tr>
@@ -163,6 +179,23 @@
                     </div>
                 </td> 
             </template>
+            <template slot="actions-prepend"                    
+                v-if="structure.search_position == 'bottom'"
+            >
+                <v-text-field
+                    v-model="search"
+                    append-icon="search"
+                    label="Procurar"
+                    single-line
+                    hide-details
+                    class='pa-2 ma-0'
+                />
+            </template>
+            <template slot="pageText"
+                slot-scope="props"
+            >
+                {{ props.pageStart }} - {{ props.pageStop }} de {{ props.itemsLength }}
+            </template>            
             <template 
                 slot="no-results"
             >
@@ -384,13 +417,14 @@ export default {
 
                     if(series){
                         row['series_length_' + series_value] = series.length;
+                        row['series_length_last_5_' + series_value] = series.filter(function(el) { return el.cat_value >= series_last_cat[series_value]-4;}).length;
                         row['fmt_higher_value_' + series_value] = NumberTransformService.formatNumber(higher_value, "inteiro") + " (" + higher_cat + ")";
                         let last_year_value = sparkline_values[sparkline_values.length-1];
                         let last_2_year_value = sparkline_values[sparkline_values.length-2];
                         row['last_value_' + series_value] = last_year_value;
                         row['last_2_value_' + series_value] = last_2_year_value;
-                        if (last_year_value && last_year_value !== 0 && 
-                            last_2_year_value && last_2_year_value !== 0){
+                        if (last_year_value !== undefined && last_year_value !== 0 && 
+                            last_2_year_value !== undefined && last_2_year_value !== 0){
                                 let rate = last_year_value/last_2_year_value;
                                 if (rate < 1){
                                     row['fmt_last_rate_' + series_value] = '-' + NumberTransformService.formatNumber((1 - rate)*100, "real") + '%';
@@ -402,8 +436,16 @@ export default {
                                     row['fmt_last_rate_' + series_value] = '0%';
                                     row['last_rate_' + series_value] = 0;
                                 }                      
+                        }else if (last_year_value !== undefined && last_year_value == 0 && 
+                            last_2_year_value !== undefined && last_2_year_value !== 0){
+                            row['fmt_last_rate_' + series_value] = 'de ' + NumberTransformService.formatNumber(last_2_year_value, "inteiro") + ' para 0';
+                            row['last_rate_' + series_value] = null;
+                        }else if (last_year_value !== undefined && last_year_value !== 0 && 
+                            last_2_year_value !== undefined && last_2_year_value == 0){
+                            row['fmt_last_rate_' + series_value] = 'de 0 para ' + NumberTransformService.formatNumber(last_year_value, "inteiro");
+                            row['last_rate_' + series_value] = null;
                         }else {
-                            row['fmt_last_rate_' + series_value] = '';
+                            row['fmt_last_rate_' + series_value] = 'sem incidência';
                             row['last_rate_' + series_value] = null;
                         }
                     } else {
@@ -459,16 +501,18 @@ export default {
 
         getCellClass(columnField, value){
             if (columnField.startsWith('fmt_last_rate_')){
-                if (value.substr(0,1) == "+"){
-                    return "green--text text--darken-2";
-                } else if (value.substr(0,1) == "-"){
+                if (value.substr(0,1) == "+" || value.startsWith('de 0')){
                     return "red--text";
+                } else if (value.substr(0,1) == "-" || value.endsWith('para 0')){
+                    return "orange--text text--darken-1";
+                } else if (value == 'sem incidência'){
+                    return "grey--text";
                 }
             } else if (columnField.startsWith('last_rate_')){
                 if (value > 0){
-                    return "green--text text--darken-2";
-                } else if (value < 0){
                     return "red--text";
+                } else if (value < 0){
+                    return "orange--text text--darken-2";
                 }
             }
             return '';
@@ -484,11 +528,19 @@ export default {
         addHeadersLabels(allSeries){
             //Creating headers labels
             for (let serie of allSeries){
+
                 let last_2_cat = this.last_cat[serie] - 1;
+                let last_5_cat = this.last_cat[serie] - 4;
+                if (this.last_cat[serie] - this.first_cat[serie] < 4){
+                   last_5_cat =  this.first_cat[serie];
+                }
                 this.labels['last_value_'+ serie + '_label'] = this.last_cat[serie];
                 this.labels['last_2_value_'+ serie + '_label'] = last_2_cat;
                 this.labels['last_rate_'+ serie + '_label'] = '(' + last_2_cat + '-' + this.last_cat[serie] + ')';
                 this.labels['spark_'+ serie + '_label'] = ' (' + this.first_cat[serie] + ' a ' + this.last_cat[serie] + ')';
+                this.labels['series_length_'+ serie + '_label'] = ' (' + this.first_cat[serie] + '-' + this.last_cat[serie] + ')';
+                this.labels['series_length_last_5_'+ serie + '_label'] = ' (' + last_5_cat + '-' + this.last_cat[serie] + ')';
+                
             }
             //Adding labels in headers text
             let i = 0;
@@ -577,7 +629,7 @@ export default {
   .sparklines-grid table.v-table thead th{
     padding: 0 5px;
   }
-  table thead th span.word-wrap {
+  table thead tr th span.word-wrap {
     word-wrap: break-word;
     white-space: normal; 
   }  
