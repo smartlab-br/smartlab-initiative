@@ -374,7 +374,7 @@
     /* margin-right: 50px; */
   }
   .section-title {
-    font-family: titulos-observatorio;
+    font-family: titulos-observatorio, sans-serif;
     font-size: 3rem;
     margin: 16px;
     line-height: 1.1;
