@@ -39,57 +39,81 @@
       </v-layout>
     </v-flex>
     <v-flex class="black--background">
-    <v-layout v-for="(secao, indxSctn) in secoes"
+      <v-layout 
+        align-center 
+        section
+        v-for="(secao, indxSctn) in secoes"
         :key="indxSctn"
-          px-5 row wrap v-show="secoes"
-          class="white--text section">
-      <v-flex v-if="!secao.complement" xs12>
-        <div class='section-title'>{{secao.title}}</div>
-        <div class='section-description' v-html="secao.description"></div>
-      </v-flex>
-      <v-flex v-if="secao.complement" :class="(secao.cls ? secao.cls : 'xs9')">
-        <div class='section-title'>{{secao.title}}</div>
-        <div class='section-description'  v-html="secao.description"></div>
-      </v-flex>
-      <v-flex v-if="secao.complement" class="section-complement" :class="(secao.complement.cls ? secao.complement.cls : 'xs3')">
-        <flpo-minicard
-          v-for="(miniCard, indexMinicard) in secao.complement.minicards"
-          :key="'minicard_'+indexMinicard"
-          :structure="miniCard" 
-          @showSnackbar="snackAlert">
-        </flpo-minicard>
+        v-show="secoes"
+      >
+        <v-layout 
+            px-5 row wrap
+            class="white--text"
+        >
+          <v-flex v-if="!secao.complement" xs12>
+            <div class='section-title'>{{secao.title}}</div>
+            <div class='section-description' v-html="secao.description"></div>
+          </v-flex>
+          <v-flex v-if="secao.complement" :class="(secao.cls ? secao.cls : 'xs9')">
+            <div class='section-title'>{{secao.title}}</div>
+            <div class='section-description'  v-html="secao.description"></div>
+          </v-flex>
+          <v-flex v-if="secao.complement" class="section-complement" :class="(secao.complement.cls ? secao.complement.cls : 'xs3')">
+            <flpo-minicard
+              v-for="(miniCard, indexMinicard) in secao.complement.minicards"
+              :key="'minicard_'+indexMinicard"
+              :structure="miniCard" 
+              @showSnackbar="snackAlert">
+            </flpo-minicard>
+            
+
+            <v-layout  
+              v-for="(image, indexImage) in secao.complement.images"
+              :key="'img_'+indexImage" 
+              pa-0
+              justify-center 
+            >
+              <div 
+                class="image-container" 
+                :style="'width:' + (image.width ? image.width : '')"
+              >
+                <div v-if="image.tag" class="layout caption font-weight-bold pa-1 text-xs-center soon-tag warning black--text">
+                  {{image.tag.text}}
+                </div>
+                <v-img 
+                  :src="image.url"
+                  :class="(image.link_disabled ? 'link_disabled' : '') + ' complement-image'"
+                />
+              </div>
+            </v-layout>
+            
+          </v-flex>
+        </v-layout>
+      </v-layout>
+
+      <v-layout 
+        v-for="(observatorio, indxObs) in observatorios"
+        :key="'obs_section_'+indxObs"
         
-
-        <v-flex  v-for="(image, indexImage) in secao.complement.images"
-          :key="'img_'+indexImage" pa-0 class="image-container">
-          <div v-if="image.tag" class="layout caption font-weight-bold pa-1 text-xs-center soon-tag warning black--text">
-            {{image.tag.text}}
-          </div>
-          <v-img 
-            :src="image.url"
-            :class="(image.link_disabled ? 'link_disabled' : '') + ' complement-image'"></v-img>
-        </v-flex>
-        
-      </v-flex>
-    </v-layout>
-
-
-    <div v-for="(observatorio, indxObs) in observatorios"
-        :key="'obs_section_'+indxObs">
-    <v-layout v-if="!observatorio.blocked"
-          px-5 row wrap class="white--text section">
-      <v-flex :class="(indxObs % 2 == 0 ? 'xs12 md6 px-3' : 'xs12 md6 px-3 order-md12')">
-        <div class='section-title'>{{observatorio.title}}</div>
-        <div class='section-description' v-html="observatorio.section_description"></div>
-      </v-flex>
-      <v-flex  class="section-complement" xs12 md6 px-3>      
-        <v-img :src="observatorio.section_image"
-          class="complement-image"
-          @click="$navigationManager.constructor.pushRoute($router, observatorio.to, observatorio.external)"
-        ></v-img>
-      </v-flex>  
-    </v-layout>
-      </div>
+      >
+        <v-layout 
+          v-if="!observatorio.blocked"
+          px-5 row wrap class="white--text"
+          section
+          align-center              
+        >
+          <v-flex :class="(indxObs % 2 == 0 ? 'xs12 md6 px-3' : 'xs12 md6 px-3 order-md12')">
+            <div class='section-title'>{{observatorio.title}}</div>
+            <div class='section-description' v-html="observatorio.section_description"></div>
+          </v-flex>
+          <v-flex  class="section-complement" xs12 md6 px-3>      
+            <v-img :src="observatorio.section_image"
+              class="complement-image"
+              @click="$navigationManager.constructor.pushRoute($router, observatorio.to, observatorio.external)"
+            ></v-img>
+          </v-flex>  
+        </v-layout>
+      </v-layout>
 
     </v-flex>
   </v-layout>
@@ -354,7 +378,7 @@
     font-size: 3rem;
     margin: 16px;
     line-height: 1.1;
-    /* margin-bottom: 32px; */
+    margin-bottom: 40px;
   }
   .section-description {
     font-size: 1.3rem;
