@@ -115,18 +115,17 @@ class NumberTransformService {
     if (formato == 'inteiro') {
       localeConfig.maximumFractionDigits = 0;
     } else {
-      // if (formato == 'real' || formato == 'porcentagem' || formato == 'monetario') {
-      //   if (Math.floor((valor - Math.floor(valor))*(Math.pow(10, casasDecimais))) == 0) {
-      //     // Se o número for efetivamente um inteiro e não tiver collapse, retira a casa decimal
-      //     localeConfig.maximumFractionDigits = 0;
-      //   }
-      // }
       localeConfig.minimumFractionDigits = localeConfig.maximumFractionDigits;
     }
 
+    valor = valor.toLocaleString('pt-br', localeConfig);
+
+    //Retira decimais quando zerados
+    valor = valor.endsWith("," + "0".repeat(casasDecimais)) ? valor.replace("," + "0".repeat(casasDecimais),""): valor;
+
     // Substitui o collapseConfig apenas na porcentagem
     if (formato == 'porcentagem') collapseSuffix = openUiTags + "%" + closeUiTags;
-    return unitPrefix + valor.toLocaleString('pt-br', localeConfig) + collapseSuffix;
+    return unitPrefix + valor + collapseSuffix;
   }
 
   getPaceString(interval, inverse = false) {

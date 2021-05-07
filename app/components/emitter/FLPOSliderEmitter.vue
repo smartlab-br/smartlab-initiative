@@ -73,14 +73,12 @@
           this.items.push.apply(this.items,Array(emptyThicks).fill(""));
           this.items.push(this.max);
           // se tiver valor default - executa filtro
-          if (structure.default != null &&  structure.default != undefined) {
-            this.value = structure.default;
-            this.sendDefaultSelection();
-          } else {
-            this.value = this.max;
-          }
+           this.value = this.max;
         }
-
+        if (structure.default != null &&  structure.default != undefined) {
+          this.value = structure.default;
+          this.sendDefaultSelection();
+        }
       },
 
       sendSelection() {

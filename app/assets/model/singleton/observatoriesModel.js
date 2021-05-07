@@ -21,6 +21,11 @@ class ObservatoriesModel {
         return this.background_images;
     }
 
+    setSections(content) {
+        this.sections = content.secoes;
+        return this.sections;
+    }
+
     getBackgroundImages() {
         if (this.background_images == null && this.background_images == undefined) { // Start loading only once
             return this.yamlFetcher.loadYaml("br/observatorios")
@@ -40,6 +45,17 @@ class ObservatoriesModel {
                 });
         } else {
             return this.observatories;
+        }
+    }
+
+    getSections() {
+        if (this.section == null && this.section == undefined) { // Start loading only once
+            return this.yamlFetcher.loadYaml("br/observatorios")
+                .then((result) => { 
+                    return this.setSections(result);
+                });
+        } else {
+            return this.sections;
         }
     }
     

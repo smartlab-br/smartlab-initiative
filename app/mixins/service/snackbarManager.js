@@ -88,6 +88,13 @@ const SnackbarManager = {
         buildChartAdditionalOptions(id, chartType, structure, chartOptions, dataset, metadata, sectionIndex = 0) {
           let fnNavigation = this.$navigationManager.constructor.searchAnalysisUnit;
           let idAnalysisUnit = this.selectedPlace ? this.selectedPlace : (this.customParams ? this.customParams.idLocalidade : null);
+          if (chartOptions.selected_place){
+            if (chartOptions.selected_place.fixed){
+              idAnalysisUnit = chartOptions.selected_place.fixed;
+            } else if (chartOptions.selected_place.named_prop && this.customParams){
+              idAnalysisUnit = this.customParams[chartOptions.selected_place.named_prop];
+            }
+          }
           let fnSendError = this.sendError;    
           let additionalOptions = { 
             idAU: idAnalysisUnit,

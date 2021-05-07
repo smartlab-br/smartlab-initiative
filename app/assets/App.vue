@@ -1407,10 +1407,11 @@
 
   .first-section {
     position: relative;
+    background-color: black;
   }
 
   .bg-shadow {
-    background-color:rgba(0,0,0,0.5) !important;
+    background-color:rgba(0,0,0,0.5) !important; 
     position: absolute !important;
     top: 0;
     margin: 0 !important;
@@ -1419,7 +1420,6 @@
   }
 
   .bg-home-shadow {
-    background-color:rgba(0,0,0,0.3) !important;
     position: absolute !important;
     top: 0;
     margin: 0 !important;
@@ -1429,6 +1429,7 @@
 
   .parallax-content-home {
     min-height: 700px;
+    background-color: black;
   }
 
   .parallax-content >.flex {

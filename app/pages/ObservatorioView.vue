@@ -4,7 +4,7 @@
       <transition name="fade">
         <v-layout xs12 class="bg-zoom" height="auto" :style="currentParallax" v-show="backgroundVisible"></v-layout>
       </transition>
-      <v-layout xs12 class="bg-shadow ma-0"></v-layout>
+      <v-layout xs12 class="bg-home-shadow ma-0"></v-layout>
       <v-layout row wrap px-3 justify-center class="parallax-content">
         <v-flex shrink>
           <v-flex id="screenTitle">
@@ -463,7 +463,7 @@
             this.slicing = "xs12 sm6 md4 xl3";
             break;
           case 9:
-            this.slicing = "xs12 sm6 md4";
+            this.slicing = "xs12 sm6 md4 xl3";
             break;
           case 8:
             this.slicing = "xs12 sm6 lg3";
