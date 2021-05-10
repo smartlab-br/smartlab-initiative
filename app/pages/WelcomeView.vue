@@ -45,6 +45,7 @@
         v-for="(secao, indxSctn) in secoes"
         :key="indxSctn"
         v-show="secoes"
+        :style="'background-image:url(\'' + secao.section_background + '\');'"
       >
         <v-layout 
             px-5 row wrap
@@ -92,26 +93,27 @@
       </v-layout>
 
       <v-layout 
+        obs_container
         v-for="(observatorio, indxObs) in observatorios"
         :key="'obs_section_'+indxObs"
-        
+        :style="'background-image:url(\'' + observatorio.section_background + '\');'"
       >
         <v-layout 
           v-if="!observatorio.blocked"
           px-5 row wrap class="white--text"
           section
-          align-center              
+          align-center
         >
-          <v-flex :class="(indxObs % 2 == 0 ? 'xs12 md6 px-3' : 'xs12 md6 px-3 order-md12')">
-            <div class='section-title'>{{observatorio.title}}</div>
+          <v-flex xs12>
+            <div class='section-title nav_first_section' @click="$navigationManager.constructor.pushRoute($router, observatorio.to, observatorio.external)" >{{observatorio.title}}</div>
             <div class='section-description' v-html="observatorio.section_description"></div>
           </v-flex>
-          <v-flex  class="section-complement" xs12 md6 px-3>      
+          <!-- <v-flex  class="section-complement" xs12 md6 px-3>      
             <v-img :src="observatorio.section_image"
               class="complement-image"
               @click="$navigationManager.constructor.pushRoute($router, observatorio.to, observatorio.external)"
             ></v-img>
-          </v-flex>  
+          </v-flex>   -->
         </v-layout>
       </v-layout>
 
@@ -364,14 +366,19 @@
   .black--background {
     background-color: black;
   }
+  .obs_container{
+    background-size: cover;
+    background-position: top;
+  }
   .section {
     min-height: 95vh;
     border-top: 1px solid rgba(255, 255, 255, 0.2);
-    margin: 30px;
+    padding-bottom: 30px;
     padding-top: 30px;
-    margin-left: 8px;
-    margin-right: 8px;
-    /* margin-right: 50px; */
+    padding-left: 8px;
+    padding-right: 8px;
+    background-size: cover;
+    background-position: top;
   }
   .section-title {
     font-family: titulos-observatorio, sans-serif;
