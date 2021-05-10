@@ -388,7 +388,7 @@
     margin-bottom: 40px;
   }
   .section-description {
-    font-size: 1.3rem;
+    font-size: 1.45rem;
      margin: 16px;
   }
   .section-complement {
