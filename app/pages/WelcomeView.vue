@@ -105,7 +105,7 @@
           align-center
         >
           <v-flex xs12>
-            <div class='section-title'>{{observatorio.title}}</div>
+            <div class='section-title nav_first_section' @click="$navigationManager.constructor.pushRoute($router, observatorio.to, observatorio.external)" >{{observatorio.title}}</div>
             <div class='section-description' v-html="observatorio.section_description"></div>
           </v-flex>
           <!-- <v-flex  class="section-complement" xs12 md6 px-3>      
