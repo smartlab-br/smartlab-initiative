@@ -426,10 +426,10 @@
           wrap
         >
           <img 
-            src="/static/smartlab/mpt.svg"
+            src="/static/smartlab/mpt-text.svg"
             class="cursor-pointer mr-2" 
             alt="Ministério Público do Trabalho"
-            height="50px"
+            height="40px"
             @click="$navigationManager.constructor.pushRoute($router, 'https://mpt.mp.br', true)" 
           />
           <img 
@@ -444,7 +444,7 @@
             src="/static/smartlab/sit.png"
             class="cursor-pointer mb-1 ml-2" 
             alt="Subsecretaria de Inspeção do Trabalho"
-            height="50px"
+            height="40px"
             @click="$navigationManager.constructor.pushRoute('https://www.gov.br/trabalho/pt-br/inspecao', true)" 
           />
           <img
