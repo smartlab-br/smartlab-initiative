@@ -1411,7 +1411,7 @@
   }
 
   .bg-shadow {
-    /* background-color:rgba(0,0,0,0.5) !important; */
+    background-color:rgba(0,0,0,0.5) !important; 
     position: absolute !important;
     top: 0;
     margin: 0 !important;
@@ -1420,7 +1420,6 @@
   }
 
   .bg-home-shadow {
-    /* background-color:rgba(0,0,0,0.3) !important; */
     position: absolute !important;
     top: 0;
     margin: 0 !important;
