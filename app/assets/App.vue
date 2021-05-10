@@ -439,13 +439,20 @@
             height="40px"
             @click="$navigationManager.constructor.pushRoute($router, 'https://ilo.org', true)" 
           />
+          <img 
+            v-if="currentObs == 'te'"
+            src="/static/smartlab/sit.png"
+            class="cursor-pointer mb-1 ml-2" 
+            alt="Subsecretaria de Inspeção do Trabalho"
+            height="50px"
+            @click="$navigationManager.constructor.pushRoute('https://www.gov.br/trabalho/pt-br/inspecao', true)" 
+          />
           <img
             src="/static/smartlab/cnmp.svg"
             class="cursor-pointer mb-1 ml-2" 
             alt="Conselho Nacional do Ministério Público"
             max-height="80%"
             min-height="50%"
-            style="border-left: 1px solid white; padding-left: 10px;"
             @click="$navigationManager.constructor.pushRoute($router, 'http://cnmp.mp.br', true)" 
           />
           <img 
