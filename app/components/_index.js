@@ -37,6 +37,7 @@ import FLPOOdometer from './FLPOOdometer'
 
 // Data Visualizations
 import FLPOSparklines from './viz/FLPOSparklines'
+import FLPODatatable from './viz/FLPODatatable'
 
 export default {
   
@@ -65,6 +66,7 @@ export default {
   'flpo-ranking-card': FLPORankingCard,
 
   'flpo-sparklines': FLPOSparklines,
+  'flpo-datatable': FLPODatatable,
   
   'flpo-articles-highlights': FLPOArticlesHighlights
 }

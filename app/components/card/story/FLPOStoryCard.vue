@@ -122,6 +122,18 @@
                         >
                         </flpo-sparklines>
                       </v-layout>
+                      <v-layout fill-height
+                        v-if="structure && structure.component_options !== null && structure.component_type == 'DATATABLE'">
+                        <flpo-datatable 
+                          :custom-params="customParams"
+                          :custom-functions="customFunctions"
+                          :custom-filters="customFilters"
+                          :refresh-component="refreshComponent"
+                          :structure="Object.assign({}, structure.component_options, (({ api, apiBase, headers }) => ({ api, apiBase, headers }))(structure))"
+                          v-on:dataset-loaded="triggerDatasetUpdate"
+                        >
+                        </flpo-datatable>
+                      </v-layout>
                     </v-flex>
                     <v-flex shrink v-if="chartFooter" xs12 pt-0 text-xs-center chart-footer>
                       {{ chartFooter }}

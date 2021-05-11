@@ -278,6 +278,7 @@
   import axios from 'axios'
 
   import BaseStoryView from './BaseStoryView.vue';
+  import NumberTransformService from '../assets/service/singleton/numberTransformService'
 
   export default {
     extends: BaseStoryView,
@@ -375,6 +376,27 @@
             if (d[age_prop] <= 54) return '50-54'
             if (d[age_prop] <= 59) return '55-59'
             return '> 60'
+          },
+          get_formatted_value: function(d, value, type){
+              switch(type) {
+                  case '(Quantidade)':
+                      return NumberTransformService.formatNumber(
+                              value, "inteiro", 0);
+                  case '(Índice)':
+                      return NumberTransformService.formatNumber(
+                              value, "real", 3);
+                  case '(em R$ x 1.000)':
+                      return NumberTransformService.formatNumber(
+                              value, "monetario", 2, 1000, {format: 'monetario', precision: 1}, false,  false);
+                  case '(R$)':
+                      return NumberTransformService.formatNumber(
+                              value, "monetario", 2, 1, null, false,  false);
+                  case '(Pessoas)':
+                      return NumberTransformService.formatNumber(
+                              value, "inteiro", 0);
+                  default:
+                      return value;
+              }
           },
           calc_subtraction_ds: function(d, a, b) { return a - b; },
           calc_addition_ids_ds: function(d, a, b, multiplier=10000000) { return a*multiplier + b; },
