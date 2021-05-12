@@ -434,7 +434,7 @@ class IndicatorsModel {
     return meltedDS;
   }
 
-  cast(dataset, col_fields, value_field, layer_field, fmt_value_field) {
+  cast(dataset, col_fields, value_field, layer_field, fmt_value_field, det_value_field) {
     let result = [];
     for (let indxDS in dataset) {
       // Verifica se já existe a entrada no dataset de resultado
@@ -452,6 +452,9 @@ class IndicatorsModel {
         if(fmt_value_field){
           result[indxRes]['fmt_' + dataset[indxDS][layer_field]] = dataset[indxDS][fmt_value_field];
         }
+        if(det_value_field){
+          result[indxRes]['det_' + dataset[indxDS][layer_field]] = dataset[indxDS][det_value_field];
+        }
         found = true;
         break;
       }
@@ -468,6 +471,9 @@ class IndicatorsModel {
         nuRow[dataset[indxDS][layer_field]] = dataset[indxDS][value_field];
         if(fmt_value_field){
           nuRow['fmt_' + dataset[indxDS][layer_field]] = dataset[indxDS][fmt_value_field];
+        }
+        if(det_value_field){
+          nuRow['det_' + dataset[indxDS][layer_field]] = dataset[indxDS][det_value_field];
         }
         // Adds row to the result
         result.push(nuRow);

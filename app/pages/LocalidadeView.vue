@@ -377,14 +377,50 @@
             if (d[age_prop] <= 59) return '55-59'
             return '> 60'
           },
+          get_detail_value: function(d, class_indicador, value, rank_br, rank_uf, media_br, media_uf){
+            let detail = "";
+            // if ( type !== "(Índice)" && desc !== "PIB PER CAPITA"){
+            //   detail =  NumberTransformService.formatNumber( d.pct_br, "porcentagem",2,1,false,false,false) + "BR " + 
+            //     NumberTransformService.formatNumber( d.pct_uf, "porcentagem", 2,1,false,false,false) + "UF<br/>";
+            // }
+            if ((class_indicador == "bom" && value < media_br) || 
+               (class_indicador == "ruim" && value > media_br)){
+              detail += "<span class='red--text'>" + NumberTransformService.formatNumber( rank_br, "inteiro", 0) + "º no BR</span>";
+            } else {
+              detail += NumberTransformService.formatNumber( rank_br, "inteiro", 0) + "º no BR";
+            }
+            detail += " e ";
+            if ((class_indicador == "bom" && value < media_uf) || 
+               (class_indicador == "ruim" && value > media_uf)){
+              detail += "<span class='red--text'>" + NumberTransformService.formatNumber( rank_uf, "inteiro", 0) + "º no UF</span>";
+            } else {
+              detail += NumberTransformService.formatNumber( rank_uf, "inteiro", 0) + "º no UF";
+            }
+            return detail;
+          },
           get_formatted_value: function(d, value, type){
               switch(type) {
                   case '(Quantidade)':
                       return NumberTransformService.formatNumber(
                               value, "inteiro", 0);
                   case '(Índice)':
-                      return NumberTransformService.formatNumber(
-                              value, "real", 3);
+                      if(d.ds_indicador.startsWith('IDH ')){
+                        if (value < 0.5){
+                          return NumberTransformService.formatNumber(value, "real", 3) + " (Muito baixo)";
+                        } else if (value < 0.6){
+                          return NumberTransformService.formatNumber(value, "real", 3) + " (Baixo)";
+                        } else if (value < 0.7){
+                          return NumberTransformService.formatNumber(value, "real", 3) + " (Médio)";
+                        } else if (value < 0.8){
+                          return NumberTransformService.formatNumber(value, "real", 3) + " (Alto)";
+                        } else {
+                          return NumberTransformService.formatNumber(value, "real", 3) + " (Muito alto)";
+                        }
+                      } else {
+                        return NumberTransformService.formatNumber(
+                                value, "real", 3);
+                      }
+                    
                   case '(em R$ x 1.000)':
                       return NumberTransformService.formatNumber(
                               value, "monetario", 2, 1000, {format: 'monetario', precision: 1}, false,  false);
@@ -405,7 +441,9 @@
           calc_percentage_val1: function(val1,val2) { return val1 / (val1 + val2) * 100},
           calc_percentage_2values: function(val1,val2,total) { return (val1 + val2) / total * 100},
           calc_proportion: function(dividendo, divisor) { return dividendo / divisor; },
-          calc_proportion_ds: function(d,dividendo, divisor) { return divisor==0 ? null:dividendo / divisor; },
+          calc_proportion_ds: function(d,dividendo, divisor) { 
+            return divisor==0 ? null:dividendo / divisor; 
+          },
           get_flag_value: function(d) {return (d.vl_indicador == 0) ? d.ds_indicador_radical + ": NÃO" : d.ds_indicador_radical + ": SIM";},
           get_flag_number: function(d,a){ return a>=0 ? 'Positivo':'Negativo'; },
           get_te_label: function(d,campo) {

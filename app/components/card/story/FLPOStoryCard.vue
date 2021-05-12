@@ -117,7 +117,7 @@
                           :custom-functions="customFunctions"
                           :custom-filters="customFilters"
                           :refresh-component="refreshComponent"
-                          :structure="Object.assign({}, structure.component_options, (({ api, apiBase, headers }) => ({ api, apiBase, headers }))(structure))"
+                          :structure="Object.assign({}, structure.component_options, (({ api, apiBase, headers, api_options }) => ({ api, apiBase, headers, api_options }))(structure))"
                           v-on:dataset-loaded="triggerDatasetUpdate"
                         >
                         </flpo-sparklines>
@@ -129,7 +129,7 @@
                           :custom-functions="customFunctions"
                           :custom-filters="customFilters"
                           :refresh-component="refreshComponent"
-                          :structure="Object.assign({}, structure.component_options, (({ api, apiBase, headers }) => ({ api, apiBase, headers }))(structure))"
+                          :structure="Object.assign({}, structure.component_options, (({ api, apiBase, headers, api_options }) => ({ api, apiBase, headers, api_options }))(structure))"
                           v-on:dataset-loaded="triggerDatasetUpdate"
                         >
                         </flpo-datatable>

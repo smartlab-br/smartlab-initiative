@@ -103,6 +103,11 @@
                     >
                         {{ (hdr.format && props.item['fmt_' + hdr.value]) ? props.item['fmt_' + hdr.value]: props.item[hdr.value] }}
                     </div>
+                    <div class="flpo-datatable-detail no-wrap py-1"
+                        v-if="props.item['det_' + hdr.value.replace('fmt_','')]"
+                        v-html="props.item['det_' + hdr.value.replace('fmt_','')]"
+                    >
+                    </div>
                 </td> 
             </template>
             <template slot="actions-prepend"                    
@@ -181,14 +186,22 @@ export default {
             }
         },
         fillFromDataset(sourceDS, rules, sourceStructure, addedParams = null, metadata = null) {
+            let order_field = null;
             if (this.structure.pivot){
-                sourceDS = this.$indicatorsModel.cast(sourceDS, this.structure.col_fields, this.structure.value_field, this.structure.layer_field, this.structure.fmt_value_field);
+                sourceDS = this.$indicatorsModel.cast(sourceDS, this.structure.pivot.col_fields, this.structure.pivot.value_field, this.structure.pivot.layer_field, this.structure.pivot.fmt_value_field, this.structure.det_value_field);
                 this.addHeadersFields(sourceDS[0]);
+                //default order - first pivot field
+                order_field = this.structure.headers[this.baseHeaders.length].value.replace('fmt_','');
             }
+            //default 
             if (sourceStructure.order_field){
-                let order_field = sourceStructure.order_field;
+                order_field = sourceStructure.order_field;
+            }
+
+            if (order_field){
+                //desc order
                 let fnSorter = (a, b) => {
-                    return (a[order_field] < b[order_field]) ? 1 : -1 ;
+                    return (a[order_field] < b[order_field]) ? 1 : (a[order_field] > b[order_field]) ? -1 : 0 ;
                 }
                 sourceDS.sort(fnSorter);
             }
@@ -201,12 +214,12 @@ export default {
         addHeadersFields(row){
             // this.structure.headers = this.structure.headers.slice(0,this.baseHeaders.length);
             for (let field of Object.keys(row)){
-                if (!this.structure.col_fields.includes(field) && !field.startsWith('fmt_')){
+                if (!this.structure.pivot.col_fields.includes(field) && !field.startsWith('fmt_') && !field.startsWith('det_')){
                     let header = {};
                     header.text = field;
                     header.align = 'center';
                     header.item_align = 'center';
-                    header.value = this.structure.fmt_value_field ? "fmt_"+field : field;
+                    header.value = this.structure.pivot.fmt_value_field ? "fmt_"+field : field;
 
                     this.structure.headers.push(header);
                 }
@@ -244,19 +257,9 @@ export default {
         },
 
         getCellClass(columnField, value){
-            if (columnField.startsWith('fmt_last_rate_')){
-                if (value.substr(0,1) == "+" || value.startsWith('de 0')){
+            if (columnField.indexOf('IDH Municipal') && value){
+                if (value.indexOf("(Baixo)") !== -1 || value.indexOf("(Muito baixo)") !== -1){
                     return "red--text";
-                } else if (value.substr(0,1) == "-" || value.endsWith('para 0')){
-                    return "orange--text text--darken-1";
-                } else if (value == 'sem incidência'){
-                    return "grey--text";
-                }
-            } else if (columnField.startsWith('last_rate_')){
-                if (value > 0){
-                    return "red--text";
-                } else if (value < 0){
-                    return "orange--text text--darken-2";
                 }
             }
             return '';
@@ -278,6 +281,9 @@ export default {
   }
   .flpo-datatable-grid table.v-table thead th{
     padding: 0 5px;
+  }
+  .flpo-datatable-detail{
+    font-size: 0.65rem;
   }
   table thead tr th span.word-wrap {
     word-wrap: break-word;
