@@ -188,7 +188,7 @@ export default {
         fillFromDataset(sourceDS, rules, sourceStructure, addedParams = null, metadata = null) {
             let order_field = null;
             if (this.structure.pivot){
-                sourceDS = this.$indicatorsModel.cast(sourceDS, this.structure.pivot.col_fields, this.structure.pivot.value_field, this.structure.pivot.layer_field, this.structure.pivot.fmt_value_field, this.structure.det_value_field);
+                sourceDS = this.$indicatorsModel.cast(sourceDS, this.structure.pivot.col_fields, this.structure.pivot.value_field, this.structure.pivot.layer_field, this.structure.pivot.fmt_value_field, this.structure.pivot.det_value_field);
                 this.addHeadersFields(sourceDS[0]);
                 //default order - first pivot field
                 order_field = this.structure.headers[this.baseHeaders.length].value.replace('fmt_','');
