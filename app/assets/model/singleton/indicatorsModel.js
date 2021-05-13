@@ -434,22 +434,29 @@ class IndicatorsModel {
     return meltedDS;
   }
 
-  cast(dataset, col_fields, value_field, layer_field) {
+  cast(dataset, col_fields, value_field, layer_field, fmt_value_field, det_value_field) {
     let result = [];
     for (let indxDS in dataset) {
       // Verifica se já existe a entrada no dataset de resultado
-      let found = true;
+      let found = false;
       loopResult: for (let indxRes in result) {
         // Itera nos campos de identificação, para checar se é a mesma ocorrência
         for (let indxCol in col_fields) {
           if (result[indxRes][col_fields[indxCol]] != dataset[indxDS][col_fields[indxCol]]) {
-            found = false;
-            break loopResult;
+            continue loopResult;
           }
         }
         // Found is true and it'the current indxRes
         // Sets the new value column to the existing result row
-        result[dataset[indxDS][layer_field]] = dataset[indxDS][value_field];
+        result[indxRes][dataset[indxDS][layer_field]] = dataset[indxDS][value_field];
+        if(fmt_value_field){
+          result[indxRes]['fmt_' + dataset[indxDS][layer_field]] = dataset[indxDS][fmt_value_field];
+        }
+        if(det_value_field){
+          result[indxRes]['det_' + dataset[indxDS][layer_field]] = dataset[indxDS][det_value_field];
+        }
+        found = true;
+        break;
       }
 
       // Creates new row if not found in result
@@ -462,10 +469,17 @@ class IndicatorsModel {
         }
         // Sets the pivot value
         nuRow[dataset[indxDS][layer_field]] = dataset[indxDS][value_field];
+        if(fmt_value_field){
+          nuRow['fmt_' + dataset[indxDS][layer_field]] = dataset[indxDS][fmt_value_field];
+        }
+        if(det_value_field){
+          nuRow['det_' + dataset[indxDS][layer_field]] = dataset[indxDS][det_value_field];
+        }
         // Adds row to the result
         result.push(nuRow);
       }
     }
+    return result;
   }
 
   sortObject(object, order_field){
