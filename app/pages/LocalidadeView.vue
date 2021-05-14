@@ -392,9 +392,9 @@
             detail += " e ";
             if ((class_indicador == "bom" && value < media_uf) || 
                (class_indicador == "ruim" && value > media_uf)){
-              detail += "<span class='red--text'>" + NumberTransformService.formatNumber( rank_uf, "inteiro", 0) + "º no UF</span>";
+              detail += "<span class='red--text'>" + NumberTransformService.formatNumber( rank_uf, "inteiro", 0) + "º na UF</span>";
             } else {
-              detail += NumberTransformService.formatNumber( rank_uf, "inteiro", 0) + "º no UF";
+              detail += NumberTransformService.formatNumber( rank_uf, "inteiro", 0) + "º na UF";
             }
             return detail;
           },
@@ -430,8 +430,21 @@
                   case '(Pessoas)':
                       return NumberTransformService.formatNumber(
                               value, "inteiro", 0);
+                  case '(Razão)':
+                      return NumberTransformService.formatNumber(
+                              value, "real", 1);
+                  case '(Admitidos - Desligados)':
+                      return NumberTransformService.formatNumber(
+                              value, "inteiro", 0);
+                  case '':
+                    if (d.ds_indicador.startsWith('Remuneração Média ')){
+                      return NumberTransformService.formatNumber(
+                              value, "monetario", 2, 1, {format: 'monetario', precision: 1}, false,  false);
+                    } else {
+                      return value.toString();
+                    }
                   default:
-                      return value;
+                      return value.toString();
               }
           },
           calc_subtraction_ds: function(d, a, b) { return a - b; },

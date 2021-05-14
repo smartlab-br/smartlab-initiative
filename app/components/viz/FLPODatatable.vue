@@ -23,6 +23,7 @@
             :headers="removeFormatItems(structure.headers)"
             :items="dataset"
             :disable-initial-sort="disableInitialSort"
+            :custom-sort="customSort"
             :search="search"
             class="flpo-datatable-grid elevation-1"
             style="width: 100%;"
@@ -185,11 +186,27 @@ export default {
             this.pagination.descending = false
             }
         },
+        customSort(items, index, isDesc){
+            items.sort((a, b) => {
+
+                if(typeof a[index] !== 'undefined'){
+                    if (!isDesc) {
+                        return (a[index] > b[index]) ? 1 : (a[index] < b[index]) ? -1 : 0 ;
+                    }
+                    else {
+                        return (a[index] < b[index]) ? 1 : (a[index] > b[index]) ? -1 : 0 ;
+                    }
+                }
+            });
+            return items;
+        },
         fillFromDataset(sourceDS, rules, sourceStructure, addedParams = null, metadata = null) {
             let order_field = null;
+            let castResult = {}
             if (this.structure.pivot){
-                sourceDS = this.$indicatorsModel.cast(sourceDS, this.structure.pivot.col_fields, this.structure.pivot.value_field, this.structure.pivot.layer_field, this.structure.pivot.fmt_value_field, this.structure.pivot.det_value_field);
-                this.addHeadersFields(sourceDS[0]);
+                castResult = this.$indicatorsModel.cast(sourceDS, this.structure.pivot.col_fields, this.structure.pivot.value_field, this.structure.pivot.layer_field, this.structure.pivot.fmt_value_field, this.structure.pivot.det_value_field);
+                sourceDS = castResult.dataset;
+                this.addHeadersFields(castResult.newCols);
                 //default order - first pivot field
                 order_field = this.structure.headers[this.baseHeaders.length].value.replace('fmt_','');
             }
@@ -211,18 +228,15 @@ export default {
             this.$emit('dataset-loaded', this.dataset);
         },
 
-        addHeadersFields(row){
+        addHeadersFields(newCols){
             // this.structure.headers = this.structure.headers.slice(0,this.baseHeaders.length);
-            for (let field of Object.keys(row)){
-                if (!this.structure.pivot.col_fields.includes(field) && !field.startsWith('fmt_') && !field.startsWith('det_')){
-                    let header = {};
-                    header.text = field;
-                    header.align = 'center';
-                    header.item_align = 'center';
-                    header.value = this.structure.pivot.fmt_value_field ? "fmt_"+field : field;
-
-                    this.structure.headers.push(header);
-                }
+            for (let col of newCols){
+                let header = {};
+                header.text = col;
+                header.align = 'center';
+                header.item_align = 'center';
+                header.value = this.structure.pivot.fmt_value_field ? "fmt_"+col : col;
+                this.structure.headers.push(header);
             }
 
         },
