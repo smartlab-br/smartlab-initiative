@@ -353,6 +353,13 @@
             // return "Mais de " + bins[bins.length-1].toLocaleString('pt-br', {maximumFractionDigits: 0});
             return value;
           },
+          get_age_class: function(d,age_bin){
+            if (["90 ou mais","80 a 89","70 a 79", "60 a 69"].includes(age_bin)){
+              return "Idosos";
+            } else {
+              return "Não Idosos";
+            }
+          },
           get_bin_faixa_etaria: function(d, age_prop) {
             if (d[age_prop] <= 17) return '01'; // < 18
             if (d[age_prop] <= 24) return '02'; // 18-24
