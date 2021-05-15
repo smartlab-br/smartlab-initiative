@@ -3,6 +3,10 @@ class NumberTransformService {
   
   static formatNumber(valor, formato, casasDecimais, multiplier = 1, collapse = null, signed = false, uiTags = true){
 
+    if (isNaN(valor)){
+      return valor;
+    }
+    
     if (formato == 'cep'){
       valor = ('00000000' + valor.toString()).slice(-8);
       valor = valor.slice(0,5) + '-' + valor.slice(-3);
@@ -101,7 +105,7 @@ class NumberTransformService {
       }
     }
     
-    casasDecimais = casasDecimais ? casasDecimais : 1;
+    casasDecimais = (casasDecimais !== undefined && casasDecimais !== null) ? casasDecimais : 1;
     // Define a configuração do locale
     let localeConfig = {
       maximumFractionDigits: casasDecimais
@@ -111,18 +115,17 @@ class NumberTransformService {
     if (formato == 'inteiro') {
       localeConfig.maximumFractionDigits = 0;
     } else {
-      // if (formato == 'real' || formato == 'porcentagem' || formato == 'monetario') {
-      //   if (Math.floor((valor - Math.floor(valor))*(Math.pow(10, casasDecimais))) == 0) {
-      //     // Se o número for efetivamente um inteiro e não tiver collapse, retira a casa decimal
-      //     localeConfig.maximumFractionDigits = 0;
-      //   }
-      // }
       localeConfig.minimumFractionDigits = localeConfig.maximumFractionDigits;
     }
 
+    valor = valor.toLocaleString('pt-br', localeConfig);
+
+    //Retira decimais quando zerados
+    valor = valor.endsWith("," + "0".repeat(casasDecimais)) ? valor.replace("," + "0".repeat(casasDecimais),""): valor;
+
     // Substitui o collapseConfig apenas na porcentagem
     if (formato == 'porcentagem') collapseSuffix = openUiTags + "%" + closeUiTags;
-    return unitPrefix + valor.toLocaleString('pt-br', localeConfig) + collapseSuffix;
+    return unitPrefix + valor + collapseSuffix;
   }
 
   getPaceString(interval, inverse = false) {

@@ -118,6 +118,7 @@
         <v-layout column v-else-if="descSection.type && descSection.type == 'check'&&
                                     (descSection.group == undefined || descSection.group == null || descSection.group == activeGroup)" 
           :class="descSection.cls?descSection.cls:'pb-2'">
+          <v-flex v-if="descSection.title" pa-0 class="headline-obs">{{ descSection.title }}</v-flex>
           <flpo-check-emitter
             :id = "descSection.id + '_' + id" 
             :custom-params="customParams"
@@ -220,6 +221,7 @@
       },
 
       triggerDefaultSelect(payload) {
+        this.reactiveParent = payload.id;
         this.$emit('default-selection', payload);
       },
 

@@ -60,6 +60,13 @@
           // console.log(this.dtOdometros)
 
           for(let odometer of this.odometerItems){
+            odometer.title =  this.$textTransformService.applyInterpol(
+                                    odometer.title,
+                                    {},
+                                    [],
+                                    dtOdometros[odometer.id_odometer],
+                                    null
+                                  );
             let options = Object.assign({}, odometer.options);
             options.start = dtOdometros[odometer.id_odometer].vl_estimado;
             options.pace = dtOdometros[odometer.id_odometer].delta_por_ms;

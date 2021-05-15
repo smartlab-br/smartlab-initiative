@@ -426,10 +426,10 @@
           wrap
         >
           <img 
-            src="/static/smartlab/mpt.svg"
+            src="/static/smartlab/mpt-text.svg"
             class="cursor-pointer mr-2" 
             alt="Ministério Público do Trabalho"
-            height="50px"
+            height="40px"
             @click="$navigationManager.constructor.pushRoute($router, 'https://mpt.mp.br', true)" 
           />
           <img 
@@ -439,13 +439,20 @@
             height="40px"
             @click="$navigationManager.constructor.pushRoute($router, 'https://ilo.org', true)" 
           />
+          <img 
+            v-if="currentObs == 'te'"
+            src="/static/smartlab/sit.png"
+            class="cursor-pointer mb-1 ml-2" 
+            alt="Subsecretaria de Inspeção do Trabalho"
+            height="40px"
+            @click="$navigationManager.constructor.pushRoute('https://www.gov.br/trabalho/pt-br/inspecao', true)" 
+          />
           <img
             src="/static/smartlab/cnmp.svg"
             class="cursor-pointer mb-1 ml-2" 
             alt="Conselho Nacional do Ministério Público"
             max-height="80%"
             min-height="50%"
-            style="border-left: 1px solid white; padding-left: 10px;"
             @click="$navigationManager.constructor.pushRoute($router, 'http://cnmp.mp.br', true)" 
           />
           <img 
@@ -1407,10 +1414,11 @@
 
   .first-section {
     position: relative;
+    background-color: black;
   }
 
   .bg-shadow {
-    background-color:rgba(0,0,0,0.5) !important;
+    background-color:rgba(0,0,0,0.5) !important; 
     position: absolute !important;
     top: 0;
     margin: 0 !important;
@@ -1419,7 +1427,6 @@
   }
 
   .bg-home-shadow {
-    background-color:rgba(0,0,0,0.3) !important;
     position: absolute !important;
     top: 0;
     margin: 0 !important;
@@ -1429,6 +1436,7 @@
 
   .parallax-content-home {
     min-height: 700px;
+    background-color: black;
   }
 
   .parallax-content >.flex {

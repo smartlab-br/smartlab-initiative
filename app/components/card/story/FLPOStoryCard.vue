@@ -63,7 +63,7 @@
             </v-flex>
             <v-flex pt-0>    
               <v-layout row wrap :style="structure.type != 'headline' && structure.type != 'text' ? 'min-height:500px;' : ''">
-                <v-flex xs12 :class="chartPosition != 'bottom' ? 'md3 position-relative': 'position-relative'" column>
+                <v-flex xs12 :class="chartPosition != 'bottom' ? 'md3 position-relative pr-4': 'position-relative'" column>
                   <v-flex column pt-0 slot="description">
                     <flpo-composite-text
                       v-if="!invalidInterpol"
@@ -99,8 +99,8 @@
                   </div>
                 </v-flex>
                 <v-flex xs12 :class="chartPosition != 'bottom' ? 'md9': ''" py-3>
-                  <v-layout fill-height row wrap>
-                    <v-flex xs12 fill-height :style="cmpStyle"
+                  <v-layout fill-height column>
+                    <v-flex grow fill-height :style="cmpStyle"
                       :class="{'mx-0 px-3': (this.$vuetify.breakpoint.smAndDown || chartPosition == 'bottom'), 'mx-0 pt-2 pr-4 pb-0': (this.$vuetify.breakpoint.mdAndUp && chartPosition != 'bottom')}">
                       <!-- Definition of all possible charts -->
                       <v-layout fill-height
@@ -110,10 +110,34 @@
                         :class = "leafletBasedCharts.includes(structure.chart_type) ? 'map_geo' : ''"
                         :id="chartId">
                       </v-layout>
+                      <v-layout fill-height
+                        v-if="structure && structure.component_options !== null && structure.component_type == 'SPARKLINES'">
+                        <flpo-sparklines 
+                          :custom-params="customParams"
+                          :custom-functions="customFunctions"
+                          :custom-filters="customFilters"
+                          :refresh-component="refreshComponent"
+                          :structure="Object.assign({}, structure.component_options, (({ api, apiBase, headers, api_options }) => ({ api, apiBase, headers, api_options }))(structure))"
+                          v-on:dataset-loaded="triggerDatasetUpdate"
+                        >
+                        </flpo-sparklines>
+                      </v-layout>
+                      <v-layout fill-height
+                        v-if="structure && structure.component_options !== null && structure.component_type == 'DATATABLE'">
+                        <flpo-datatable 
+                          :custom-params="customParams"
+                          :custom-functions="customFunctions"
+                          :custom-filters="customFilters"
+                          :refresh-component="refreshComponent"
+                          :structure="Object.assign({}, structure.component_options, (({ api, apiBase, headers, api_options }) => ({ api, apiBase, headers, api_options }))(structure))"
+                          v-on:dataset-loaded="triggerDatasetUpdate"
+                        >
+                        </flpo-datatable>
+                      </v-layout>
                     </v-flex>
-                    <v-layout v-if="chartFooter" xs12 pt-0 justify-center chart-footer>
+                    <v-flex shrink v-if="chartFooter" xs12 pt-0 text-xs-center chart-footer>
                       {{ chartFooter }}
-                    </v-layout>
+                    </v-flex>
                   </v-layout>
                 </v-flex>
               </v-layout>
@@ -192,7 +216,8 @@
         footnote: null,
         chartFooter: null,
         chart: null,
-        renderComponent: true
+        renderComponent: true,
+        refreshComponent: true
       }
     },
     created() {
@@ -268,13 +293,13 @@
       completeStructure() {
         this.setReferenceInStructure();
         
-        if (this.structure.chart_options.format_function !== null && this.structure.chart_options.format_function !== undefined) {
+        if (this.structure.chart_options && this.structure.chart_options.format_function !== null && this.structure.chart_options.format_function !== undefined) {
           this.structure.chart_options.format = this.customFunctions[this.structure.chart_options.format_function];
         }
-        if (this.structure.chart_options.y_function !== null && this.structure.chart_options.y_function !== undefined) {
+        if (this.structure.chart_options && this.structure.chart_options.y_function !== null && this.structure.chart_options.y_function !== undefined) {
           this.structure.chart_options.y = this.customFunctions[this.structure.chart_options.y_function];
         }
-        if (this.structure.chart_options.tooltip_function !== null && this.structure.chart_options.tooltip_function !== undefined && this.structure.chart_options.tooltip_function !== "default_tooltip") {
+        if (this.structure.chart_options && this.structure.chart_options.tooltip_function !== null && this.structure.chart_options.tooltip_function !== undefined && this.structure.chart_options.tooltip_function !== "default_tooltip") {
           if(this.customFunctions[this.structure.chart_options.tooltip_function]){
             this.structure.chart_options.tooltip_function = this.customFunctions[this.structure.chart_options.tooltip_function];
           } 
@@ -311,7 +336,9 @@
                 }
               } 
                        
-              this.structure.chart_options.filterText = this.customFilters.filterText;
+              if (this.structure.chart_options){
+                this.structure.chart_options.filterText = this.customFilters.filterText;
+              } 
             } else {
               endpoint = this.$textTransformService.applyInterpol(payload.rules.api, this.customParams, this.customFunctions, this.customFilters);
             }
@@ -378,7 +405,7 @@
 
       fetchData(endpoint = null) {
         this.assessChartFooter();
-        if (this.structure.chart_type != "MIXED_MAP"){
+        if (this.structure.chart_type && this.structure.chart_type != "MIXED_MAP"){
           this.fillDataStructure(
             this.structure, this.customParams,
             this.customFunctions, this.setDataset,
@@ -388,6 +415,9 @@
               "fnCallback": this.triggerChartUpdates
             }
           );
+        } else if (this.structure.component_options) {
+          this.dataset = true;
+          this.triggerComponentUpdates();
         } else {
           for (var eachChart of this.structure.chart_options.layers) {
               this.fillDataStructure(
@@ -402,7 +432,9 @@
           }
         }
       },
-
+      triggerComponentUpdates() {
+        this.refreshComponent = !this.refreshComponent;
+      },
       triggerChartUpdates() {
         let fnSendError = this.sendError;
         let chartTitle = this.chartFooter;
@@ -496,6 +528,10 @@
 
       downloadChart() {
         this.$refs.chart.download();
+      },
+
+      triggerDatasetUpdate(dataset){
+        this.dataset = dataset;
       }
     }
   }

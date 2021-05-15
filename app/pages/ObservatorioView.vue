@@ -4,7 +4,7 @@
       <transition name="fade">
         <v-layout xs12 class="bg-zoom" height="auto" :style="currentParallax" v-show="backgroundVisible"></v-layout>
       </transition>
-      <v-layout xs12 class="bg-shadow ma-0"></v-layout>
+      <v-layout xs12 class="bg-home-shadow ma-0"></v-layout>
       <v-layout row wrap px-3 justify-center class="parallax-content">
         <v-flex shrink>
           <v-flex id="screenTitle">
@@ -457,13 +457,13 @@
 
         switch (content.dimensoes.length) {
           case 12:
-            this.slicing = "xs12 sm6 md4";
+            this.slicing = "xs12 sm6 md4 xl3";
             break;
           case 10:
             this.slicing = "xs12 sm6 md4 xl3";
             break;
           case 9:
-            this.slicing = "xs12 sm6 md4";
+            this.slicing = "xs12 sm6 md4 xl3";
             break;
           case 8:
             this.slicing = "xs12 sm6 lg3";
@@ -481,13 +481,13 @@
             this.slicing = "xs12 sm6 md4";
             break;
           case 2:
-            this.slicing = "xs12 sm6";
+            this.slicing = "xs12 sm6 md4";
             break;
           case 1:
             this.slicing = "xs12";
             break;
           default:
-            this.slicing = "xs12 sm6 md4 xl2";
+            this.slicing = "xs12 sm6 md4 xl3";
             break;
         }
       },

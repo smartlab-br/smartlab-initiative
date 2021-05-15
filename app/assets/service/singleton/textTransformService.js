@@ -28,7 +28,11 @@ class TextTransformService {
           for (var indx in struct.args) {
             var iterArg = null;
             if (struct.args[indx].function) {
-              iterArg = this.objectTransformService.runNamedFunction(struct.args[indx], base_object, customFunctions);
+              if (struct.args[indx].base_object && customParams[struct.args[indx].base_object]){
+                iterArg = this.objectTransformService.runNamedFunction(struct.args[indx], customParams, customFunctions);
+              } else {
+                iterArg = this.objectTransformService.runNamedFunction(struct.args[indx], base_object, customFunctions);
+              }
             } else if (struct.args[indx].value) {
               iterArg = struct.args[indx].value;
             } else if (struct.args[indx].fixed) {
@@ -43,7 +47,11 @@ class TextTransformService {
               }
               if (iterArg === null || iterArg === undefined){
                 if(struct.args[indx].base_object){
-                  iterArg = customParams[struct.args[indx].base_object][struct.args[indx].named_prop];
+                  if (customParams[struct.args[indx].base_object]){
+                    iterArg = customParams[struct.args[indx].base_object][struct.args[indx].named_prop];
+                  } else if (base_object[struct.args[indx].base_object]){
+                    iterArg = base_object[struct.args[indx].base_object][struct.args[indx].named_prop];
+                  }
                 } else {
                   iterArg = customParams[struct.args[indx].named_prop];
                 }

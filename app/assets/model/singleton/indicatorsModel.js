@@ -19,11 +19,11 @@ class IndicatorsModel {
   ]
   datasetEndpoints = {
     centralindicadores: {
-      municipio: '/indicadoresmunicipais?categorias=nm_municipio_uf,cd_uf,cd_dimensao,ds_indicador,ds_indicador_curto,ds_indicador_prefixo,ds_agreg_primaria,ds_agreg_secundaria,ds_indicador_radical,cd_indicador,nu_competencia,nu_competencia_min,nu_competencia_max,cd_mun_ibge,ds_fonte,vl_indicador,rank_uf,rank_br,rank_uf_total,rank_br_total,pct_uf,pct_br,media_uf,media_br,vl_indicador_br,vl_indicador_uf&filtros=eq-cd_mun_ibge-{0}&agregacao=DISTINCT',
-      estado: '/indicadoresestaduais?categorias=nm_uf,cd_dimensao,ds_indicador,ds_indicador_curto,ds_indicador_prefixo,ds_agreg_primaria,ds_agreg_secundaria,ds_indicador_radical,cd_indicador,nu_competencia,nu_competencia_max,nu_competencia_min,cd_mun_ibge,ds_fonte,vl_indicador,vl_indicador_br,rank_br,rank_br_total,rank_uf_total,pct_br,media_br&filtros=eq-cd_mun_ibge-{0}&agregacao=DISTINCT',
-      brasil: '/indicadoresnacionais?categorias=cd_dimensao,ds_indicador,ds_indicador_curto,ds_indicador_prefixo,ds_agreg_primaria,ds_agreg_secundaria,ds_indicador_radical,cd_indicador,nu_competencia,nu_competencia_min,nu_competencia_max,ds_fonte,vl_indicador&agregacao=DISTINCT',
-      mptreg: '/indicadoresmptunidades?categorias=cd_dimensao,ds_indicador,ds_indicador_curto,ds_indicador_prefixo,ds_agreg_primaria,ds_agreg_secundaria,ds_indicador_radical,cd_indicador,nu_competencia,nu_competencia_max,nu_competencia_min,cd_prt,ds_fonte,vl_indicador,vl_indicador_br,rank_br,rank_br_total,rank_prt_total,pct_br,media_br&filtros=eq-cd_prt-{0}&agregacao=DISTINCT',
-      prtptm: '/indicadoresmptunidades?categorias=cd_dimensao,ds_indicador,ds_indicador_curto,ds_indicador_prefixo,ds_agreg_primaria,ds_agreg_secundaria,ds_indicador_radical,cd_indicador,nu_competencia,nu_competencia_max,nu_competencia_min,cd_unidade,cd_prt,nm_unidade,sg_unidade,ds_fonte,vl_indicador,vl_indicador_br,rank_br,rank_br_total,rank_prt_total,pct_br,media_br&filtros=eq-cd_unidade-{0}&agregacao=DISTINCT',
+      municipio: '/indicadoresmunicipais?categorias=nm_municipio_uf,cd_uf,cd_dimensao,ds_indicador,ds_indicador_curto,ds_indicador_completo,ds_indicador_prefixo,ds_agreg_primaria,ds_agreg_secundaria,ds_indicador_radical,cd_indicador,nu_competencia,nu_competencia_min,nu_competencia_max,cd_mun_ibge,ds_fonte,vl_indicador,vl_indicador_txt,rank_uf,rank_br,rank_uf_total,rank_br_total,pct_uf,pct_br,media_uf,media_br,vl_indicador_br,vl_indicador_uf&filtros=eq-cd_mun_ibge-{0}&agregacao=DISTINCT',
+      estado: '/indicadoresestaduais?categorias=nm_uf,cd_dimensao,ds_indicador,ds_indicador_curto,ds_indicador_completo,ds_indicador_prefixo,ds_agreg_primaria,ds_agreg_secundaria,ds_indicador_radical,cd_indicador,nu_competencia,nu_competencia_max,nu_competencia_min,cd_mun_ibge,ds_fonte,vl_indicador,vl_indicador_txt,vl_indicador_br,rank_br,rank_br_total,rank_uf_total,pct_br,media_br&filtros=eq-cd_mun_ibge-{0}&agregacao=DISTINCT',
+      brasil: '/indicadoresnacionais?categorias=cd_dimensao,ds_indicador,ds_indicador_curto,ds_indicador_completo,ds_indicador_prefixo,ds_agreg_primaria,ds_agreg_secundaria,ds_indicador_radical,cd_indicador,nu_competencia,nu_competencia_min,nu_competencia_max,ds_fonte,vl_indicador,vl_indicador_txt&agregacao=DISTINCT',
+      mptreg: '/indicadoresmptunidades?categorias=cd_dimensao,ds_indicador,ds_indicador_curto,ds_indicador_completo,ds_indicador_prefixo,ds_agreg_primaria,ds_agreg_secundaria,ds_indicador_radical,cd_indicador,nu_competencia,nu_competencia_max,nu_competencia_min,cd_prt,ds_fonte,vl_indicador,vl_indicador_txt,vl_indicador_br,rank_br,rank_br_total,rank_prt_total,pct_br,media_br&filtros=eq-cd_prt-{0}&agregacao=DISTINCT',
+      prtptm: '/indicadoresmptunidades?categorias=cd_dimensao,ds_indicador,ds_indicador_curto,ds_indicador_completo,ds_indicador_prefixo,ds_agreg_primaria,ds_agreg_secundaria,ds_indicador_radical,cd_indicador,nu_competencia,nu_competencia_max,nu_competencia_min,cd_unidade,cd_prt,nm_unidade,sg_unidade,ds_fonte,vl_indicador,vl_indicador_txt,vl_indicador_br,rank_br,rank_br_total,rank_prt_total,pct_br,media_br&filtros=eq-cd_unidade-{0}&agregacao=DISTINCT',
     },
     trabalho_escravo: {
       municipio: '/te/indicadoresmunicipais?categorias=nm_municipio_uf,cd_uf,cd_indicador,nu_competencia,nu_competencia_min,nu_competencia_max,cd_mun_ibge_dv,vl_indicador,rank_uf,rank_br,rank_uf_total,rank_br_total,pct_uf,pct_br,media_uf,media_br,vl_indicador_br,vl_indicador_uf&filtros=eq-cd_mun_ibge_dv-{0},and,nn-vl_indicador&agregacao=DISTINCT',
@@ -434,25 +434,36 @@ class IndicatorsModel {
     return meltedDS;
   }
 
-  cast(dataset, col_fields, value_field, layer_field) {
-    let result = [];
+  cast(dataset, col_fields, value_field, layer_field, fmt_value_field, det_value_field) {
+    let resultDataset = [];
+    let newCols = [];
     for (let indxDS in dataset) {
       // Verifica se já existe a entrada no dataset de resultado
-      let found = true;
-      loopResult: for (let indxRes in result) {
+      let found = false;
+      loopResult: for (let indxRes in resultDataset) {
         // Itera nos campos de identificação, para checar se é a mesma ocorrência
         for (let indxCol in col_fields) {
-          if (result[indxRes][col_fields[indxCol]] != dataset[indxDS][col_fields[indxCol]]) {
-            found = false;
-            break loopResult;
+          if (resultDataset[indxRes][col_fields[indxCol]] != dataset[indxDS][col_fields[indxCol]]) {
+            continue loopResult;
           }
         }
         // Found is true and it'the current indxRes
         // Sets the new value column to the existing result row
-        result[dataset[indxDS][layer_field]] = dataset[indxDS][value_field];
+        resultDataset[indxRes][dataset[indxDS][layer_field]] = dataset[indxDS][value_field];
+        if (!newCols.includes(dataset[indxDS][layer_field])){
+          newCols.push(dataset[indxDS][layer_field]);
+        }
+        if(fmt_value_field){
+          resultDataset[indxRes]['fmt_' + dataset[indxDS][layer_field]] = dataset[indxDS][fmt_value_field];
+        }
+        if(det_value_field){
+          resultDataset[indxRes]['det_' + dataset[indxDS][layer_field]] = dataset[indxDS][det_value_field];
+        }
+        found = true;
+        break;
       }
 
-      // Creates new row if not found in result
+      // Creates new row if not found in resultDataset
       if (!found) {
         // Instantiates the base object for all layers in each dataset row
         var nuRow = {};
@@ -462,10 +473,23 @@ class IndicatorsModel {
         }
         // Sets the pivot value
         nuRow[dataset[indxDS][layer_field]] = dataset[indxDS][value_field];
-        // Adds row to the result
-        result.push(nuRow);
+        if (!newCols.includes(dataset[indxDS][layer_field])){
+          newCols.push(dataset[indxDS][layer_field]);
+        }
+        if(fmt_value_field){
+          nuRow['fmt_' + dataset[indxDS][layer_field]] = dataset[indxDS][fmt_value_field];
+        }
+        if(det_value_field){
+          nuRow['det_' + dataset[indxDS][layer_field]] = dataset[indxDS][det_value_field];
+        }
+        // Adds row to the resultDataset
+        resultDataset.push(nuRow);
       }
     }
+    let result = {};
+    result.dataset = resultDataset;
+    result.newCols = newCols;
+    return result;
   }
 
   sortObject(object, order_field){

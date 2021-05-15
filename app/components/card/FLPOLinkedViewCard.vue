@@ -159,7 +159,7 @@
   */
 
   .bg-black-transparent-buttom {
-    background-color: rgba(0,0,0,0.3);
+    background-color: rgba(255, 255, 255, 0.15);
   }
 
   .rounded-border{

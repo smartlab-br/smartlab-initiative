@@ -20,7 +20,15 @@ class ObjectTransformService {
         args.push(struct.fn_args[indx].fixed);
       } else if (struct.fn_args[indx].named_prop) {
         if (base_object) {
-          args.push(base_object[struct.fn_args[indx].named_prop]);
+          if(struct.fn_args[indx].base_object){
+            if (base_object[struct.fn_args[indx].base_object]){
+              args.push(base_object[struct.fn_args[indx].base_object][struct.fn_args[indx].named_prop]);
+            } else {
+              args.push(undefined);
+            }
+          } else {
+            args.push(base_object[struct.fn_args[indx].named_prop]);
+          }          
         } else {
           args.push(undefined);
         }
