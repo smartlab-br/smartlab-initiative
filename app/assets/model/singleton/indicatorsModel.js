@@ -437,37 +437,41 @@ class IndicatorsModel {
   cast(dataset, col_fields, value_field, layer_field, fmt_value_field, det_value_field) {
     let resultDataset = [];
     let newCols = [];
-    for (let indxDS in dataset) {
-      // Verifica se já existe a entrada no dataset de resultado
-      let found = false;
-      loopResult: for (let indxRes in resultDataset) {
-        // Itera nos campos de identificação, para checar se é a mesma ocorrência
-        for (let indxCol in col_fields) {
-          if (resultDataset[indxRes][col_fields[indxCol]] != dataset[indxDS][col_fields[indxCol]]) {
-            continue loopResult;
-          }
+    let key_field = "";
+    if (col_fields.length == 1){
+      key_field = col_fields[0];
+    } else {
+      dataset.map((reg) => {
+        let key_value = ""
+        for (let col of col_fields) {
+          key_value += reg[col].toString();
         }
-        // Found is true and it'the current indxRes
+        reg["reg_key"] = key_value;
+        key_field = "reg_key";
+      });  
+    }
+    for (let indxDS in dataset) {
+      let regKey = null;
+      regKey = resultDataset.find(reg => reg[key_field] === dataset[indxDS][key_field]);
+      if (regKey) {
+        // Found is true 
         // Sets the new value column to the existing result row
-        resultDataset[indxRes][dataset[indxDS][layer_field]] = dataset[indxDS][value_field];
+        regKey[dataset[indxDS][layer_field]] = dataset[indxDS][value_field];
         if (!newCols.includes(dataset[indxDS][layer_field])){
           newCols.push(dataset[indxDS][layer_field]);
         }
         if(fmt_value_field){
-          resultDataset[indxRes]['fmt_' + dataset[indxDS][layer_field]] = dataset[indxDS][fmt_value_field];
+          regKey['fmt_' + dataset[indxDS][layer_field]] = dataset[indxDS][fmt_value_field];
         }
         if(det_value_field){
-          resultDataset[indxRes]['det_' + dataset[indxDS][layer_field]] = dataset[indxDS][det_value_field];
+          regKey['det_' + dataset[indxDS][layer_field]] = dataset[indxDS][det_value_field];
         }
-        found = true;
-        break;
-      }
-
-      // Creates new row if not found in resultDataset
-      if (!found) {
+      } else {
         // Instantiates the base object for all layers in each dataset row
         var nuRow = {};
-        // Sets identifier columns' values
+        if (!col_fields.includes(key_field)){
+          nuRow[key_field] = dataset[indxDS][key_field];
+        }
         for (let indxCol in col_fields) {
           nuRow[col_fields[indxCol]] = dataset[indxDS][col_fields[indxCol]];
         }
