@@ -437,7 +437,6 @@ class IndicatorsModel {
   cast(dataset, col_fields, value_field, layer_field, fmt_value_field, det_value_field) {
     let resultDataset = [];
     let newCols = [];
-    console.log(new Date().toISOString()) ;
     let key_field = "";
     if (col_fields.length == 1){
       key_field = col_fields[0];
@@ -453,23 +452,7 @@ class IndicatorsModel {
     }
     for (let indxDS in dataset) {
       let regKey = null;
-      // if (key_field){
       regKey = resultDataset.find(reg => reg[key_field] === dataset[indxDS][key_field]);
-      // }else {
-      //   regKey = resultDataset.find(reg => {
-      //     let colSame = 0
-      //     for (let indxCol in col_fields) {
-      //       if (reg[col_fields[indxCol]] === dataset[indxDS][col_fields[indxCol]]) {
-      //       colSame++;
-      //       }
-      //     }
-      //     if (colSame !== col_fields.length){
-      //       return false;
-      //     } else {
-      //       return true;
-      //     }  
-      //   });
-      // }
       if (regKey) {
         // Found is true 
         // Sets the new value column to the existing result row
@@ -506,126 +489,7 @@ class IndicatorsModel {
         // Adds row to the resultDataset
         resultDataset.push(nuRow);
       }
-
-      // } else {
-      
-      // let selectedIndex = -1;
-      // resultDataset.some((reg, index) => {
-      //   let colSame = 0
-      //   for (let indxCol in col_fields) {
-      //     if (reg[col_fields[indxCol]] == dataset[indxDS][col_fields[indxCol]]) {
-      //      colSame++;
-      //     }
-      //   }
-      //   if (colSame !== col_fields.length){
-      //     return false;
-      //   } else {
-      //     selectedIndex = index;
-      //     return true;
-      //   }  
-      // })
-
-      // var selectedIndex = resultDataset.findIndex(function(reg) {
-      //   let colSame = 0
-      //   for (let indxCol in col_fields) {
-      //     if (reg[col_fields[indxCol]] == dataset[indxDS][col_fields[indxCol]]) {
-      //      colSame++;
-      //     }
-      //   }
-      //   if (colSame !== col_fields.length){
-      //     return false;
-      //   } else {
-      //     return true;
-      //   }  
-      // });
-      
-      // if (selectedIndex > -1) {
-      //   // Found is true 
-      //   // Sets the new value column to the existing result row
-      //   resultDataset[selectedIndex][dataset[indxDS][layer_field]] = dataset[indxDS][value_field];
-      //   if (!newCols.includes(dataset[indxDS][layer_field])){
-      //     newCols.push(dataset[indxDS][layer_field]);
-      //   }
-      //   if(fmt_value_field){
-      //     resultDataset[selectedIndex]['fmt_' + dataset[indxDS][layer_field]] = dataset[indxDS][fmt_value_field];
-      //   }
-      //   if(det_value_field){
-      //     resultDataset[selectedIndex]['det_' + dataset[indxDS][layer_field]] = dataset[indxDS][det_value_field];
-      //   }
-      // } else {
-      //   // Instantiates the base object for all layers in each dataset row
-      //   var nuRow = {};
-      //   // Sets identifier columns' values
-      //   for (let indxCol in col_fields) {
-      //     nuRow[col_fields[indxCol]] = dataset[indxDS][col_fields[indxCol]];
-      //   }
-      //   // Sets the pivot value
-      //   nuRow[dataset[indxDS][layer_field]] = dataset[indxDS][value_field];
-      //   if (!newCols.includes(dataset[indxDS][layer_field])){
-      //     newCols.push(dataset[indxDS][layer_field]);
-      //   }
-      //   if(fmt_value_field){
-      //     nuRow['fmt_' + dataset[indxDS][layer_field]] = dataset[indxDS][fmt_value_field];
-      //   }
-      //   if(det_value_field){
-      //     nuRow['det_' + dataset[indxDS][layer_field]] = dataset[indxDS][det_value_field];
-      //   }
-      //   // Adds row to the resultDataset
-      //   resultDataset.push(nuRow);
-      // }
-    
-
-        // // Verifica se já existe a entrada no dataset de resultado
-        // let found = false;
-        // loopResult: for (let indxRes in resultDataset) {
-        //   // Itera nos campos de identificação, para checar se é a mesma ocorrência
-
-        //   for (let indxCol in col_fields) {
-        //     if (resultDataset[indxRes][col_fields[indxCol]] != dataset[indxDS][col_fields[indxCol]]) {
-        //       continue loopResult;
-        //     }
-        //   }
-        //   // Found is true and it'the current indxRes
-        //   // Sets the new value column to the existing result row
-        //   resultDataset[indxRes][dataset[indxDS][layer_field]] = dataset[indxDS][value_field];
-        //   if (!newCols.includes(dataset[indxDS][layer_field])){
-        //     newCols.push(dataset[indxDS][layer_field]);
-        //   }
-        //   if(fmt_value_field){
-        //     resultDataset[indxRes]['fmt_' + dataset[indxDS][layer_field]] = dataset[indxDS][fmt_value_field];
-        //   }
-        //   if(det_value_field){
-        //     resultDataset[indxRes]['det_' + dataset[indxDS][layer_field]] = dataset[indxDS][det_value_field];
-        //   }
-        //   found = true;
-        //   break;
-        // }
-
-        // // Creates new row if not found in resultDataset
-        // if (!found) {
-        //   // Instantiates the base object for all layers in each dataset row
-        //   var nuRow = {};
-        //   // Sets identifier columns' values
-        //   for (let indxCol in col_fields) {
-        //     nuRow[col_fields[indxCol]] = dataset[indxDS][col_fields[indxCol]];
-        //   }
-        //   // Sets the pivot value
-        //   nuRow[dataset[indxDS][layer_field]] = dataset[indxDS][value_field];
-        //   if (!newCols.includes(dataset[indxDS][layer_field])){
-        //     newCols.push(dataset[indxDS][layer_field]);
-        //   }
-        //   if(fmt_value_field){
-        //     nuRow['fmt_' + dataset[indxDS][layer_field]] = dataset[indxDS][fmt_value_field];
-        //   }
-        //   if(det_value_field){
-        //     nuRow['det_' + dataset[indxDS][layer_field]] = dataset[indxDS][det_value_field];
-        //   }
-        //   // Adds row to the resultDataset
-        //   resultDataset.push(nuRow);
-        // }
-      // }
     }
-    console.log(new Date().toISOString()) ;
     let result = {};
     result.dataset = resultDataset;
     result.newCols = newCols;
