@@ -168,6 +168,7 @@ export default {
     props: ['refreshComponent', 'customFilters'],
     created () {
         this.baseHeaders = this.structure.headers.map((x) => Object.assign({}, x));
+        console.log(new Date().toISOString()) ;
         this.fillDataStructure(this.structure, this.customParams,
         this.customFunctions, this.fillFromDataset, {});
     },
@@ -201,6 +202,7 @@ export default {
             return items;
         },
         fillFromDataset(sourceDS, rules, sourceStructure, addedParams = null, metadata = null) {
+            console.log(new Date().toISOString()) ;
             let order_field = null;
             let castResult = {}
             if (this.structure.pivot){
@@ -271,10 +273,12 @@ export default {
         },
 
         getCellClass(columnField, value){
-            if (columnField.indexOf('IDH Municipal') && value){
+            if (columnField.indexOf('IDH Municipal') != -1 && value){
                 if (value.indexOf("(Baixo)") !== -1 || value.indexOf("(Muito baixo)") !== -1){
                     return "red--text";
                 }
+            } else if (!isNaN(parseFloat(value)) && value < 0){
+                    return "red--text";
             }
             return '';
         },
