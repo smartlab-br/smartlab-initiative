@@ -414,10 +414,10 @@ const SnackbarManager = {
               text += "<tr><td>Fonte: IBGE - Censo Agropecuário 2017</td></tr>";
               text += "<tr><td class='font-weight-bold'>SOFRENDO ACIDENTES</td></tr>";
               text += "<tr><td class='font-weight-bold brown--text'>COM VÍNCULOS DE EMPREGO</td></tr>";
-              text += "<tr><td>" + (dtCatMenores && dtCatMenores.agr_count_cd_municipio_ibge ? this.$numberTransformService.constructor.formatNumber(dtCatMenores.agr_count_cd_municipio_ibge,"inteiro") + " notificações de acidentes de trabalho graves de menores de 18 anos" : "Não houve notificações de acidentes de trabalho graves de menores de 18 anos")+ "</td></tr>";
+              text += "<tr><td>" + (dtCatMenores && dtCatMenores.agr_count_cd_municipio_ibge ? this.$numberTransformService.constructor.formatNumber(dtCatMenores.agr_count_cd_municipio_ibge,"inteiro") + " notificações de acidentes de menores de 18 anos" : "Não houve notificações de acidentes de menores de 18 anos")+ "</td></tr>";
               text += "<tr><td>Fonte: CATWEB 2012 a 2018</td></tr>";
               text += "<tr><td class='font-weight-bold orange--text'>SEGUNDO AS NOTIFICAÇÕES SINAN</td></tr>";
-              text += "<tr><td>" + (dtSinan && dtSinan.agr_sum_vl_indicador ? this.$numberTransformService.constructor.formatNumber(dtSinan.agr_sum_vl_indicador,"inteiro") + " notificações relacionadas ao trabalho de "+ dtSinan.ds_agreg_primaria : "Não houve notificações relacionadas ao trabalho de Crianças e Adolescentes ( 0 a 17 anos)") +"</td></tr>";
+              text += "<tr><td>" + (dtSinan && dtSinan.agr_sum_vl_indicador ? this.$numberTransformService.constructor.formatNumber(dtSinan.agr_sum_vl_indicador,"inteiro") + " notificações de "+ dtSinan.ds_agreg_primaria : "Não houve notificações de acidente de trabalho grave de Crianças e Adolescentes ( 0 a 17 anos)") +"</td></tr>";
               text += "<tr><td>Fonte: MS - SINAN 2007 a 2020</td></tr>";
               text += "<tr><td class='font-weight-bold'>EXPLORADOS PELO TRABALHO ESCRAVO</td></tr>";
               text += "<tr><td class='font-weight-bold red--text'>LOCAL DE NASCIMENTO</td></tr>";
