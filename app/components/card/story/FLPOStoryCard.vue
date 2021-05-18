@@ -393,7 +393,9 @@
               endpoint.push(item + filters);
             }
           } 
-          this.structure.chart_options.filterText = this.customFilters.filterText;
+          if (this.structure.chart_options){
+            this.structure.chart_options.filterText = this.customFilters.filterText;
+          }
           this.fetchData(endpoint);
         } else if (payload.item){
           endpoint = this.$textTransformService.applyInterpol(payload.rules.api, this.customParams, this.customFunctions, this.customFilters);
