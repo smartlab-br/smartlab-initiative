@@ -383,19 +383,30 @@
             //   detail =  NumberTransformService.formatNumber( d.pct_br, "porcentagem",2,1,false,false,false) + "BR " + 
             //     NumberTransformService.formatNumber( d.pct_uf, "porcentagem", 2,1,false,false,false) + "UF<br/>";
             // }
-            if ((class_indicador == "bom" && value < media_br) || 
-               (class_indicador == "ruim" && value > media_br)){
-              detail += "<span class='red--text'>" + NumberTransformService.formatNumber( rank_br, "inteiro", 0) + "º no BR</span>";
-            } else {
-              detail += NumberTransformService.formatNumber( rank_br, "inteiro", 0) + "º no BR";
+            let imgColorBR = "grey";
+            let imgColorUF = "grey";
+            if (class_indicador == "bom" || class_indicador == "ruim"){
+              if ((class_indicador == "bom" && value <= media_br) || 
+                (class_indicador == "ruim" && value >= media_br)){
+                imgColorBR = "red";
+              }
+              if ((class_indicador == "bom" && value <= media_uf) || 
+                (class_indicador == "ruim" && value >= media_uf)){
+                imgColorUF = "red";
+              }
             }
-            detail += " e ";
-            if ((class_indicador == "bom" && value < media_uf) || 
-               (class_indicador == "ruim" && value > media_uf)){
-              detail += "<span class='red--text'>" + NumberTransformService.formatNumber( rank_uf, "inteiro", 0) + "º na UF</span>";
-            } else {
-              detail += NumberTransformService.formatNumber( rank_uf, "inteiro", 0) + "º na UF";
-            }
+            detail += "<span> \
+              <img  \
+                src='/static/smartlab/rank_br_ret_"+ imgColorBR +".svg'\
+                title='"+ NumberTransformService.formatNumber( rank_br, "inteiro", 0) + "º no BR'" + 
+                "height='13px'  \
+              /></span>";
+            detail += "<span> \
+              <img  \
+                src='/static/smartlab/rank_uf_ret_"+ imgColorUF +".svg'\
+                title='"+ NumberTransformService.formatNumber( rank_uf, "inteiro", 0) + "º na UF'" + 
+                "height='13px'  \
+              /></span>";
             return detail;
           },
           get_formatted_value: function(d, value, type){
