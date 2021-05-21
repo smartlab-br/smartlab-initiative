@@ -338,77 +338,77 @@ const ViewConfReader = {
 					this.errorMessage = error;
 				},
 
-				reformDataset(dataset, options, customFunctions, customParams = {}) {
-					if (options) {
+				reformDataset(dataset, reformOptions, customFunctions, customParams = {}) {
+					if (reformOptions) {
 						// Adiciona o mínimo e o máximo ao dataset
-						if (options.recalc_min_max) {
-							let minmax_field = (options.minmax_field) ? options.minmax_field : 'vl_indicador';
+						if (reformOptions.recalc_min_max) {
+							let minmax_field = (reformOptions.minmax_field) ? reformOptions.minmax_field : 'vl_indicador';
 							dataset = this.$indicatorsModel.getMinMaxEachIndicator(dataset, minmax_field);
 						}
 
-						if (options.combine) {
-							dataset = dataset.concat(this.$indicatorsModel.combineIndicators(dataset, options.combine, customFunctions, options.place_id_field));
+						if (reformOptions.combine) {
+							dataset = dataset.concat(this.$indicatorsModel.combineIndicators(dataset, reformOptions.combine, customFunctions, reformOptions.place_id_field));
 
 							// Faz um slice, se declarado
-							if (options.slice) {
-                				dataset = this.$indicatorsModel.slice(options.slice, dataset, {});
+							if (reformOptions.slice) {
+                				dataset = this.$indicatorsModel.slice(reformOptions.slice, dataset, {});
 							}
 						}
 						
 						// Melts the dataset (ruws to columns)
-						if (options.melt) {
+						if (reformOptions.melt) {
 							dataset = this.$indicatorsModel.melt(
 								dataset,
-								options.melt.value_field,
-								options.melt.layer_fields,
-								options.melt.layer_field,
-								options.melt.label_fields,
-								options.melt.label_field,
-								options.melt.value_function
+								reformOptions.melt.value_field,
+								reformOptions.melt.layer_fields,
+								reformOptions.melt.layer_field,
+								reformOptions.melt.label_fields,
+								reformOptions.melt.label_field,
+								reformOptions.melt.value_function
 							);
 						}
 		
-						for (var indx in options.calcs) {
-							let nuField = 'calc_' + options.calcs[indx].id;
+						for (var indx in reformOptions.calcs) {
+							let nuField = 'calc_' + reformOptions.calcs[indx].id;
 							for (let eachRow in dataset) {
-								if (options.calcs[indx].function) {
+								if (reformOptions.calcs[indx].function) {
 									dataset[eachRow][nuField] = this.$objectTransformService.runNamedFunction(
-										options.calcs[indx], dataset[eachRow],
+										reformOptions.calcs[indx], dataset[eachRow],
 										customFunctions, [dataset[eachRow]], customParams);
 								}
 								
-								if(options.calcs[indx].format){
+								if(reformOptions.calcs[indx].format){
 									dataset[eachRow][nuField] = this.$numberTransformService.constructor.formatNumber(
-										dataset[eachRow][nuField], options.calcs[indx].format,
-										options.calcs[indx].precision, options.calcs[indx].multiplier,
-										options.calcs[indx].collapse, options.calcs[indx].signed,
-										options.calcs[indx].uiTags
+										dataset[eachRow][nuField], reformOptions.calcs[indx].format,
+										reformOptions.calcs[indx].precision, reformOptions.calcs[indx].multiplier,
+										reformOptions.calcs[indx].collapse, reformOptions.calcs[indx].signed,
+										reformOptions.calcs[indx].uiTags
 									);                  
 								}
 							}
 
 							// Adiciona o mínimo e o máximo ao dataset
-							if (options.calcs[indx].recalc_min_max) {
+							if (reformOptions.calcs[indx].recalc_min_max) {
 								dataset = this.$indicatorsModel.getMinMaxEachIndicator(dataset, nuField);
 							}
 						}
 
-						for (let indxClone in options.clone) {
+						for (let indxClone in reformOptions.clone) {
 							dataset.map((reg) => {
-								reg[options.clone[indxClone].new_column] = reg[options.clone[indxClone].id];
+								reg[reformOptions.clone[indxClone].new_column] = reg[reformOptions.clone[indxClone].id];
 							  });  
 
 						}
 
-						for (var indxFmts in options.formatters) {
-							let nuField = 'fmt_' + options.formatters[indxFmts].id;
-							let formatRules = options.formatters[indxFmts];
+						for (var indxFmts in reformOptions.formatters) {
+							let nuField = 'fmt_' + reformOptions.formatters[indxFmts].id;
+							let formatRules = reformOptions.formatters[indxFmts];
 							for (let eachRow in dataset) {
 								if (formatRules.format == 'auto') {
 									formatRules = this.$textTransformService.getFormatRules(formatRules, dataset[eachRow]);
 								}
 								dataset[eachRow][nuField] = this.$numberTransformService.constructor.formatNumber(
-									dataset[eachRow][options.formatters[indxFmts].id], 
+									dataset[eachRow][reformOptions.formatters[indxFmts].id], 
 									formatRules.format, 
 									formatRules.precision, 
 									formatRules.multiplier, 
@@ -419,23 +419,23 @@ const ViewConfReader = {
 							}
 
 							// Adiciona o mínimo e o máximo ao dataset
-							if (options.formatters[indxFmts].recalc_min_max) {
+							if (reformOptions.formatters[indxFmts].recalc_min_max) {
 								dataset = this.$indicatorsModel.getMinMaxEachIndicator(dataset, nuField);
 							}
 						}
 		
-						// if (options.cast) {
-						// 	console.log(options);
+						// if (reformOptions.cast) {
+						// 	console.log(reformOptions);
 						// 	dataset = this.$indicatorsModel.cast(
 						// 		dataset,
-						// 		options.cast.col_fields,
-						// 		options.value_field ? options.value_field : 'vl_indicador',
-						// 		options.cast.layer_field ? options.layer_field : 'cd_indicador'
+						// 		reformOptions.cast.col_fields,
+						// 		reformOptions.value_field ? reformOptions.value_field : 'vl_indicador',
+						// 		reformOptions.cast.layer_field ? reformOptions.layer_field : 'cd_indicador'
 						// 	);
 						// }
 
-						if (options.order_field !== null && options.order_field !== undefined) {
-							dataset = this.$indicatorsModel.sortObject(dataset, options.order_field);
+						if (reformOptions.order_field !== null && reformOptions.order_field !== undefined) {
+							dataset = this.$indicatorsModel.sortObject(dataset, reformOptions.order_field);
 						}
 					}
 					

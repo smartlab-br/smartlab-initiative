@@ -392,25 +392,29 @@
               }
             }
             if (rank_br){
-              detail += "<span> \
-                <img  \
-                  src='/static/smartlab/rank_br_ret_"+ imgColorBR +".svg'\
-                  title='"+ NumberTransformService.formatNumber( rank_br, "inteiro", 0) + "º no BR'" + 
-                  "height='13px'  \
-                /></span>";
+              detail += "<span> " +
+                "<img  " +
+                "  src='/static/smartlab/rank_br_ret_"+ imgColorBR +".svg'" +
+                "  title='"+ NumberTransformService.formatNumber( rank_br, "inteiro", 0) + "º no BR'" + 
+                "  height='13px'  " +
+                "/> " +
+                "</span>";
             }
             if (rank_uf){
-              detail += "<span> \
-                <img  \
-                  src='/static/smartlab/rank_uf_ret_"+ imgColorUF +".svg'\
-                  title='"+ NumberTransformService.formatNumber( rank_uf, "inteiro", 0) + "º na UF'" + 
-                  "height='13px'  \
-                /></span>";
+              detail += "<span> " +
+                "<img  " +
+                "  src='/static/smartlab/rank_uf_ret_"+ imgColorUF +".svg' " +
+                "  title='"+ NumberTransformService.formatNumber( rank_uf, "inteiro", 0) + "º na UF'" + 
+                "  height='13px'  " +
+                "/>" +
+                "</span>";
             }
             return detail;
           },
           get_formatted_value: function(d, ds_indicador, value, type){
               switch(type) {
+                  case '(Pessoas)':
+                  case '(Admitidos - Desligados)':
                   case '(Quantidade)':
                       return NumberTransformService.formatNumber(
                               value, "inteiro", 0);
@@ -438,15 +442,9 @@
                   case '(R$)':
                       return NumberTransformService.formatNumber(
                               value, "monetario", 2, 1, null, false,  false);
-                  case '(Pessoas)':
-                      return NumberTransformService.formatNumber(
-                              value, "inteiro", 0);
                   case '(Razão)':
                       return NumberTransformService.formatNumber(
                               value, "real", 1);
-                  case '(Admitidos - Desligados)':
-                      return NumberTransformService.formatNumber(
-                              value, "inteiro", 0);
                   case '':
                     if (ds_indicador.startsWith('Remuneração Média ')){
                       return NumberTransformService.formatNumber(
