@@ -188,17 +188,23 @@ export default {
             }
         },
         customSort(items, index, isDesc){
-            items.sort((a, b) => {
-
-                if(typeof a[index] !== 'undefined'){
-                    if (!isDesc) {
-                        return (a[index] > b[index]) ? 1 : (a[index] < b[index]) ? -1 : 0 ;
+            if (index){
+                items.sort((a, b) => {
+                    if (a[index] === b[index]) {
+                        return 0;
                     }
-                    else {
-                        return (a[index] < b[index]) ? 1 : (a[index] > b[index]) ? -1 : 0 ;
+                    else if (a[index] === null || a[index] === undefined) {
+                        return 1;
                     }
-                }
-            });
+                    else if (b[index] === null || b[index] === undefined) {
+                        return -1;
+                    } else if (!isDesc) {
+                        return a[index] < b[index] ? -1 : 1;
+                    } else {
+                        return b[index] < a[index] ? -1 : 1;
+                    }
+                });
+            }
             return items;
         },
         fillFromDataset(sourceDS, rules, sourceStructure, addedParams = null, metadata = null) {
@@ -218,11 +224,7 @@ export default {
             }
 
             if (order_field){
-                //desc order
-                let fnSorter = (a, b) => {
-                    return (a[order_field] < b[order_field]) ? 1 : (a[order_field] > b[order_field]) ? -1 : 0 ;
-                }
-                sourceDS.sort(fnSorter);
+                this.customSort(sourceDS,order_field,true);
             }
             
             this.dataset = sourceDS;

@@ -212,7 +212,8 @@
             this.reformDataset(
               result.data.dataset,
               this.structure.api.options,
-              this.customFunctions
+              this.customFunctions,
+              this.customParams
             ),
             this.structure.args,
             this.structure,
