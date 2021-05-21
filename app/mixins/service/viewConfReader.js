@@ -88,7 +88,8 @@ const ViewConfReader = {
 										this.reformDataset(
 											result.data.dataset,
 											structure.api.options,
-											customFunctions
+											customFunctions,
+											customParams
 										),
 										structure.args,
 										structure,
@@ -116,7 +117,8 @@ const ViewConfReader = {
 													fnReformDataset(
 														result.data.dataset,
 														structure.api[indexApi].options,
-														customFunctions
+														customFunctions,
+														customParams
 													)
 												);
 											}).catch(error => { 
@@ -140,7 +142,8 @@ const ViewConfReader = {
 											fullDS = fnReformDataset(
 												fullDS,
 												structure.api_options,
-												customFunctions
+												customFunctions,
+												customParams
 											)											
 										}
 										cbFunction(
@@ -170,7 +173,8 @@ const ViewConfReader = {
 									this.reformDataset(
 										result.data.dataset,
 										structure.api_reactive.options,
-										customFunctions
+										customFunctions,
+										customParams
 									),
 									structure.args,
 									structure,
@@ -203,7 +207,7 @@ const ViewConfReader = {
 										this.$indicatorsModel.slice(
 											structure.preloaded, 
 											customParams && customParams[structure.preloaded.prop] ? customParams[structure.preloaded.prop] : this.$indicatorsModel.getGlobalDatasets()[structure.preloaded.prop].ds,
-											Object.assign({}, customFunctions)
+											Object.assign({}, customFunctions, customParams)
 										),
 										structure.preloaded.options,
 										customFunctions
@@ -218,7 +222,7 @@ const ViewConfReader = {
 										this[structure.preloaded.function](
 											structure.preloaded, 
 											customParams && customParams[structure.preloaded.prop] ? customParams[structure.preloaded.prop] : this.$indicatorsModel.getGlobalDatasets()[structure.preloaded.prop].ds,
-											Object.assign({}, customFunctions)
+											Object.assign({}, customFunctions, customParams)
 										),
 										structure.preloaded.options,
 										customFunctions
@@ -239,7 +243,8 @@ const ViewConfReader = {
 										this.reformDataset(
 											result.data.dataset,
 											structure.api.options,
-											customFunctions
+											customFunctions,
+											customParams
 										),
 										structure.args,
 										structure,
@@ -266,7 +271,8 @@ const ViewConfReader = {
 													fnReformDataset(
 														result.data.dataset,
 														eachApi.options,
-														customFunctions
+														customFunctions,
+														customParams
 													)
 												);
 											}).catch(error => { 
@@ -290,7 +296,8 @@ const ViewConfReader = {
 											fullDS = fnReformDataset(
 												fullDS,
 												structure.api_options,
-												customFunctions
+												customFunctions,
+												customParams
 											)											
 										}
 										cbFunction(
@@ -311,7 +318,8 @@ const ViewConfReader = {
 								this.reformDataset(
 									structure.chart_data.dataset,
 									structure.reform_options,
-									customFunctions
+									customFunctions,
+									customParams
 								),
 								structure.args,
 								structure,
@@ -330,7 +338,7 @@ const ViewConfReader = {
 					this.errorMessage = error;
 				},
 
-				reformDataset(dataset, options, customFunctions) {
+				reformDataset(dataset, options, customFunctions, customParams = {}) {
 					if (options) {
 						// Adiciona o mínimo e o máximo ao dataset
 						if (options.recalc_min_max) {
@@ -366,7 +374,7 @@ const ViewConfReader = {
 								if (options.calcs[indx].function) {
 									dataset[eachRow][nuField] = this.$objectTransformService.runNamedFunction(
 										options.calcs[indx], dataset[eachRow],
-										customFunctions, [dataset[eachRow]]);
+										customFunctions, [dataset[eachRow]], customParams);
 								}
 								
 								if(options.calcs[indx].format){
@@ -383,6 +391,13 @@ const ViewConfReader = {
 							if (options.calcs[indx].recalc_min_max) {
 								dataset = this.$indicatorsModel.getMinMaxEachIndicator(dataset, nuField);
 							}
+						}
+
+						for (let indxClone in options.clone) {
+							dataset.map((reg) => {
+								reg[options.clone[indxClone].new_column] = reg[options.clone[indxClone].id];
+							  });  
+
 						}
 
 						for (var indxFmts in options.formatters) {
