@@ -377,12 +377,8 @@
             if (d[age_prop] <= 59) return '55-59'
             return '> 60'
           },
-          get_detail_value: function(d, class_indicador, value, rank_br, rank_uf, media_br, media_uf){
+          get_detail_value: function(d, class_indicador = "", value=null, rank_br=null, rank_uf=null, media_br=null, media_uf=null){
             let detail = "";
-            // if ( type !== "(Índice)" && desc !== "PIB PER CAPITA"){
-            //   detail =  NumberTransformService.formatNumber( d.pct_br, "porcentagem",2,1,false,false,false) + "BR " + 
-            //     NumberTransformService.formatNumber( d.pct_uf, "porcentagem", 2,1,false,false,false) + "UF<br/>";
-            // }
             let imgColorBR = "grey";
             let imgColorUF = "grey";
             if (class_indicador == "bom" || class_indicador == "ruim"){
@@ -395,27 +391,31 @@
                 imgColorUF = "red";
               }
             }
-            detail += "<span> \
-              <img  \
-                src='/static/smartlab/rank_br_ret_"+ imgColorBR +".svg'\
-                title='"+ NumberTransformService.formatNumber( rank_br, "inteiro", 0) + "º no BR'" + 
-                "height='13px'  \
-              /></span>";
-            detail += "<span> \
-              <img  \
-                src='/static/smartlab/rank_uf_ret_"+ imgColorUF +".svg'\
-                title='"+ NumberTransformService.formatNumber( rank_uf, "inteiro", 0) + "º na UF'" + 
-                "height='13px'  \
-              /></span>";
+            if (rank_br){
+              detail += "<span> \
+                <img  \
+                  src='/static/smartlab/rank_br_ret_"+ imgColorBR +".svg'\
+                  title='"+ NumberTransformService.formatNumber( rank_br, "inteiro", 0) + "º no BR'" + 
+                  "height='13px'  \
+                /></span>";
+            }
+            if (rank_uf){
+              detail += "<span> \
+                <img  \
+                  src='/static/smartlab/rank_uf_ret_"+ imgColorUF +".svg'\
+                  title='"+ NumberTransformService.formatNumber( rank_uf, "inteiro", 0) + "º na UF'" + 
+                  "height='13px'  \
+                /></span>";
+            }
             return detail;
           },
-          get_formatted_value: function(d, value, type){
+          get_formatted_value: function(d, ds_indicador, value, type){
               switch(type) {
                   case '(Quantidade)':
                       return NumberTransformService.formatNumber(
                               value, "inteiro", 0);
                   case '(Índice)':
-                      if(d.ds_indicador.startsWith('IDH ')){
+                      if(ds_indicador.startsWith('IDH ')){
                         if (value < 0.5){
                           return NumberTransformService.formatNumber(value, "real", 3) + " (Muito baixo)";
                         } else if (value < 0.6){
@@ -448,14 +448,14 @@
                       return NumberTransformService.formatNumber(
                               value, "inteiro", 0);
                   case '':
-                    if (d.ds_indicador.startsWith('Remuneração Média ')){
+                    if (ds_indicador.startsWith('Remuneração Média ')){
                       return NumberTransformService.formatNumber(
                               value, "monetario", 2, 1, {format: 'monetario', precision: 1}, false,  false);
                     } else {
-                      return value.toString();
+                      return (value !== null && value !== undefined) ? value.toString() : "";
                     }
                   default:
-                      return value.toString();
+                      return (value !== null && value !== undefined) ? value.toString() : "";
               }
           },
           calc_subtraction_ds: function(d, a, b) { return a - b; },
