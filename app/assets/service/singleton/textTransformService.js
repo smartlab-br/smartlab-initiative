@@ -135,8 +135,8 @@ class TextTransformService {
   }
 
   // Reposiciona os parâmetros, uma vez que recebe automaticamente um row do dataset como primeiro
-  applyInterpolReplaceDatasetParam(dataset_object, struct, customFunctions = [], base_object = null, cbInvalidate = null) {
-    return this.applyInterpol(struct, {}, customFunctions, dataset_object, cbInvalidate);
+  applyInterpolReplaceDatasetParam(dataset_object, struct, customFunctions = [], customParams = {}, cbInvalidate = null) {
+    return this.applyInterpol(struct, customParams, customFunctions, dataset_object, cbInvalidate);
   }
 
   replaceArgs(string, args, cbInvalidate = null) {
