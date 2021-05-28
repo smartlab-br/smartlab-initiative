@@ -603,6 +603,10 @@
               return sc;
             }
           },
+          format_month: function(month_ym){
+            let ym = typeof(month_ym) == "number"? month_ym.toString(): month_ym;
+            return ym.substr(4,2) + "/" + ym.substr(0,4);
+          },
           format_month_ds: function(d,month_ym){
             let ym = typeof(month_ym) == "number"? month_ym.toString(): month_ym;
             return ym.substr(4,2) + "/" + ym.substr(0,4);
