@@ -30,6 +30,17 @@
               dias = (24*60*60*1000) * dias;
               return new Date(data - dias).toISOString().substring(0,10).replace(/-/g,'\\-');
           },
+          format_scope: function(scope, type = "month"){
+            let sc = typeof(scope) == "number"? scope.toString(): scope;
+            if (type == "month" && sc.length == 6) { // month
+              let months = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
+              return months[parseInt(sc.substr(4,2))-1] + " de " + sc.substr(0,4);
+            } else if (type == "year" && sc.length == 6) { // month
+              return sc.substr(0,4);
+            } else {
+              return sc;
+            }
+          },
           format_month_ds: function(d,month_ym){
             let ym = typeof(month_ym) == "number"? month_ym.toString(): month_ym;
             return ym.substr(4,2) + "/" + ym.substr(0,4);
