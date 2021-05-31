@@ -417,6 +417,7 @@
                   case '(Pessoas)':
                   case '(Admitidos - Desligados)':
                   case '(Quantidade)':
+                  case 'Quantidade':
                       return NumberTransformService.formatNumber(
                               value, "inteiro", 0);
                   case '(Índice)':
