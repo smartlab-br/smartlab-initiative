@@ -35,11 +35,6 @@ class IndicatorsModel {
       estado: '/te/indicadoresestaduais?categorias=nm_uf,cd_uf,cd_indicador,nu_competencia_min,nu_competencia_max&valor=vl_indicador&agregacao=SUM&filtros=eq-cd_uf-{0},and,nn-vl_indicador',
       brasil: '/te/indicadoresnacionais?categorias=cd_indicador,nu_competencia_min,nu_competencia_max&valor=vl_indicador&agregacao=SUM&filtros=nn-vl_indicador'
     },
-    censo_agro_2017: {
-      municipio: "/ti/censoagromunicipal?categorias='agro_menores'-cd_indicador,'2017'-nu_competencia,cod_mun,qt_ocupados,qt_ocupados_menores14,percent_ocupados_men_14&filtros=eq-cod_mun-{0}",
-      estado: "/ti/censoagroestadual?categorias='agro_menores'-cd_indicador,'2017'-nu_competencia,cd_uf,tot_ocupados,tot_ocup_men14,perc_tot_14,men_14_parente,part_com_parentesco,men_14_sem_parente,part_sem_parentesco&filtros=eq-cd_uf-{0}",
-      brasil: "/ti/censoagronacional?categorias='agro_menores'-cd_indicador,'2017'-nu_competencia,tot_ocupados,tot_ocup_men14,perc_tot_14,men_14_parente,part_com_parentesco,men_14_sem_parente,part_sem_parentesco"
-    },
     munic: {
       municipio: '/estadicmunic?categorias=cd_indicador_spai-cd_indicador,cd_indicador-cd_indicador_externo,spai_ds,spai_ds_texto,ds_fonte,nu_ano_indicador-nu_competencia,vl_indicador,spai_vl_indicador_txt,ds_indicador,tema,sub_tema,spai_vl_indicador,total_br,presenca_total_br,pct_presenca_br,total_uf,presenca_total_uf,pct_presenca_uf,nm_municipio,nm_uf,sg_uf,nm_municipio_uf&filtros=eq-cd_mun_ibge-{0}',
       estado: '/estadicmunic?categorias=cd_indicador_spai-cd_indicador,cd_indicador-cd_indicador_externo,spai_ds,spai_ds_texto,ds_fonte,nu_ano_indicador-nu_competencia,vl_indicador,spai_vl_indicador_txt,ds_indicador,tema,sub_tema,spai_vl_indicador,total_br,presenca_total_br,pct_presenca_br,total_uf,presenca_total_uf,pct_presenca_uf,rank_pct_uf,rank_pct_uf_max,nm_municipio,nm_uf,sg_uf,nm_municipio_uf&valor=cd_uf&agregacao=DISTINCT&filtros=eq-cd_uf-{0}',

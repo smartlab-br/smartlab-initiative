@@ -348,12 +348,12 @@ const SnackbarManager = {
           let urlSinan = "/indicadoresmunicipais?categorias=nm_municipio_uf,ds_agreg_primaria,ds_fonte,nu_competencia_min,nu_competencia_max&valor=vl_indicador&agregacao=sum&filtros=eq-cd_indicador-'06_05_02_99',and,eq-cd_mun_ibge-"+ target.options.rowData.cd_mun_ibge;
           let urlCatMenores = "/sst/cats?categorias=1&valor=nm_municipio_uf,cd_municipio_ibge&agregacao=COUNT&filtros=lt-idade_cat-18,and,ne-idade_cat-0,and,eq-cd_municipio_ibge_dv-"+ target.options.rowData.cd_mun_ibge;
           let urlProvaBrasil = "/ti/provabrasil?categorias=nm_municipio_uf,nu_ano_prova_brasil-nu_competencia&valor=vl_indicador&agregacao=sum&filtros=nn-vl_indicador,and,ne-vl_indicador-0,and,eq-nu_ano_prova_brasil-2017,and,eq-cd_tr_fora-1,and,eq-cd_municipio_ibge_dv-"+ target.options.rowData.cd_mun_ibge;
-          let urlPotAprendizes = "/indicadoresmunicipais?categorias=nm_municipio_uf,nu_competencia,ds_fonte&valor=vl_indicador&agregacao=sum&filtros=eq-cd_indicador-'12_03_03_00',and,eq-nu_competencia-nu_competencia_max,and,eq-cd_municipio_ibge_dv-"+ target.options.rowData.cd_mun_ibge;
+          let urlPotAprendizes = "/indicadoresmunicipais?categorias=nm_municipio_uf,nu_competencia,ds_fonte&valor=vl_indicador&agregacao=sum&filtros=eq-cd_indicador-'APRZ_21_001',and,eq-nu_competencia-nu_competencia_max,and,eq-cd_municipio_ibge_dv-"+ target.options.rowData.cd_mun_ibge;
           let urlTENascimento = "/te/indicadoresmunicipais?categorias=nm_municipio_uf&valor=vl_indicador&agregacao=sum&filtros=eq-cd_indicador-'te_nat_idade',and,lt-cast(ds_agreg_primaria as smallint)-18,and,eq-cd_mun_ibge-"+ target.options.rowData.cd_mun_ibge;
           // let urlTEResidencia = "/te/indicadoresmunicipais?categorias=nm_municipio_uf&valor=vl_indicador&agregacao=sum&filtros=eq-cd_indicador-'te_res_idade',and,lt-cast(ds_agreg_primaria as smallint)-18,and,eq-cd_mun_ibge-"+ target.options.rowData.cd_mun_ibge;
           let urlMapear = "/ti/mapear?categorias=nm_municipio_uf&agregacao=count&filtros=eq-cd_municipio_ibge_dv-"+ target.options.rowData.cd_mun_ibge;
           let urlCenso = "/indicadoresmunicipais?categorias=nm_municipio_uf,ds_agreg_primaria,ds_fonte,nu_competencia&valor=vl_indicador&agregacao=sum&filtros=eq-cd_indicador-'06_01_01_01',and,eq-nu_competencia-nu_competencia_max,and,eq-cd_mun_ibge-"+ target.options.rowData.cd_mun_ibge;
-          let urlCensoAgro = "/ti/censoagromunicipal?categorias=nm_municipio_uf,qt_ocupados_menores14&filtros=eq-cod_mun-"+ target.options.rowData.cd_mun_ibge;
+          let urlCensoAgro = "/indicadoresmunicipais?categorias=nm_municipio_uf,ds_agreg_primaria,ds_fonte,nu_competencia&valor=vl_indicador&agregacao=sum&filtros=eq-cd_indicador-'CAGRO_TICA01',and,eq-nu_competencia-nu_competencia_max,and,eq-cd_mun_ibge-"+ target.options.rowData.cd_mun_ibge;
           let text = "";
           if (options && options.clickable){
             text += "<p class='text-xs-right ma-0'><a href='" + this.$tooltipBuildingService.constructor.getUrlByPlace(target.options.rowData.cd_mun_ibge, route) + "' class='primary--text font-weight-black'>IR PARA</a></p>";
@@ -410,12 +410,12 @@ const SnackbarManager = {
               text += "<tr><td>" + (dtProvaBrasil && dtProvaBrasil.agr_sum_vl_indicador ? this.$numberTransformService.constructor.formatNumber(dtProvaBrasil.agr_sum_vl_indicador,"inteiro") + " declararam trabalhar fora de casa" : "Nenhum estudante declarou trabalhar fora de casa") + "</td></tr>";
               text += "<tr><td>Fonte: Prova Brasil 2017 (5º e 9º ano)</td></tr>";
               text += "<tr><td class='font-weight-bold cyan--text darken-2'>CRIANÇAS E ADOLESCENTES OCUPADOS EM ESTABELECIMENOS AGROPECUÁRIOS</td></tr>";
-              text += "<tr><td>" + (dtCensoAgro && dtCensoAgro.qt_ocupados_menores14 ? this.$numberTransformService.constructor.formatNumber(dtCensoAgro.qt_ocupados_menores14,"inteiro") + " menores de 14 anos ocupados em estabelecimentos agropecuários" : "Nenhum registro de menores de 14 anos ocupados em estabelecimentos agropecuários") + "</td></tr>";
+              text += "<tr><td>" + (dtCensoAgro && dtCensoAgro.agr_sum_vl_indicador ? this.$numberTransformService.constructor.formatNumber(dtCensoAgro.agr_sum_vl_indicador,"inteiro") + " menores de 14 anos ocupados em estabelecimentos agropecuários" : "Nenhum registro de menores de 14 anos ocupados em estabelecimentos agropecuários") + "</td></tr>";
               text += "<tr><td>Fonte: IBGE - Censo Agropecuário 2017</td></tr>";
               text += "<tr><td class='font-weight-bold'>SOFRENDO ACIDENTES</td></tr>";
               text += "<tr><td class='font-weight-bold brown--text'>COM VÍNCULOS DE EMPREGO</td></tr>";
               text += "<tr><td>" + (dtCatMenores && dtCatMenores.agr_count_cd_municipio_ibge ? this.$numberTransformService.constructor.formatNumber(dtCatMenores.agr_count_cd_municipio_ibge,"inteiro") + " notificações de acidentes de menores de 18 anos" : "Não houve notificações de acidentes de menores de 18 anos")+ "</td></tr>";
-              text += "<tr><td>Fonte: CATWEB 2012 a 2018</td></tr>";
+              text += "<tr><td>Fonte: CATWEB 2012 a 2020</td></tr>";
               text += "<tr><td class='font-weight-bold orange--text'>SEGUNDO AS NOTIFICAÇÕES SINAN</td></tr>";
               text += "<tr><td>" + (dtSinan && dtSinan.agr_sum_vl_indicador ? this.$numberTransformService.constructor.formatNumber(dtSinan.agr_sum_vl_indicador,"inteiro") + " notificações de "+ dtSinan.ds_agreg_primaria : "Não houve notificações de acidente de trabalho grave de Crianças e Adolescentes ( 0 a 17 anos)") +"</td></tr>";
               text += "<tr><td>Fonte: MS - SINAN 2007 a 2020</td></tr>";
@@ -431,7 +431,7 @@ const SnackbarManager = {
               text += "<tr><td>Fonte: Mapear/PRF</td></tr>";
               text += "<tr><td class='font-weight-bold green--text accent-4'>POTENCIAL DE COTAS DE APRENDIZAGEM</td></tr>";
               text += "<tr><td>" + (dtPotAprendizes && dtPotAprendizes.agr_sum_vl_indicador ? this.$numberTransformService.constructor.formatNumber(dtPotAprendizes.agr_sum_vl_indicador,"inteiro") + " vagas de cotas de aprendizagem" : "Nenhuma vaga de cotas de aprendizagem") + "</td></tr>";
-              text += "<tr><td>Fonte: RAIS/Ministério da Economia, 2019</td></tr>";
+              text += "<tr><td>Fonte: ME – IDEB/SIT, janeiro de 2021</td></tr>";
               text += "</table>";
               target.bindPopup(text, {maxHeight: 300, minWidth: 400}).openPopup();
             }))
