@@ -821,7 +821,7 @@
         </v-layout>
       </v-card>
     </v-dialog>
-    <v-layout text-xs-center pa-0 ma-0
+    <v-layout text-xs-center pa-0 
       class="footer-nav white--text">
       <v-layout row wrap caption class="cursor-pointer">
         <v-layout column scroll-menu v-if="!isPageBottom" pa-2
@@ -1773,8 +1773,9 @@
   .footer-nav {
     position: fixed;
     bottom: 0;
+    margin-left: 47vw;
     z-index: 99;
-    width: 100%;
+    width: 64px;
     display: flex;
     align-items: center;
     justify-content: center;
