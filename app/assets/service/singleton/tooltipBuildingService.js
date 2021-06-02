@@ -46,7 +46,7 @@ class TooltipBuildingService {
 
       if(item == 0){ //Título
         if (options && options.clickable && options.visibleLayers){ // leaflet
-          text += "<p class='text-xs-right ma-0'><a href='" + TooltipBuildingService.getUrlByPlace(d.cd_mun_ibge, route) + "' class='primary--text font-weight-black'>IR PARA</a></p>";
+          text += "<p class='text-xs-right ma-0'><a href='" + TooltipBuildingService.getUrlByPlace(d.cd_mun_ibge?d.cd_mun_ibge:d.cd_municipio_ibge_dv, route) + "' class='primary--text font-weight-black'>IR PARA</a></p>";
         }
         text += "<p class='headline-obs'><b>" + value + "</b></p>";
         text += "<hr class='tooltip_divider'>";

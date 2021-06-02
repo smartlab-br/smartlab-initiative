@@ -437,6 +437,18 @@ const SnackbarManager = {
             }))
         },
   
+        obsTICensoAgroTooltip(target, route, tooltip_list = [], removed_text_list = [], options = null) { 
+          let url = "/indicadoresmunicipais?categorias=cd_municipio_ibge_dv,nm_municipio,nu_competencia,ds_fonte&valor=vl_indicador&agregacao=sum&pivot=cd_indicador&filtros=in-cd_indicador-'CAGRO_TICA01'-'CAGRO_TICA05'-'CAGRO_TICA06',and,eq-nu_competencia-nu_competencia_max,and,eq-cd_municipio_ibge_dv-"+ target.options.rowData.cd_municipio_ibge_dv;
+          axios(this.$axiosCallSetupService.getAxiosOptions(url))
+            .then(result => {
+              let text = "";
+              let d = result.data.dataset[0];
+              text = this.$tooltipBuildingService.constructor.defaultTooltip(d, route, options.tooltip_list?options.tooltip_list: tooltip_list, removed_text_list, options);
+              target.unbindPopup();
+              target.bindPopup(text).openPopup();
+            });
+        },
+
         obsSSTTooltip(target, route, tooltip_list = [], removed_text_list = [], options = null) {
           let text = "";
           if (options && options.clickable){
