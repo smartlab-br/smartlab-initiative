@@ -147,7 +147,6 @@
 
 <script>
 import FLPOBaseLayout from '../FLPOBaseLayout.vue';
-import NumberTransformService from '../../assets/service/singleton/numberTransformService'
 
 export default {
     extends: FLPOBaseLayout,
@@ -156,11 +155,7 @@ export default {
             search: '',
             dataset: null,
             disableInitialSort: true,
-            numberTransformService: NumberTransformService,
             pagination: {}, 
-            first_cat: {},
-            last_cat: {},
-            labels: {},
             baseHeaders: null,
             loaded: true     
         }
