@@ -321,7 +321,9 @@
         ind_principais_compare:[],
         topology_compare: null,
         thematicDatasets: [],
-        dimParamsLoaded: true,
+        dimParamsCount: 0,
+        dimParamsLoadedCount: 0,
+        dimParamsLoaded: false,
 
         // Functions
         // TODO Migrate gradually to prototype objects
@@ -913,8 +915,8 @@
 
       addDimCustomParams(dataset, args, structure, addedParams, metadata){
         this.customParams[structure.name] = dataset[0];
-        this.dimParamsLoaded = true;
-
+        this.dimParamsLoadedCount++;
+        if (this.dimParamsLoadedCount == this.dimParamsCount) this.dimParamsLoaded = true;
       },
 
       flagThematicLoaded() {
@@ -965,10 +967,13 @@
 
         if (content.params){
           this.dimParamsLoaded = false;
+          this.dimParamsCount = content.params.length;
           this.loadDimCustomParams(content.params);
+        } else {
+          this.dimParamsLoaded = true;
         }
 
-        let thematicDatasets = ['centralindicadores'];
+        let thematicDatasets = [];
         if (content && content.tematicos) {
           for (let tematico of content.tematicos){
             thematicDatasets.push(tematico.dataset);

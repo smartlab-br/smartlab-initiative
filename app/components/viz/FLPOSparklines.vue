@@ -23,6 +23,7 @@
             :headers="removeFormatItems(structure.headers)"
             :items="dataset"
             :disable-initial-sort="disableInitialSort"
+            :custom-sort="customSort"
             :search="search"
             class="sparklines-grid elevation-1"
             style="width: 100%;"
@@ -117,7 +118,7 @@
                                 text-xs-right 
                                 :style="'color:'+hdr.bgColor"
                             >
-                                {{ hdr.format ? numberTransformService.formatNumber(
+                                {{ hdr.format ? $numberTransformService.constructor.formatNumber(
                                                     props.item['sparkline_values_' + hdr.series][0], hdr.format, hdr.precision, hdr.multiplier, hdr.collapse, hdr.signed, hdr.uiTags ) 
                                                 : props.item['sparkline_values_' + hdr.series][0] 
                                 }}
@@ -144,7 +145,7 @@
                                 text-xs-left 
                                 :style="'color:'+hdr.bgColor"
                             >
-                                {{ hdr.format ? numberTransformService.formatNumber(
+                                {{ hdr.format ? $numberTransformService.constructor.formatNumber(
                                                     props.item['sparkline_values_' + hdr.series][props.item['sparkline_values_' + hdr.series].length-1], 
                                                     hdr.format, hdr.precision, hdr.multiplier, hdr.collapse, hdr.signed, hdr.uiTags ) 
                                                 : props.item['sparkline_values_' + hdr.series][props.item['sparkline_values_' + hdr.series].length-1]
@@ -214,46 +215,18 @@
 </template>
 
 <script>
-import FLPOBaseLayout from '../FLPOBaseLayout.vue';
-import NumberTransformService from '../../assets/service/singleton/numberTransformService'
+import FLPODatatable from './FLPODatatable.vue';
 
 export default {
-    extends: FLPOBaseLayout,
+    extends: FLPODatatable,
     data() {
         return {
-            search: '',
-            dataset: null,
-            disableInitialSort: true,
-            numberTransformService: NumberTransformService,
-            pagination: {}, 
             first_cat: {},
             last_cat: {},
-            labels: {},
-            baseHeaders: null,
-            loaded: true     
-        }
-    },
-    props: ['refreshComponent', 'customFilters'],
-    created () {
-        this.baseHeaders = this.structure.headers.map((x) => Object.assign({}, x));
-        this.fillDataStructure(this.structure, this.customParams,
-        this.customFunctions, this.fillFromDataset, {});
-    },
-    watch: {
-        refreshComponent: function(newVal, oldVal) {
-            this.loaded = false;
-            this.updateDataStructure(this.customFilters.filterUrl);
+            labels: {}
         }
     },
     methods: {
-        changeSort (column) {
-            if (this.pagination.sortBy === column) {
-            this.pagination.descending = !this.pagination.descending
-            } else {
-            this.pagination.sortBy = column
-            this.pagination.descending = false
-            }
-        },
         fillFromDataset(sourceDS, rules, sourceStructure, addedParams = null, metadata = null) {
             let hierarchicalDS = [];
             let allSeries = [];
@@ -418,7 +391,7 @@ export default {
                     if(series){
                         row['series_length_' + series_value] = series.length;
                         row['series_length_last_5_' + series_value] = series.filter(function(el) { return el.cat_value >= series_last_cat[series_value]-4;}).length;
-                        row['fmt_higher_value_' + series_value] = NumberTransformService.formatNumber(higher_value, "inteiro") + " (" + higher_cat + ")";
+                        row['fmt_higher_value_' + series_value] = this.$numberTransformService.constructor.formatNumber(higher_value, "inteiro") + " (" + higher_cat + ")";
                         let last_year_value = sparkline_values[sparkline_values.length-1];
                         let last_2_year_value = sparkline_values[sparkline_values.length-2];
                         row['last_value_' + series_value] = last_year_value;
@@ -427,10 +400,10 @@ export default {
                             last_2_year_value !== undefined && last_2_year_value !== 0){
                                 let rate = last_year_value/last_2_year_value;
                                 if (rate < 1){
-                                    row['fmt_last_rate_' + series_value] = '-' + NumberTransformService.formatNumber((1 - rate)*100, "real") + '%';
+                                    row['fmt_last_rate_' + series_value] = '-' + this.$numberTransformService.constructor.formatNumber((1 - rate)*100, "real") + '%';
                                     row['last_rate_' + series_value] = (1 - rate)*100*-1;
                                 } else if (rate > 1){
-                                    row['fmt_last_rate_' + series_value] = '+' + NumberTransformService.formatNumber((rate - 1)*100, "real") + '%';
+                                    row['fmt_last_rate_' + series_value] = '+' + this.$numberTransformService.constructor.formatNumber((rate - 1)*100, "real") + '%';
                                     row['last_rate_' + series_value] = (rate - 1)*100;
                                 } else {
                                     row['fmt_last_rate_' + series_value] = '0%';
@@ -438,11 +411,11 @@ export default {
                                 }                      
                         }else if (last_year_value !== undefined && last_year_value == 0 && 
                             last_2_year_value !== undefined && last_2_year_value !== 0){
-                            row['fmt_last_rate_' + series_value] = 'de ' + NumberTransformService.formatNumber(last_2_year_value, "inteiro") + ' para 0';
+                            row['fmt_last_rate_' + series_value] = 'de ' + this.$numberTransformService.constructor.formatNumber(last_2_year_value, "inteiro") + ' para 0';
                             row['last_rate_' + series_value] = null;
                         }else if (last_year_value !== undefined && last_year_value !== 0 && 
                             last_2_year_value !== undefined && last_2_year_value == 0){
-                            row['fmt_last_rate_' + series_value] = 'de 0 para ' + NumberTransformService.formatNumber(last_year_value, "inteiro");
+                            row['fmt_last_rate_' + series_value] = 'de 0 para ' + this.$numberTransformService.constructor.formatNumber(last_year_value, "inteiro");
                             row['last_rate_' + series_value] = null;
                         }else {
                             row['fmt_last_rate_' + series_value] = 'sem incidência';
@@ -458,7 +431,7 @@ export default {
 
                     for (let header of this.structure.headers){
                         if (header.format){
-                            row['fmt_'+ header.value] = NumberTransformService.formatNumber(
+                            row['fmt_'+ header.value] = this.$numberTransformService.constructor.formatNumber(
                                 row[header.value], header.format, header.precision, header.multiplier, header.collapse, header.signed, header.uiTags );
                         }
                     }
@@ -469,35 +442,6 @@ export default {
 
         },
         
-        removeFormatItems(headers){
-            let items = JSON.parse(JSON.stringify(headers));
-            for(var item in items){
-                items[item].value = String(items[item].value).replace("fmt_","");
-            }
-            return items;
-        },
-
-        updateDataStructure(filterUrl){
-            let structReactive = Object.assign({},this.structure);
-            structReactive.api = JSON.parse(JSON.stringify(this.structure.apiBase?this.structure.apiBase:this.structure.api));
-
-            if (structReactive.api){
-                if (!Array.isArray(structReactive.api)){
-                    structReactive.api = [structReactive.api];
-                }
-                for(let struct of structReactive.api){
-                    if (struct.fixed){
-                    struct.fixed += filterUrl
-                    } else if (struct.template){
-                    struct.template += filterUrl
-                    }
-                }
-            }        
-            this.fillDataStructure(
-            structReactive, this.customParams,
-            this.customFunctions, this.fillFromDataset
-            );
-        },
 
         getCellClass(columnField, value){
             if (columnField.startsWith('fmt_last_rate_')){
@@ -516,13 +460,6 @@ export default {
                 }
             }
             return '';
-        },
-
-        replaceSpecialCharacters (item, queryText) {
-            let itemText = item? item.toString(): "";
-            queryText = this.$textTransformService.replaceSpecialCharacters(queryText).toLowerCase();
-            itemText = this.$textTransformService.replaceSpecialCharacters(itemText).toLowerCase();
-            return itemText.indexOf(queryText) > -1 
         },
 
         addHeadersLabels(allSeries){
