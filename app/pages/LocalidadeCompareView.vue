@@ -172,7 +172,7 @@
       </v-layout>
     </v-container>
     <v-container fluid  xs12  class="pa-0 ma-0">
-      <v-layout v-if="sections && sections.length > 0" class="bg-page grey lighten-2" column pa-0 ma-0>
+      <v-layout v-if="dimParamsLoaded && sections && sections.length > 0" class="bg-page grey lighten-2" column pa-0 ma-0>
         <v-layout v-for="(secao, indexSecao) in sections"  
           :key="secao.id"
           row wrap>
@@ -267,7 +267,7 @@
                     </v-layout>
                   </v-flex>
 
-                  <v-flex xs12 sm6 v-if="card.type != 'presentation'">
+                  <v-flex xs12 sm6 v-if="localidade_compare && card.type != 'presentation'">
                     <v-layout ma-0 pa-0
                       :style="sections_compare[indexSecao].cards[cardIndex].type != 'headline' && sections_compare[indexSecao].cards[cardIndex].type != 'text' ? 'min-height:500px;': ''">
                       <v-layout v-if="sections_compare[indexSecao].cards[cardIndex].type && sections_compare[indexSecao].cards[cardIndex].type == 'text'"
@@ -374,6 +374,27 @@
                   }
                 } else {
                   for(let api of card.api){
+                    if (api.args){
+                      for (let arg of api.args){
+                        if (arg.named_prop == "cd_uf"){
+                          arg.named_prop = "cd_uf_compare";
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+              if (card.apiBase){
+                if (!Array.isArray(card.apiBase)){
+                  if (card.apiBase.args){
+                    for (let arg of card.apiBase.args){
+                      if (arg.named_prop == "cd_uf"){
+                        arg.named_prop = "cd_uf_compare";
+                      }
+                    }
+                  }
+                } else {
+                  for(let api of card.apiBase){
                     if (api.args){
                       for (let arg of api.args){
                         if (arg.named_prop == "cd_uf"){
