@@ -134,6 +134,23 @@
                         >
                         </flpo-datatable>
                       </v-layout>
+                      <v-layout fill-height
+                        v-if="structure && structure.component_options !== null && structure.component_type == 'TEXT'">
+                          <flpo-composite-text
+                            v-if="!invalidInterpol"
+                            :id = "'story_component_' + structure.id"
+                            :structure="structure.component_options"
+                            :custom-params="customParams"
+                            :custom-functions="customFunctions"
+                            :custom-filters="customFilters"
+                            :reactive-filter="reactiveFilter"
+                            v-on:selection="triggerSelect"
+                            v-on:default-selection="triggerDefaultSelect"
+                            v-on:resendInvalidInterpol="changeTextToInvalidInterpol"
+                            @showSnackbar="snackAlert"
+                            @showAuthenticatioDialog="openAuthenticatioDialog">
+                          </flpo-composite-text>
+                      </v-layout>
                     </v-flex>
                     <v-flex shrink v-if="chartFooter" xs12 pt-0 text-xs-center chart-footer>
                       {{ chartFooter }}
