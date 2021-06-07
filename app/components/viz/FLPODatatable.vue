@@ -163,7 +163,6 @@ export default {
     props: ['refreshComponent', 'customFilters'],
     created () {
         this.baseHeaders = this.structure.headers.map((x) => Object.assign({}, x));
-        console.log(new Date().toISOString()) ;
         this.fillDataStructure(this.structure, this.customParams,
         this.customFunctions, this.fillFromDataset, {});
     },
@@ -203,7 +202,6 @@ export default {
             return items;
         },
         fillFromDataset(sourceDS, rules, sourceStructure, addedParams = null, metadata = null) {
-            console.log(new Date().toISOString()) ;
             let order_field = null;
             let castResult = {}
             if (this.structure.pivot){
