@@ -100,7 +100,7 @@
             <v-flex white--text subheading xs12 md4 lg3 :class="{'px-3': $vuetify.breakpoint.mdAndDown, 'px-4': $vuetify.breakpoint.lgAndUp}" v-html="dimensao_ativa.description">
             </v-flex>
             <v-flex text-xs-center xs12 md3 :class="{'px-3': $vuetify.breakpoint.mdAndDown, 'px-4': $vuetify.breakpoint.lgAndUp}" >
-              <v-layout v-if="ind_principais && ind_principais.length > 0 && unlockLoading" row wrap justify-center>
+              <v-layout v-if="dimParamsLoaded && ind_principais && ind_principais.length > 0 && unlockLoading" row wrap justify-center>
                 <flpo-minicard
                   v-for="(miniCardPrincipal, indexMinicardsPrincipal) in ind_principais"
                   :key="'minicard_principal_'+indexMinicardsPrincipal"
