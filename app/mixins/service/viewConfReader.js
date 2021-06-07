@@ -16,15 +16,28 @@ const ViewConfReader = {
 					let promises_alt = [];
 					
 					let basePath = this.$store.state.GIT_VIEWCONF_TAG_URL ? this.$store.state.GIT_VIEWCONF_TAG_URL : "/static/smartlab-initiative-viewconf/";
-					
-					// TODO Need to intercept 404 errors thrown to the browser console.
+
+					let fnSendDataStructureError = this.sendDataStructureError;
+					let errorMsg = "Falha ao carregar a dimensão - não foi possível carregar o arquivo da dimensão (.yaml).";
+					let errorStruct = {secoes:[{ name: errorMsg, cards:[]}]}
+
 					for (let yamlConfIndex in yamlArray) {	
 						promises[yamlConfIndex] = new Promise(
 							function(resolve, reject) {
 								axios.get(basePath + yamlArray[yamlConfIndex].main + ".yaml")
 									.then(response => {
 										resolve(yaml.safeLoad(response.data, { json: true }))
-									}).catch(error => { resolve(null); });
+									}).catch(error => { 
+										// console.log(error);
+										if (error.reason == "end of the stream or a document separator is expected"){
+											// yaml not found
+											resolve(null); 
+										} else { 
+											// yaml error
+											fnSendDataStructureError(errorMsg);
+											resolve(errorStruct);
+										}
+									});
 							}
 						);
 
