@@ -28,7 +28,6 @@ const ViewConfReader = {
 									.then(response => {
 										resolve(yaml.safeLoad(response.data, { json: true }))
 									}).catch(error => { 
-										// console.log(error);
 										if (error.reason == "end of the stream or a document separator is expected"){
 											// yaml not found
 											resolve(null); 
