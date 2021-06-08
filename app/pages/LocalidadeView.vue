@@ -339,6 +339,32 @@
             }
             return d[prop_val];
           },
+          get_sector_censoagro(d,cd_sector){
+              switch(cd_sector) {
+                  case 1:
+                      return "Aquicultura";
+                  case 2:
+                      return "Horticultura e Floricultura";
+                  case 3:
+                      return "Pecurária";
+                  case 4:
+                      return "Pesca";
+                  case 5:
+                      return "Lavouras temporárias";
+                  case 6:
+                      return "Lavouras permanentes";
+                  case 7:
+                      return "Sementes e mudas certificadas";
+                  case 8:
+                      return "Produção em florestas nativas";
+                  case 9:
+                      return "Produção de florestas plantadas";
+                  case 0:
+                      return "Dado indisponível";
+                  default:
+                      return "";
+              }
+          },
           get_bin: function(d,value,bins=[10,50,100,500]){
             // [10,50,100,500,1000,2000,5000,10000,20000,40000,50000]
             if (value == 0){

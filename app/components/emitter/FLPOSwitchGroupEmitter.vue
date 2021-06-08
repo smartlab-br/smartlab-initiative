@@ -1,5 +1,5 @@
 <template>
-  <v-layout row wrap>
+  <v-layout row wrap align-center>
     <v-flex v-for="eachSwitch in structure.switches"
       :key="eachSwitch.id"
       :class="'ma-0 ' + (eachSwitch.cls ? eachSwitch.cls : ' pb-0 pl-3 xs12')">
@@ -7,6 +7,7 @@
       <v-switch class="ma-0 pa-0" hide-details
         v-model="selection[eachSwitch.id]"
         :color="eachSwitch.color !== null ? eachSwitch.color : 'primary'"
+        :readonly="eachSwitch.readonly==true?true:false"
         v-on:change="toggleSwitch(eachSwitch)">
         <template slot="label">
           <v-layout align-center>
