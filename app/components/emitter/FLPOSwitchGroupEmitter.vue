@@ -46,7 +46,9 @@
           this.selection[this.structure.switches[indxStruct].id] = this.structure.switches[indxStruct].default;
         }
       }
-      this.$emit(this.structure.event, { id: this.id, type: 'switch-group', enabled: this.selection });
+      if (this.structure.event){
+        this.$emit(this.structure.event, { id: this.id, type: 'switch-group', enabled: this.selection });
+      }
     },
     methods: {
       toggleSwitch(struct) {
