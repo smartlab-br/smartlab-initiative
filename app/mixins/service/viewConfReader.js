@@ -380,6 +380,15 @@ const ViewConfReader = {
 							);
 						}
 		
+						if (reformOptions.cast) {
+							dataset = this.$indicatorsModel.cast(
+								dataset,
+								reformOptions.cast.col_fields,
+								reformOptions.cast.value_field ? reformOptions.cast.value_field : 'vl_indicador',
+								reformOptions.cast.layer_field ? reformOptions.cast.layer_field : 'cd_indicador'
+							);
+						}
+
 						for (var indx in reformOptions.calcs) {
 							let nuField = 'calc_' + reformOptions.calcs[indx].id;
 							for (let eachRow in dataset) {
@@ -436,16 +445,6 @@ const ViewConfReader = {
 							}
 						}
 		
-						// if (reformOptions.cast) {
-						// 	console.log(reformOptions);
-						// 	dataset = this.$indicatorsModel.cast(
-						// 		dataset,
-						// 		reformOptions.cast.col_fields,
-						// 		reformOptions.value_field ? reformOptions.value_field : 'vl_indicador',
-						// 		reformOptions.cast.layer_field ? reformOptions.layer_field : 'cd_indicador'
-						// 	);
-						// }
-
 						if (reformOptions.order_field !== null && reformOptions.order_field !== undefined) {
 							dataset = this.$indicatorsModel.sortObject(dataset, reformOptions.order_field);
 						}
