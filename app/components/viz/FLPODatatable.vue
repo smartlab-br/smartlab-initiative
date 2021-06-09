@@ -75,7 +75,7 @@
                     />
                 </th>
             </tr>
-            <tr>
+            <tr class="flpo-datatable-head">
                 <th scope="colgroup" 
                     v-for="(header, idxHeader) in props.headers"
                     :key="idxHeader"
@@ -83,8 +83,14 @@
                     :width="header.width"
                     @click="changeSort(header.value)"
                 >
-                    <v-icon small>arrow_upward</v-icon>
-                    <span class="word-wrap" v-html="header.text" />
+                    <v-layout column>
+                        <v-flex pb-0>
+                            <span class="word-wrap" v-html="header.text" />
+                        </v-flex>
+                        <v-flex pt-0>
+                            <v-icon small>arrow_upward</v-icon>
+                        </v-flex>
+                    </v-layout>
                 </th>
             </tr>
             </template>            
@@ -302,4 +308,12 @@ export default {
     word-wrap: break-word;
     white-space: normal; 
   }  
+  .flpo-datatable-head {
+    border-bottom: 1px solid rgba(0,0,0,0.12);
+  }
+  
+  .flpo-datatable-head th div{
+    margin: 0px !important;
+  }
+
 </style>
