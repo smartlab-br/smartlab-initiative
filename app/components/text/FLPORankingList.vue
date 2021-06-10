@@ -1,27 +1,18 @@
 <template>
   <v-flex :class="cls ? cls : 'xs12'">
-    <v-layout column wrap ml-2 mb-2>
-      <v-flex x12 px-0 :class="'display-1-obs ranking-list-title'+ (structure.text_size? '-'+structure.text_size:'') + ' pb-2'" v-html="title"></v-flex>
+    <v-layout v-if="structure.look !='minicard'" column wrap ml-2 mb-2>
+      <v-flex x12 px-0 :class="'display-1-obs ranking-list-title pb-2'" v-html="title"></v-flex>
       <v-flex v-if="errorMessage" x12 px-0 :class="'display-1-obs ranking-list-text'+ (structure.text_size? '-'+structure.text_size:'')+' pb-2'"> {{ errorMessage }} </v-flex>
       <v-flex xs12 class="ranking-list pa-0" v-for="(item, itemIndx) in ranking" :key="itemIndx">      
         <div :class="'ranking-list-text'+ (structure.text_size? '-'+structure.text_size:'')" v-html="'<span>' + (item.rank? item.rank: itemIndx+1) + '. </span>'+ item.localidade + ' ' + (item.vl_indicador?item.vl_indicador:'')" />
       </v-flex>
-      <!--
-      <v-layout py-2 class="ranking-list-title"> {{title}} </v-layout>      
-      <v-layout pa-2 mb-1 class="ranking-list" v-for="(item, itemIndx) in ranking" :key="itemIndx">
-        <v-layout row wrap pr-2>
-          <v-flex pa-1 xs2 primary white--text class="display-1-obs">
-            <v-layout ma-0 justify-center fill-height align-center>
-              {{ item.rank ? item.rank : (itemIndx + 1) }}
-            </v-layout>
-          </v-flex>
-          <v-flex xs10 column>
-            <v-layout pa-1 class="ranking-list-text">{{item.localidade}}</v-layout>
-            <v-layout pa-1 class="ranking-list-value" grey lighten-2>{{item.vl_indicador}}</v-layout>
-          </v-flex>
-        </v-layout>
-      </v-layout>
-    -->
+    </v-layout>
+    <v-layout v-else column wrap ml-2 mb-2 class="ranking-list-minicard">
+      <v-flex v-if="errorMessage" x12 px-0 :class="'display-1-obs ranking-list-minicard-text'+ (structure.text_size? '-'+structure.text_size:'')+' pb-2'"> {{ errorMessage }} </v-flex>
+      <v-flex xs12 class="ranking-list-minicard pa-0" v-for="(item, itemIndx) in ranking" :key="itemIndx">      
+        <div :class="'ranking-list-minicard-text'+ (structure.text_size? '-'+structure.text_size:'')" v-html="(item.rank? item.rank: itemIndx+1) + '. '+ item.localidade + ' ' + (item.vl_indicador?item.vl_indicador:'')" />
+      </v-flex>
+      <v-flex x12 px-0 :class="'ranking-list-minicard-title pb-2'" v-html="title"></v-flex>
     </v-layout>
   </v-flex>
 </template>
@@ -121,29 +112,20 @@
     font-size: 1.25rem;
   } 
   
-  .ranking-list-value {
-    font-size: 0.85rem;
-    padding-bottom: 0.5rem;
-  } 
-
-  .ranking-list-text-large span {
-    font-size: 1.429rem;
+  .ranking-list-minicard {
+    color: rgb(53,94,168,1);
+  }
+  
+  .ranking-list-minicard-text {
+    font-family: Lato, Calibri, sans-serif !important;
+    font-size: 1.25rem;
+    line-height: 1.2;
   } 
   
-  .ranking-list-text-large {
-    font-size: 2.214rem;
-  } 
-  
-  .ranking-list-title-large {
+  .ranking-list-minicard-title {
     text-transform: uppercase;
-    font-size: 2.214rem;
+    font-size: 0.8rem;
+    font-weight: 400;
   } 
   
-  .ranking-list-value-large {
-    font-size: 1.429rem;
-    padding-bottom: 0.5rem;
-  } 
-
-
-
 </style>
