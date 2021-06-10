@@ -346,7 +346,7 @@
                   case 2:
                       return "Horticultura e Floricultura";
                   case 3:
-                      return "Pecurária";
+                      return "Pecuária";
                   case 4:
                       return "Pesca";
                   case 5:
