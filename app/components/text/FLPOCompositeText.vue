@@ -89,6 +89,17 @@
             @showSnackbar="snackAlert">
           </flpo-select-emitter>
         </v-layout>
+        <v-layout column v-else-if="descSection.type && descSection.type == 'legend-list'&&
+                                    (descSection.group == undefined || descSection.group == null || descSection.group == activeGroup)" 
+          :class="descSection.cls?descSection.cls:'pb-2'">
+          <v-flex pa-0 class="title-obs">{{ descSection.title }}</v-flex>
+          <flpo-legend-list
+            :id = "descSection.id + '_' + id" 
+            :structure="descSection"
+            :custom-functions="customFunctions"
+            @showSnackbar="snackAlert">
+          </flpo-legend-list>
+        </v-layout>
         <v-layout column v-else-if="descSection.type && descSection.type == 'switch-group'&&
                                     (descSection.group == undefined || descSection.group == null || descSection.group == activeGroup)" 
           :class="descSection.cls?descSection.cls:'pb-2'">
