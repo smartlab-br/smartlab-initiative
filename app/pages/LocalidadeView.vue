@@ -448,6 +448,9 @@
                   case 'Quantidade':
                       return NumberTransformService.formatNumber(
                               value, "inteiro", 0);
+                  case '(Percentual)':
+                      return NumberTransformService.formatNumber(
+                              value, "porcentagem", 1, null, null, false, false);
                   case '(Índice)':
                       if(ds_indicador.startsWith('IDH ')){
                         if (value < 0.5){
@@ -647,6 +650,9 @@
           format_quarter_ds_short: function(d,quarter_yq){
             let yq = typeof(quarter_yq) == "number"? quarter_yq.toString(): quarter_yq;
             return yq.substr(5,1) + "º T " + yq.substr(0,4);
+          },
+          capitalize_first_letter(string) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
           },
           concat_descriptions: function(d) {
             return d.desc_indicador + " - " + d.ds_indicador_radical;
