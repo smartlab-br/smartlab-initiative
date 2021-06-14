@@ -631,7 +631,7 @@ class IndicatorsModel {
     //busca indicadores da localidade
     return axios(this.axiosSetup.getAxiosOptions(url))
       .then((result) => {
-        let dataset = { name: dataset_name, ds: result.data.dataset, valid: true };
+        let dataset = { name: dataset_name, ds: result.data.dataset, valid: true, analysisUnit: {type: scope, id: auId} };
         this.globalDatasets[dataset_name + suffix] = dataset;
         return dataset;
       });

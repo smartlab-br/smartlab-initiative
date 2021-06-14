@@ -735,7 +735,7 @@ const SnackbarManager = {
         },
 
         obsCustomTooltip(target, route, tooltip_list = [], removed_text_list = [], options = null) { 
-          let params = Object.assign({},this.customParams,{idLocalidadeTooltip: target.options.rowData.cd_municipio_ibge_dv});
+          let params = Object.assign({},this.customParams,{tooltipLocalidade: target.options.rowData.cd_municipio_ibge_dv});
           this.fillDataStructure(
             options.tooltip_data, params,
             this.customFunctions, this.showDefaultTooltip,
