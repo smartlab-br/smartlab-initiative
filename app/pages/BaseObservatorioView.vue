@@ -137,21 +137,21 @@
         this.$emit('alterToolbar', observatorio.theme.toolbar);
         this.observatorio = observatorio;
 
-        let thematic = ['centralindicadores'];
-        if (observatorio && observatorio.tematicos) {
-          for(let indxTematico in observatorio.tematicos) {
-            thematic.push(observatorio.tematicos[indxTematico].dataset);
-          }
-        }
+        // let thematic = ['centralindicadores'];
+        // if (observatorio && observatorio.tematicos) {
+        //   for(let indxTematico in observatorio.tematicos) {
+        //     thematic.push(observatorio.tematicos[indxTematico].dataset);
+        //   }
+        // }
 
-        let indicadoresTematicos = this.$indicatorsModel.getMultipleGlobalDatasets(thematic, 'brasil', 0);
-        if (indicadoresTematicos instanceof Promise || indicadoresTematicos.then) {
-          indicadoresTematicos.then(
-            (result) => { this.keepLoading(); },
-            (error) => { this.sendError('Falha ao carregar indicadores do Brasil'); });
-        } else {
-          this.keepLoading();
-        }
+        // let indicadoresTematicos = this.$indicatorsModel.getMultipleGlobalDatasets(thematic, 'brasil', 0);
+        // if (indicadoresTematicos instanceof Promise || indicadoresTematicos.then) {
+        //   indicadoresTematicos.then(
+        //     (result) => { this.keepLoading(); },
+        //     (error) => { this.sendError('Falha ao carregar indicadores do Brasil'); });
+        // } else {
+        this.keepLoading();
+        // }
 
         if (observatorio.prevalencia && observatorio.prevalencia.odometers){
           this.hasOdometers = true;
