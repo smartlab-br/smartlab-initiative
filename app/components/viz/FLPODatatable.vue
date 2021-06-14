@@ -152,17 +152,27 @@
                     </div>
                 </td> 
             </template>
-            <template slot="actions-prepend"                    
-                v-if="structure.search_position == 'bottom'"
-            >
-                <v-text-field
-                    v-model="search"
-                    append-icon="search"
-                    label="Procurar"
-                    single-line
-                    hide-details
-                    class='pa-2 ma-0'
-                />
+            <template slot="actions-prepend">
+                <v-layout row>
+                    <v-flex align-left>
+                        <v-checkbox v-if="structure.check"
+                            v-model="required_column"
+                            :label="structure.check.label"
+                            :value="structure.check.column"
+                            class='pt-3 ma-0'
+                        />
+                    </v-flex>
+                    <v-flex>
+                        <v-text-field v-if="structure.search_position == 'bottom'"
+                            v-model="search"
+                            append-icon="search"
+                            label="Procurar"
+                            single-line
+                            hide-details
+                            class='pa-2 ma-0'
+                        />
+                    </v-flex>
+                </v-layout>
             </template>
             <template slot="pageText"
                 slot-scope="props"
@@ -195,10 +205,12 @@ export default {
         return {
             search: '',
             dataset: null,
+            data_items: null,
             disableInitialSort: true,
             pagination: {}, 
             baseHeaders: null,
-            loaded: true     
+            loaded: true,
+            required_column: null     
         }
     },
     props: ['refreshComponent', 'customFilters'],
@@ -211,6 +223,16 @@ export default {
         refreshComponent: function(newVal, oldVal) {
             this.loaded = false;
             this.updateDataStructure(this.customFilters.filterUrl);
+        },
+        required_column: function(newVal, oldVal){
+            if (newVal){
+                this.pagination.page = 1;
+                this.dataset = this.dataset.filter(function(el) { 
+                    return el[newVal] !== null && el[newVal] !== undefined
+                })
+            } else {
+                this.dataset = this.data_items.slice();
+            }
         }
     },
     methods: {
@@ -262,6 +284,7 @@ export default {
             }
             
             this.dataset = sourceDS;
+            this.data_items = sourceDS.slice();
             this.loaded = true;
             this.$emit('dataset-loaded', this.dataset);
         },
@@ -349,6 +372,10 @@ export default {
   
   .flpo-datatable-head th div{
     margin: 0px !important;
+  }
+
+  .flpo-datatable-grid .v-datatable__actions > div:first-child {
+   justify-content: space-between !important;
   }
 
 </style>
