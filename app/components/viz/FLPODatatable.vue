@@ -105,7 +105,42 @@
                     :style="(hdr.item_align?'text-align:'+hdr.item_align:'')"
                     pa-0 
                 >
-                    <div 
+                    <div v-if="props.item[hdr.value] && props.item[hdr.value].toLowerCase() == 'sim'"
+                    >
+                        <v-tooltip bottom>
+                            <v-icon 
+                                slot="activator"
+                            >
+                                check
+                            </v-icon>
+                            Sim
+                        </v-tooltip>
+                    </div>
+                    <div v-else-if="props.item[hdr.value] && props.item[hdr.value].toLowerCase() == 'não'"
+                    >
+                        <v-tooltip bottom>
+                            <v-icon 
+                                slot="activator"
+                                color="red"
+                            >
+                                clear
+                            </v-icon>
+                            Não
+                        </v-tooltip>
+                    </div>
+                    <div v-else-if="props.item[hdr.value] && props.item[hdr.value].toLowerCase() == 'não informado'"
+                    >
+                        <v-tooltip bottom>
+                            <v-icon 
+                                slot="activator"
+                                color="grey lighten-2"
+                            >
+                                remove
+                            </v-icon>
+                            Não Informado
+                        </v-tooltip>
+                    </div>
+                    <div v-else
                         :class="getCellClass(hdr.value, props.item[hdr.value])"
                     >
                         {{ (hdr.format && props.item['fmt_' + hdr.value]) ? props.item['fmt_' + hdr.value]: props.item[hdr.value] }}
