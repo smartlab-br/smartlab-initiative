@@ -1057,7 +1057,7 @@
 
         if (this.$route.query.compare) { // In comparison view
           this.sections_compare = this.changeToCompareStructure(this.sections);
-          this.ind_principais_compare = this.changeToCompareStructure(this.ind_principais);
+          this.ind_principais_compare = this.ind_principais ? this.changeToCompareStructure(this.ind_principais): null;
           this.presentation_compare = JSON.parse(JSON.stringify(this.dimStruct.presentation).replace(/centralindicadores/g,"centralindicadores_compare").replace(/idLocalidade/g,"idLocalidade_compare"));
             
           let dimStructMasterCompare = JSON.parse(JSON.stringify(this.dimStruct.master).replace(/centralindicadores/g,"centralindicadores_compare").replace(/idLocalidade/g,"idLocalidade_compare"));
