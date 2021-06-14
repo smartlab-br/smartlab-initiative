@@ -84,6 +84,14 @@ class AnalysisUnitModel {
       );
   }
 
+  setPlace(name, data){
+    this[name] = data;
+  }
+
+  getPlace(name){
+    return this[name];
+  }
+
   getPRTPTMInstance(scope, id) {
     let url = "/municipios?categorias=cd_unidade,nm_unidade,cd_uf&agregacao=distinct&filtros=eq-cd_unidade-" + id;
     return axios(this.axiosSetup.getAxiosOptions(url))
