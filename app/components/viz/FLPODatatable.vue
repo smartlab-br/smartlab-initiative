@@ -105,7 +105,7 @@
                     :style="(hdr.item_align?'text-align:'+hdr.item_align:'')"
                     pa-0 
                 >
-                    <div v-if="props.item[hdr.value] && props.item[hdr.value].toLowerCase() == 'sim'"
+                    <div v-if="props.item[hdr.value] && props.item[hdr.value].toString().toLowerCase() == 'sim'"
                     >
                         <v-tooltip bottom>
                             <v-icon 
@@ -116,7 +116,7 @@
                             Sim
                         </v-tooltip>
                     </div>
-                    <div v-else-if="props.item[hdr.value] && props.item[hdr.value].toLowerCase() == 'não'"
+                    <div v-else-if="props.item[hdr.value] && props.item[hdr.value].toString().toLowerCase() == 'não'"
                     >
                         <v-tooltip bottom>
                             <v-icon 
@@ -128,7 +128,7 @@
                             Não
                         </v-tooltip>
                     </div>
-                    <div v-else-if="props.item[hdr.value] && props.item[hdr.value].toLowerCase() == 'não informado'"
+                    <div v-else-if="props.item[hdr.value] && props.item[hdr.value].toString().toLowerCase() == 'não informado'"
                     >
                         <v-tooltip bottom>
                             <v-icon 
