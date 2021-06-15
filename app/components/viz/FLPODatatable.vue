@@ -152,17 +152,18 @@
                     </div>
                 </td> 
             </template>
-            <template slot="actions-prepend">
+            <template slot="footer">
+                <tr><td colspan="15">
                 <v-layout row>
-                    <v-flex align-left>
-                        <v-checkbox v-if="structure.check"
+                    <v-flex xs3  v-if="structure.check">
+                        <v-checkbox
                             v-model="required_column"
                             :label="structure.check.label"
                             :value="structure.check.column"
-                            class='pt-3 ma-0'
+                            class='pt-3 ma-0 flpo-datatable-checkbox'
                         />
                     </v-flex>
-                    <v-flex>
+                    <v-flex xs3>
                         <v-text-field v-if="structure.search_position == 'bottom'"
                             v-model="search"
                             append-icon="search"
@@ -173,6 +174,7 @@
                         />
                     </v-flex>
                 </v-layout>
+                </td></tr>
             </template>
             <template slot="pageText"
                 slot-scope="props"
@@ -378,4 +380,8 @@ export default {
    justify-content: space-between !important;
   }
 
+  .flpo-datatable-checkbox >>> label {
+    font-size: 12px !important;
+  }
+    
 </style>
