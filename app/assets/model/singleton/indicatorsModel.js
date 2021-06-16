@@ -35,11 +35,6 @@ class IndicatorsModel {
       estado: '/te/indicadoresestaduais?categorias=nm_uf,cd_uf,cd_indicador,nu_competencia_min,nu_competencia_max&valor=vl_indicador&agregacao=SUM&filtros=eq-cd_uf-{0},and,nn-vl_indicador',
       brasil: '/te/indicadoresnacionais?categorias=cd_indicador,nu_competencia_min,nu_competencia_max&valor=vl_indicador&agregacao=SUM&filtros=nn-vl_indicador'
     },
-    censo_agro_2017: {
-      municipio: "/ti/censoagromunicipal?categorias='agro_menores'-cd_indicador,'2017'-nu_competencia,cod_mun,qt_ocupados,qt_ocupados_menores14,percent_ocupados_men_14&filtros=eq-cod_mun-{0}",
-      estado: "/ti/censoagroestadual?categorias='agro_menores'-cd_indicador,'2017'-nu_competencia,cd_uf,tot_ocupados,tot_ocup_men14,perc_tot_14,men_14_parente,part_com_parentesco,men_14_sem_parente,part_sem_parentesco&filtros=eq-cd_uf-{0}",
-      brasil: "/ti/censoagronacional?categorias='agro_menores'-cd_indicador,'2017'-nu_competencia,tot_ocupados,tot_ocup_men14,perc_tot_14,men_14_parente,part_com_parentesco,men_14_sem_parente,part_sem_parentesco"
-    },
     munic: {
       municipio: '/estadicmunic?categorias=cd_indicador_spai-cd_indicador,cd_indicador-cd_indicador_externo,spai_ds,spai_ds_texto,ds_fonte,nu_ano_indicador-nu_competencia,vl_indicador,spai_vl_indicador_txt,ds_indicador,tema,sub_tema,spai_vl_indicador,total_br,presenca_total_br,pct_presenca_br,total_uf,presenca_total_uf,pct_presenca_uf,nm_municipio,nm_uf,sg_uf,nm_municipio_uf&filtros=eq-cd_mun_ibge-{0}',
       estado: '/estadicmunic?categorias=cd_indicador_spai-cd_indicador,cd_indicador-cd_indicador_externo,spai_ds,spai_ds_texto,ds_fonte,nu_ano_indicador-nu_competencia,vl_indicador,spai_vl_indicador_txt,ds_indicador,tema,sub_tema,spai_vl_indicador,total_br,presenca_total_br,pct_presenca_br,total_uf,presenca_total_uf,pct_presenca_uf,rank_pct_uf,rank_pct_uf_max,nm_municipio,nm_uf,sg_uf,nm_municipio_uf&valor=cd_uf&agregacao=DISTINCT&filtros=eq-cd_uf-{0}',
@@ -434,38 +429,66 @@ class IndicatorsModel {
     return meltedDS;
   }
 
-  cast(dataset, col_fields, value_field, layer_field) {
-    let result = [];
-    for (let indxDS in dataset) {
-      // Verifica se já existe a entrada no dataset de resultado
-      let found = true;
-      loopResult: for (let indxRes in result) {
-        // Itera nos campos de identificação, para checar se é a mesma ocorrência
-        for (let indxCol in col_fields) {
-          if (result[indxRes][col_fields[indxCol]] != dataset[indxDS][col_fields[indxCol]]) {
-            found = false;
-            break loopResult;
-          }
+  cast(dataset, col_fields, value_field, layer_field, fmt_value_field, det_value_field) {
+    let resultDataset = [];
+    let newCols = [];
+    let key_field = "";
+    if (col_fields.length == 1){
+      key_field = col_fields[0];
+    } else {
+      dataset.map((reg) => {
+        let key_value = ""
+        for (let col of col_fields) {
+          key_value += reg[col].toString();
         }
-        // Found is true and it'the current indxRes
+        reg["reg_key"] = key_value;
+        key_field = "reg_key";
+      });  
+    }
+    for (let indxDS in dataset) {
+      let regKey = null;
+      regKey = resultDataset.find(reg => reg[key_field] === dataset[indxDS][key_field]);
+      if (regKey) {
+        // Found is true 
         // Sets the new value column to the existing result row
-        result[dataset[indxDS][layer_field]] = dataset[indxDS][value_field];
-      }
-
-      // Creates new row if not found in result
-      if (!found) {
+        regKey[dataset[indxDS][layer_field]] = dataset[indxDS][value_field];
+        if (!newCols.includes(dataset[indxDS][layer_field])){
+          newCols.push(dataset[indxDS][layer_field]);
+        }
+        if(fmt_value_field){
+          regKey['fmt_' + dataset[indxDS][layer_field]] = dataset[indxDS][fmt_value_field];
+        }
+        if(det_value_field){
+          regKey['det_' + dataset[indxDS][layer_field]] = dataset[indxDS][det_value_field];
+        }
+      } else {
         // Instantiates the base object for all layers in each dataset row
         var nuRow = {};
-        // Sets identifier columns' values
+        if (!col_fields.includes(key_field)){
+          nuRow[key_field] = dataset[indxDS][key_field];
+        }
         for (let indxCol in col_fields) {
           nuRow[col_fields[indxCol]] = dataset[indxDS][col_fields[indxCol]];
         }
         // Sets the pivot value
         nuRow[dataset[indxDS][layer_field]] = dataset[indxDS][value_field];
-        // Adds row to the result
-        result.push(nuRow);
+        if (!newCols.includes(dataset[indxDS][layer_field])){
+          newCols.push(dataset[indxDS][layer_field]);
+        }
+        if(fmt_value_field){
+          nuRow['fmt_' + dataset[indxDS][layer_field]] = dataset[indxDS][fmt_value_field];
+        }
+        if(det_value_field){
+          nuRow['det_' + dataset[indxDS][layer_field]] = dataset[indxDS][det_value_field];
+        }
+        // Adds row to the resultDataset
+        resultDataset.push(nuRow);
       }
     }
+    let result = {};
+    result.dataset = resultDataset;
+    result.newCols = newCols;
+    return result;
   }
 
   sortObject(object, order_field){
@@ -608,7 +631,7 @@ class IndicatorsModel {
     //busca indicadores da localidade
     return axios(this.axiosSetup.getAxiosOptions(url))
       .then((result) => {
-        let dataset = { name: dataset_name, ds: result.data.dataset, valid: true };
+        let dataset = { name: dataset_name, ds: result.data.dataset, valid: true, analysisUnit: {type: scope, id: auId} };
         this.globalDatasets[dataset_name + suffix] = dataset;
         return dataset;
       });

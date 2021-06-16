@@ -18,6 +18,7 @@ import FLPOCompositeText from './text/FLPOCompositeText'
 import FLPORankingText from './text/FLPORankingText'
 import FLPOTextBuilder from './text/FLPOTextBuilder'
 import FLPORankingList from './text/FLPORankingList'
+import FLPOLegendList from './text/FLPOLegendList'
 
 // Cards
 import FLPOLinkedViewCard from './card/FLPOLinkedViewCard'
@@ -37,6 +38,7 @@ import FLPOOdometer from './FLPOOdometer'
 
 // Data Visualizations
 import FLPOSparklines from './viz/FLPOSparklines'
+import FLPODatatable from './viz/FLPODatatable'
 
 export default {
   
@@ -61,10 +63,12 @@ export default {
   'flpo-story-card-autofill': FLPOStoryCardAutofill,
   'flpo-story-card-multiple-charts': FLPOStoryCardMultipleCharts,
   'flpo-ranking-text': FLPORankingText,
+  'flpo-legend-list': FLPOLegendList,
   'flpo-ranking-list': FLPORankingList,
   'flpo-ranking-card': FLPORankingCard,
 
   'flpo-sparklines': FLPOSparklines,
+  'flpo-datatable': FLPODatatable,
   
   'flpo-articles-highlights': FLPOArticlesHighlights
 }

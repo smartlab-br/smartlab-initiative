@@ -9,7 +9,7 @@ class ObjectTransformService {
     this.numberTransformService = new NumberTransformService();
   }
 
-  runNamedFunction(struct, base_object, localFunctions = null, initialArgs = []) {
+  runNamedFunction(struct, base_object, localFunctions = null, initialArgs = [], customParams = {}) {
     // Runs function with args defines in yaml structure
     var args = initialArgs;
     
@@ -21,7 +21,9 @@ class ObjectTransformService {
       } else if (struct.fn_args[indx].named_prop) {
         if (base_object) {
           if(struct.fn_args[indx].base_object){
-            if (base_object[struct.fn_args[indx].base_object]){
+            if (customParams && customParams[struct.fn_args[indx].base_object]){
+              args.push(customParams[struct.fn_args[indx].base_object][struct.fn_args[indx].named_prop]);
+            } else if (base_object[struct.fn_args[indx].base_object]){
               args.push(base_object[struct.fn_args[indx].base_object][struct.fn_args[indx].named_prop]);
             } else {
               args.push(undefined);
@@ -54,6 +56,8 @@ class ObjectTransformService {
     }
     if (['applyInterpolReplaceDatasetParam'].includes(struct.function)) {
       let textTransformService = new TextTransformService();
+      args.push(localFunctions);
+      args.push(customParams);
       return textTransformService[struct.function].apply(textTransformService, args);
     }
     if (this[struct.function]) {

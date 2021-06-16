@@ -117,10 +117,39 @@
                           :custom-functions="customFunctions"
                           :custom-filters="customFilters"
                           :refresh-component="refreshComponent"
-                          :structure="Object.assign({}, structure.component_options, (({ api, apiBase, headers }) => ({ api, apiBase, headers }))(structure))"
+                          :structure="Object.assign({}, structure.component_options, (({ api, apiBase, headers, api_options }) => ({ api, apiBase, headers, api_options }))(structure))"
                           v-on:dataset-loaded="triggerDatasetUpdate"
                         >
                         </flpo-sparklines>
+                      </v-layout>
+                      <v-layout fill-height
+                        v-if="structure && structure.component_options !== null && structure.component_type == 'DATATABLE'">
+                        <flpo-datatable 
+                          :custom-params="customParams"
+                          :custom-functions="customFunctions"
+                          :custom-filters="customFilters"
+                          :refresh-component="refreshComponent"
+                          :structure="Object.assign({}, structure.component_options, (({ api, apiBase, headers, api_options }) => ({ api, apiBase, headers, api_options }))(structure))"
+                          v-on:dataset-loaded="triggerDatasetUpdate"
+                        >
+                        </flpo-datatable>
+                      </v-layout>
+                      <v-layout fill-height
+                        v-if="structure && structure.component_options !== null && structure.component_type == 'TEXT'">
+                          <flpo-composite-text
+                            v-if="!invalidInterpol"
+                            :id = "'story_component_' + structure.id"
+                            :structure="structure.component_options"
+                            :custom-params="customParams"
+                            :custom-functions="customFunctions"
+                            :custom-filters="customFilters"
+                            :reactive-filter="reactiveFilter"
+                            v-on:selection="triggerSelect"
+                            v-on:default-selection="triggerDefaultSelect"
+                            v-on:resendInvalidInterpol="changeTextToInvalidInterpol"
+                            @showSnackbar="snackAlert"
+                            @showAuthenticatioDialog="openAuthenticatioDialog">
+                          </flpo-composite-text>
                       </v-layout>
                     </v-flex>
                     <v-flex shrink v-if="chartFooter" xs12 pt-0 text-xs-center chart-footer>
@@ -381,7 +410,9 @@
               endpoint.push(item + filters);
             }
           } 
-          this.structure.chart_options.filterText = this.customFilters.filterText;
+          if (this.structure.chart_options){
+            this.structure.chart_options.filterText = this.customFilters.filterText;
+          }
           this.fetchData(endpoint);
         } else if (payload.item){
           endpoint = this.$textTransformService.applyInterpol(payload.rules.api, this.customParams, this.customFunctions, this.customFilters);

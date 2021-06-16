@@ -100,7 +100,7 @@
             <v-flex white--text subheading xs12 md4 lg3 :class="{'px-3': $vuetify.breakpoint.mdAndDown, 'px-4': $vuetify.breakpoint.lgAndUp}" v-html="dimensao_ativa.description">
             </v-flex>
             <v-flex text-xs-center xs12 md3 :class="{'px-3': $vuetify.breakpoint.mdAndDown, 'px-4': $vuetify.breakpoint.lgAndUp}" >
-              <v-layout v-if="ind_principais && ind_principais.length > 0 && unlockLoading" row wrap justify-center>
+              <v-layout v-if="dimParamsLoaded && ind_principais && ind_principais.length > 0 && unlockLoading" row wrap justify-center>
                 <flpo-minicard
                   v-for="(miniCardPrincipal, indexMinicardsPrincipal) in ind_principais"
                   :key="'minicard_principal_'+indexMinicardsPrincipal"
@@ -130,7 +130,7 @@
     </v-container>
     <!-- Indicadores principais: Empregadores, Vínculos Formais, Municípios, Estabelecimentos, % MEI e EPPs -->
     <v-container fluid  xs12  class="pa-0 ma-0">
-      <v-layout v-if="sections && sections.length > 0" class="bg-page grey lighten-2" column pa-0 ma-0>
+      <v-layout v-if="dimParamsLoaded && sections && sections.length > 0" class="bg-page grey lighten-2" column pa-0 ma-0>
         <v-layout v-for="(secao, indexSecao) in sections"  
           :key="secao.id"
           row wrap>
@@ -278,6 +278,7 @@
   import axios from 'axios'
 
   import BaseStoryView from './BaseStoryView.vue';
+  import NumberTransformService from '../assets/service/singleton/numberTransformService'
 
   export default {
     extends: BaseStoryView,
@@ -320,6 +321,9 @@
         ind_principais_compare:[],
         topology_compare: null,
         thematicDatasets: [],
+        dimParamsCount: 0,
+        dimParamsLoadedCount: 0,
+        dimParamsLoaded: false,
 
         // Functions
         // TODO Migrate gradually to prototype objects
@@ -334,6 +338,32 @@
               return -d[prop_val];
             }
             return d[prop_val];
+          },
+          get_sector_censoagro(d,cd_sector){
+              switch(cd_sector) {
+                  case 1:
+                      return "Aquicultura";
+                  case 2:
+                      return "Horticultura e Floricultura";
+                  case 3:
+                      return "Pecuária";
+                  case 4:
+                      return "Pesca";
+                  case 5:
+                      return "Lavouras temporárias";
+                  case 6:
+                      return "Lavouras permanentes";
+                  case 7:
+                      return "Sementes e mudas certificadas";
+                  case 8:
+                      return "Produção em florestas nativas";
+                  case 9:
+                      return "Produção de florestas plantadas";
+                  case 0:
+                      return "Dado indisponível";
+                  default:
+                      return "";
+              }
           },
           get_bin: function(d,value,bins=[10,50,100,500]){
             // [10,50,100,500,1000,2000,5000,10000,20000,40000,50000]
@@ -376,6 +406,89 @@
             if (d[age_prop] <= 59) return '55-59'
             return '> 60'
           },
+          get_detail_value: function(d, class_indicador = "", value=null, rank_br=null, rank_uf=null, media_br=null, media_uf=null){
+            let detail = "";
+            let imgColorBR = "grey";
+            let imgColorUF = "grey";
+            if (class_indicador == "bom" || class_indicador == "ruim"){
+              if ((class_indicador == "bom" && value <= media_br) || 
+                (class_indicador == "ruim" && value >= media_br)){
+                imgColorBR = "red";
+              }
+              if ((class_indicador == "bom" && value <= media_uf) || 
+                (class_indicador == "ruim" && value >= media_uf)){
+                imgColorUF = "red";
+              }
+            }
+            if (rank_br){
+              detail += "<span> " +
+                "<img  " +
+                "  src='/static/smartlab/rank_br_ret_"+ imgColorBR +".svg'" +
+                "  title='"+ NumberTransformService.formatNumber( rank_br, "inteiro", 0) + "º no BR'" + 
+                "  height='13px'  " +
+                "/> " +
+                "</span>";
+            }
+            if (rank_uf){
+              detail += "<span> " +
+                "<img  " +
+                "  src='/static/smartlab/rank_uf_ret_"+ imgColorUF +".svg' " +
+                "  title='"+ NumberTransformService.formatNumber( rank_uf, "inteiro", 0) + "º na UF'" + 
+                "  height='13px'  " +
+                "/>" +
+                "</span>";
+            }
+            return detail;
+          },
+          get_formatted_value: function(d, ds_indicador, value, type){
+              switch(type) {
+                  case '(Pessoas)':
+                  case '(Admitidos - Desligados)':
+                  case '(Quantidade)':
+                  case 'Quantidade':
+                      return NumberTransformService.formatNumber(
+                              value, "inteiro", 0);
+                  case '(Percentual)':
+                      return NumberTransformService.formatNumber(
+                              value, "porcentagem", 1, null, null, false, false);
+                  case '(Índice)':
+                      if(ds_indicador.startsWith('IDH ')){
+                        if (value < 0.5){
+                          return NumberTransformService.formatNumber(value, "real", 3) + " (Muito baixo)";
+                        } else if (value < 0.6){
+                          return NumberTransformService.formatNumber(value, "real", 3) + " (Baixo)";
+                        } else if (value < 0.7){
+                          return NumberTransformService.formatNumber(value, "real", 3) + " (Médio)";
+                        } else if (value < 0.8){
+                          return NumberTransformService.formatNumber(value, "real", 3) + " (Alto)";
+                        } else {
+                          return NumberTransformService.formatNumber(value, "real", 3) + " (Muito alto)";
+                        }
+                      } else {
+                        return NumberTransformService.formatNumber(
+                                value, "real", 3);
+                      }
+                    
+                  case '(em R$ x 1.000)':
+                      return NumberTransformService.formatNumber(
+                              value, "monetario", 2, 1000, {format: 'monetario', precision: 1}, false,  false);
+                  case '(R$)':
+                      return NumberTransformService.formatNumber(
+                              value, "monetario", 2, 1, null, false,  false);
+                  case '(Razão)':
+                      return NumberTransformService.formatNumber(
+                              value, "real", 1);
+                  case '':
+                    if (ds_indicador.startsWith('Remuneração Média ')){
+                      return NumberTransformService.formatNumber(
+                              value, "monetario", 2, 1, {format: 'monetario', precision: 1}, false,  false);
+                    } else {
+                      return (value !== null && value !== undefined) ? value.toString() : "";
+                    }
+                  default:
+                      return (value !== null && value !== undefined) ? value.toString() : "";
+              }
+          },
           calc_subtraction_ds: function(d, a, b) { return a - b; },
           calc_addition_ids_ds: function(d, a, b, multiplier=10000000) { return a*multiplier + b; },
           calc_addition: function(a, b) { return a + b; },
@@ -383,7 +496,9 @@
           calc_percentage_val1: function(val1,val2) { return val1 / (val1 + val2) * 100},
           calc_percentage_2values: function(val1,val2,total) { return (val1 + val2) / total * 100},
           calc_proportion: function(dividendo, divisor) { return dividendo / divisor; },
-          calc_proportion_ds: function(d,dividendo, divisor) { return divisor==0 ? null:dividendo / divisor; },
+          calc_proportion_ds: function(d,dividendo, divisor) { 
+            return divisor==0 ? null:dividendo / divisor; 
+          },
           get_flag_value: function(d) {return (d.vl_indicador == 0) ? d.ds_indicador_radical + ": NÃO" : d.ds_indicador_radical + ": SIM";},
           get_flag_number: function(d,a){ return a>=0 ? 'Positivo':'Negativo'; },
           get_te_label: function(d,campo) {
@@ -509,6 +624,21 @@
           to_upper_ds: function(d,value_field){
             return d[value_field].toUpperCase();
           },
+          format_scope: function(scope, type = "month"){
+            let sc = typeof(scope) == "number"? scope.toString(): scope;
+            if (type == "month" && sc.length == 6) { // month
+              let months = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
+              return months[parseInt(sc.substr(4,2))-1] + " de " + sc.substr(0,4);
+            } else if (type == "year" && sc.length == 6) { // month
+              return sc.substr(0,4);
+            } else {
+              return sc;
+            }
+          },
+          format_month: function(month_ym){
+            let ym = typeof(month_ym) == "number"? month_ym.toString(): month_ym;
+            return ym.substr(4,2) + "/" + ym.substr(0,4);
+          },
           format_month_ds: function(d,month_ym){
             let ym = typeof(month_ym) == "number"? month_ym.toString(): month_ym;
             return ym.substr(4,2) + "/" + ym.substr(0,4);
@@ -520,6 +650,9 @@
           format_quarter_ds_short: function(d,quarter_yq){
             let yq = typeof(quarter_yq) == "number"? quarter_yq.toString(): quarter_yq;
             return yq.substr(5,1) + "º T " + yq.substr(0,4);
+          },
+          capitalize_first_letter(string) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
           },
           concat_descriptions: function(d) {
             return d.desc_indicador + " - " + d.ds_indicador_radical;
@@ -568,9 +701,6 @@
    
     created () {
       let tmpIdObs = this.$observatories.constructor.identifyObservatory(this.$route.path.split('/')[1]);
-      this.$dimensions.getDimensions(tmpIdObs)
-        .then((result) => this.setSiblingDimensions(result));
-      this.idObservatorio = tmpIdObs;
       
       this.$yamlFetcherService.loadYaml("br/observatorio/" + tmpIdObs)
         .then((result) => { 
@@ -707,6 +837,9 @@
           }
         }
         this.dimensoes = dimensoesTmp;
+        let tmpIdObs = this.$observatories.constructor.identifyObservatory(this.$route.path.split('/')[1]);
+        
+        this.setActiveDim(this.$route.params.idLocalidade, tmpIdObs, this.$route.query.dimensao);
       },
 
       setVisibleCardMaxIndex(){
@@ -730,8 +863,9 @@
       
       keepLoading() {
         let tmpIdObs = this.$observatories.constructor.identifyObservatory(this.$route.path.split('/')[1]);
-        
-        this.setActiveDim(this.$route.params.idLocalidade, tmpIdObs, this.$route.query.dimensao);
+        this.$dimensions.getDimensions(tmpIdObs)
+          .then((result) => this.setSiblingDimensions(result));
+        this.idObservatorio = tmpIdObs;
 
         // this.$yamlFetcherService.loadYaml("br/autocard").then((result) => { this.customParams.deck = result; });
 
@@ -814,6 +948,8 @@
 
       addDimCustomParams(dataset, args, structure, addedParams, metadata){
         this.customParams[structure.name] = dataset[0];
+        this.dimParamsLoadedCount++;
+        if (this.dimParamsLoadedCount == this.dimParamsCount) this.dimParamsLoaded = true;
       },
 
       flagThematicLoaded() {
@@ -863,10 +999,14 @@
         this.dimStruct = content;
 
         if (content.params){
+          this.dimParamsLoaded = false;
+          this.dimParamsCount = content.params.length;
           this.loadDimCustomParams(content.params);
+        } else {
+          this.dimParamsLoaded = true;
         }
 
-        let thematicDatasets = ['centralindicadores'];
+        let thematicDatasets = [];
         if (content && content.tematicos) {
           for (let tematico of content.tematicos){
             thematicDatasets.push(tematico.dataset);
@@ -917,7 +1057,7 @@
 
         if (this.$route.query.compare) { // In comparison view
           this.sections_compare = this.changeToCompareStructure(this.sections);
-          this.ind_principais_compare = this.changeToCompareStructure(this.ind_principais);
+          this.ind_principais_compare = this.ind_principais ? this.changeToCompareStructure(this.ind_principais): null;
           this.presentation_compare = JSON.parse(JSON.stringify(this.dimStruct.presentation).replace(/centralindicadores/g,"centralindicadores_compare").replace(/idLocalidade/g,"idLocalidade_compare"));
             
           let dimStructMasterCompare = JSON.parse(JSON.stringify(this.dimStruct.master).replace(/centralindicadores/g,"centralindicadores_compare").replace(/idLocalidade/g,"idLocalidade_compare"));
@@ -947,119 +1087,133 @@
       },
 
       fetchDataLocalidade(idLocalidade, nm_var = 'localidade') {
-        let localidade = {};
-        var url = null;
-        //axios(this.$axiosCallSetupService.getAxiosOptions("/municipios?categorias=nm_municipio,cd_uf,nm_uf,sigla_uf,lat,long,ano_instalacao,ano_extincao,altitude&filtros=eq-cd_municipio_ibge-" + idLocalidade))
-        if (idLocalidade == 0){ //Brasil
-          localidade = {
-            id_localidade: 0,
-            nm_localidade: 'Brasil',
-            tipo: '',
-            img: "/static/thumbs/municipios/" + idLocalidade + ".jpg"
-          };
+        let currentPlace = this.$analysisUnitModel.getPlace(nm_var);
+        if (currentPlace && idLocalidade == currentPlace.id_localidade){
+          this[nm_var] = currentPlace;
+          this.customParams[nm_var] = currentPlace;
+        } else {
+          let localidade = {};
+          let url = null;
+          //axios(this.$axiosCallSetupService.getAxiosOptions("/municipios?categorias=nm_municipio,cd_uf,nm_uf,sigla_uf,lat,long,ano_instalacao,ano_extincao,altitude&filtros=eq-cd_municipio_ibge-" + idLocalidade))
+          if (idLocalidade == 0){ //Brasil
+            localidade = {
+              id_localidade: 0,
+              nm_localidade: 'Brasil',
+              tipo: '',
+              img: "/static/thumbs/municipios/" + idLocalidade + ".jpg"
+            };
 
-          this[nm_var] = localidade;
-          this.customParams[nm_var] = localidade;
-        } else if (idLocalidade.includes("mptreg") || idLocalidade.includes("MPTREG")) {
-          localidade = this.$analysisUnitModel.getPRTPTMInstance(this, idLocalidade.substring(0,6), idLocalidade.substring(6));
+            this[nm_var] = localidade;
+            this.customParams[nm_var] = localidade;
+            this.$analysisUnitModel.setPlace(nm_var,localidade);
+          } else if (idLocalidade.includes("mptreg") || idLocalidade.includes("MPTREG")) {
+            localidade = this.$analysisUnitModel.getPRTPTMInstance(this, idLocalidade.substring(0,6), idLocalidade.substring(6));
 
-          this[nm_var] = localidade;
-          this.customParams[nm_var] = localidade;
-        } else if (idLocalidade.includes("prt") || idLocalidade.includes("PRT") ||
-                   idLocalidade.includes("ptm") || idLocalidade.includes("PTM")) {
-          url = "/municipios?categorias=cd_unidade,nm_unidade,cd_uf&agregacao=distinct&filtros=eq-cd_unidade-" + idLocalidade.substring(3);
-          axios(this.$axiosCallSetupService.getAxiosOptions(url))
-            .then(result => {
-              var infoUnidade = result.data.dataset;
-              if (infoUnidade.length > 0) {
-                localidade = {
-                  id_localidade: infoUnidade[0].cd_unidade,
-                  nm_localidade: infoUnidade[0].nm_unidade,
-                  tipo: idLocalidade.substring(0,3)
-                };
+            this[nm_var] = localidade;
+            this.customParams[nm_var] = localidade;
+            this.$analysisUnitModel.setPlace(nm_var,localidade);
+          } else if (idLocalidade.includes("prt") || idLocalidade.includes("PRT") ||
+                    idLocalidade.includes("ptm") || idLocalidade.includes("PTM")) {
+            url = "/municipios?categorias=cd_unidade,nm_unidade,cd_uf&agregacao=distinct&filtros=eq-cd_unidade-" + idLocalidade.substring(3);
+            axios(this.$axiosCallSetupService.getAxiosOptions(url))
+              .then(result => {
+                var infoUnidade = result.data.dataset;
+                if (infoUnidade.length > 0) {
+                  localidade = {
+                    id_localidade: infoUnidade[0].cd_unidade,
+                    nm_localidade: infoUnidade[0].nm_unidade,
+                    tipo: idLocalidade.substring(0,3)
+                  };
 
+                  this[nm_var] = localidade;
+                  this.customParams[nm_var] = localidade;
+                  this.$analysisUnitModel.setPlace(nm_var,localidade);
+                }
+              }, error => {
+                console.error(error.toString());
+                this.sendError("Falha ao buscar total das localidades");
+                reject({ code: 500 });
+              });
+          } else if (idLocalidade.length == 1){ //Região
+            localidade = {
+              id_localidade: idLocalidade,
+              nm_localidade: this.$analysisUnitModel.getRegion(idLocalidade),
+              tipo: '',
+              img: "/static/thumbs/municipios/" + idLocalidade + ".jpg"
+            };
+
+            this[nm_var] = localidade;
+            this.customParams[nm_var] = localidade;
+            this.$analysisUnitModel.setPlace(nm_var,localidade);
+          } else if (idLocalidade.length == 2){ //Estado
+            url = "/municipios?categorias=cd_uf,nm_uf&agregacao=distinct&filtros=eq-cd_uf-" + idLocalidade;
+            axios(this.$axiosCallSetupService.getAxiosOptions(url))
+              .then(result => {
+                localidade = result.data.dataset[0];
+                localidade.id_localidade = localidade.cd_uf;
+                localidade.nm_localidade = localidade.nm_uf;
+                localidade.tipo = 'UF';
+                localidade.img = "/static/thumbs/municipios/" + idLocalidade + ".jpg";
+                
                 this[nm_var] = localidade;
                 this.customParams[nm_var] = localidade;
-              }
-            }, error => {
-              console.error(error.toString());
-              this.sendError("Falha ao buscar total das localidades");
-              reject({ code: 500 });
-            });
-        } else if (idLocalidade.length == 1){ //Região
-          localidade = {
-            id_localidade: idLocalidade,
-            nm_localidade: this.$analysisUnitModel.getRegion(idLocalidade),
-            tipo: '',
-            img: "/static/thumbs/municipios/" + idLocalidade + ".jpg"
-          };
-
-          this[nm_var] = localidade;
-          this.customParams[nm_var] = localidade;
-        } else if (idLocalidade.length == 2){ //Estado
-          url = "/municipios?categorias=cd_uf,nm_uf&agregacao=distinct&filtros=eq-cd_uf-" + idLocalidade;
-          axios(this.$axiosCallSetupService.getAxiosOptions(url))
-            .then(result => {
-              localidade = result.data.dataset[0];
-              localidade.id_localidade = localidade.cd_uf;
-              localidade.nm_localidade = localidade.nm_uf;
-              localidade.tipo = 'UF';
-              localidade.img = "/static/thumbs/municipios/" + idLocalidade + ".jpg";
-              
-              this[nm_var] = localidade;
-              this.customParams[nm_var] = localidade;
-            }, error => {
-              console.error(error.toString());
-              this.sendError("Falha ao buscar dados do município");
-            });
-        } else if (idLocalidade.length == 4){ //Mesorregião
-          url = "/municipios?categorias=cd_mesorregiao,nm_mesorregiao&agregacao=distinct&filtros=eq-cd_mesorregiao-" + idLocalidade;
-          axios(this.$axiosCallSetupService.getAxiosOptions(url))
-            .then(result => {
-              localidade = result.data.dataset[0];
-              localidade.id_localidade = localidade.cd_mesorregiao;
-              localidade.nm_localidade = localidade.nm_mesorregiao;
-              localidade.tipo = 'Mesorregião';
-              localidade.img = "/static/thumbs/municipios/" + idLocalidade + ".jpg";
-              
-              this[nm_var] = localidade;
-              this.customParams[nm_var] = localidade;
-            }, error => {
-              console.error(error.toString());
-              this.sendError("Falha ao buscar dados da mesorregião");
-            });
-        } else if (idLocalidade.length == 5){ //Microrregião
-          url = "/municipios?categorias=cd_microrregiao,nm_microrregiao&agregacao=distinct&filtros=eq-cd_microrregiao-" + idLocalidade;
-          axios(this.$axiosCallSetupService.getAxiosOptions(url))
-            .then(result => {
-              localidade = result.data.dataset[0];
-              localidade.id_localidade = localidade.cd_microrregiao;
-              localidade.nm_localidade = localidade.nm_microrregiao;
-              localidade.tipo = 'Microrregião';
-              localidade.img = "/static/thumbs/municipios/" + idLocalidade + ".jpg";
-              
-              this[nm_var] = localidade;
-              this.customParams[nm_var] = localidade;
-            }, error => {
-              console.error(error.toString());
-              this.sendError("Falha ao buscar dados da microrregião");
-            });
-        } else {
-          url = "/municipio/" + idLocalidade;
-          axios(this.$axiosCallSetupService.getAxiosOptions(url))
-            .then(result => {
-              localidade = result.data[0];
-              localidade.id_localidade = localidade.cd_municipio_ibge_dv;
-              localidade.nm_localidade = localidade.nm_municipio_uf;
-              localidade.tipo = 'Município';
-              localidade.img = "/static/thumbs/municipios/" + idLocalidade + ".jpg";
-              
-              this[nm_var] = localidade;
-              this.customParams[nm_var] = localidade;
-            }, error => {
-              console.error(error.toString());
-              this.sendError("Falha ao buscar dados do município");
-            });
+                this.$analysisUnitModel.setPlace(nm_var,localidade);
+              }, error => {
+                console.error(error.toString());
+                this.sendError("Falha ao buscar dados do município");
+              });
+          } else if (idLocalidade.length == 4){ //Mesorregião
+            url = "/municipios?categorias=cd_mesorregiao,nm_mesorregiao&agregacao=distinct&filtros=eq-cd_mesorregiao-" + idLocalidade;
+            axios(this.$axiosCallSetupService.getAxiosOptions(url))
+              .then(result => {
+                localidade = result.data.dataset[0];
+                localidade.id_localidade = localidade.cd_mesorregiao;
+                localidade.nm_localidade = localidade.nm_mesorregiao;
+                localidade.tipo = 'Mesorregião';
+                localidade.img = "/static/thumbs/municipios/" + idLocalidade + ".jpg";
+                
+                this[nm_var] = localidade;
+                this.customParams[nm_var] = localidade;
+                this.$analysisUnitModel.setPlace(nm_var,localidade);
+              }, error => {
+                console.error(error.toString());
+                this.sendError("Falha ao buscar dados da mesorregião");
+              });
+          } else if (idLocalidade.length == 5){ //Microrregião
+            url = "/municipios?categorias=cd_microrregiao,nm_microrregiao&agregacao=distinct&filtros=eq-cd_microrregiao-" + idLocalidade;
+            axios(this.$axiosCallSetupService.getAxiosOptions(url))
+              .then(result => {
+                localidade = result.data.dataset[0];
+                localidade.id_localidade = localidade.cd_microrregiao;
+                localidade.nm_localidade = localidade.nm_microrregiao;
+                localidade.tipo = 'Microrregião';
+                localidade.img = "/static/thumbs/municipios/" + idLocalidade + ".jpg";
+                
+                this[nm_var] = localidade;
+                this.customParams[nm_var] = localidade;
+                this.$analysisUnitModel.setPlace(nm_var,localidade);
+              }, error => {
+                console.error(error.toString());
+                this.sendError("Falha ao buscar dados da microrregião");
+              });
+          } else {
+            url = "/municipio/" + idLocalidade;
+            axios(this.$axiosCallSetupService.getAxiosOptions(url))
+              .then(result => {
+                localidade = result.data[0];
+                localidade.id_localidade = localidade.cd_municipio_ibge_dv;
+                localidade.nm_localidade = localidade.nm_municipio_uf;
+                localidade.tipo = 'Município';
+                localidade.img = "/static/thumbs/municipios/" + idLocalidade + ".jpg";
+                
+                this[nm_var] = localidade;
+                this.customParams[nm_var] = localidade;
+                this.$analysisUnitModel.setPlace(nm_var,localidade);
+              }, error => {
+                console.error(error.toString());
+                this.sendError("Falha ao buscar dados do município");
+              });
+          }
         }
       },
 
@@ -1072,7 +1226,7 @@
             structure.template,
             this.$indicatorsModel.indicatorsToValueArray(
               rules, 
-              this.customFunctions, 
+              this.custom_functions, 
               base_object_list,
               this.sendInvalidInterpol
             ),

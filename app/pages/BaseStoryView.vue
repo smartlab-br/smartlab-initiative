@@ -104,22 +104,6 @@
     padding: 10px;
   }
 
-  .footer-nav {
-    position: fixed;
-    bottom: 0;
-    z-index: 99;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .footer-nav>.layout {
-    flex: none;
-    border-radius: 0.3rem 0.3rem 0 0;
-    background-color: rgba(0,0,0,0.6);
-  }
-
   .master-indicator span{
     align-self: auto;
   }
