@@ -16,7 +16,7 @@
             height="40"
             :indeterminate="!dataset"
             color="info">
-            <p class="headline-obs text-xs-center">{{structure.title}}</p>
+            <p class="headline-obs text-xs-center" v-html="structure.title"/>
         </v-progress-linear>
         <v-data-table 
             v-if="dataset && structure.headers"
@@ -58,7 +58,7 @@
                     class="headline-obs" 
                     :colspan="props.headers.length-((structure.search_position == 'left' || structure.search_position == 'right')?2:0)"
                 >
-                    {{structure.title}}
+                    <span class="word-wrap" v-html="structure.title" />
                 </th>
                 <th 
                     v-if="structure.search_position == 'right'"
@@ -217,6 +217,7 @@
             </template>            
         </v-data-table>
     </v-card>        
+    
   </v-layout>
 </template>
 
