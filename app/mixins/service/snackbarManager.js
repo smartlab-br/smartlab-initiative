@@ -133,6 +133,10 @@ const SnackbarManager = {
             }
           }
           if (this.leafletBasedCharts.includes(chartType)) {
+              if(chartOptions.tiles_url == undefined){
+                chartOptions.tiles_url = "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}";
+                chartOptions.tiles_attribution = "";
+              }
               if (chartOptions.tooltip_function == null) additionalOptions.tooltipFunction = TooltipBuildingService.defaultLeafletTooltip; 
 
               if (this.limCoords){
