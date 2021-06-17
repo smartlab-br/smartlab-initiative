@@ -166,13 +166,30 @@
       <!-- Modal com o dataset -->
       <v-dialog v-if="dataset && structure && structure.headers && dialog" v-model="dialog">
         <v-card>
-          <v-card-title class="headline-obs">Dataset</v-card-title>
+          <v-card-title class="headline-obs py-0">Dataset</v-card-title>
           <v-card-text>
             <div v-if="dataset && structure.headers && dialog" class="content">
               <v-data-table
                 :headers="removeFormatItems(structure.headers)"
+                :pagination.sync="pagination"
                 :items="dataset"
                 class="elevation-1">
+                <template 
+                  slot="headers" 
+                  slot-scope="props"
+                >
+                  <tr>
+                      <th scope="colgroup" 
+                          v-for="(header, idxHeader) in props.headers"
+                          :key="idxHeader"
+                          :class="['text-xs-left column sortable', pagination.descending ? 'desc' : 'asc', header.value === pagination.sortBy ? 'active' : '']"
+                          :width="header.width"
+                          @click="changeSort(header.value)"
+                      >
+                        <span class="word-wrap" v-html="header.text" /><v-icon small>arrow_upward</v-icon>
+                      </th>
+                  </tr> 
+                </template>
                 <template :headers="structure.headers" slot="items" slot-scope="props">
                   <!-- v-for SEM BIND, pois está restrito ao contexto do template do data-table -->
                   <td v-for="(hdr, idxHdr) in structure.headers" :key="idxHdr">
@@ -234,7 +251,8 @@
         chartFooter: null,
         chart: null,
         renderComponent: true,
-        refreshComponent: true
+        refreshComponent: true,
+        pagination: {}
       }
     },
     created() {
@@ -307,6 +325,14 @@
       // }
     },
     methods: {
+      changeSort (column) {
+          if (this.pagination.sortBy === column) {
+          this.pagination.descending = !this.pagination.descending
+          } else {
+          this.pagination.sortBy = column
+          this.pagination.descending = false
+          }
+      },
       completeStructure() {
         this.setReferenceInStructure();
         
@@ -584,4 +610,9 @@
     color: rgba(0,0,0,0.87);
     font-family: titulos-observatorio, Calibri, sans-serif !important;
   }
+
+  table thead tr th span.word-wrap {
+    word-wrap: break-word;
+    white-space: normal; 
+  }  
 </style>

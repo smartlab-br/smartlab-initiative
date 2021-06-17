@@ -287,6 +287,17 @@
             </v-flex>
           </v-layout>
         </v-flex>
+        <v-flex xs12 v-if="observatorio.sparklines.footer" px-2 py-0>
+          <flpo-composite-text
+            :id = "'desc_sparkline_' + idObservatorio"
+            :structure="observatorio.sparklines.footer"
+            :custom-params="customParams"
+            :custom-functions="customFunctions"
+            :custom-filters="customParams"
+            section-class="pa-0"
+            @showSnackbar="snackAlert"
+          />
+        </v-flex>
       </v-layout>
     </v-container>
 
