@@ -166,7 +166,7 @@
       <!-- Modal com o dataset -->
       <v-dialog v-if="dataset && structure && structure.headers && dialog" v-model="dialog">
         <v-card>
-          <v-card-title class="headline-obs">Dataset</v-card-title>
+          <v-card-title class="headline-obs py-0">Dataset</v-card-title>
           <v-card-text>
             <div v-if="dataset && structure.headers && dialog" class="content">
               <v-data-table
