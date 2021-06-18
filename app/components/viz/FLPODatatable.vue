@@ -229,8 +229,9 @@ export default {
         required_column: function(newVal, oldVal){
             if (newVal){
                 this.pagination.page = 1;
+                let colId = Number.isNaN(newVal) ? newVal : this.structure.headers[newVal-1].value;
                 this.dataset = this.dataset.filter(function(el) { 
-                    return el[newVal] !== null && el[newVal] !== undefined
+                    return el[colId] !== null && el[colId] !== undefined
                 })
             } else {
                 this.dataset = this.data_items.slice();
