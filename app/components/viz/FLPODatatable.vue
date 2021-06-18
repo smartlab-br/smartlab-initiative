@@ -231,7 +231,9 @@ export default {
                 this.pagination.page = 1;
                 let colId = Number.isNaN(newVal) ? newVal : this.structure.headers[newVal-1].value;
                 this.dataset = this.dataset.filter(function(el) { 
-                    return el[colId] !== null && el[colId] !== undefined
+                    return el[colId] !== null 
+                            && el[colId] !== undefined 
+                            && el[colId].toString() !== "0"
                 })
             } else {
                 this.dataset = this.data_items.slice();
