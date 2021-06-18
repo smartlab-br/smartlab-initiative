@@ -440,7 +440,7 @@
             @click="$navigationManager.constructor.pushRoute($router, 'https://ilo.org', true)" 
           />
           <img 
-            v-if="currentObs == 'te'"
+            v-if="currentObs == 'te' || currentObs == 'ti'"
             src="/static/smartlab/sit.png"
             class="cursor-pointer mb-1 ml-2" 
             alt="Subsecretaria de Inspeção do Trabalho"

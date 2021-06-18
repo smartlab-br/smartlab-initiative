@@ -16,7 +16,7 @@
             height="40"
             :indeterminate="!dataset"
             color="info">
-            <p class="headline-obs text-xs-center">{{structure.title}}</p>
+            <p class="headline-obs text-xs-center" v-html="structure.title"/>
         </v-progress-linear>
         <v-data-table 
             v-if="dataset && structure.headers"
@@ -58,7 +58,7 @@
                     class="headline-obs" 
                     :colspan="props.headers.length-((structure.search_position == 'left' || structure.search_position == 'right')?2:0)"
                 >
-                    {{structure.title}}
+                    <span class="word-wrap" v-html="structure.title" />
                 </th>
                 <th 
                     v-if="structure.search_position == 'right'"
@@ -229,8 +229,9 @@ export default {
         required_column: function(newVal, oldVal){
             if (newVal){
                 this.pagination.page = 1;
+                let colId = Number.isNaN(newVal) ? newVal : this.structure.headers[newVal-1].value;
                 this.dataset = this.dataset.filter(function(el) { 
-                    return el[newVal] !== null && el[newVal] !== undefined
+                    return el[colId] !== null && el[colId] !== undefined
                 })
             } else {
                 this.dataset = this.data_items.slice();
