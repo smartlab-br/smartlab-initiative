@@ -16,7 +16,7 @@
             height="40"
             :indeterminate="!dataset"
             color="info">
-            <p class="headline-obs text-xs-center">{{structure.title}}</p>
+            <p class="headline-obs text-xs-center" v-html="structure.title"/>
         </v-progress-linear>
         <v-data-table 
             v-if="dataset && structure.headers"
@@ -58,7 +58,7 @@
                     class="headline-obs" 
                     :colspan="props.headers.length-((structure.search_position == 'left' || structure.search_position == 'right')?2:0)"
                 >
-                    {{structure.title}}
+                    <span class="word-wrap" v-html="structure.title" />
                 </th>
                 <th 
                     v-if="structure.search_position == 'right'"
@@ -75,7 +75,7 @@
                     />
                 </th>
             </tr>
-            <tr>
+            <tr class="flpo-datatable-head">
                 <th scope="colgroup" 
                     v-for="(header, idxHeader) in props.headers"
                     :key="idxHeader"
@@ -83,8 +83,14 @@
                     :width="header.width"
                     @click="changeSort(header.value)"
                 >
-                    <v-icon small>arrow_upward</v-icon>
-                    <span class="word-wrap" v-html="header.text" />
+                    <v-layout column>
+                        <v-flex pb-0>
+                            <span class="word-wrap" v-html="header.text" />
+                        </v-flex>
+                        <v-flex pt-0>
+                            <v-icon small>arrow_upward</v-icon>
+                        </v-flex>
+                    </v-layout>
                 </th>
             </tr>
             </template>            
@@ -99,7 +105,42 @@
                     :style="(hdr.item_align?'text-align:'+hdr.item_align:'')"
                     pa-0 
                 >
-                    <div 
+                    <div v-if="props.item[hdr.value] && props.item[hdr.value].toString().toLowerCase() == 'sim'"
+                    >
+                        <v-tooltip bottom>
+                            <v-icon 
+                                slot="activator"
+                            >
+                                check
+                            </v-icon>
+                            Sim
+                        </v-tooltip>
+                    </div>
+                    <div v-else-if="props.item[hdr.value] && props.item[hdr.value].toString().toLowerCase() == 'não'"
+                    >
+                        <v-tooltip bottom>
+                            <v-icon 
+                                slot="activator"
+                                color="red"
+                            >
+                                clear
+                            </v-icon>
+                            Não
+                        </v-tooltip>
+                    </div>
+                    <div v-else-if="props.item[hdr.value] && props.item[hdr.value].toString().toLowerCase() == 'não informado'"
+                    >
+                        <v-tooltip bottom>
+                            <v-icon 
+                                slot="activator"
+                                color="grey lighten-2"
+                            >
+                                remove
+                            </v-icon>
+                            Não Informado
+                        </v-tooltip>
+                    </div>
+                    <div v-else
                         :class="getCellClass(hdr.value, props.item[hdr.value])"
                     >
                         {{ (hdr.format && props.item['fmt_' + hdr.value]) ? props.item['fmt_' + hdr.value]: props.item[hdr.value] }}
@@ -111,17 +152,29 @@
                     </div>
                 </td> 
             </template>
-            <template slot="actions-prepend"                    
-                v-if="structure.search_position == 'bottom'"
-            >
-                <v-text-field
-                    v-model="search"
-                    append-icon="search"
-                    label="Procurar"
-                    single-line
-                    hide-details
-                    class='pa-2 ma-0'
-                />
+            <template slot="footer">
+                <tr><td colspan="15">
+                <v-layout row>
+                    <v-flex xs3  v-if="structure.check">
+                        <v-checkbox
+                            v-model="required_column"
+                            :label="structure.check.label"
+                            :value="structure.check.column"
+                            class='pt-3 ma-0 flpo-datatable-checkbox'
+                        />
+                    </v-flex>
+                    <v-flex xs3>
+                        <v-text-field v-if="structure.search_position == 'bottom'"
+                            v-model="search"
+                            append-icon="search"
+                            label="Procurar"
+                            single-line
+                            hide-details
+                            class='pa-2 ma-0'
+                        />
+                    </v-flex>
+                </v-layout>
+                </td></tr>
             </template>
             <template slot="pageText"
                 slot-scope="props"
@@ -147,7 +200,6 @@
 
 <script>
 import FLPOBaseLayout from '../FLPOBaseLayout.vue';
-import NumberTransformService from '../../assets/service/singleton/numberTransformService'
 
 export default {
     extends: FLPOBaseLayout,
@@ -155,14 +207,12 @@ export default {
         return {
             search: '',
             dataset: null,
+            data_items: null,
             disableInitialSort: true,
-            numberTransformService: NumberTransformService,
             pagination: {}, 
-            first_cat: {},
-            last_cat: {},
-            labels: {},
             baseHeaders: null,
-            loaded: true     
+            loaded: true,
+            required_column: null     
         }
     },
     props: ['refreshComponent', 'customFilters'],
@@ -175,6 +225,17 @@ export default {
         refreshComponent: function(newVal, oldVal) {
             this.loaded = false;
             this.updateDataStructure(this.customFilters.filterUrl);
+        },
+        required_column: function(newVal, oldVal){
+            if (newVal){
+                this.pagination.page = 1;
+                let colId = Number.isNaN(newVal) ? newVal : this.structure.headers[newVal-1].value;
+                this.dataset = this.dataset.filter(function(el) { 
+                    return el[colId] !== null && el[colId] !== undefined
+                })
+            } else {
+                this.dataset = this.data_items.slice();
+            }
         }
     },
     methods: {
@@ -187,17 +248,23 @@ export default {
             }
         },
         customSort(items, index, isDesc){
-            items.sort((a, b) => {
-
-                if(typeof a[index] !== 'undefined'){
-                    if (!isDesc) {
-                        return (a[index] > b[index]) ? 1 : (a[index] < b[index]) ? -1 : 0 ;
+            if (index){
+                items.sort((a, b) => {
+                    if (a[index] === b[index]) {
+                        return 0;
                     }
-                    else {
-                        return (a[index] < b[index]) ? 1 : (a[index] > b[index]) ? -1 : 0 ;
+                    else if (a[index] === null || a[index] === undefined) {
+                        return 1;
                     }
-                }
-            });
+                    else if (b[index] === null || b[index] === undefined) {
+                        return -1;
+                    } else if (!isDesc) {
+                        return a[index] < b[index] ? -1 : 1;
+                    } else {
+                        return b[index] < a[index] ? -1 : 1;
+                    }
+                });
+            }
             return items;
         },
         fillFromDataset(sourceDS, rules, sourceStructure, addedParams = null, metadata = null) {
@@ -216,14 +283,11 @@ export default {
             }
 
             if (order_field){
-                //desc order
-                let fnSorter = (a, b) => {
-                    return (a[order_field] < b[order_field]) ? 1 : (a[order_field] > b[order_field]) ? -1 : 0 ;
-                }
-                sourceDS.sort(fnSorter);
+                this.customSort(sourceDS,order_field,true);
             }
             
             this.dataset = sourceDS;
+            this.data_items = sourceDS.slice();
             this.loaded = true;
             this.$emit('dataset-loaded', this.dataset);
         },
@@ -271,10 +335,12 @@ export default {
         },
 
         getCellClass(columnField, value){
-            if (columnField.indexOf('IDH Municipal') && value){
+            if (columnField.indexOf('IDH Municipal') != -1 && value){
                 if (value.indexOf("(Baixo)") !== -1 || value.indexOf("(Muito baixo)") !== -1){
                     return "red--text";
                 }
+            } else if (!isNaN(parseFloat(value)) && value < 0){
+                    return "red--text";
             }
             return '';
         },
@@ -303,4 +369,20 @@ export default {
     word-wrap: break-word;
     white-space: normal; 
   }  
+  .flpo-datatable-head {
+    border-bottom: 1px solid rgba(0,0,0,0.12);
+  }
+  
+  .flpo-datatable-head th div{
+    margin: 0px !important;
+  }
+
+  .flpo-datatable-grid .v-datatable__actions > div:first-child {
+   justify-content: space-between !important;
+  }
+
+  .flpo-datatable-checkbox >>> label {
+    font-size: 12px !important;
+  }
+    
 </style>
