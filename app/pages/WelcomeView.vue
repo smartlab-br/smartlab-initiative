@@ -10,7 +10,7 @@
           <div class="display-4-obs ubuntu">Iniciativa SmartLab</div>
           <div class="display-1-obs ubuntu-condensed">Promoção do Trabalho Decente Guiada por Dados</div>
         </v-flex>
-        <v-layout px-5 row wrap v-show="observatorios">
+        <v-layout px-5 :class="{'justify-center': $vuetify.breakpoint.xlOnly }" row wrap v-show="observatorios">
           <v-flex 
             v-for="(observatorio, indxObs) in observatorios"
             :key="'linked_card_obs_' + indxObs"
