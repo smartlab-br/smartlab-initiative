@@ -261,7 +261,6 @@
           Alterar Localidade
         </v-tooltip>
       </v-btn>
-      <!--
       <v-btn
         tabindex="23"
         icon 
@@ -290,7 +289,6 @@
           {{ computedLoginLabel }} 
         </v-tooltip>
       </v-btn>
-      -->
       <v-tooltip bottom>
         <a 
           slot="activator"
@@ -758,7 +756,6 @@
         </v-card-text>
       </v-card>
     </v-dialog>
-    <!--
     <v-dialog 
       v-model="authMessageDialog"
       width="500px" 
@@ -793,7 +790,145 @@
         </v-layout>
       </v-card>
     </v-dialog>
-    -->
+    <v-dialog 
+      v-model="userDataDialog"
+      width="500px" 
+    >
+      <v-card>
+        <v-card-title 
+          class="headline-obs py-1"
+        >
+          Registro do usuário
+        </v-card-title>
+        <v-card-text py-1>
+          <v-form 
+            ref="userDataForm" 
+            v-model="valid"
+          >
+            <v-container>
+              <v-layout column>
+                <v-flex py-0>
+                  <v-text-field 
+                    v-model="graviteeUser.name"
+                    class="py-0"
+                    label="Nome"
+                    readonly
+                  />
+                </v-flex>
+
+                <v-flex py-0>
+                  <v-text-field 
+                    v-model="graviteeUser.email"
+                    class="py-0"
+                    label="E-mail"
+                    readonly
+                  />
+                </v-flex>
+
+                <v-flex py-0>
+                  <v-text-field 
+                    ref="userInstitutionText"                     
+                    v-model="graviteeUser.phone_number"
+                    class="py-0"
+                    label="Telefone de contato"
+                    required
+                    :rules="userDataTextRules"                      
+                  />
+                </v-flex>
+
+                <v-flex py-0>
+                  <v-text-field 
+                    ref="userInstitutionText"                     
+                    v-model="graviteeUser.institution"
+                    class="py-0"
+                    label="Instituição"
+                    required
+                    :rules="userDataTextRules"                      
+                  />
+                </v-flex>
+
+                <v-flex py-0>
+                  <v-select
+                    v-model="graviteeUser.researcher_type"
+                    :items="['Agência de Pesquisa','Biblioteca Digital','Organização Governamental','Organização Não Governamental','Pesquisador Individual','Professor Universitário','Estudante Universitário','Outros']"
+                    label="Tipo de Instituição/Pesquisador"
+                    :rules="userDataTextRules"                      
+                  ></v-select>
+                </v-flex>
+
+                <v-flex py-0>
+                  <v-textarea 
+                    v-if="userDataDialog"
+                    ref="userProjectText"
+                    v-model="graviteeUser.project"
+                    class="py-0"
+                    label="Projeto"
+                    autofocus
+                    counter=2500
+                    placeholder="Título, pesquisador principal, e-mail, área de pesquisa, demais participantes"
+                    required
+                    rows=3
+                    maxlength="2500"
+                    :rules="userDataTextRules"                      
+                  />
+                </v-flex>
+
+                <v-flex py-0>
+                  <v-textarea 
+                    v-if="userDataDialog"
+                    ref="userResearchText"
+                    v-model="graviteeUser.research"
+                    class="py-0"
+                    label="Descrição da pesquisa"
+                    autofocus
+                    counter=2500
+                    placeholder="Forneça um resumo de um parágrafo descrevendo como você planeja usar os dados. Inclua a análise que você propõe realizar. A descrição pode ter até 2500 caracteres."
+                    required
+                    rows=3
+                    maxlength="2500"
+                    :rules="userDataTextRules"                      
+                  />
+                </v-flex>
+
+                <v-layout 
+                  py-0 
+                  row
+                >
+                  <v-layout 
+                    justify-end 
+                    pa-0
+                  >
+                    <v-btn 
+                      small 
+                      flat  
+                      class="mb-0 mr-2"
+                      @click="sendUserData"
+                    >
+                      <span class="hidden-sm-and-down body">Enviar</span>
+                      <v-icon right>
+                        send
+                      </v-icon> 
+                    </v-btn>
+                    <v-btn
+                      small 
+                      flat 
+                      class="mb-0 mx-0"
+                      @click="closeUserDataDialog"
+                    >
+                      <span class="hidden-sm-and-down body">Fechar</span>
+                      <v-icon right>
+                        close
+                      </v-icon> 
+                    </v-btn>
+                  </v-layout>
+                </v-layout>
+              </v-layout>
+            </v-container>
+          </v-form>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+    <!--
     <v-dialog 
       v-model="authMessageDialog"
       width="500px" 
@@ -821,6 +956,7 @@
         </v-layout>
       </v-card>
     </v-dialog>
+    -->
     <v-layout text-xs-center pa-0 
       class="footer-nav white--text">
       <v-layout row wrap caption class="cursor-pointer">
@@ -905,7 +1041,12 @@
         currentAnalysisUnit: null,
         observatorios: null,
         currentObs: null,
-        dim: { label: null }
+        dim: { label: null },
+        userDataDialog: false,
+        userDataTextRules: [
+          v => !!v || 'Preencha o campo',
+        ],
+        graviteeUser: {}
       }
     },
     computed: {
@@ -1245,12 +1386,12 @@
                 data: {},
                 headers: {'Authorization': bearer}
               }).then(function (response) {
-                let graviteeUser = {};
-                graviteeUser.name = response.data.name;
-                graviteeUser.email = response.data.email;
-                graviteeUser.picture = response.data.picture;
-                this_.updateUser(graviteeUser)
-                this_.snackAlert({ color : 'success', text: "Login realizado com sucesso." });
+                this_.graviteeUser.name = response.data.name;
+                this_.graviteeUser.email = response.data.email;
+                this_.graviteeUser.picture = response.data.picture;
+                this_.userDataDialog = true;
+                // this_.updateUser(graviteeUser)
+                // this_.snackAlert({ color : 'success', text: "Login realizado com sucesso." });
               }).catch(function(error) {
                 // handle error
                 console.log(error)
@@ -1321,13 +1462,25 @@
         this.bugDialog = true;
       },
 
+      closeUserDataDialog(){
+        this.userDataDialog = false;
+        // this.userData = '';
+        // this.bugText = '';
+        this.$refs.userDataForm.resetValidation()
+      },
+
+      sendUserData(){
+        if (this.$refs.userDataForm.validate()){
+          console.log(this.graviteeUser);
+        }
+      },
+
       closeBugDialog(){
         this.bugDialog = false;
         this.bugEmail = '';
         this.bugText = '';
         this.$refs.bugForm.resetValidation()
       },
-
       sendBugReport(){
         if (this.$refs.bugForm.validate()) {
           this.sendingMail = true;
