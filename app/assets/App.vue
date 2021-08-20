@@ -828,7 +828,7 @@
                 <v-flex py-0>
                   <v-text-field 
                     ref="userInstitutionText"                     
-                    v-model="graviteeUser.phone_number"
+                    v-model="graviteeUser.additionalInformation.phone_number"
                     class="py-0"
                     label="Telefone de contato"
                     required
@@ -839,7 +839,7 @@
                 <v-flex py-0>
                   <v-text-field 
                     ref="userInstitutionText"                     
-                    v-model="graviteeUser.institution"
+                    v-model="graviteeUser.additionalInformation.institution"
                     class="py-0"
                     label="Instituição"
                     required
@@ -849,7 +849,7 @@
 
                 <v-flex py-0>
                   <v-select
-                    v-model="graviteeUser.researcher_type"
+                    v-model="graviteeUser.additionalInformation.researcher_type"
                     :items="['Agência de Pesquisa','Biblioteca Digital','Organização Governamental','Organização Não Governamental','Pesquisador Individual','Professor Universitário','Estudante Universitário','Outros']"
                     label="Tipo de Instituição/Pesquisador"
                     :rules="userDataTextRules"                      
@@ -860,7 +860,7 @@
                   <v-textarea 
                     v-if="userDataDialog"
                     ref="userProjectText"
-                    v-model="graviteeUser.project"
+                    v-model="graviteeUser.additionalInformation.project"
                     class="py-0"
                     label="Projeto"
                     autofocus
@@ -877,7 +877,7 @@
                   <v-textarea 
                     v-if="userDataDialog"
                     ref="userResearchText"
-                    v-model="graviteeUser.research"
+                    v-model="graviteeUser.additionalInformation.research"
                     class="py-0"
                     label="Descrição da pesquisa"
                     autofocus
@@ -904,7 +904,7 @@
                       class="mb-0 mr-2"
                       @click="sendUserData"
                     >
-                      <span class="hidden-sm-and-down body">Enviar</span>
+                      <span class="hidden-sm-and-down body">Registrar usuário</span>
                       <v-icon right>
                         send
                       </v-icon> 
@@ -1046,7 +1046,7 @@
         userDataTextRules: [
           v => !!v || 'Preencha o campo',
         ],
-        graviteeUser: {}
+        graviteeUser: {additionalInformation:{}}
       }
     },
     computed: {
@@ -1220,6 +1220,11 @@
       this.themeEval();
     },
     watch: {
+      userDataDialog: function(newVal, oldVal){
+        if (!newVal && this.$store.state.user == null){ // dialog closed
+          this.userLogout();
+        }
+      },
       '$route.fullPath': function(newVal, oldVal) {
         this.currentObs = this.$observatories.constructor.identifyObservatory(this.$route.path.split('/')[1]);
         this.dim = { label: null }
@@ -1378,7 +1383,6 @@
             if (popupWindowPath.hash) {
               var params = popupWindowPath.hash.split("access_token=")[1]
               var access_token = params.split("&")[0]
-
               var bearer = 'Bearer ' + access_token
               axios({
                 method: "GET",
@@ -1386,13 +1390,16 @@
                 data: {},
                 headers: {'Authorization': bearer}
               }).then(function (response) {
-                this_.graviteeUser.name = response.data.name;
-                this_.graviteeUser.email = response.data.email;
-                this_.graviteeUser.picture = response.data.picture;
-                this_.userDataDialog = true;
-                // this_.updateUser(graviteeUser)
-                // this_.snackAlert({ color : 'success', text: "Login realizado com sucesso." });
+                let user = response.data;
+                this_.graviteeUser = Object.assign({}, user, {additionalInformation: {}});
+                if (!user.researcher_type){
+                  this_.userDataDialog = true;
+                } else {
+                  this_.updateUser(this_.graviteeUser)
+                  this_.snackAlert({ color : 'success', text: "Login realizado com sucesso." });
+                }
               }).catch(function(error) {
+                this_.userLogout();
                 // handle error
                 console.log(error)
                 throw new Error('Erro ao buscar informações do usuário.');
@@ -1408,6 +1415,11 @@
           }
         }, 250);
 
+      },
+
+      userLogout(){
+        this.$store.commit('setUser', null);
+        window.location = `${process.env.GRAVITEE_AM_BASE_URL}/logout?invalidate_tokens=true&target_url=${process.env.GRAVITEE_AM_REDIRECT_URL}`;
       },
 
       focusChangePlace(){
@@ -1470,7 +1482,20 @@
       },
 
       sendUserData(){
-        if (this.$refs.userDataForm.validate()){
+        let this_ = this;
+        if (this.$refs.userDataForm.validate()){ 
+          axios.post(
+              '/register/user',
+              this.graviteeUser
+          ).then((response) => {
+            console.log(response);
+            this_.updateUser(this_.graviteeUser)
+            this_.userDataDialog = false;
+            this_.snackAlert({ color : 'success', text: "Login realizado com sucesso." });
+          }).catch((error) => {
+            console.log(error);
+            this_.snackAlert({ color : 'error', text: "Falha no registro do usuário. Por favor, tente novamente." });
+          });          
           console.log(this.graviteeUser);
         }
       },

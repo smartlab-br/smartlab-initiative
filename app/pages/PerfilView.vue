@@ -87,6 +87,7 @@
     },
     methods: {
       logOut: function() {
+        this.$store.commit('setUser', null);
         window.location = `${process.env.GRAVITEE_AM_BASE_URL}/logout?invalidate_tokens=true&target_url=${process.env.GRAVITEE_AM_REDIRECT_URL}`;
       }
     }
