@@ -74,6 +74,8 @@ export default context => {
         store.state.GRAVITEE_AM_BASE_URL = process.env.GRAVITEE_AM_BASE_URL;
         store.state.GRAVITEE_AM_CLIENT_ID = process.env.GRAVITEE_AM_CLIENT_ID;
         store.state.GRAVITEE_AM_REDIRECT_URL = process.env.GRAVITEE_AM_REDIRECT_URL
+        store.state.GRAVITEE_AM_MANAGER_BASE_URL = process.env.GRAVITEE_AM_MANAGER_BASE_URL;
+        store.state.GRAVITEE_AM_MANAGER_TOKEN = process.env.GRAVITEE_AM_MANAGER_TOKEN;
         
         context.state = store.state                
         resolve(app)

@@ -231,9 +231,11 @@ app.get('/api-proxy/*', (req, res) => {
     })
 });
 
-app.post('/register/user', (req, res) => {
+app.post('/register', (req, res) => {
   let url = `${process.env.GRAVITEE_AM_MANAGER_BASE_URL}/auth/token`
-  let regData = req.body
+  let user = req.body;
+  user.username = user.email;
+  user = JSON.stringify(user);
   axios.post(
       url,
       "grant_type=client_credentials",
@@ -245,11 +247,14 @@ app.post('/register/user', (req, res) => {
           httpsAgent: new https.Agent({ rejectUnauthorized: false })
       }
   ).then((response) => {
-      let token = response.access_token
-      let user_id = this.$store.state.user.preferred_username;
-      let url = `${process.env.GRAVITEE_AM_MANAGER_BASE_URL}/organizations/DEFAULT/environments/DEFAULT/domains/a39348fb-841e-4b48-9348-fb841e4b4893/users/${user_id}`
-      axios.get(
+      let token = response.data.access_token;
+      let url = `${process.env.GRAVITEE_AM_MANAGER_BASE_URL}/organizations/DEFAULT/environments/DEFAULT/domains/smartlab/users/`
+      console.log(token);
+      console.log(url);
+      console.log(user);
+      axios.post(
           url,
+          user,
           {
               headers: {
                   'Authorization': `Bearer ${token}`,
@@ -258,36 +263,16 @@ app.post('/register/user', (req, res) => {
               httpsAgent: new https.Agent({ rejectUnauthorized: false })
           }
       ).then((response) => {
-        let user = response.data;
-        user = Object.assign(user,{additionalInfomation: regData.additionalInfomation});
-        let url = `${process.env.GRAVITEE_AM_MANAGER_BASE_URL}/organizations/DEFAULT/environments/DEFAULT/domains/a39348fb-841e-4b48-9348-fb841e4b4893/users/${user_id}`
-        axios.put(
-            url,
-            user,
-            {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                },
-                httpsAgent: new https.Agent({ rejectUnauthorized: false })
-            }
-        ).then((response) => {
-          res.status(response.status);
-          res.json(response.data);
-        }).catch((error) => {
-          res.status(error.response.status)
-          res.json({
-              origin: "Gerenciador de Identidades",
-              message: error.error_description
-          })
-        });          
+        console.log(response);
+        res.status(response.status);
+        res.json(response.data);
       }).catch((error) => {
         res.status(error.response.status)
         res.json({
             origin: "Gerenciador de Identidades",
             message: error.error_description
         })
-      });
+      });          
   }).catch((error) => {
       res.status(error.response.status)
       res.json({

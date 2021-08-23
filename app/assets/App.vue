@@ -261,34 +261,58 @@
           Alterar Localidade
         </v-tooltip>
       </v-btn>
-      <v-btn
-        tabindex="23"
-        icon 
-        class="ml-0"
-        aria-label="Identifique-se"
-        @click="handleAvatarClick()"
-      >
-        <v-tooltip bottom>
-          <v-avatar
-            slot="activator"
-            size="36px"
+
+      <v-menu open-on-hover right offset-y>
+        <template slot="activator" slot-scope="{ on }">
+          <v-btn
+            tabindex="23"
+            icon 
+            class="ml-0"
+            aria-label="Identifique-se"
+            @click="handleAvatarClick()"
+            v-on="on"
           >
-            <img
-              v-if="this.$store.state.user && this.$store.state.user.picture"
-              alt="Foto"
-              :src="this.$store.state.user.picture"
+            <v-avatar
+              size="36px"
             >
-            <v-icon 
-              v-else 
-              slot="activator"
-              color="white" 
-            >
-              perm_identity
-            </v-icon>
-          </v-avatar>
-          {{ computedLoginLabel }} 
-        </v-tooltip>
-      </v-btn>
+              <img
+                v-if="$store.state.user && $store.state.user.picture"
+                alt="Foto"
+                :src="$store.state.user.picture"
+              >
+              <v-icon 
+                v-else 
+                color="white" 
+              >
+                perm_identity
+              </v-icon>
+            </v-avatar>
+          </v-btn>
+        </template>
+        <v-list>
+          <v-list-tile v-if="!$store.state.user"
+            @click="handleAvatarClick()"
+          >
+            <v-list-tile-title>Autenticar</v-list-tile-title>
+          </v-list-tile>
+          <v-list-tile v-if="!$store.state.user"
+            @click="userDataDialog = true"
+          >
+            <v-list-tile-title>Cadastrar</v-list-tile-title>
+          </v-list-tile>
+          <v-list-tile v-if="$store.state.user"
+            @click="handleAvatarClick()"
+          >
+            <v-list-tile-title>Perfil</v-list-tile-title>
+          </v-list-tile>
+          <v-list-tile v-if="$store.state.user"
+            @click="userLogout()"
+          >
+            <v-list-tile-title>Sair</v-list-tile-title>
+          </v-list-tile>
+        </v-list>
+      </v-menu>
+
       <v-tooltip bottom>
         <a 
           slot="activator"
@@ -809,19 +833,34 @@
               <v-layout column>
                 <v-flex py-0>
                   <v-text-field 
-                    v-model="graviteeUser.name"
+                    v-model="graviteeUser.email"
                     class="py-0"
-                    label="Nome"
-                    readonly
+                    label="E-mail"
                   />
                 </v-flex>
 
                 <v-flex py-0>
                   <v-text-field 
-                    v-model="graviteeUser.email"
+                    type="password"
+                    v-model="graviteeUser.password"
                     class="py-0"
-                    label="E-mail"
-                    readonly
+                    label="Senha"
+                  />
+                </v-flex>
+
+                <v-flex py-0>
+                  <v-text-field 
+                    v-model="graviteeUser.firstName"
+                    class="py-0"
+                    label="Nome"
+                  />
+                </v-flex>
+
+                <v-flex py-0>
+                  <v-text-field 
+                    v-model="graviteeUser.lastName"
+                    class="py-0"
+                    label="Sobrenome"
                   />
                 </v-flex>
 
@@ -904,7 +943,7 @@
                       class="mb-0 mr-2"
                       @click="sendUserData"
                     >
-                      <span class="hidden-sm-and-down body">Registrar usuário</span>
+                      <span class="hidden-sm-and-down body">Cadastrar usuário</span>
                       <v-icon right>
                         send
                       </v-icon> 
@@ -1390,14 +1429,9 @@
                 data: {},
                 headers: {'Authorization': bearer}
               }).then(function (response) {
-                let user = response.data;
-                this_.graviteeUser = Object.assign({}, user, {additionalInformation: {}});
-                if (!user.researcher_type){
-                  this_.userDataDialog = true;
-                } else {
-                  this_.updateUser(this_.graviteeUser)
-                  this_.snackAlert({ color : 'success', text: "Login realizado com sucesso." });
-                }
+                this_.graviteeUser = response.data;
+                this_.updateUser(this_.graviteeUser)
+                this_.snackAlert({ color : 'success', text: "Login realizado com sucesso." });
               }).catch(function(error) {
                 this_.userLogout();
                 // handle error
@@ -1485,11 +1519,12 @@
         let this_ = this;
         if (this.$refs.userDataForm.validate()){ 
           axios.post(
-              '/register/user',
+              '/register',
               this.graviteeUser
           ).then((response) => {
             console.log(response);
-            this_.updateUser(this_.graviteeUser)
+            this_.graviteeUser = response.data;
+            this_.updateUser(response.data);
             this_.userDataDialog = false;
             this_.snackAlert({ color : 'success', text: "Login realizado com sucesso." });
           }).catch((error) => {
