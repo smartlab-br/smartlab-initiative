@@ -269,7 +269,6 @@
             icon 
             class="ml-0"
             aria-label="Identifique-se"
-            @click="handleAvatarClick()"
             v-on="on"
           >
             <v-avatar
@@ -833,65 +832,69 @@
               <v-layout column>
                 <v-flex py-0>
                   <v-text-field 
-                    v-model="graviteeUser.email"
+                    v-model="userData.email"
                     class="py-0"
                     label="E-mail"
+                    :rules="[userDataTextRules.required, userDataTextRules.email]"                      
                   />
                 </v-flex>
 
                 <v-flex py-0>
                   <v-text-field 
                     type="password"
-                    v-model="graviteeUser.password"
+                    v-model="userData.password"
                     class="py-0"
-                    label="Senha"
+                    label="Senha (min. 6 caracteres)"
+                    :rules="[userDataTextRules.required, userDataTextRules.password]"                      
                   />
                 </v-flex>
 
                 <v-flex py-0>
                   <v-text-field 
-                    v-model="graviteeUser.firstName"
+                    v-model="userData.firstName"
                     class="py-0"
                     label="Nome"
+                    :rules="[userDataTextRules.required]"                      
                   />
                 </v-flex>
 
                 <v-flex py-0>
                   <v-text-field 
-                    v-model="graviteeUser.lastName"
+                    v-model="userData.lastName"
                     class="py-0"
                     label="Sobrenome"
+                    :rules="[userDataTextRules.required]"                      
                   />
                 </v-flex>
 
                 <v-flex py-0>
                   <v-text-field 
                     ref="userInstitutionText"                     
-                    v-model="graviteeUser.additionalInformation.phone_number"
+                    v-model="userData.additionalInformation.phone_number"
                     class="py-0"
                     label="Telefone de contato"
                     required
-                    :rules="userDataTextRules"                      
+                    :rules="[userDataTextRules.required]"                      
                   />
                 </v-flex>
 
                 <v-flex py-0>
                   <v-text-field 
                     ref="userInstitutionText"                     
-                    v-model="graviteeUser.additionalInformation.institution"
+                    v-model="userData.additionalInformation.institution"
                     class="py-0"
                     label="Instituição"
                     required
-                    :rules="userDataTextRules"                      
+                    :rules="[userDataTextRules.required]"                      
                   />
                 </v-flex>
 
                 <v-flex py-0>
                   <v-select
-                    v-model="graviteeUser.additionalInformation.researcher_type"
+                    v-model="userData.additionalInformation.researcher_type"
                     :items="['Agência de Pesquisa','Biblioteca Digital','Organização Governamental','Organização Não Governamental','Pesquisador Individual','Professor Universitário','Estudante Universitário','Outros']"
                     label="Tipo de Instituição/Pesquisador"
-                    :rules="userDataTextRules"                      
+                    :rules="[userDataTextRules.required]"                      
                   ></v-select>
                 </v-flex>
 
@@ -899,7 +902,7 @@
                   <v-textarea 
                     v-if="userDataDialog"
                     ref="userProjectText"
-                    v-model="graviteeUser.additionalInformation.project"
+                    v-model="userData.additionalInformation.project"
                     class="py-0"
                     label="Projeto"
                     autofocus
@@ -908,7 +911,7 @@
                     required
                     rows=3
                     maxlength="2500"
-                    :rules="userDataTextRules"                      
+                    :rules="[userDataTextRules.required]"                      
                   />
                 </v-flex>
 
@@ -916,7 +919,7 @@
                   <v-textarea 
                     v-if="userDataDialog"
                     ref="userResearchText"
-                    v-model="graviteeUser.additionalInformation.research"
+                    v-model="userData.additionalInformation.research"
                     class="py-0"
                     label="Descrição da pesquisa"
                     autofocus
@@ -925,7 +928,7 @@
                     required
                     rows=3
                     maxlength="2500"
-                    :rules="userDataTextRules"                      
+                    :rules="[userDataTextRules.required]"                      
                   />
                 </v-flex>
 
@@ -1082,10 +1085,16 @@
         currentObs: null,
         dim: { label: null },
         userDataDialog: false,
-        userDataTextRules: [
-          v => !!v || 'Preencha o campo',
-        ],
-        graviteeUser: {additionalInformation:{}}
+        userDataTextRules: {
+          required: v => !!v || 'Preencha o campo',
+          password: v => (v && v.length >= 6) || 'A senha deve ter no mínimo 6 caracteres',
+          email: value => {
+            const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+            return pattern.test(value) || 'E-mail inválido.'        
+          }
+        },
+        userData: {additionalInformation:{}},
+        graviteeUser: {}
       }
     },
     computed: {
@@ -1259,11 +1268,6 @@
       this.themeEval();
     },
     watch: {
-      userDataDialog: function(newVal, oldVal){
-        if (!newVal && this.$store.state.user == null){ // dialog closed
-          this.userLogout();
-        }
-      },
       '$route.fullPath': function(newVal, oldVal) {
         this.currentObs = this.$observatories.constructor.identifyObservatory(this.$route.path.split('/')[1]);
         this.dim = { label: null }
@@ -1520,18 +1524,17 @@
         if (this.$refs.userDataForm.validate()){ 
           axios.post(
               '/register',
-              this.graviteeUser
+              this.userData
           ).then((response) => {
             console.log(response);
-            this_.graviteeUser = response.data;
-            this_.updateUser(response.data);
             this_.userDataDialog = false;
-            this_.snackAlert({ color : 'success', text: "Login realizado com sucesso." });
+            this_.snackAlert({ color : 'success', text: "Registro realizado com sucesso. " });
+            this.showLoginDialog();
           }).catch((error) => {
-            console.log(error);
-            this_.snackAlert({ color : 'error', text: "Falha no registro do usuário. Por favor, tente novamente." });
+            console.log(error.response.data);
+            this_.snackAlert({ color : 'error', text: "Falha no registro do usuário. Por favor, tente novamente. \
+                                                        Erro: '" +  error.response.data.message + "'"});
           });          
-          console.log(this.graviteeUser);
         }
       },
 

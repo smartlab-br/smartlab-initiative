@@ -235,6 +235,8 @@ app.post('/register', (req, res) => {
   let url = `${process.env.GRAVITEE_AM_MANAGER_BASE_URL}/auth/token`
   let user = req.body;
   user.username = user.email;
+  user.additionalInformation.lastName = user.lastName;
+  user.additionalInformation.firstName = user.firstName;
   user = JSON.stringify(user);
   axios.post(
       url,
@@ -249,9 +251,6 @@ app.post('/register', (req, res) => {
   ).then((response) => {
       let token = response.data.access_token;
       let url = `${process.env.GRAVITEE_AM_MANAGER_BASE_URL}/organizations/DEFAULT/environments/DEFAULT/domains/smartlab/users/`
-      console.log(token);
-      console.log(url);
-      console.log(user);
       axios.post(
           url,
           user,
@@ -267,17 +266,23 @@ app.post('/register', (req, res) => {
         res.status(response.status);
         res.json(response.data);
       }).catch((error) => {
-        res.status(error.response.status)
-        res.json({
+        res.status(error.response.status).send({
             origin: "Gerenciador de Identidades",
-            message: error.error_description
-        })
+            message: error.response.data.message
+      });
+        // console.log(error.response.data);
+        // res.status(error.response.status);
+        // res.json({
+        //     origin: "Gerenciador de Identidades",
+        //     message: error.response.data.message
+        // });
       });          
   }).catch((error) => {
+      console.log(error);
       res.status(error.response.status)
       res.json({
           origin: "Gerenciador de Identidades",
-          message: error.error_description
+          message: error.response.data.message
       })
   });
 });
