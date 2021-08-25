@@ -274,14 +274,8 @@
             <v-avatar
               size="36px"
             >
-              <img
-                v-if="$store.state.user && $store.state.user.picture"
-                alt="Foto"
-                :src="$store.state.user.picture"
-              >
               <v-icon 
-                v-else 
-                color="white" 
+                :color="$store.state.user ? 'accent' : 'white'" 
               >
                 perm_identity
               </v-icon>
@@ -289,15 +283,17 @@
           </v-btn>
         </template>
         <v-list>
-          <v-list-tile v-if="!$store.state.user"
-            @click="handleAvatarClick()"
-          >
-            <v-list-tile-title>Autenticar</v-list-tile-title>
-          </v-list-tile>
-          <v-list-tile v-if="!$store.state.user"
+          <v-list-tile 
+            v-if="!$store.state.user"
             @click="userDataDialog = true"
           >
-            <v-list-tile-title>Cadastrar</v-list-tile-title>
+            <v-list-tile-title>Registrar</v-list-tile-title>
+          </v-list-tile>
+          <v-list-tile 
+            v-if="!$store.state.user"
+            @click="handleAvatarClick()"
+          >
+            <v-list-tile-title>Entrar</v-list-tile-title>
           </v-list-tile>
           <v-list-tile v-if="$store.state.user"
             @click="handleAvatarClick()"
@@ -789,7 +785,7 @@
         </v-card-title>
         <v-card-text>
           <p>Para baixar os dados, é necessário que você se autentique.</p>
-          <p>Clique no botão abaixo e faça o login na plataforma utilizando sua conta do Google ou Facebook.</p>
+          <p>Registre-se na plataforma ou se autentique clicando no botão "Entrar" caso já tenha se registrado.</p>
         </v-card-text>
         <v-layout 
           align-center 
@@ -797,6 +793,19 @@
           row 
           fill-height
         >
+          <v-btn 
+            class="theme--light mb-3 mt-0" 
+            color="accent" 
+            @click="handleRegisterClick()"
+          >
+            <v-icon 
+              left 
+              color="white"
+            >
+              perm_identity
+            </v-icon>
+            Registrar
+          </v-btn>
           <v-btn 
             class="theme--light mb-3 mt-0" 
             color="accent" 
@@ -808,7 +817,7 @@
             >
               perm_identity
             </v-icon>
-            Autenticar
+            Entrar
           </v-btn>
         </v-layout>
       </v-card>
@@ -829,17 +838,17 @@
             v-model="valid"
           >
             <v-container>
-              <v-layout column>
-                <v-flex py-0>
+              <v-layout row wrap>
+                <v-flex py-0 xs12>
                   <v-text-field 
                     v-model="userData.email"
-                    class="py-0"
+                    class="pt-1 pb-0"
                     label="E-mail"
                     :rules="[userDataTextRules.required, userDataTextRules.email]"                      
                   />
                 </v-flex>
 
-                <v-flex py-0>
+                <v-flex pt-2 pb-0 xs12>
                   <v-text-field 
                     type="password"
                     v-model="userData.password"
@@ -849,7 +858,7 @@
                   />
                 </v-flex>
 
-                <v-flex py-0>
+                <v-flex pt-2 pb-0 xs6>
                   <v-text-field 
                     v-model="userData.firstName"
                     class="py-0"
@@ -858,7 +867,7 @@
                   />
                 </v-flex>
 
-                <v-flex py-0>
+                <v-flex pt-2 pb-0 xs6>
                   <v-text-field 
                     v-model="userData.lastName"
                     class="py-0"
@@ -867,7 +876,7 @@
                   />
                 </v-flex>
 
-                <v-flex py-0>
+                <v-flex pt-2 pb-0 xs6>
                   <v-text-field 
                     ref="userInstitutionText"                     
                     v-model="userData.additionalInformation.phone_number"
@@ -878,7 +887,7 @@
                   />
                 </v-flex>
 
-                <v-flex py-0>
+                <v-flex pt-2 pb-0 xs6>
                   <v-text-field 
                     ref="userInstitutionText"                     
                     v-model="userData.additionalInformation.institution"
@@ -889,7 +898,7 @@
                   />
                 </v-flex>
 
-                <v-flex py-0>
+                <v-flex pt-2 pb-0 xs12>
                   <v-select
                     v-model="userData.additionalInformation.researcher_type"
                     :items="['Agência de Pesquisa','Biblioteca Digital','Organização Governamental','Organização Não Governamental','Pesquisador Individual','Professor Universitário','Estudante Universitário','Outros']"
@@ -898,7 +907,7 @@
                   ></v-select>
                 </v-flex>
 
-                <v-flex py-0>
+                <v-flex pt-2 pb-0 xs12>
                   <v-textarea 
                     v-if="userDataDialog"
                     ref="userProjectText"
@@ -907,7 +916,7 @@
                     label="Projeto"
                     autofocus
                     counter=2500
-                    placeholder="Título, pesquisador principal, e-mail, área de pesquisa, demais participantes"
+                    placeholder="Informe o título, pesquisador principal, e-mail, área de pesquisa e demais participantes"
                     required
                     rows=3
                     maxlength="2500"
@@ -915,7 +924,7 @@
                   />
                 </v-flex>
 
-                <v-flex py-0>
+                <v-flex pt-2 pb-0 xs12>
                   <v-textarea 
                     v-if="userDataDialog"
                     ref="userResearchText"
@@ -924,7 +933,7 @@
                     label="Descrição da pesquisa"
                     autofocus
                     counter=2500
-                    placeholder="Forneça um resumo de um parágrafo descrevendo como você planeja usar os dados. Inclua a análise que você propõe realizar. A descrição pode ter até 2500 caracteres."
+                    placeholder="Descreva como você planeja usar os dados. Inclua a análise que você propõe realizar."
                     required
                     rows=3
                     maxlength="2500"
@@ -946,7 +955,7 @@
                       class="mb-0 mr-2"
                       @click="sendUserData"
                     >
-                      <span class="hidden-sm-and-down body">Cadastrar usuário</span>
+                      <span class="hidden-sm-and-down body">Registrar usuário</span>
                       <v-icon right>
                         send
                       </v-icon> 
@@ -1402,6 +1411,11 @@
         this.authMessageDialog = false;
       },
 
+      handleRegisterClick: function() {
+        this.userDataDialog = true;
+        this.authMessageDialog = false;
+      },
+
       handleAvatarClick: function() {
         if (this.$store.state.user) {
           this.$navigationManager.constructor.pushRoute(this.$router, '/perfil', false)
@@ -1531,9 +1545,9 @@
             this_.snackAlert({ color : 'success', text: "Registro realizado com sucesso. " });
             this.showLoginDialog();
           }).catch((error) => {
-            console.log(error.response.data);
+            console.log(error.response ? error.response.data.message : error.message);
             this_.snackAlert({ color : 'error', text: "Falha no registro do usuário. Por favor, tente novamente. \
-                                                        Erro: '" +  error.response.data.message + "'"});
+                                                        Erro: '" +  (error.response ? error.response.data.message : error.message) + "'"});
           });          
         }
       },

@@ -266,23 +266,21 @@ app.post('/register', (req, res) => {
         res.status(response.status);
         res.json(response.data);
       }).catch((error) => {
-        res.status(error.response.status).send({
+        console.log(error.response.data);
+        res.status(error.response.status);
+        res.json({
             origin: "Gerenciador de Identidades",
             message: error.response.data.message
-      });
-        // console.log(error.response.data);
-        // res.status(error.response.status);
-        // res.json({
-        //     origin: "Gerenciador de Identidades",
-        //     message: error.response.data.message
-        // });
+        });
       });          
   }).catch((error) => {
       console.log(error);
-      res.status(error.response.status)
+      let status = error.response ? error.response.status : error.status;
+      if (!status) { status="400";}
+      res.status(status);
       res.json({
           origin: "Gerenciador de Identidades",
-          message: error.response.data.message
+          message: (error.response ? error.response.data.message : error.message)
       })
   });
 });
