@@ -287,7 +287,7 @@
             v-if="!$store.state.user"
             @click="userDataDialog = true"
           >
-            <v-list-tile-title>Registrar</v-list-tile-title>
+            <v-list-tile-title>Registre-se</v-list-tile-title>
           </v-list-tile>
           <v-list-tile 
             v-if="!$store.state.user"
@@ -785,7 +785,7 @@
         </v-card-title>
         <v-card-text>
           <p>Para baixar os dados, é necessário que você se autentique.</p>
-          <p>Registre-se na plataforma ou se autentique clicando no botão "Entrar" caso já tenha se registrado.</p>
+          <p>Registre-se na plataforma ou se autentique clicando no botão "Entrar", caso já tenha se registrado.</p>
         </v-card-text>
         <v-layout 
           align-center 
@@ -839,21 +839,23 @@
           >
             <v-container>
               <v-layout row wrap>
-                <v-flex py-0 xs12>
+                <v-flex pt-2 pb-0 xs6>
                   <v-text-field 
                     v-model="userData.email"
-                    class="pt-1 pb-0"
+                    class="py-0"
                     label="E-mail"
+                    required
                     :rules="[userDataTextRules.required, userDataTextRules.email]"                      
                   />
                 </v-flex>
 
-                <v-flex pt-2 pb-0 xs12>
+                <v-flex pt-2 pb-0 xs6>
                   <v-text-field 
                     type="password"
                     v-model="userData.password"
                     class="py-0"
                     label="Senha (min. 6 caracteres)"
+                    required
                     :rules="[userDataTextRules.required, userDataTextRules.password]"                      
                   />
                 </v-flex>
@@ -863,6 +865,7 @@
                     v-model="userData.firstName"
                     class="py-0"
                     label="Nome"
+                    required
                     :rules="[userDataTextRules.required]"                      
                   />
                 </v-flex>
@@ -872,6 +875,7 @@
                     v-model="userData.lastName"
                     class="py-0"
                     label="Sobrenome"
+                    required
                     :rules="[userDataTextRules.required]"                      
                   />
                 </v-flex>
@@ -903,6 +907,7 @@
                     v-model="userData.additionalInformation.researcher_type"
                     :items="['Agência de Pesquisa','Biblioteca Digital','Organização Governamental','Organização Não Governamental','Pesquisador Individual','Professor Universitário','Estudante Universitário','Outros']"
                     label="Tipo de Instituição/Pesquisador"
+                    required
                     :rules="[userDataTextRules.required]"                      
                   ></v-select>
                 </v-flex>
@@ -914,7 +919,6 @@
                     v-model="userData.additionalInformation.project"
                     class="py-0"
                     label="Projeto"
-                    autofocus
                     counter=2500
                     placeholder="Informe o título, pesquisador principal, e-mail, área de pesquisa e demais participantes"
                     required
@@ -931,7 +935,6 @@
                     v-model="userData.additionalInformation.research"
                     class="py-0"
                     label="Descrição da pesquisa"
-                    autofocus
                     counter=2500
                     placeholder="Descreva como você planeja usar os dados. Inclua a análise que você propõe realizar."
                     required
@@ -1096,7 +1099,7 @@
         userDataDialog: false,
         userDataTextRules: {
           required: v => !!v || 'Preencha o campo',
-          password: v => (v && v.length >= 6) || 'A senha deve ter no mínimo 6 caracteres',
+          password: v => (v && v.length >= 6) || 'Senha de no mínimo 6 caracteres',
           email: value => {
             const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
             return pattern.test(value) || 'E-mail inválido.'        
@@ -1135,6 +1138,11 @@
           let tmpObs = this.$observatories.getObservatoryById(this.currentObs);
           if (tmpObs) {
             observ = tmpObs;
+          } else if (this.$route.path.indexOf("perfil") != -1){ //Perfil
+            observ = {
+              short_title: "Perfil",
+              title: "Perfil"
+            };
           } else if (this.$route.path.indexOf("saibamais") != -1){ //Sobre
             observ = {
               short_title: "Sobre",
@@ -1542,7 +1550,7 @@
           ).then((response) => {
             console.log(response);
             this_.userDataDialog = false;
-            this_.snackAlert({ color : 'success', text: "Registro realizado com sucesso. " });
+            this_.snackAlert({ color : 'success', text: "Registro realizado com sucesso. Faça o login para ter acesso aos dados." });
             this.showLoginDialog();
           }).catch((error) => {
             console.log(error.response ? error.response.data.message : error.message);
