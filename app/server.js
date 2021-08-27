@@ -232,14 +232,14 @@ app.get('/api-proxy/*', (req, res) => {
 });
 
 app.post('/register', (req, res) => {
-  let url = `${process.env.GRAVITEE_AM_MANAGER_BASE_URL}/auth/token`
+  let urlToken = `${process.env.GRAVITEE_AM_MANAGER_BASE_URL}/auth/token`
   let user = req.body;
   user.username = user.email;
   user.additionalInformation.lastName = user.lastName;
   user.additionalInformation.firstName = user.firstName;
   user = JSON.stringify(user);
   axios.post(
-      url,
+      urlToken,
       "grant_type=client_credentials",
       {
           headers: {
@@ -248,8 +248,8 @@ app.post('/register', (req, res) => {
           },
           httpsAgent: new https.Agent({ rejectUnauthorized: false })
       }
-  ).then((response) => {
-      let token = response.data.access_token;
+  ).then((resToken) => {
+      let token = resToken.data.access_token;
       let url = `${process.env.GRAVITEE_AM_MANAGER_BASE_URL}/organizations/DEFAULT/environments/DEFAULT/domains/smartlab/users/`
       axios.post(
           url,

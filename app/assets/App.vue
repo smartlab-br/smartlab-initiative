@@ -262,8 +262,15 @@
         </v-tooltip>
       </v-btn>
 
-      <v-menu open-on-hover right offset-y>
-        <template slot="activator" slot-scope="{ on }">
+      <v-menu 
+        open-on-hover 
+        right 
+        offset-y
+      >
+        <template 
+          slot="activator" 
+          slot-scope="{ on }"
+        >
           <v-btn
             tabindex="23"
             icon 
@@ -295,12 +302,14 @@
           >
             <v-list-tile-title>Entrar</v-list-tile-title>
           </v-list-tile>
-          <v-list-tile v-if="$store.state.user"
+          <v-list-tile 
+            v-if="$store.state.user"
             @click="handleAvatarClick()"
           >
             <v-list-tile-title>Perfil</v-list-tile-title>
           </v-list-tile>
-          <v-list-tile v-if="$store.state.user"
+          <v-list-tile 
+            v-if="$store.state.user"
             @click="userLogout()"
           >
             <v-list-tile-title>Sair</v-list-tile-title>
@@ -838,8 +847,15 @@
             v-model="valid"
           >
             <v-container>
-              <v-layout row wrap>
-                <v-flex pt-2 pb-0 xs6>
+              <v-layout 
+                row 
+                wrap
+              >
+                <v-flex 
+                  pt-2 
+                  pb-0 
+                  xs6
+                >
                   <v-text-field 
                     v-model="userData.email"
                     class="py-0"
@@ -849,10 +865,14 @@
                   />
                 </v-flex>
 
-                <v-flex pt-2 pb-0 xs6>
+                <v-flex
+                  pt-2 
+                  pb-0 
+                  xs6
+                >
                   <v-text-field 
-                    type="password"
                     v-model="userData.password"
+                    type="password"
                     class="py-0"
                     label="Senha (min. 6 caracteres)"
                     required
@@ -860,7 +880,11 @@
                   />
                 </v-flex>
 
-                <v-flex pt-2 pb-0 xs6>
+                <v-flex
+                  pt-2 
+                  pb-0 
+                  xs6
+                >
                   <v-text-field 
                     v-model="userData.firstName"
                     class="py-0"
@@ -870,7 +894,11 @@
                   />
                 </v-flex>
 
-                <v-flex pt-2 pb-0 xs6>
+                <v-flex
+                  pt-2 
+                  pb-0 
+                  xs6
+                >               
                   <v-text-field 
                     v-model="userData.lastName"
                     class="py-0"
@@ -880,7 +908,11 @@
                   />
                 </v-flex>
 
-                <v-flex pt-2 pb-0 xs6>
+                <v-flex
+                  pt-2 
+                  pb-0 
+                  xs6
+                >                
                   <v-text-field 
                     ref="userInstitutionText"                     
                     v-model="userData.additionalInformation.phone_number"
@@ -891,7 +923,11 @@
                   />
                 </v-flex>
 
-                <v-flex pt-2 pb-0 xs6>
+                <v-flex
+                  pt-2 
+                  pb-0 
+                  xs6
+                >
                   <v-text-field 
                     ref="userInstitutionText"                     
                     v-model="userData.additionalInformation.institution"
@@ -902,43 +938,55 @@
                   />
                 </v-flex>
 
-                <v-flex pt-2 pb-0 xs12>
+                <v-flex
+                  pt-2 
+                  pb-0 
+                  xs12
+                >                
                   <v-select
                     v-model="userData.additionalInformation.researcher_type"
                     :items="['Agência de Pesquisa','Biblioteca Digital','Organização Governamental','Organização Não Governamental','Pesquisador Individual','Professor Universitário','Estudante Universitário','Outros']"
                     label="Tipo de Instituição/Pesquisador"
                     required
                     :rules="[userDataTextRules.required]"                      
-                  ></v-select>
+                  />
                 </v-flex>
 
-                <v-flex pt-2 pb-0 xs12>
+                <v-flex
+                  pt-2 
+                  pb-0 
+                  xs12
+                >                
                   <v-textarea 
                     v-if="userDataDialog"
                     ref="userProjectText"
                     v-model="userData.additionalInformation.project"
                     class="py-0"
                     label="Projeto"
-                    counter=2500
+                    counter="2500"
                     placeholder="Informe o título, pesquisador principal, e-mail, área de pesquisa e demais participantes"
                     required
-                    rows=3
+                    rows="3"
                     maxlength="2500"
                     :rules="[userDataTextRules.required]"                      
                   />
                 </v-flex>
 
-                <v-flex pt-2 pb-0 xs12>
+                <v-flex
+                  pt-2 
+                  pb-0 
+                  xs12
+                >                
                   <v-textarea 
                     v-if="userDataDialog"
                     ref="userResearchText"
                     v-model="userData.additionalInformation.research"
                     class="py-0"
                     label="Descrição da pesquisa"
-                    counter=2500
+                    counter="2500"
                     placeholder="Descreva como você planeja usar os dados. Inclua a análise que você propõe realizar."
                     required
-                    rows=3
+                    rows="3"
                     maxlength="2500"
                     :rules="[userDataTextRules.required]"                      
                   />
@@ -1554,8 +1602,7 @@
             this.showLoginDialog();
           }).catch((error) => {
             console.log(error.response ? error.response.data.message : error.message);
-            this_.snackAlert({ color : 'error', text: "Falha no registro do usuário. Por favor, tente novamente. \
-                                                        Erro: '" +  (error.response ? error.response.data.message : error.message) + "'"});
+            this_.snackAlert({ color : 'error', text: "Falha no registro do usuário. Por favor, tente novamente. Erro: '" +  (error.response ? error.response.data.message : error.message) + "'"});
           });          
         }
       },
