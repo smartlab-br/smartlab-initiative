@@ -261,36 +261,62 @@
           Alterar Localidade
         </v-tooltip>
       </v-btn>
-      <!--
-      <v-btn
-        tabindex="23"
-        icon 
-        class="ml-0"
-        aria-label="Identifique-se"
-        @click="handleAvatarClick()"
+
+      <v-menu 
+        open-on-hover 
+        right 
+        offset-y
       >
-        <v-tooltip bottom>
-          <v-avatar
-            slot="activator"
-            size="36px"
+        <template 
+          slot="activator" 
+          slot-scope="{ on }"
+        >
+          <v-btn
+            tabindex="23"
+            icon 
+            class="ml-0"
+            aria-label="Identifique-se"
+            v-on="on"
           >
-            <img
-              v-if="this.$store.state.user && this.$store.state.user.picture"
-              alt="Foto"
-              :src="this.$store.state.user.picture"
+            <v-avatar
+              size="36px"
             >
-            <v-icon 
-              v-else 
-              slot="activator"
-              color="white" 
-            >
-              perm_identity
-            </v-icon>
-          </v-avatar>
-          {{ computedLoginLabel }} 
-        </v-tooltip>
-      </v-btn>
-      -->
+              <v-icon 
+                :color="$store.state.user ? 'accent' : 'white'" 
+              >
+                perm_identity
+              </v-icon>
+            </v-avatar>
+          </v-btn>
+        </template>
+        <v-list>
+          <v-list-tile 
+            v-if="!$store.state.user"
+            @click="userDataDialog = true"
+          >
+            <v-list-tile-title>Registre-se</v-list-tile-title>
+          </v-list-tile>
+          <v-list-tile 
+            v-if="!$store.state.user"
+            @click="handleAvatarClick()"
+          >
+            <v-list-tile-title>Entrar</v-list-tile-title>
+          </v-list-tile>
+          <v-list-tile 
+            v-if="$store.state.user"
+            @click="handleAvatarClick()"
+          >
+            <v-list-tile-title>Perfil</v-list-tile-title>
+          </v-list-tile>
+          <v-list-tile 
+            v-if="$store.state.user"
+            @click="userLogout()"
+          >
+            <v-list-tile-title>Sair</v-list-tile-title>
+          </v-list-tile>
+        </v-list>
+      </v-menu>
+
       <v-tooltip bottom>
         <a 
           slot="activator"
@@ -758,7 +784,6 @@
         </v-card-text>
       </v-card>
     </v-dialog>
-    <!--
     <v-dialog 
       v-model="authMessageDialog"
       width="500px" 
@@ -769,7 +794,7 @@
         </v-card-title>
         <v-card-text>
           <p>Para baixar os dados, é necessário que você se autentique.</p>
-          <p>Clique no botão abaixo e faça o login na plataforma utilizando sua conta do Google ou Facebook.</p>
+          <p>Registre-se na plataforma ou se autentique clicando no botão "Entrar", caso já tenha se registrado.</p>
         </v-card-text>
         <v-layout 
           align-center 
@@ -777,6 +802,19 @@
           row 
           fill-height
         >
+          <v-btn 
+            class="theme--light mb-3 mt-0" 
+            color="accent" 
+            @click="handleRegisterClick()"
+          >
+            <v-icon 
+              left 
+              color="white"
+            >
+              perm_identity
+            </v-icon>
+            Registrar
+          </v-btn>
           <v-btn 
             class="theme--light mb-3 mt-0" 
             color="accent" 
@@ -788,12 +826,211 @@
             >
               perm_identity
             </v-icon>
-            Autenticar
+            Entrar
           </v-btn>
         </v-layout>
       </v-card>
     </v-dialog>
-    -->
+    <v-dialog 
+      v-model="userDataDialog"
+      width="500px" 
+    >
+      <v-card>
+        <v-card-title 
+          class="headline-obs py-1"
+        >
+          Registro do usuário
+        </v-card-title>
+        <v-card-text py-1>
+          <v-form 
+            ref="userDataForm" 
+            v-model="valid"
+          >
+            <v-container>
+              <v-layout 
+                row 
+                wrap
+              >
+                <v-flex 
+                  pt-2 
+                  pb-0 
+                  xs6
+                >
+                  <v-text-field 
+                    v-model="userData.email"
+                    class="py-0"
+                    label="E-mail"
+                    required
+                    :rules="[userDataTextRules.required, userDataTextRules.email]"                      
+                  />
+                </v-flex>
+
+                <v-flex
+                  pt-2 
+                  pb-0 
+                  xs6
+                >
+                  <v-text-field 
+                    v-model="userData.password"
+                    type="password"
+                    class="py-0"
+                    label="Senha (min. 6 caracteres)"
+                    required
+                    :rules="[userDataTextRules.required, userDataTextRules.password]"                      
+                  />
+                </v-flex>
+
+                <v-flex
+                  pt-2 
+                  pb-0 
+                  xs6
+                >
+                  <v-text-field 
+                    v-model="userData.firstName"
+                    class="py-0"
+                    label="Nome"
+                    required
+                    :rules="[userDataTextRules.required]"                      
+                  />
+                </v-flex>
+
+                <v-flex
+                  pt-2 
+                  pb-0 
+                  xs6
+                >               
+                  <v-text-field 
+                    v-model="userData.lastName"
+                    class="py-0"
+                    label="Sobrenome"
+                    required
+                    :rules="[userDataTextRules.required]"                      
+                  />
+                </v-flex>
+
+                <v-flex
+                  pt-2 
+                  pb-0 
+                  xs6
+                >                
+                  <v-text-field 
+                    ref="userInstitutionText"                     
+                    v-model="userData.additionalInformation.phone_number"
+                    class="py-0"
+                    label="Telefone de contato"
+                    required
+                    :rules="[userDataTextRules.required]"                      
+                  />
+                </v-flex>
+
+                <v-flex
+                  pt-2 
+                  pb-0 
+                  xs6
+                >
+                  <v-text-field 
+                    ref="userInstitutionText"                     
+                    v-model="userData.additionalInformation.institution"
+                    class="py-0"
+                    label="Instituição"
+                    required
+                    :rules="[userDataTextRules.required]"                      
+                  />
+                </v-flex>
+
+                <v-flex
+                  pt-2 
+                  pb-0 
+                  xs12
+                >                
+                  <v-select
+                    v-model="userData.additionalInformation.researcher_type"
+                    :items="['Agência de Pesquisa','Biblioteca Digital','Organização Governamental','Organização Não Governamental','Pesquisador Individual','Professor Universitário','Estudante Universitário','Outros']"
+                    label="Tipo de Instituição/Pesquisador"
+                    required
+                    :rules="[userDataTextRules.required]"                      
+                  />
+                </v-flex>
+
+                <v-flex
+                  pt-2 
+                  pb-0 
+                  xs12
+                >                
+                  <v-textarea 
+                    v-if="userDataDialog"
+                    ref="userProjectText"
+                    v-model="userData.additionalInformation.project"
+                    class="py-0"
+                    label="Projeto"
+                    counter="2500"
+                    placeholder="Informe o título, pesquisador principal, e-mail, área de pesquisa e demais participantes"
+                    required
+                    rows="3"
+                    maxlength="2500"
+                    :rules="[userDataTextRules.required]"                      
+                  />
+                </v-flex>
+
+                <v-flex
+                  pt-2 
+                  pb-0 
+                  xs12
+                >                
+                  <v-textarea 
+                    v-if="userDataDialog"
+                    ref="userResearchText"
+                    v-model="userData.additionalInformation.research"
+                    class="py-0"
+                    label="Descrição da pesquisa"
+                    counter="2500"
+                    placeholder="Descreva como você planeja usar os dados. Inclua a análise que você propõe realizar."
+                    required
+                    rows="3"
+                    maxlength="2500"
+                    :rules="[userDataTextRules.required]"                      
+                  />
+                </v-flex>
+
+                <v-layout 
+                  py-0 
+                  row
+                >
+                  <v-layout 
+                    justify-end 
+                    pa-0
+                  >
+                    <v-btn 
+                      small 
+                      flat  
+                      class="mb-0 mr-2"
+                      @click="sendUserData"
+                    >
+                      <span class="hidden-sm-and-down body">Registrar usuário</span>
+                      <v-icon right>
+                        send
+                      </v-icon> 
+                    </v-btn>
+                    <v-btn
+                      small 
+                      flat 
+                      class="mb-0 mx-0"
+                      @click="closeUserDataDialog"
+                    >
+                      <span class="hidden-sm-and-down body">Fechar</span>
+                      <v-icon right>
+                        close
+                      </v-icon> 
+                    </v-btn>
+                  </v-layout>
+                </v-layout>
+              </v-layout>
+            </v-container>
+          </v-form>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+    <!--
     <v-dialog 
       v-model="authMessageDialog"
       width="500px" 
@@ -821,6 +1058,7 @@
         </v-layout>
       </v-card>
     </v-dialog>
+    -->
     <v-layout text-xs-center pa-0 
       class="footer-nav white--text">
       <v-layout row wrap caption class="cursor-pointer">
@@ -905,7 +1143,18 @@
         currentAnalysisUnit: null,
         observatorios: null,
         currentObs: null,
-        dim: { label: null }
+        dim: { label: null },
+        userDataDialog: false,
+        userDataTextRules: {
+          required: v => !!v || 'Preencha o campo',
+          password: v => (v && v.length >= 6) || 'Senha de no mínimo 6 caracteres',
+          email: value => {
+            const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+            return pattern.test(value) || 'E-mail inválido.'        
+          }
+        },
+        userData: {additionalInformation:{}},
+        graviteeUser: {}
       }
     },
     computed: {
@@ -937,6 +1186,11 @@
           let tmpObs = this.$observatories.getObservatoryById(this.currentObs);
           if (tmpObs) {
             observ = tmpObs;
+          } else if (this.$route.path.indexOf("perfil") != -1){ //Perfil
+            observ = {
+              short_title: "Perfil",
+              title: "Perfil"
+            };
           } else if (this.$route.path.indexOf("saibamais") != -1){ //Sobre
             observ = {
               short_title: "Sobre",
@@ -1213,6 +1467,11 @@
         this.authMessageDialog = false;
       },
 
+      handleRegisterClick: function() {
+        this.userDataDialog = true;
+        this.authMessageDialog = false;
+      },
+
       handleAvatarClick: function() {
         if (this.$store.state.user) {
           this.$navigationManager.constructor.pushRoute(this.$router, '/perfil', false)
@@ -1237,7 +1496,6 @@
             if (popupWindowPath.hash) {
               var params = popupWindowPath.hash.split("access_token=")[1]
               var access_token = params.split("&")[0]
-
               var bearer = 'Bearer ' + access_token
               axios({
                 method: "GET",
@@ -1245,13 +1503,11 @@
                 data: {},
                 headers: {'Authorization': bearer}
               }).then(function (response) {
-                let graviteeUser = {};
-                graviteeUser.name = response.data.name;
-                graviteeUser.email = response.data.email;
-                graviteeUser.picture = response.data.picture;
-                this_.updateUser(graviteeUser)
+                this_.graviteeUser = response.data;
+                this_.updateUser(this_.graviteeUser)
                 this_.snackAlert({ color : 'success', text: "Login realizado com sucesso." });
               }).catch(function(error) {
+                this_.userLogout();
                 // handle error
                 console.log(error)
                 throw new Error('Erro ao buscar informações do usuário.');
@@ -1267,6 +1523,11 @@
           }
         }, 250);
 
+      },
+
+      userLogout(){
+        this.$store.commit('setUser', null);
+        window.location = `${process.env.GRAVITEE_AM_BASE_URL}/logout?invalidate_tokens=true&target_url=${process.env.GRAVITEE_AM_REDIRECT_URL}`;
       },
 
       focusChangePlace(){
@@ -1321,13 +1582,35 @@
         this.bugDialog = true;
       },
 
+      closeUserDataDialog(){
+        this.userDataDialog = false;
+        this.$refs.userDataForm.resetValidation()
+      },
+
+      sendUserData(){
+        let this_ = this;
+        if (this.$refs.userDataForm.validate()){ 
+          axios.post(
+              '/register',
+              this.userData
+          ).then((response) => {
+            console.log(response);
+            this_.userDataDialog = false;
+            this_.snackAlert({ color : 'success', text: "Registro realizado com sucesso. Faça o login para ter acesso aos dados." });
+            this.showLoginDialog();
+          }).catch((error) => {
+            console.log(error.response ? error.response.data.message : error.message);
+            this_.snackAlert({ color : 'error', text: "Falha no registro do usuário. Por favor, tente novamente. Erro: '" +  (error.response ? error.response.data.message : error.message) + "'"});
+          });          
+        }
+      },
+
       closeBugDialog(){
         this.bugDialog = false;
         this.bugEmail = '';
         this.bugText = '';
         this.$refs.bugForm.resetValidation()
       },
-
       sendBugReport(){
         if (this.$refs.bugForm.validate()) {
           this.sendingMail = true;

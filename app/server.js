@@ -8,6 +8,7 @@ const resolve = file => path.resolve(__dirname, file)
 const { createBundleRenderer } = require('vue-server-renderer')
 const redirects = require('./router/301.json')
 const axios = require('axios');
+const https = require('https');
 
 const isProd = (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'staging')
 const useMicroCache = process.env.MICRO_CACHE !== 'false'
@@ -230,9 +231,62 @@ app.get('/api-proxy/*', (req, res) => {
     })
 });
 
+app.post('/register', (req, res) => {
+  let urlToken = `${process.env.GRAVITEE_AM_MANAGER_BASE_URL}/auth/token`
+  let user = req.body;
+  user.username = user.email;
+  user.additionalInformation ={...user.additionalInformation,lastName: user.lastName, firstName: user.firstName};
+  axios.post(
+      urlToken,
+      "grant_type=client_credentials",
+      {
+          headers: {
+              'Authorization': `Basic ${process.env.GRAVITEE_AM_MANAGER_TOKEN}`,
+              'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          httpsAgent: new https.Agent({ rejectUnauthorized: false })
+      }
+  ).then((resToken) => {
+      let token = resToken.data.access_token;
+      let url = `${process.env.GRAVITEE_AM_MANAGER_BASE_URL}/organizations/DEFAULT/environments/DEFAULT/domains/smartlab/users/`
+      axios.post(
+          url,
+          JSON.stringify(user),
+          {
+              headers: {
+                  'Authorization': `Bearer ${token}`,
+                  'Content-Type': 'application/json',
+              },
+              httpsAgent: new https.Agent({ rejectUnauthorized: false })
+          }
+      ).then((response) => {
+        console.log(response);
+        res.status(response.status);
+        res.json(response.data);
+      }).catch((error) => {
+        console.log(error.response.data);
+        res.status(error.response.status);
+        res.json({
+            origin: "Gerenciador de Identidades",
+            message: error.response.data.message
+        });
+      });          
+  }).catch((error) => {
+      console.log(error);
+      let status = error.response ? error.response.status : error.status;
+      if (!status) { status="400";}
+      res.status(status);
+      res.json({
+          origin: "Gerenciador de Identidades",
+          message: (error.response ? error.response.data.message : error.message)
+      })
+  });
+});
+
 app.get('*', isProd ? render : (req, res) => {
   readyPromise.then(() => render(req, res))
 })
+
 
 const port = process.env.PORT || 8081
 app.listen(port, '0.0.0.0', () => {
