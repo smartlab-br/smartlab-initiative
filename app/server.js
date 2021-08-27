@@ -235,9 +235,7 @@ app.post('/register', (req, res) => {
   let urlToken = `${process.env.GRAVITEE_AM_MANAGER_BASE_URL}/auth/token`
   let user = req.body;
   user.username = user.email;
-  user.additionalInformation.lastName = user.lastName;
-  user.additionalInformation.firstName = user.firstName;
-  user = JSON.stringify(user);
+  user.additionalInformation ={...user.additionalInformation,lastName: user.lastName, firstName: user.firstName};
   axios.post(
       urlToken,
       "grant_type=client_credentials",
@@ -253,7 +251,7 @@ app.post('/register', (req, res) => {
       let url = `${process.env.GRAVITEE_AM_MANAGER_BASE_URL}/organizations/DEFAULT/environments/DEFAULT/domains/smartlab/users/`
       axios.post(
           url,
-          user,
+          JSON.stringify(user),
           {
               headers: {
                   'Authorization': `Bearer ${token}`,

@@ -24,9 +24,7 @@ const config = merge(base, {
       // 'process.env.ACIDENTOMETROS_APP_KEY': JSON.stringify(process.env.ACIDENTOMETROS_APP_KEY || 'key'),
       'process.env.GRAVITEE_AM_BASE_URL': JSON.stringify(process.env.GRAVITEE_AM_BASE_URL),
       'process.env.GRAVITEE_AM_CLIENT_ID': JSON.stringify(process.env.GRAVITEE_AM_CLIENT_ID),
-      'process.env.GRAVITEE_AM_REDIRECT_URL': JSON.stringify(process.env.GRAVITEE_AM_REDIRECT_URL),
-      'process.env.GRAVITEE_AM_MANAGER_BASE_URL': JSON.stringify(process.env.GRAVITEE_AM_MANAGER_BASE_URL),
-      'process.env.GRAVITEE_AM_MANAGER_TOKEN': JSON.stringify(process.env.GRAVITEE_AM_MANAGER_TOKEN)
+      'process.env.GRAVITEE_AM_REDIRECT_URL': JSON.stringify(process.env.GRAVITEE_AM_REDIRECT_URL)
     }),
     // extract vendor chunks for better caching
     new webpack.optimize.CommonsChunkPlugin({
