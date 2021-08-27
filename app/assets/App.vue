@@ -1584,8 +1584,6 @@
 
       closeUserDataDialog(){
         this.userDataDialog = false;
-        // this.userData = '';
-        // this.bugText = '';
         this.$refs.userDataForm.resetValidation()
       },
 
