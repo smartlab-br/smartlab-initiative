@@ -25,7 +25,8 @@ class AxiosCallSetupService {
     }
 
     var headers = {
-      'Content-Type': "application/json"
+      'Content-Type': "application/json",
+      'Request-Source': "application"
     }
 
     if (key == 'ACIDENTOMETROS') {
