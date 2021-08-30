@@ -152,84 +152,90 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.post('/api-proxy/*', (req, res) => {
+  if (req.headers['request-source'] == 'application' && req.headers['user-agent'] && req.headers['user-agent'].toLowerCase().indexOf('postman') == -1){
+    const apiDataMap = { 
+      mercurio: [process.env.MAILER_API_BASE_URL, 
+                process.env.MAILER_APP_KEY]
+    }
 
-  const apiDataMap = { 
-    mercurio: [process.env.MAILER_API_BASE_URL, 
-              process.env.MAILER_APP_KEY]
+    const splitArray = req.url.split("/")
+    const resourceUrl = splitArray.slice(3).join('/')
+    const apiUrl = apiDataMap[splitArray[2]][0] + '/' + resourceUrl
+
+    var header = {
+      'Content-Type': 'application/json',
+      'X-Gravitee-Api-Key': apiDataMap[splitArray[2]][1]
+    }
+    
+    axios({
+        method: "POST",
+        url: apiUrl,
+        data: req.body,
+        headers: header
+      }).then(function (response) {
+        res.json(response.data);
+      }).catch(function(error) {
+        // handle error
+        console.log(error)
+        if (error.response) {
+          res.status(error.response.status).send(error.response.data)
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          res.status(400).send(error)
+        }
+      });
+  } else {
+    res.status(401).send("Unauthorized");    
   }
-
-  const splitArray = req.url.split("/")
-  const resourceUrl = splitArray.slice(3).join('/')
-  const apiUrl = apiDataMap[splitArray[2]][0] + '/' + resourceUrl
-
-  var header = {
-    'Content-Type': 'application/json',
-    'X-Gravitee-Api-Key': apiDataMap[splitArray[2]][1]
-  }
-  
-  axios({
-      method: "POST",
-      url: apiUrl,
-      data: req.body,
-      headers: header
-    }).then(function (response) {
-      res.json(response.data);
-    }).catch(function(error) {
-      // handle error
-      console.log(error)
-      if (error.response) {
-        res.status(error.response.status).send(error.response.data)
-      } else {
-        // Something happened in setting up the request that triggered an Error
-        res.status(400).send(error)
-      }
-    });
 })
 
 app.get('/api-proxy/*', (req, res) => {
-  
-  const apiDataMap = { 
-    datahub: [process.env.DATAHUB_API_BASE_URL, 
-              process.env.DATAHUB_APP_KEY],
-    odometros: [process.env.ACIDENTOMETROS_API_BASE_URL, 
-              process.env.ACIDENTOMETROS_APP_KEY] 
-  }
+  if (req.headers['request-source'] == 'application' && req.headers['user-agent'] && req.headers['user-agent'].toLowerCase().indexOf('postman') == -1){
+    const apiDataMap = { 
+      datahub: [process.env.DATAHUB_API_BASE_URL, 
+                process.env.DATAHUB_APP_KEY],
+      odometros: [process.env.ACIDENTOMETROS_API_BASE_URL, 
+                process.env.ACIDENTOMETROS_APP_KEY] 
+    }
 
-  const splitArray = req.url.split("/")
-  const resourceUrl = splitArray.slice(3).join('/')
-  const apiUrl = apiDataMap[splitArray[2]][0] + "/" + resourceUrl
+    const splitArray = req.url.split("/")
+    const resourceUrl = splitArray.slice(3).join('/')
+    const apiUrl = apiDataMap[splitArray[2]][0] + "/" + resourceUrl
 
-  var header = {
-    'Content-Type': 'application/json',
-  }
+    var header = {
+      'Content-Type': 'application/json',
+    }
 
-  header['X-Mpt-Api-Key'] = apiDataMap[splitArray[2]][1]  
-  
-  if (req.headers['cache-control']) {
-    header['cache-control'] = 'no-cache'
-  }
+    header['X-Mpt-Api-Key'] = apiDataMap[splitArray[2]][1]  
+    
+    if (req.headers['cache-control']) {
+      header['cache-control'] = 'no-cache'
+    }
 
-  axios({
-    method: 'get',
-    url: apiUrl,
-    responseType: 'json',
-    headers: header
-  })
-    .then(function(response) {
-      // handle success
-      res.json(response.data);
+    axios({
+      method: 'get',
+      url: apiUrl,
+      responseType: 'json',
+      headers: header
     })
-    .catch(function(error) {
-      // handle error
-      console.log(error)
-      if (error.response) {
-        res.status(error.response.status).send(error.response.data)
-      } else {
-        // Something happened in setting up the request that triggered an Error
-        res.status(400).send(error)
-      }
-    })
-});
+      .then(function(response) {
+        // handle success
+        res.json(response.data);
+      })
+      .catch(function(error) {
+        // handle error
+        console.log(error)
+        if (error.response) {
+          res.status(error.response.status).send(error.response.data)
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          res.status(400).send(error)
+        }
+      })
+    } else {
+      res.status(401).send("Unauthorized");    
+    }
+  });
 
 app.post('/register', (req, res) => {
   let urlToken = `${process.env.GRAVITEE_AM_MANAGER_BASE_URL}/auth/token`
