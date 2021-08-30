@@ -105,7 +105,15 @@
                 </v-flex>
 
                 <v-flex xs12 text-xs-center>
-                  <v-btn  small dark @click="logOut()">Sair</v-btn>
+                  <v-btn  
+                    small 
+                    class="black--text py-0"
+                    color="accent"                  
+                    @click="logOut()"
+                    light
+                  >
+                    Sair
+                  </v-btn>
                 </v-flex>
               </v-layout>
           </v-container>
