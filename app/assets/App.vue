@@ -824,7 +824,7 @@
               left 
               color="white"
             >
-              perm_identity
+              login
             </v-icon>
             Entrar
           </v-btn>
