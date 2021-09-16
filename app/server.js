@@ -241,6 +241,7 @@ app.post('/register', (req, res) => {
   let urlToken = `${process.env.GRAVITEE_AM_MANAGER_BASE_URL}/auth/token`
   let user = req.body;
   user.username = user.email;
+  user.preRegistration = true;
   user.additionalInformation ={...user.additionalInformation,lastName: user.lastName, firstName: user.firstName};
   axios.post(
       urlToken,
