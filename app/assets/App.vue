@@ -1596,8 +1596,8 @@
           ).then((response) => {
             console.log(response);
             this_.userDataDialog = false;
-            this_.snackAlert({ color : 'success', text: "Registro realizado com sucesso. Faça o login para ter acesso aos dados." });
-            this.showLoginDialog();
+            this_.snackAlert({ color : 'orange darken-4', text: "Verifique seu e-mail para confirmar o registro." });
+            // this.showLoginDialog();
           }).catch((error) => {
             console.log(error.response ? error.response.data.message : error.message);
             this_.snackAlert({ color : 'error', text: "Falha no registro do usuário. Por favor, tente novamente. Erro: '" +  (error.response ? error.response.data.message : error.message) + "'"});
