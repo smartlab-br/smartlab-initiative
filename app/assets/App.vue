@@ -452,7 +452,7 @@
           wrap
         >
           <img 
-            src="/static/smartlab/mpt-text.svg"
+            src="/static/smartlab/mpt-extended.svg"
             class="cursor-pointer mr-2" 
             alt="Ministério Público do Trabalho"
             height="40px"
@@ -471,7 +471,7 @@
             class="cursor-pointer mb-1 ml-2" 
             alt="Subsecretaria de Inspeção do Trabalho"
             height="40px"
-            @click="$navigationManager.constructor.pushRoute('https://www.gov.br/trabalho/pt-br/inspecao', true)" 
+            @click="$navigationManager.constructor.pushRoute($router, 'https://www.gov.br/trabalho/pt-br/inspecao', true)" 
           />
           <img
             src="/static/smartlab/cnmp.svg"
@@ -495,7 +495,7 @@
             alt="Fórum Nacional de Prevenção e Erradicação do Trabalho Infantil"
             max-height="80%"
             min-height="50%"
-            @click="$navigationManager.constructor.pushRoute('https://fnpeti.org.br', true)" 
+            @click="$navigationManager.constructor.pushRoute($router, 'https://fnpeti.org.br', true)" 
           />
           <img 
             v-if="currentObs == 'ti' || currentObs == 'td'"
@@ -503,7 +503,15 @@
             class="cursor-pointer mb-1 ml-0" 
             alt="Instituto Brasileiro de Geografia e Estatística"
             height="50px"
-            @click="$navigationManager.constructor.pushRoute('http:///ibge.gov.br', true)" 
+            @click="$navigationManager.constructor.pushRoute($router, 'http:///ibge.gov.br', true)" 
+          />
+          <img 
+            v-if="currentObs == 'ti'"
+            src="/static/smartlab/mcidadania.png"
+            class="cursor-pointer mb-1 ml-0" 
+            alt="Ministério da Cidadania"
+            height="50px"
+            @click="$navigationManager.constructor.pushRoute($router, 'https://www.gov.br/cidadania/pt-br', true)" 
           />
           <img 
             v-if="currentObs == 'des'"
@@ -512,7 +520,7 @@
             alt="Pacto Global - Rede Brasil"
             max-height="80%"
             min-height="50%"
-            @click="$navigationManager.constructor.pushRoute('https://www.pactoglobal.org.br', true)" 
+            @click="$navigationManager.constructor.pushRoute($router, 'https://www.pactoglobal.org.br', true)" 
           />
           <img 
             v-if="currentObs == 'des'"
@@ -520,7 +528,7 @@
             class="cursor-pointer ml-2" 
             alt="ONU Mulheres"
             height="20px" 
-            @click="$navigationManager.constructor.pushRoute('http://www.onumulheres.org.br/', true)" 
+            @click="$navigationManager.constructor.pushRoute($router, 'http://www.onumulheres.org.br/', true)" 
           />
         </v-layout>       
       </v-flex>
