@@ -506,6 +506,14 @@
             @click="$navigationManager.constructor.pushRoute('http:///ibge.gov.br', true)" 
           />
           <img 
+            v-if="currentObs == 'ti'"
+            src="/static/smartlab/mcidadania.png"
+            class="cursor-pointer mb-1 ml-0" 
+            alt="Ministério da Cidadania"
+            height="50px"
+            @click="$navigationManager.constructor.pushRoute('https://www.gov.br/cidadania/pt-br', true)" 
+          />
+          <img 
             v-if="currentObs == 'des'"
             src="/static/smartlab/pacto.svg"
             class="cursor-pointer mb-1 ml-0" 
