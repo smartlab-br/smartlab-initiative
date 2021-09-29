@@ -452,7 +452,7 @@
           wrap
         >
           <img 
-            src="/static/smartlab/mpt-text.svg"
+            src="/static/smartlab/mpt-extended.svg"
             class="cursor-pointer mr-2" 
             alt="Ministério Público do Trabalho"
             height="40px"
