@@ -64,6 +64,16 @@
 
                 <v-flex pt-2 pb-0 xs6>
                   <v-text-field 
+                    v-model="userData.occupation"
+                    class="py-0"
+                    label="Profissão"
+                    readonly
+                    dark
+                  />
+                </v-flex>
+
+                <v-flex pt-2 pb-0 xs6>
+                  <v-text-field 
                     v-model="userData.institution"
                     class="py-0"
                     label="Instituição"
@@ -72,32 +82,31 @@
                   />
                 </v-flex>
 
+                <v-flex pt-2 pb-0 xs6>
+                  <v-text-field 
+                    v-model="userData.institution_website"
+                    class="py-0"
+                    label="Site da instituição"
+                    readonly
+                    dark
+                  />
+                </v-flex>
+
                 <v-flex pt-2 pb-0 xs12>
                   <v-text-field 
-                    v-model="userData.researcher_type"
+                    v-model="userData.research_field"
                     class="py-0"
-                    label="Tipo de Instituição/Pesquisador"
+                    label="Área de pesquisa"
                     readonly
                     dark
                   />
                 </v-flex>
 
-                <v-flex pt-2 pb-0 xs12 md6>
-                  <v-textarea 
-                    v-model="userData.project"
-                    class="py-0"
-                    label="Projeto"
-                    rows=3
-                    readonly
-                    dark
-                  />
-                </v-flex>
-
-                <v-flex pt-2 pb-0 xs12 md6>
+                <v-flex pt-2 pb-0 xs12>
                   <v-textarea 
                     v-model="userData.research"
                     class="py-0"
-                    label="Descrição da pesquisa"
+                    label="Pesquisa"
                     rows=3
                     readonly
                     dark

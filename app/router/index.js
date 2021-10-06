@@ -74,6 +74,7 @@ export function createRouter () {
         route('/covid/embreve', 'ObservatorioEmBreve'),
 
         route('/perfil', 'Perfil'),
+        route('/cadastro', 'Cadastro'),
 
         // Provisórias
         route('/mapa/:nmIndicador', 'Mapa'),
