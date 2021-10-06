@@ -98,5 +98,10 @@
     "title": "Smartlab - Perfil",
     "description": "Perfil",
     "keywords": "perfil"
+  },
+  "cadastro": {
+    "title": "Smartlab - Cadastro",
+    "description": "Cadastro",
+    "keywords": "cadastro"
   }
 }
