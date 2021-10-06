@@ -383,7 +383,8 @@ import axios from 'axios'
             console.log(response);
             this_.notificationDialog = false;
             this_.snackAlert({ color : 'blue darken-1', text: "Dados enviados. Verifique seu e-mail para confirmar o registro." });
-            this.$refs.userDataForm.reset()
+            this.$refs.userDataForm.reset();
+            this.handleBackToHome();
           }).catch((error) => {
             console.log(error.response ? error.response.data.message : error.message);
             this_.snackAlert({ color : 'error', text: "Falha no registro do usuário. Por favor, tente novamente. Erro: '" +  (error.response ? error.response.data.message : error.message) + "'"});
@@ -416,5 +417,8 @@ import axios from 'axios'
 }
 .important-notes{
   font-size: 0.85rem;;
+}
+.theme--dark span{
+    color: white !important;
 }
 </style>
