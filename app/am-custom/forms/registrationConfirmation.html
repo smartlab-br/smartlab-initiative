@@ -41,7 +41,7 @@ a{
                 <label>Falha na confirmação do registro.</label>
                 <div th:if="${error} != 'invalid_token'">
                 <p>Por favor tente mais tarde.</p>
-                  <p><b>Erro:</b> <span th:text="${error}" class="error"></span></p>
+                  <p><strong>Erro:</strong> <span th:text="${error}" class="error"></span></p>
                 </div>
                 <div th:if="${error} == 'invalid_token'">
                 <p>O link de confirmação expirou.</p>

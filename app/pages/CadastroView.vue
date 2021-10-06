@@ -23,13 +23,6 @@
           <v-container grid-list-md>
               <v-layout row wrap align-center>
                 <v-flex py-0 xs12>
-                  <!-- <v-card>
-                    <v-card-title 
-                    class="headline-obs py-1"
-                    >
-                    Registro do usuário
-                    </v-card-title>
-                    <v-card-text py-1> -->
                     <v-form 
                         ref="userDataForm" 
                         v-model="valid"
@@ -202,7 +195,7 @@
                             pb-0 
                             xs12
                             >                
-                            <p class="important-notes"><b>IMPORTANTE</b><br/>
+                            <p class="important-notes"><strong>IMPORTANTE</strong><br/>
                             Ao submeter o formulário, você concorda em respeitar todas as condições de uso, entre elas a de não redistribuir o conteúdo obtido. <br/>
                             Cada potencial usuário deverá submeter sua própria solicitação. <br/>
                             As informações aqui publicadas podem ser utilizadas em veículos como artigos científicos, jornais, relatórios e análogos sem fins comerciais. <br/>
@@ -238,8 +231,6 @@
                         </v-layout>
                         </v-container>
                     </v-form>
-                    <!-- </v-card-text>
-                </v-card> -->
                 </v-flex>
 
                 <v-dialog 
@@ -393,7 +384,6 @@ import axios from 'axios'
             this_.notificationDialog = false;
             this_.snackAlert({ color : 'blue darken-1', text: "Dados enviados. Verifique seu e-mail para confirmar o registro." });
             this.$refs.userDataForm.reset()
-            // this.showLoginDialog();
           }).catch((error) => {
             console.log(error.response ? error.response.data.message : error.message);
             this_.snackAlert({ color : 'error', text: "Falha no registro do usuário. Por favor, tente novamente. Erro: '" +  (error.response ? error.response.data.message : error.message) + "'"});
@@ -407,9 +397,6 @@ import axios from 'axios'
   }
 </script>
 <style>
- .social-access-badge {
-   margin-top: 15px;
- }
  .notification-dialog {
     background-color: #212121;
  }
