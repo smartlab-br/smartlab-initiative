@@ -40,7 +40,7 @@
                       :items="items_site"
                       :search="search_site"
                       :open.sync="open"
-                      :filter="customFilter"
+                      :filter="searchFilter"
                     >
                       <template slot="label" slot-scope="{ item }">
                         <v-layout row>
@@ -221,7 +221,7 @@
         
         search_site: "",
         items_site: [],
-        open: [1, 2]
+        open: [1, 2],
 
       }
     },
@@ -369,7 +369,7 @@
         }
         return text;
       },
-      customFilter(item, search, textKey){
+      searchFilter(item, search, textKey){
         let queryText = this.$textTransformService.replaceSpecialCharacters(search).toLowerCase();
         let itemText = this.$textTransformService.replaceSpecialCharacters(item.search_text).toLowerCase();
         return itemText.indexOf(queryText) > -1;
