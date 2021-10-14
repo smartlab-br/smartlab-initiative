@@ -1,34 +1,36 @@
 <template>
-  <v-layout row wrap class="pa-0">
+  <v-layout 
+    row
+    wrap 
+    class="pa-0"
+  >
     <!-- Nome do município + UF -->
-    <v-container fluid grid-list-lg xs12 overflow-hidden class="first-section pa-0" :style="displayHeight">
-      <v-layout xs12 class="bg-zoom" height="auto" :style="currentParallax" v-if="customParams.cd_uf"></v-layout>
-      <v-layout xs12 class="bg-shadow ma-0"></v-layout>
-      <v-layout row wrap class="parallax-content" v-if="dimensao_ativa">
-        <!-- Menu para cada dimensao -->
-        <!--
-        <v-flex xs12 class="justify-bottom pa-0 dim-menu">
-          <v-bottom-nav :value="true" :active.sync="dimensao_ativa.id"
-            class="pa-3 toolbar" shift style="height:auto; opacity:0.75;">
-            <v-layout row wrap justify-center>
-              <v-flex text-xs-center column 
-                v-on:click="changeDim(dimensao.id, idLocalidade, idObservatorio)"
-                :class="getGridPositionDimensao(dimensao, dimIndx)"
-                v-for="(dimensao, dimIndx) in dimensoes" :key="dimensao.id">
-                <v-tooltip bottom>
-                  <v-layout pa-2 column slot="activator">
-                    <v-icon dark 
-                      :color="dimensao.id == dimensao_ativa.id ? 'accent' : ''">
-                      {{ dimensao.icon }}
-                    </v-icon>
-                  </v-layout>
-                  {{ dimensao.short_desc }}
-                </v-tooltip>
-              </v-flex>
-            </v-layout>
-          </v-bottom-nav>
-        </v-flex>
-        -->
+    <v-container 
+      fluid 
+      grid-list-lg 
+      xs12 
+      overflow-hidden 
+      class="first-section pa-0" 
+      :style="displayHeight"
+    >
+      <v-layout 
+        v-if="customParams.cd_uf"
+        xs12 
+        class="bg-zoom" 
+        height="auto" 
+        :style="currentParallax" 
+      >
+      </v-layout>
+      <v-layout 
+        xs12 
+        class="bg-shadow ma-0"
+      ></v-layout>
+      <v-layout 
+        v-if="dimensao_ativa"
+        row 
+        wrap 
+        class="parallax-content" 
+      >
         <!-- Menu para cada dimensao - tabs -->
         <v-flex xs12 class="justify-bottom pa-0 dim-menu">
           <v-tabs
@@ -37,32 +39,54 @@
             v-model="dimensao_ativa_id"
             show-arrows
             grow
-            dark>
+            dark
+          >
             <v-tabs-slider></v-tabs-slider>
             <!-- Headers -->
             <v-tab 
               v-for="dimensao in dimensoes" 
               :key="dimensao.id" 
               :href="'#'+dimensao.id"
-              v-on:click="changeDim(dimensao.id, idLocalidade, idObservatorio)"
               ripple
-              class="caption-obs px-3">
+              class="caption-obs px-3"
+              @click="changeDim(dimensao.id, idLocalidade, idObservatorio)"
+            >
                {{ dimensao.short_desc }}
             </v-tab>
           </v-tabs>
         </v-flex>        
-        <v-flex column pt-1 px-5 xs12 >
-          <v-flex v-if="ind_principais && ind_principais.length == 0 && localidade != null" class="text-xs-center pa-0">
-            <v-progress-circular indeterminate color="primary"></v-progress-circular>        
+        <v-flex 
+          column 
+          pt-1 
+          px-5 
+          xs12 
+        >
+          <v-flex 
+            v-if="ind_principais && ind_principais.length == 0 && localidade != null" 
+            class="text-xs-center pa-0"
+          >
+            <v-progress-circular 
+              indeterminate 
+              color="primary"
+            ></v-progress-circular>        
           </v-flex>
           <v-flex pt-5></v-flex>
-          <v-flex id="screenTitle" class="white--text text-xs-center pa-5 line-height-1">
+          <v-flex 
+            id="screenTitle" 
+            class="white--text text-xs-center pa-5 line-height-1"
+          >
             <div class="display-3-obs">
                 {{ localidade != null ? localidade.nm_localidade : '' }}
-                <v-tooltip v-if="presentation" bottom class="icon-vertical-align-middle">
-                  <v-icon color="accent"
+                <v-tooltip 
+                  v-if="presentation" 
+                  bottom 
+                  class="icon-vertical-align-middle"
+                >
+                  <v-icon 
+                    color="accent"
                     class="pb-1"
-                    slot="activator">
+                    slot="activator"
+                  >
                     info
                   </v-icon>
                   <flpo-text-builder
@@ -71,36 +95,62 @@
                     :structure="presentation">
                   </flpo-text-builder>
                 </v-tooltip>
-                <!--
-                <span class="icon-vertical-align-middle">
-                  <v-icon :color="isFavorite ? 'amber' : 'grey'"
-                    class="pb-1"
-                    v-on:click="toggleFavorite">
-                    star
-                  </v-icon>
-                </span>
-                -->
             </div>
-            <v-layout pa-1 justify-center class="subheading master-indicator" v-if="masterIndicator" v-html="masterIndicator">
+            <v-layout 
+              v-if="masterIndicator" v-html="masterIndicator"
+              pa-1 
+              justify-center 
+              class="subheading master-indicator" 
+            >
             </v-layout>
-            <v-layout justify-center v-if='idLocalidade != 0'>
-              <v-btn small class="accent--text" color="transparent"
-                @click.native="openCompareDialog()">
+            <v-layout 
+              justify-center 
+              v-if='idLocalidade != 0'
+            >
+              <v-btn 
+                small 
+                class="accent--text" 
+                color="transparent"
+                @click.native="openCompareDialog()"
+              >
                 <v-icon left>add</v-icon>
                 Comparar
               </v-btn>
             </v-layout>
-            <div class="display-2-obs pt-3" v-html="dimensao_ativa != null ? (dimensao_ativa.title != null ? dimensao_ativa.title : dimensao_ativa.label) : ''">
+            <div 
+              class="display-2-obs pt-3" 
+              v-html="dimensao_ativa != null ? (dimensao_ativa.title != null ? dimensao_ativa.title : dimensao_ativa.label) : ''"
+            >
             </div>
           </v-flex>
-          <!-- <div v-if="localidade !== null && localidade.tipo !== null" class="display-1-obs white--text text-xs-center pb-5">
-            {{ currentContext }}
-          </div> -->
-          <v-layout row wrap justify-center pt-4>
-            <v-flex white--text subheading xs12 md4 lg3 :class="{'px-3': $vuetify.breakpoint.mdAndDown, 'px-4': $vuetify.breakpoint.lgAndUp}" v-html="dimensao_ativa.description">
+          <v-layout 
+            row 
+            wrap 
+            justify-center 
+            pt-4
+          >
+            <v-flex 
+              white--text 
+              subheading 
+              xs12 
+              md4 
+              lg3 
+              :class="{'px-3': $vuetify.breakpoint.mdAndDown, 'px-4': $vuetify.breakpoint.lgAndUp}" 
+              v-html="dimensao_ativa.description"
+            >
             </v-flex>
-            <v-flex text-xs-center xs12 md3 :class="{'px-3': $vuetify.breakpoint.mdAndDown, 'px-4': $vuetify.breakpoint.lgAndUp}" >
-              <v-layout v-if="dimParamsLoaded && ind_principais && ind_principais.length > 0 && unlockLoading" row wrap justify-center>
+            <v-flex 
+              text-xs-center 
+              xs12 
+              md3 
+              :class="{'px-3': $vuetify.breakpoint.mdAndDown, 'px-4': $vuetify.breakpoint.lgAndUp}" 
+            >
+              <v-layout 
+                v-if="dimParamsLoaded && ind_principais && ind_principais.length > 0 && unlockLoading" 
+                row 
+                wrap 
+                justify-center
+              >
                 <flpo-minicard
                   v-for="(miniCardPrincipal, indexMinicardsPrincipal) in ind_principais"
                   :key="'minicard_principal_'+indexMinicardsPrincipal"
@@ -110,15 +160,33 @@
                 </flpo-minicard>
               </v-layout>
             </v-flex>
-            <v-flex xs12 md4 lg3 :class="{'px-3': $vuetify.breakpoint.mdAndDown, 'px-4': $vuetify.breakpoint.lgAndUp}">
-              <v-flex pt-0 column wrap v-if="sections && sections.length > 0" > 
-                <v-flex v-for="(cardLink, cardLinkIndx) in cardLinks"
-                  :key="cardLink.id ? cardLink.id : ('sec' + cardLinkIndx)" py-0>
-                  <!--<v-icon color="accent">arrow_right</v-icon>-->
-                  <a v-if="cardLink.id" class="accent--text subheading" v-on:click="scrollTo('anchor_' + cardLink.id)">
+            <v-flex 
+              xs12 
+              md4 
+              lg3 
+              :class="{'px-3': $vuetify.breakpoint.mdAndDown, 'px-4': $vuetify.breakpoint.lgAndUp}"
+            >
+              <v-flex 
+                v-if="sections && sections.length > 0" 
+                pt-0 
+                column 
+                wrap 
+              > 
+                <v-flex 
+                  v-for="(cardLink, cardLinkIndx) in cardLinks"
+                  :key="cardLink.id ? cardLink.id : ('sec' + cardLinkIndx)" 
+                  py-0
+                >
+                  <a 
+                    v-if="cardLink.id" class="accent--text subheading" 
+                    @click="scrollTo('anchor_' + cardLink.id)"
+                  >
                     <span class='card-title-bullet accent--text'>&#9679;</span> {{ cardLink.title }}
                   </a>
-                  <div v-else :class="cardLinkIndx != 0 ? 'pt-2 title-obs white--text':'title-obs white--text'">
+                  <div 
+                    v-else 
+                    :class="cardLinkIndx != 0 ? 'pt-2 title-obs white--text':'title-obs white--text'"
+                  >
                     {{ cardLink.title }}
                   </div>
                 </v-flex>
@@ -129,37 +197,61 @@
       </v-layout>
     </v-container>
     <!-- Indicadores principais: Empregadores, Vínculos Formais, Municípios, Estabelecimentos, % MEI e EPPs -->
-    <v-container fluid  xs12  class="pa-0 ma-0">
-      <v-layout v-if="dimParamsLoaded && sections && sections.length > 0" class="bg-page grey lighten-2" column pa-0 ma-0>
-        <v-layout v-for="(secao, indexSecao) in sections"  
+    <v-container 
+      fluid  
+      xs12  
+      class="pa-0 ma-0"
+    >
+      <v-layout 
+        v-if="dimParamsLoaded && sections && sections.length > 0" class="bg-page grey lighten-2" 
+        column 
+        pa-0 
+        ma-0
+      >
+        <v-layout 
+          v-for="(secao, indexSecao) in sections"  
           :key="secao.id"
-          row wrap>
-          <v-layout column :id="secao.id" :style="'background-color:' + $colorsService.constructor.assessZebraBG(indexSecao, $vuetify.theme) + ';'">
+          row 
+          wrap
+        >
+          <v-layout 
+            column 
+            :id="secao.id" 
+            :style="'background-color:' + $colorsService.constructor.assessZebraBG(indexSecao, $vuetify.theme) + ';'">
             <v-flex xs12>
               <div
-                :class="'display-2-obs pt-5 pb-3  ml-5 pl-3 font-weight-bold ' + $colorsService.constructor.assessZebraTitle(indexSecao, $vuetify.theme)">
+                :class="'display-2-obs pt-5 pb-3  ml-5 pl-3 font-weight-bold ' + $colorsService.constructor.assessZebraTitle(indexSecao, $vuetify.theme)"
+              >
                 {{ secao.name }}
               </div>
             </v-flex>
-            <!-- <v-container fluid grid-list-md py-0>
-              <v-layout row wrap align-end justify-center>
-                <flpo-leadcard v-if="secao.indicadores.length > 0" 
-                  v-for="(secindicador, indx) in secao.indicadores"
-                  :key="indx"
-                  :structure="secindicador"
-                  :customParams="customParams"
-                  :customFunctions="custom_functions">
-                </flpo-leadcard>
-              </v-layout>
-            </v-container> -->
-            <v-container fluid grid-list-lg py-2 px-1>
-              <v-layout column v-if="unlockLoading && secao.cards && secao.cards.length > 0 && customParams.localidade">
-                <v-flex xs12 
+            <v-container 
+              fluid 
+              grid-list-lg 
+              py-2 
+              px-1
+            >
+              <v-layout 
+                v-if="unlockLoading && secao.cards && secao.cards.length > 0 && customParams.localidade"
+                column 
+              >
+                <v-flex 
                   v-for="(card, cardIndex) in secao.cards"
-                  :key="card.id">
-                  <v-layout :id="'anchor_' + card.id" ma-0 pa-0
-                    :style="card.type != 'headline' && card.type != 'text' && card.type != 'presentation' ? 'min-height:500px;': ''">
-                    <v-layout v-if="card.type && (card.type == 'text' || card.type == 'presentation')" :id="card.id" px-4 pb-4>
+                  :key="card.id"
+                  xs12 
+                >
+                  <v-layout 
+                    :id="'anchor_' + card.id" 
+                    :style="card.type != 'headline' && card.type != 'text' && card.type != 'presentation' ? 'min-height:500px;': ''"
+                    ma-0 
+                    pa-0
+                  >
+                    <v-layout 
+                      v-if="card.type && (card.type == 'text' || card.type == 'presentation')" 
+                      :id="card.id" 
+                      px-4 
+                      pb-4
+                    >
                       <flpo-composite-text
                         :structure="card.description"
                         :custom-params = "customParams"
@@ -168,10 +260,15 @@
                         @showSnackbar="snackAlert">
                       </flpo-composite-text>
                     </v-layout>
-                    <v-layout v-else-if="card.type && card.type == 'headline'"
-                      pt-5 pb-3 ml-5 pl-2
+                    <v-layout 
+                      v-else-if="card.type && card.type == 'headline'"
                       :class="'display-2-obs font-weight-bold ' + $colorsService.constructor.assessZebraTitle(indexSecao, $vuetify.theme)"
-                      v-html="card.title.fixed">
+                      pt-5 
+                      pb-3 
+                      ml-5 
+                      pl-2
+                      v-html="card.title.fixed"
+                    >
                     </v-layout>
                     <flpo-story-card-autofill
                       v-else-if="card.autoFill && topology && ((indexSecao*100) + cardIndex <= visibleCardMaxIndex)"
@@ -213,8 +310,17 @@
       </v-layout>
     </v-container>
     <!-- Navegação lateral em dots pelos dimensoes e seções -->
-    <flpo-dot-nav :sections="sections"></flpo-dot-nav>
-    <v-layout  v-if="!unlockLoading" align-center justify-center row fill-height class= "loadingPanel">
+    <flpo-dot-nav 
+      :sections="sections"
+    ></flpo-dot-nav>
+    <v-layout  
+      v-if="!unlockLoading" 
+      align-center 
+      justify-center 
+      row 
+      fill-height 
+      class= "loadingPanel"
+    >
       <v-progress-circular
         :size="120"
         :width="8"
@@ -223,46 +329,72 @@
         Carregando dados
       </v-progress-circular>
     </v-layout>
-    <v-dialog width="500px" v-model="compareDialog">
-        <v-card>
-          <v-card-title class="headline-obs">Comparar com:</v-card-title>
-          <v-card-text>
-          <v-layout align-right row wrap>
+    <v-dialog 
+      width="500px" 
+      v-model="compareDialog"
+    >
+      <v-card>
+        <v-card-title 
+          class="headline-obs"
+        >
+          Comparar com:
+        </v-card-title>
+        <v-card-text>
+          <v-layout 
+            align-right 
+            row 
+            wrap
+          >
             <v-flex xs12>
               <v-autocomplete
                 v-if="auOptions.length > 0"
-                :items="computedSearchItems"
-                persistent-hint
                 v-model="idLocalidade_compare"
-                item-text="label"
+                :items="computedSearchItems"
                 :placeholder="localidade ? localidade.scope: ''"
-                item-value="id"
                 :filter="customFilter"
-                @blur="idLocalidade_compare = null"
+                persistent-hint
+                item-text="label"
+                item-value="id"
                 class="input-group--focused global-search"
-                return-object>
-                <template slot="item" slot-scope="data">
-                  <template v-if="auOptions.length < 2">
+                return-object
+                @blur="idLocalidade_compare = null"
+              >
+                <template 
+                  slot="item" 
+                  slot-scope="data"
+                >
+                  <template 
+                    v-if="auOptions.length < 2"
+                  >
                     <v-list-tile-content>
-                      <v-progress-circular :size="20" indeterminate color="primary">
+                      <v-progress-circular 
+                        :size="20" 
+                        indeterminate 
+                        color="primary"
+                      >
                       </v-progress-circular>
                     </v-list-tile-content>
                   </template>
                   <template v-else>
-                    <!--<v-list-tile-avatar>
-                      <v-icon>{{ data.item.icon }}</v-icon>
-                    </v-list-tile-avatar>-->
                     <v-list-tile-content>
-                      <v-list-tile-title v-html="data.item.label"></v-list-tile-title>
-                      <!--<v-list-tile-sub-title v-html="data.item.detail"></v-list-tile-sub-title>-->
+                      <v-list-tile-title 
+                        v-html="data.item.label"
+                      ></v-list-tile-title>
                     </v-list-tile-content>
                   </template>
                 </template>  
               </v-autocomplete>
             </v-flex>
-            <v-flex xs12 text-xs-right>
-              <v-btn small class="theme--light" color="accent"
-                @click.native="compareDialog = false">
+            <v-flex 
+              xs12 
+              text-xs-right
+            >
+              <v-btn 
+                small 
+                class="theme--light" 
+                color="accent"
+                @click.native="compareDialog = false"
+              >
                 <v-icon left>close</v-icon>
                 Fechar
               </v-btn>
@@ -677,7 +809,8 @@
    
     created () {
       let tmpIdObs = this.$observatories.constructor.identifyObservatory(this.$route.path.split('/')[1]);
-      
+      this.idObservatorio = tmpIdObs;
+
       this.$yamlFetcherService.loadYaml("br/observatorio/" + tmpIdObs)
         .then((result) => { 
           let scope = this.getEscopo(this.$route.params.idLocalidade);
@@ -734,6 +867,13 @@
       },
       localidade: function(){
         this.$emit('alterMiddleToolbar', { "localidade": this.localidade });
+      },
+      unlockLoading: function(newVal){
+        if (newVal){
+          if (this.$route.hash){
+            this.scrollTo('anchor_' + this.$route.hash.replace('#',''))
+          }
+        }
       }
     },
     computed: {
@@ -841,7 +981,6 @@
         let tmpIdObs = this.$observatories.constructor.identifyObservatory(this.$route.path.split('/')[1]);
         this.$dimensions.getDimensions(tmpIdObs)
           .then((result) => this.setSiblingDimensions(result));
-        this.idObservatorio = tmpIdObs;
 
         // this.$yamlFetcherService.loadYaml("br/autocard").then((result) => { this.customParams.deck = result; });
 
@@ -1248,9 +1387,14 @@
       },
 
       scrollTo(anchor) {
-        var el = this.$el.querySelector("#" + anchor);
-        el.scrollIntoView();
-        window.scrollBy(0,-120);
+        let el = this.$el.querySelector("#" + anchor);
+        if (el) {
+          el.scrollIntoView();
+          window.scrollBy(0,-120);
+        } else {
+          console.log("scrollTo não funcionou. Elemento de id '"+ anchor +"' não existe.")
+        }
+
       },
 
       changeDim(idDimensao, idLocalidade, idObservatorio) {

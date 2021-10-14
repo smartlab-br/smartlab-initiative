@@ -76,6 +76,8 @@ export function createRouter () {
         route('/perfil', 'Perfil'),
         route('/cadastro', 'Cadastro'),
 
+        route('/mapasite', 'MapaSite'),
+
         // Provisórias
         route('/mapa/:nmIndicador', 'Mapa'),
         // Global redirect for 404
