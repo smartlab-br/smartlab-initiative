@@ -677,7 +677,8 @@
    
     created () {
       let tmpIdObs = this.$observatories.constructor.identifyObservatory(this.$route.path.split('/')[1]);
-      
+      this.idObservatorio = tmpIdObs;
+
       this.$yamlFetcherService.loadYaml("br/observatorio/" + tmpIdObs)
         .then((result) => { 
           let scope = this.getEscopo(this.$route.params.idLocalidade);
@@ -734,6 +735,13 @@
       },
       localidade: function(){
         this.$emit('alterMiddleToolbar', { "localidade": this.localidade });
+      },
+      unlockLoading: function(newVal){
+        if (newVal){
+          if (this.$route.hash){
+            this.scrollTo('anchor_' + this.$route.hash.replace('#',''))
+          }
+        }
       }
     },
     computed: {
@@ -841,7 +849,6 @@
         let tmpIdObs = this.$observatories.constructor.identifyObservatory(this.$route.path.split('/')[1]);
         this.$dimensions.getDimensions(tmpIdObs)
           .then((result) => this.setSiblingDimensions(result));
-        this.idObservatorio = tmpIdObs;
 
         // this.$yamlFetcherService.loadYaml("br/autocard").then((result) => { this.customParams.deck = result; });
 
@@ -1248,9 +1255,14 @@
       },
 
       scrollTo(anchor) {
-        var el = this.$el.querySelector("#" + anchor);
-        el.scrollIntoView();
-        window.scrollBy(0,-120);
+        let el = this.$el.querySelector("#" + anchor);
+        if (el) {
+          el.scrollIntoView();
+          window.scrollBy(0,-120);
+        } else {
+          console.log("scrollTo não funcionou. Elemento de id '"+ anchor +"' não existe.")
+        }
+
       },
 
       changeDim(idDimensao, idLocalidade, idObservatorio) {

@@ -963,6 +963,11 @@
               short_title: "Perfil",
               title: "Perfil"
             };
+          } else if (this.$route.path.indexOf("mapasite") != -1){ //Mapa do Site
+            observ = {
+              short_title: "Mapa do Site",
+              title: "Mapa do Site"
+            };
           } else if (this.$route.path.indexOf("saibamais") != -1){ //Sobre
             observ = {
               short_title: "Sobre",
