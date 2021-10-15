@@ -24,7 +24,7 @@ def struct_to_yaml(file_path, struct):
 def get_indicator(datasource, cd_indicador):
     api_key = os.environ['DATAHUB_APP_KEY']
     api_url = os.environ['DATAHUB_API_BASE_URL']
-    headers= {'X-Mpt-Api-Key': api_key,
+    headers = {'X-Mpt-Api-Key': api_key,
                       'Content-Type':'application/json'
                      }
     if ((datasource == 'estadicmunic') or (datasource == 'estadicuf')):
@@ -118,7 +118,7 @@ def generate_structure(view_conf_path):
     return obs_dim
 
 try:
-    view_conf_path =  str(pathlib.Path().resolve()).replace('scripts','app') + '\\static\\smartlab-initiative-viewconf\\br'    
+    view_conf_path =  str(pathlib.Path().resolve()).replace('scripts','app') + '\\static\\smartlab-initiative-viewconf\\br'   
     struct = generate_structure(view_conf_path)
     file_path = view_conf_path + "\\mapa_site.yaml"
     struct_to_yaml(file_path, struct)
