@@ -7,8 +7,77 @@
       <v-layout xs12 class="bg-home-shadow ma-0"></v-layout>
       <v-layout row wrap fill-height align-center justify-center pa-0 class="parallax-content-home">
         <v-flex id="screenTitle" xs12 class="white--text text-xs-center py-4 my-5" style="line-height: normal;">
-          <div class="display-4-obs ubuntu">Iniciativa SmartLab</div>
-          <div class="display-1-obs ubuntu-condensed">Promoção do Trabalho Decente Guiada por Dados</div>
+          <v-layout row wrap justify-center>
+            <v-flex xs12>
+              <div class="display-4-obs ubuntu">Iniciativa SmartLab</div>
+            </v-flex>
+            <v-flex xs12>
+              <div class="display-1-obs ubuntu-condensed">Promoção do Trabalho Decente Guiada por Dados</div>
+            </v-flex>
+            <v-flex xs10 md4 pa-3>
+              <v-menu 
+                allow-overflow
+                offset-y
+                dark
+              >
+                <template slot="activator" slot-scope="{ on }">
+                  <v-text-field
+                    ref="searchText"
+                    v-model="search_site"
+                    label="Pesquisar no site"
+                    dark
+                    solo-inverted
+                    append-icon="search"
+                    v-on="on"
+                    @input="handleSearch"
+                    @keyup.enter="on.click"
+                  ></v-text-field>
+                </template>
+                <v-card dark>
+                  <v-card-text>
+                    <v-treeview
+                      ref="tree"
+                      :items="items_site"
+                      :search="search_site"
+                      :open.sync="open"
+                      :filter="searchFilter"
+                    >
+                      <template slot="label" slot-scope="{ item }">
+                        <v-layout row>
+                          <v-flex shrink pr-2>
+                            <app-icon 
+                              v-if="item.type == 'observatorio'" 
+                              :icon="item.app_icon"
+                              size="16" 
+                              :fill="'white'"
+                            />
+                            <v-icon 
+                              v-else-if="item.type == 'dimensao'"
+                            >
+                            view_list
+                            </v-icon>
+                            <v-icon 
+                              v-else
+                            >
+                            article
+                            </v-icon>
+                          </v-flex>
+                          <v-flex v-if="item.type == 'observatorio'" grow>
+                            <a @click="goToItem(item.url)" class="white--text">{{ $vuetify.breakpoint.smAndDown ? item.short_title : item.name }}</a>
+                          </v-flex>
+                          <v-flex v-else grow>
+                            <a @click="goToItem(item.url)" class="white--text">{{ item.name }}</a>
+                          </v-flex>
+                        </v-layout>
+                      </template>            
+                    </v-treeview>
+                  </v-card-text>
+                </v-card>
+              </v-menu>
+            </v-flex>
+          </v-layout>
+          <div >
+          </div>
         </v-flex>
         <v-layout px-5 :class="{'justify-center': $vuetify.breakpoint.xlOnly }" row wrap v-show="observatorios">
           <v-flex 
@@ -148,11 +217,20 @@
         parallaxFile: null,
         idParallaxfile: 0,
         background_images: [],
-        backgroundVisible: true
+        backgroundVisible: true,
         
+        search_site: "",
+        items_site: [],
+        open: [1, 2],
+
       }
     },
     created () {
+
+      this.$yamlFetcherService.loadYaml("br/mapa_site")
+        .then((result) => { 
+          this.items_site = result;
+        });
       
       let tmpObs = this.$observatories.getObservatories();
 
@@ -290,6 +368,26 @@
           text = text.replace("<br/>"," ");
         }
         return text;
+      },
+      searchFilter(item, search, textKey){
+        let queryText = this.$textTransformService.replaceSpecialCharacters(search).toLowerCase();
+        let itemText = this.$textTransformService.replaceSpecialCharacters(item.search_text).toLowerCase();
+        return itemText.indexOf(queryText) > -1;
+      },
+
+      handleSearch(input) {
+        if (input) {
+          this.$refs.tree.updateAll(true)
+        } else {
+          this.$refs.tree.updateAll(false)
+        }
+      },
+      goToItem(url){
+        if (url.indexOf('{0}')){
+          url =  this.$textTransformService.replaceArgs(url, [this.$analysisUnitModel.getCurrentAnalysisUnit()]);
+        }
+
+        this.$navigationManager.constructor.pushRoute(this.$router, url, false)  
       }
     }
   }

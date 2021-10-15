@@ -150,18 +150,18 @@ class TextTransformService {
     return string;
   }
   replaceSpecialCharacters(string){
-    string = string.replace(/[áàâãä]/,"a");
-    string = string.replace(/[ÁÀÂÃÄ]/,"A");
-    string = string.replace(/[éèê]/, "e");
-    string = string.replace(/[ÉÈÊ]/, "E");
-    string = string.replace(/[íì]/, "i");
-    string = string.replace(/[ÍÌ]/, "I");
-    string = string.replace(/[óòôõö]/, "o");
-    string = string.replace(/[ÓÒÔÕÖ]/, "O");
-    string = string.replace(/[úùü]/, "u");
-    string = string.replace(/[ÚÙÜ]/, "U");
-    string = string.replace(/ç/, "c");
-    string = string.replace(/Ç/, "C");
+    string = string.replace(/[áàâãä]/g,"a");
+    string = string.replace(/[ÁÀÂÃÄ]/g,"A");
+    string = string.replace(/[éèê]/g, "e");
+    string = string.replace(/[ÉÈÊ]/g, "E");
+    string = string.replace(/[íì]/g, "i");
+    string = string.replace(/[ÍÌ]/g, "I");
+    string = string.replace(/[óòôõö]/g, "o");
+    string = string.replace(/[ÓÒÔÕÖ]/g, "O");
+    string = string.replace(/[úùü]/g, "u");
+    string = string.replace(/[ÚÙÜ]/g, "U");
+    string = string.replace(/ç/g, "c");
+    string = string.replace(/Ç/g, "C");
     return string;
   }
 }
