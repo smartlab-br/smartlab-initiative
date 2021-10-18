@@ -94,7 +94,7 @@
               alt="Smartlab"
               @click="$navigationManager.constructor.pushRoute($router, '/', false)"
               @keyup.enter="$navigationManager.constructor.pushRoute($router, '/', false)"
-            > 
+            /> 
           </v-flex>
           <v-flex 
             pr-2 
@@ -107,7 +107,7 @@
               class="cursor-pointer"
               alt="Smartlab"
               @click="$navigationManager.constructor.pushRoute($router, '/', false)" 
-            > 
+            /> 
           </v-flex>
           <v-divider 
             v-show="computedTitle" 
@@ -434,7 +434,7 @@
                 alt="Smartlab" 
                 height="25px" 
                 style="margin-bottom: -5px;"
-              >
+              />
               <span class="ml-3">Sobre</span>
             </a>
           </v-flex>
@@ -455,14 +455,14 @@
             alt="Ministério Público do Trabalho"
             height="40px"
             @click="$navigationManager.constructor.pushRoute($router, 'https://mpt.mp.br', true)" 
-          >
+          />
           <img 
             src="/static/smartlab/oit.png"
             class="cursor-pointer mr-2 ml-2" 
             alt="Organização Internacional do Trabalho"
             height="40px"
             @click="$navigationManager.constructor.pushRoute($router, 'https://ilo.org', true)" 
-          >
+          />
           <img 
             v-if="currentObs == 'te' || currentObs == 'ti'"
             src="/static/smartlab/sit.png"
@@ -470,7 +470,7 @@
             alt="Subsecretaria de Inspeção do Trabalho"
             height="40px"
             @click="$navigationManager.constructor.pushRoute($router, 'https://www.gov.br/trabalho/pt-br/inspecao', true)" 
-          >
+          />
           <img
             src="/static/smartlab/cnmp.svg"
             class="cursor-pointer mb-1 ml-2" 
@@ -478,14 +478,14 @@
             max-height="80%"
             min-height="50%"
             @click="$navigationManager.constructor.pushRoute($router, 'http://cnmp.mp.br', true)" 
-          >
+          />
           <img 
             src="/static/smartlab/mdh.png"
             class="cursor-pointer mr-2 ml-2" 
             alt="Ouvidoria Nacional dos Direitos Humanos"
             height="50px"
             @click="$navigationManager.constructor.pushRoute($router, 'https://ouvidoria.mdh.gov.br/portal', true)" 
-          >
+          />
           <img 
             v-if="currentObs == 'ti'"
             src="/static/smartlab/fnpeti.svg"
@@ -494,7 +494,7 @@
             max-height="80%"
             min-height="50%"
             @click="$navigationManager.constructor.pushRoute($router, 'https://fnpeti.org.br', true)" 
-          >
+          />
           <img 
             v-if="currentObs == 'ti' || currentObs == 'td'"
             src="/static/smartlab/ibge.png"
@@ -502,7 +502,7 @@
             alt="Instituto Brasileiro de Geografia e Estatística"
             height="50px"
             @click="$navigationManager.constructor.pushRoute($router, 'http:///ibge.gov.br', true)" 
-          >
+          />
           <img 
             v-if="currentObs == 'ti'"
             src="/static/smartlab/mcidadania.png"
@@ -510,7 +510,7 @@
             alt="Ministério da Cidadania"
             height="50px"
             @click="$navigationManager.constructor.pushRoute($router, 'https://www.gov.br/cidadania/pt-br', true)" 
-          >
+          />
           <img 
             v-if="currentObs == 'des'"
             src="/static/smartlab/pacto.svg"
@@ -519,7 +519,7 @@
             max-height="80%"
             min-height="50%"
             @click="$navigationManager.constructor.pushRoute($router, 'https://www.pactoglobal.org.br', true)" 
-          >
+          />
           <img 
             v-if="currentObs == 'des'"
             src="/static/smartlab/onumulheres.svg"
@@ -527,7 +527,7 @@
             alt="ONU Mulheres"
             height="20px" 
             @click="$navigationManager.constructor.pushRoute($router, 'http://www.onumulheres.org.br/', true)" 
-          >
+          />
         </v-layout>       
       </v-flex>
       <v-flex  
