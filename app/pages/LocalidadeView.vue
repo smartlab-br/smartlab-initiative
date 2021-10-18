@@ -871,7 +871,7 @@
       unlockLoading: function(newVal){
         if (newVal){
           if (this.$route.hash){
-            this.scrollTo('anchor_' + this.$route.hash.replace('#',''))
+            this.goToRouteHash();
           }
         }
       }
@@ -1492,8 +1492,21 @@
           this.auOptions = auOptions;
           this.compareDialog = true;
         }
-      }
+      },
 
+      goToRouteHash(){
+        let el_id = this.$route.hash.replace('#','anchor_')
+        let _this = this;
+        let i = 0;
+        let existCondition = setInterval(function() {
+          let el = _this.$el.querySelector('#' + el_id);
+          if (el || i == 30) {
+              clearInterval(existCondition);
+              _this.scrollTo(el_id)
+          }
+          i++;
+        }, 100); // check every 100ms      
+      }
       // TODO Revisar isso aqui, jogando para algum controle de preferências (App-wide) do usuário logado
       // toggleFavorite() {
       //   if (this.isFavorite) {

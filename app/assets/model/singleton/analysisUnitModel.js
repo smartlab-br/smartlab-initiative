@@ -45,7 +45,6 @@ class AnalysisUnitModel {
   }
 
   getSearchDataset() {
-    //return this.options ? this.options : [];
     if (this.isLoaded()) return this.options; // If loaded, returns the dataset
     if (!this.hasStartedLoading()) return this.buildAllSearchOptions(); // If loading hasn't been triggered, start loading an return a promise
     // If it's loading, create a promise that waits until loading is finished to continue the execution
@@ -107,7 +106,6 @@ class AnalysisUnitModel {
           callback(null);
         }
       }, error => {
-        // console.error(error.toString());
         reject("Falha ao buscar total das localidades");
       });
   }
