@@ -104,7 +104,7 @@
                                 label="Telefone de contato"
                                 required
                                 dark
-                                :rules="[userDataTextRules.required]"                      
+                                :rules="[userDataTextRules.required]"
                             />
                             </v-flex>
 
@@ -149,7 +149,7 @@
                                 label="Site da instituição"
                                 required
                                 dark
-                                :rules="[userDataTextRules.required]"                      
+                                :rules="[userDataTextRules.required, userDataTextRules.website]"                      
                             />
                             </v-flex>
 
@@ -168,6 +168,20 @@
                             />
                             </v-flex>
 
+                            <v-flex
+                            pt-2 
+                            pb-0 
+                            xs12
+                            >
+                            <v-text-field   
+                                v-model="userData.additionalInformation.project_title"
+                                class="py-0"
+                                label="Tema ou Título do Projeto, Pesquisa ou Trabalho"
+                                required
+                                dark
+                                :rules="[userDataTextRules.required]"                      
+                            />
+                            </v-flex>
                             
 
                             <v-flex
@@ -335,6 +349,10 @@ import axios from 'axios'
             const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
             return pattern.test(value) || 'E-mail inválido.'        
           },
+          website: value => {
+            const pattern = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/gm
+            return pattern.test(value) || 'Site inválido.'        
+          },
           userResearchText: value => {
             if (value) {
               var words = value.trim().split(' ')
@@ -382,7 +400,7 @@ import axios from 'axios'
           ).then((response) => {
             console.log(response);
             this_.notificationDialog = false;
-            this_.snackAlert({ color : 'blue darken-1', text: "Dados enviados. Verifique seu e-mail para confirmar o registro." });
+            this_.snackAlert({ color : 'blue darken-1', timeout: 12000, text: "Dados enviados. Seu pré-cadastro vai expirar em 10 (dez) minutos. Por favor, confirme-o por meio do link enviado ao seu e-mail." });
             this.$refs.userDataForm.reset();
             this.handleBackToHome();
           }).catch((error) => {
