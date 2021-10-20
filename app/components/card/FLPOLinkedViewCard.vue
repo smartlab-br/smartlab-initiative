@@ -160,6 +160,8 @@
 
   .bg-black-transparent-buttom {
     background-color: rgba(255, 255, 255, 0.15);
+    border: 1px solid #626262 !important;
+    border-radius:5px; 
   }
 
   .rounded-border{

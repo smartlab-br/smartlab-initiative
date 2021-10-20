@@ -14,7 +14,7 @@
             <v-flex xs12>
               <div class="display-1-obs ubuntu-condensed">Promoção do Trabalho Decente Guiada por Dados</div>
             </v-flex>
-            <v-flex xs10 md4 pa-3>
+            <v-flex xs10 md4 pt-5 mt-3>
               <v-menu 
                 allow-overflow
                 offset-y
@@ -24,16 +24,20 @@
                   <v-text-field
                     ref="searchText"
                     v-model="search_site"
-                    label="Pesquisar no site"
+                    label="Pesquisa por Tema"
                     dark
-                    solo-inverted
-                    append-icon="search"
+                    outline
+                    single-line
+                    class="search-text"
+                    prepend-inner-icon="search"
                     v-on="on"
                     @input="handleSearch"
                     @keyup.enter="on.click"
                   ></v-text-field>
                 </template>
-                <v-card dark>
+                <v-card 
+                  class="treeview-card"
+                >
                   <v-card-text>
                     <v-treeview
                       ref="tree"
@@ -48,7 +52,6 @@
                             <app-icon 
                               v-if="item.type == 'observatorio'" 
                               :icon="item.app_icon"
-                              size="16" 
                               :fill="'white'"
                             />
                             <v-icon 
@@ -406,6 +409,44 @@
     display: none;
   }
 
+  .search-text.v-input .v-input__slot {
+    border-radius: 100px;
+    background-color: var(--v-primary-base) !important;
+    opacity: 0.7;
+    text-align: center;
+    caret-color: auto;
+    border: 1px solid rgba(255,255,255,0.4) !important;
+  }
+
+  .search-text.v-input .v-input__slot .v-icon{
+    color:  rgba(255,255,255,0.4) !important;
+  }
+
+  .search-text.v-input .v-input__slot .v-label{
+    width: 100% !important;
+  }
+
+  .search-text.v-input .v-input__slot input{
+    max-width: 90% !important;
+    text-align: center;
+    color: white
+  }
+
+  .search-text.v-input--is-focused .v-input__slot {
+    border: 2px solid #ffffff !important;
+  }
+
+  .search-text.v-input--is-focused .v-input__slot .v-icon{
+    color: #ffffff !important;
+  }
+
+  .treeview-card{
+    border-radius:20px;
+    background-color: var(--v-primary-base) !important;
+    opacity: 0.9;
+    max-height: 400px;
+    overflow-y: auto;
+  }
   .radio label {
     font-family: titulos-observatorio, sans-serif !important;
     font-size: x-large;
