@@ -1200,6 +1200,7 @@
       },      
       snackAlert(params) {
         this.snack_mode = params.snack_mode || '';
+        this.snack_timeout = params.timeout || 6000;
         this.snack_color = params.color;
         this.snackText = params.text;
         this.snackbar = true;
