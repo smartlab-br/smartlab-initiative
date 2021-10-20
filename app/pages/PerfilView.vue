@@ -103,6 +103,16 @@
                 </v-flex>
 
                 <v-flex pt-2 pb-0 xs12>
+                  <v-text-field 
+                    v-model="userData.project_title"
+                    class="py-0"
+                    label="Tema ou Título do Projeto, Pesquisa ou Trabalho"
+                    readonly
+                    dark
+                  />
+                </v-flex>
+
+                <v-flex pt-2 pb-0 xs12>
                   <v-textarea 
                     v-model="userData.research"
                     class="py-0"
