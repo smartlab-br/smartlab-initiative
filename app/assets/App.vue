@@ -103,7 +103,7 @@
           >
             <img 
               tabindex="20"
-              src="/static/iconssmartlab-icon-30x30.png" 
+              src="/static/icons/smartlab-icon-30x30.png" 
               class="cursor-pointer"
               alt="Smartlab"
               @click="$navigationManager.constructor.pushRoute($router, '/', false)" 
