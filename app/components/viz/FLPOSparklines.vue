@@ -438,8 +438,8 @@ export default {
 
                     for (let header of this.structure.headers){
                         if (header.format){
-                            row['fmt_'+ header.value] = this.$numberTransformService.constructor.formatNumber(
-                                row[header.value], header.format, header.precision, header.multiplier, header.collapse, header.signed, header.uiTags );
+                            row['fmt_'+ header.value] = row[header.value] != "" ? this.$numberTransformService.constructor.formatNumber(
+                                row[header.value], header.format, header.precision, header.multiplier, header.collapse, header.signed, header.uiTags ) : "";
                         }
                     }
 
