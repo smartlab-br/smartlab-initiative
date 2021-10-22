@@ -8,7 +8,7 @@
     <v-img 
       :tabindex = "indexTab"
       :src="cmpMedia"
-      :class="bgColor ? headerClass : headerClass + ' bg-black-transparent-buttom'"
+      :class="bgColor ? headerClass : headerClass + ' bg-transparent-buttom'"
       :height="height"
       :style="bgColor ? 'background-color:' + bgColor : ''"
       :aspect-ratio="16/9"
@@ -158,10 +158,14 @@
   }
   */
 
-  .bg-black-transparent-buttom {
+  .bg-transparent-buttom {
     background-color: rgba(255, 255, 255, 0.15);
-    border: 1px solid #626262 !important;
+    border: 1px solid rgba(255,255,255,0.4) !important;
     border-radius:5px; 
+  }
+
+  .bg-transparent-buttom:hover {
+    border: 1px solid white !important;
   }
 
   .rounded-border{
