@@ -549,6 +549,9 @@ export default {
 </script>
 
 <style scoped>
+  .sparkline{
+      min-width: 150px;
+  }
   .sparkline-value {
     font-family: Lato, Calibri, sans-serif !important;
     font-weight: 300;
