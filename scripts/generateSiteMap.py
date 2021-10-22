@@ -158,22 +158,22 @@ def generate_structure(view_conf_path):
             dimensions.append({'id': dim_item['id'], 'type':'dimensao','name':dim_item['short_desc'], 'url': dim_item['to'], 'search_text': dim_item['label'], 'children': cards})
         obs_dim.append({**obs_item, 'children': dimensions.copy()})
 
-    # Sobre
-    about_yaml = read_yaml(view_conf_path + "\\about.yaml")
-    about_text = "Sobre a Iniciativa Smartlab"
-    for item_about in about_yaml:
-        for item_section in about_yaml[item_about]['sections']:
-            if((item_section['type'] == 'list') | (item_section['type'] == 'list-avatar')):
-                if (('title' in item_section) and (item_section['title'] != '')):
-                    about_text += ' ' + item_section['title']
-                    for item_list in item_section['list']:
-                        if ('name' in item_list):
-                            about_text += ' ' + item_list['name']
-                        if ('values' in item_list):
-                            about_text += ' ' + ' '.join(item_list['values'])
-            if(item_section['type'] == 'text'):
-                about_text += ' ' + item_section['content']
-    obs_dim.append({'id': 'smartlab_sobre', 'type':'sobre','name': 'Sobre a Iniciativa Smartlab (Iniciativa, Equipe e Créditos)', 'url': '/saibamais/smartlab', 'search_text' : about_text.replace('<br/>', ' ')})
+    # # Sobre
+    # about_yaml = read_yaml(view_conf_path + "\\about.yaml")
+    # about_text = "Sobre a Iniciativa Smartlab"
+    # for item_about in about_yaml:
+    #     for item_section in about_yaml[item_about]['sections']:
+    #         if((item_section['type'] == 'list') | (item_section['type'] == 'list-avatar')):
+    #             if (('title' in item_section) and (item_section['title'] != '')):
+    #                 about_text += ' ' + item_section['title']
+    #                 for item_list in item_section['list']:
+    #                     if ('name' in item_list):
+    #                         about_text += ' ' + item_list['name']
+    #                     if ('values' in item_list):
+    #                         about_text += ' ' + ' '.join(item_list['values'])
+    #         if(item_section['type'] == 'text'):
+    #             about_text += ' ' + item_section['content']
+    # obs_dim.append({'id': 'smartlab_sobre', 'type':'sobre','name': 'Sobre a Iniciativa Smartlab (Iniciativa, Equipe e Créditos)', 'url': '/saibamais/smartlab', 'search_text' : about_text.replace('<br/>', ' ')})
     return obs_dim
 
 try:
