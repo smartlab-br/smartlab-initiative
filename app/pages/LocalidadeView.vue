@@ -606,7 +606,16 @@
           calc_proportion_ds: function(d,dividendo, divisor) { 
             return divisor==0 ? null:dividendo / divisor; 
           },
-          get_flag_value: function(d) {return (d.vl_indicador == 0) ? d.ds_indicador_radical + ": NÃO" : d.ds_indicador_radical + ": SIM";},
+          get_flag_value: function(d, valor) {
+              switch(valor) {
+                  case null:
+                      return 'Sem registro';
+                  case 0:
+                      return 'Não';
+                  default:
+                      return 'Sim';
+              }
+          },
           get_flag_number: function(d,a){ return a>=0 ? 'Positivo':'Negativo'; },
           get_te_label: function(d,campo) {
               switch(d[campo]) {
