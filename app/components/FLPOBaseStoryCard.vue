@@ -395,14 +395,13 @@
       },
 
       getDatatableData(dataset, headers){
-        let dt = dataset.map((reg) => {
+        return dataset.map((reg) => {
           let row = {};
           for (let hd of headers) {
             row[hd.text.replaceAll('<br/>',' ')]= reg[hd.value];
           }
           return row
         });  
-        return dt;
       },
 
       updateTopology(){
