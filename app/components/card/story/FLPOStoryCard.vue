@@ -603,8 +603,9 @@
       },
       downloadData() {
         this.quotationDialog = false;
+        let dtDownload = this.getDatatableData(this.dataset, this.structure.headers);
         // Dataset to binary data
-        let datasetCsv = new Parser({delimiter: ';',withBOM: true}).parse(this.dataset);
+        let datasetCsv = new Parser({delimiter: ';',withBOM: true}).parse(dtDownload);
         datasetCsv = datasetCsv.replace(/<span>/g,"").replace(/<\/span>/g,"")
         const csvBin = new Blob([datasetCsv]);
         

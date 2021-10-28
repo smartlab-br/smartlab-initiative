@@ -566,8 +566,10 @@
       downloadData() {
         this.quotationDialog = false;
         for (let indexDS in this.dataset) {
+          let chart = this.structure.charts.filter(el => el.id == indexDS)[0];
+          let dtDownload = this.getDatatableData(this.dataset[indexDS], chart.headers);
           // Dataset to binary data
-          let datasetCsv = new Parser({delimiter: ';',withBOM: true}).parse(this.dataset[indexDS]);
+          let datasetCsv = new Parser({delimiter: ';',withBOM: true}).parse(dtDownload);
           datasetCsv = datasetCsv.replace(/<span>/g,"").replace(/<\/span>/g,"")
           const csvBin = new Blob([datasetCsv]);
           
