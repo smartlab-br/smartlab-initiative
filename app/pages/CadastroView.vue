@@ -356,9 +356,9 @@ import axios from 'axios'
           userResearchText: value => {
             if (value) {
               var words = value.trim().split(' ')
-              return words.length >= 50 || 'A descrição deve ter no mínimo 50 palavras'
+              return words.length >= 200 || 'A descrição deve ter no mínimo 200 palavras'
             }
-            return 'A descrição deve ter no mínimo 50 palavras'
+            return 'A descrição deve ter no mínimo 200 palavras'
             
           }
         },
