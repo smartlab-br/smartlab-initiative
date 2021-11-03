@@ -109,7 +109,7 @@
   
 <style>
   .search-text.v-input .v-input__slot {
-    border-radius: 100px;
+    border-radius: 100px !important;
     background-color: #212121 !important;
     opacity: 0.7;
     text-align: center;
