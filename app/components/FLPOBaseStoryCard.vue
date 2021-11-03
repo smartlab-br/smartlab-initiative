@@ -394,6 +394,16 @@
         this.updateDataStructure(payload);
       },
 
+      getDatatableData(dataset, headers){
+        return dataset.map((reg) => {
+          let row = {};
+          for (let hd of headers) {
+            row[hd.text.replaceAll('<br/>',' ')]= reg[hd.value];
+          }
+          return row
+        });  
+      },
+
       updateTopology(){
         if ((this.structure.chart_type ==  "MAP_TOPOJSON" 
               || this.structure.chart_type ==  "MAP_POLYGON") 
