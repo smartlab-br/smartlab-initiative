@@ -35,6 +35,7 @@ import FLPOArticlesHighlights from './FLPOArticlesHighlights'
 import FLPOSobreLayout from './FLPOSobreLayout'
 import FLPODotNav from './FLPODotNav'
 import FLPOOdometer from './FLPOOdometer'
+import FLPOSearchBar from './FLPOSearchBar'
 
 // Data Visualizations
 import FLPOSparklines from './viz/FLPOSparklines'
@@ -56,6 +57,7 @@ export default {
   'flpo-text-builder': FLPOTextBuilder,
   'flpo-minicard': FLPOMinicard,
   'flpo-odometer': FLPOOdometer,
+  'flpo-search-bar': FLPOSearchBar,
   
   'app-icon': AppIcon,
 
