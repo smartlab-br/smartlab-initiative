@@ -606,10 +606,20 @@
           calc_proportion_ds: function(d,dividendo, divisor) { 
             return divisor==0 ? null:dividendo / divisor; 
           },
-          get_flag_value: function(d, valor) {
+          get_flag_value_ds: function(d, valor) {
               switch(valor) {
                   case null:
-                      return 'Sem registro';
+                      return 'Não informado';
+                  case 0:
+                      return 'Não';
+                  default:
+                      return 'Sim';
+              }
+          },
+          get_flag_value: function(valor) {
+              switch(valor) {
+                  case null:
+                      return 'Não informado';
                   case 0:
                       return 'Não';
                   default:
