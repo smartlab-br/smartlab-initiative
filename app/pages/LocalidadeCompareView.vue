@@ -105,7 +105,7 @@
                 <v-layout pa-1 justify-center class="subheading master-indicator" v-if="masterIndicator"
                   v-html="masterIndicator">
                 </v-layout>
-                <v-layout v-if="ind_principais && unlockLoading" row wrap justify-center>
+                <v-layout v-if="dimParamsLoaded && ind_principais && unlockLoading" row wrap justify-center>
                   <flpo-minicard v-for="(miniCardPrincipal, indexMinicardsPrincipal) in ind_principais"
                     :key="'minicard_principal_'+indexMinicardsPrincipal"
                     :structure="miniCardPrincipal" :customFunctions="custom_functions"
@@ -142,7 +142,7 @@
                 <v-layout pa-1 justify-center class="subheading master-indicator" v-if="masterIndicator_compare"
                   v-html="masterIndicator_compare">
                 </v-layout>
-                <v-layout v-if="ind_principais_compare && unlockLoading" row wrap justify-center>
+                <v-layout v-if="dimParamsLoaded && ind_principais_compare && unlockLoading" row wrap justify-center>
                   <flpo-minicard v-for="(miniCardPrincipal, indexMinicardsPrincipal) in ind_principais_compare"
                     :key="'minicard_principal_'+indexMinicardsPrincipal"
                     :structure="miniCardPrincipal" :customFunctions="custom_functions"
