@@ -262,7 +262,7 @@
         </v-tooltip>
       </v-btn>
 
-      <v-menu 
+      <!-- <v-menu 
         open-on-hover 
         right 
         offset-y
@@ -315,7 +315,7 @@
             <v-list-tile-title>Sair</v-list-tile-title>
           </v-list-tile>
         </v-list>
-      </v-menu>
+      </v-menu> -->
 
       <v-tooltip bottom>
         <a 
@@ -796,11 +796,10 @@
     >
       <v-card>
         <v-card-title class="headline-obs">
-          Autenticação necessária
+          Identificação necessária
         </v-card-title>
         <v-card-text>
-          <p>Para baixar os dados, é necessário que você se autentique.</p>
-          <p>Cadastre-se na plataforma ou se autentique clicando no botão "Entrar", caso já tenha se registrado.</p>
+          <p>Para baixar os microdados, você precisa se identificar mediante nome de usuário e senha. Em breve, a funcionalidade estará disponível.</p>
         </v-card-text>
         <v-layout 
           align-center 
@@ -808,7 +807,7 @@
           row 
           fill-height
         >
-          <v-btn 
+          <!-- <v-btn 
             class="theme--light mb-3 mt-0" 
             color="accent" 
             @click="handleRegisterClick()"
@@ -833,6 +832,13 @@
               login
             </v-icon>
             Entrar
+          </v-btn> -->
+          <v-btn 
+            class="theme--light mb-3 mt-0" 
+            color="accent" 
+            @click="authMessageDialog = false"
+          >
+            Fechar
           </v-btn>
         </v-layout>
       </v-card>
