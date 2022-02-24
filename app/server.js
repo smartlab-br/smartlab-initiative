@@ -8,6 +8,7 @@ const resolve = file => path.resolve(__dirname, file)
 const { createBundleRenderer } = require('vue-server-renderer')
 const redirects = require('./router/301.json')
 const axios = require('axios');
+const https = require('https');
 
 const isProd = (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'staging')
 const useMicroCache = process.env.MICRO_CACHE !== 'false'
@@ -151,88 +152,148 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.post('/api-proxy/*', (req, res) => {
+  if (req.headers['request-source'] == 'application' && req.headers['user-agent'] && req.headers['user-agent'].toLowerCase().indexOf('postman') == -1){
+    const apiDataMap = { 
+      mercurio: [process.env.MAILER_API_BASE_URL, 
+                process.env.MAILER_APP_KEY]
+    }
 
-  const apiDataMap = { 
-    mercurio: [process.env.MAILER_API_BASE_URL, 
-              process.env.MAILER_APP_KEY]
+    const splitArray = req.url.split("/")
+    const resourceUrl = splitArray.slice(3).join('/')
+    const apiUrl = apiDataMap[splitArray[2]][0] + '/' + resourceUrl
+
+    var header = {
+      'Content-Type': 'application/json',
+      'X-Gravitee-Api-Key': apiDataMap[splitArray[2]][1]
+    }
+    
+    axios({
+        method: "POST",
+        url: apiUrl,
+        data: req.body,
+        headers: header
+      }).then(function (response) {
+        res.json(response.data);
+      }).catch(function(error) {
+        // handle error
+        console.log(error)
+        if (error.response) {
+          res.status(error.response.status).send(error.response.data)
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          res.status(400).send(error)
+        }
+      });
+  } else {
+    res.status(401).send("Unauthorized");    
   }
-
-  const splitArray = req.url.split("/")
-  const resourceUrl = splitArray.slice(3).join('/')
-  const apiUrl = apiDataMap[splitArray[2]][0] + '/' + resourceUrl
-
-  var header = {
-    'Content-Type': 'application/json',
-    'X-Gravitee-Api-Key': apiDataMap[splitArray[2]][1]
-  }
-  
-  axios({
-      method: "POST",
-      url: apiUrl,
-      data: req.body,
-      headers: header
-    }).then(function (response) {
-      res.json(response.data);
-    }).catch(function(error) {
-      // handle error
-      console.log(error)
-      if (error.response) {
-        res.status(error.response.status).send(error.response.data)
-      } else {
-        // Something happened in setting up the request that triggered an Error
-        res.status(400).send(error)
-      }
-    });
 })
 
 app.get('/api-proxy/*', (req, res) => {
-  
-  const apiDataMap = { 
-    datahub: [process.env.DATAHUB_API_BASE_URL, 
-              process.env.DATAHUB_APP_KEY],
-    odometros: [process.env.ACIDENTOMETROS_API_BASE_URL, 
-              process.env.ACIDENTOMETROS_APP_KEY] 
-  }
+  if (req.headers['request-source'] == 'application' && req.headers['user-agent'] && req.headers['user-agent'].toLowerCase().indexOf('postman') == -1){
+    const apiDataMap = { 
+      datahub: [process.env.DATAHUB_API_BASE_URL, 
+                process.env.DATAHUB_APP_KEY],
+      odometros: [process.env.ACIDENTOMETROS_API_BASE_URL, 
+                process.env.ACIDENTOMETROS_APP_KEY] 
+    }
 
-  const splitArray = req.url.split("/")
-  const resourceUrl = splitArray.slice(3).join('/')
-  const apiUrl = apiDataMap[splitArray[2]][0] + "/" + resourceUrl
+    const splitArray = req.url.split("/")
+    const resourceUrl = splitArray.slice(3).join('/')
+    const apiUrl = apiDataMap[splitArray[2]][0] + "/" + resourceUrl
 
-  var header = {
-    'Content-Type': 'application/json',
-  }
+    var header = {
+      'Content-Type': 'application/json',
+    }
 
-  header['X-Mpt-Api-Key'] = apiDataMap[splitArray[2]][1]  
-  
-  if (req.headers['cache-control']) {
-    header['cache-control'] = 'no-cache'
-  }
+    header['X-Mpt-Api-Key'] = apiDataMap[splitArray[2]][1]  
+    
+    if (req.headers['cache-control']) {
+      header['cache-control'] = 'no-cache'
+    }
 
-  axios({
-    method: 'get',
-    url: apiUrl,
-    responseType: 'json',
-    headers: header
-  })
-    .then(function(response) {
-      // handle success
-      res.json(response.data);
+    axios({
+      method: 'get',
+      url: apiUrl,
+      responseType: 'json',
+      headers: header
     })
-    .catch(function(error) {
-      // handle error
-      console.log(error)
-      if (error.response) {
-        res.status(error.response.status).send(error.response.data)
-      } else {
-        // Something happened in setting up the request that triggered an Error
-        res.status(400).send(error)
+      .then(function(response) {
+        // handle success
+        res.json(response.data);
+      })
+      .catch(function(error) {
+        // handle error
+        console.log(error)
+        if (error.response) {
+          res.status(error.response.status).send(error.response.data)
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          res.status(400).send(error)
+        }
+      })
+    } else {
+      res.status(401).send("Unauthorized");    
+    }
+  });
+
+app.post('/register', (req, res) => {
+  let urlToken = `${process.env.GRAVITEE_AM_MANAGER_BASE_URL}/auth/token`
+  let user = req.body;
+  user.username = user.email;
+  user.preRegistration = true;
+  user.additionalInformation ={...user.additionalInformation,lastName: user.lastName, firstName: user.firstName};
+  axios.post(
+      urlToken,
+      "grant_type=client_credentials",
+      {
+          headers: {
+              'Authorization': `Basic ${process.env.GRAVITEE_AM_MANAGER_TOKEN}`,
+              'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          httpsAgent: new https.Agent({ rejectUnauthorized: false })
       }
-    })
+  ).then((resToken) => {
+      let token = resToken.data.access_token;
+      let url = `${process.env.GRAVITEE_AM_MANAGER_BASE_URL}/organizations/DEFAULT/environments/DEFAULT/domains/smartlab/users/`
+      axios.post(
+          url,
+          JSON.stringify(user),
+          {
+              headers: {
+                  'Authorization': `Bearer ${token}`,
+                  'Content-Type': 'application/json',
+              },
+              httpsAgent: new https.Agent({ rejectUnauthorized: false })
+          }
+      ).then((response) => {
+        console.log(response);
+        res.status(response.status);
+        res.json(response.data);
+      }).catch((error) => {
+        console.log(error.response.data);
+        res.status(error.response.status);
+        res.json({
+            origin: "Gerenciador de Identidades",
+            message: error.response.data.message
+        });
+      });          
+  }).catch((error) => {
+      console.log(error);
+      let status = error.response ? error.response.status : error.status;
+      if (!status) { status="400";}
+      res.status(status);
+      res.json({
+          origin: "Gerenciador de Identidades",
+          message: (error.response ? error.response.data.message : error.message)
+      })
+  });
 });
 
 app.get('*', isProd ? render : (req, res) => {
   readyPromise.then(() => render(req, res))
 })
+
 
 const port = process.env.PORT || 8081
 app.listen(port, '0.0.0.0', () => {

@@ -7,8 +7,19 @@
       <v-layout xs12 class="bg-home-shadow ma-0"></v-layout>
       <v-layout row wrap fill-height align-center justify-center pa-0 class="parallax-content-home">
         <v-flex id="screenTitle" xs12 class="white--text text-xs-center py-4 my-5" style="line-height: normal;">
-          <div class="display-4-obs ubuntu">Iniciativa SmartLab</div>
-          <div class="display-1-obs ubuntu-condensed">Promoção do Trabalho Decente Guiada por Dados</div>
+          <v-layout row wrap justify-center>
+            <v-flex xs12>
+              <div class="display-4-obs ubuntu">Iniciativa SmartLab</div>
+            </v-flex>
+            <v-flex xs12>
+              <div class="display-1-obs ubuntu-condensed">Promoção do Trabalho Decente Guiada por Dados</div>
+            </v-flex>
+            <v-flex xs10 md4 pt-5 mt-3>
+              <flpo-search-bar/>
+            </v-flex>
+          </v-layout>
+          <div >
+          </div>
         </v-flex>
         <v-layout px-5 :class="{'justify-center': $vuetify.breakpoint.xlOnly }" row wrap v-show="observatorios">
           <v-flex 
@@ -148,12 +159,11 @@
         parallaxFile: null,
         idParallaxfile: 0,
         background_images: [],
-        backgroundVisible: true
-        
+        backgroundVisible: true,
       }
     },
     created () {
-      
+
       let tmpObs = this.$observatories.getObservatories();
 
       if ((tmpObs instanceof Promise) || tmpObs.then) {
@@ -290,7 +300,7 @@
           text = text.replace("<br/>"," ");
         }
         return text;
-      }
+      },
     }
   }
 </script>

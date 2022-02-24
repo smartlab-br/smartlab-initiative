@@ -32,8 +32,8 @@
                 v-if="item.icon" 
                 slot="activator"
                 :title="item.short_title" 
-                v-html="item.icon" 
                 :color="$observatories.getTheme(item.id).primary"
+                v-html="item.icon" 
               />
               <app-icon 
                 v-else-if="item.app_icon"
@@ -103,7 +103,7 @@
           >
             <img 
               tabindex="20"
-              src="/static/iconssmartlab-icon-30x30.png" 
+              src="/static/icons/smartlab-icon-30x30.png" 
               class="cursor-pointer"
               alt="Smartlab"
               @click="$navigationManager.constructor.pushRoute($router, '/', false)" 
@@ -261,36 +261,62 @@
           Alterar Localidade
         </v-tooltip>
       </v-btn>
-      <!--
-      <v-btn
-        tabindex="23"
-        icon 
-        class="ml-0"
-        aria-label="Identifique-se"
-        @click="handleAvatarClick()"
+
+      <!-- <v-menu 
+        open-on-hover 
+        right 
+        offset-y
       >
-        <v-tooltip bottom>
-          <v-avatar
-            slot="activator"
-            size="36px"
+        <template 
+          slot="activator" 
+          slot-scope="{ on }"
+        >
+          <v-btn
+            tabindex="23"
+            icon 
+            class="ml-0"
+            aria-label="Identifique-se"
+            v-on="on"
           >
-            <img
-              v-if="this.$store.state.user && this.$store.state.user.picture"
-              alt="Foto"
-              :src="this.$store.state.user.picture"
+            <v-avatar
+              size="36px"
             >
-            <v-icon 
-              v-else 
-              slot="activator"
-              color="white" 
-            >
-              perm_identity
-            </v-icon>
-          </v-avatar>
-          {{ computedLoginLabel }} 
-        </v-tooltip>
-      </v-btn>
-      -->
+              <v-icon 
+                :color="$store.state.user ? 'accent' : 'white'" 
+              >
+                perm_identity
+              </v-icon>
+            </v-avatar>
+          </v-btn>
+        </template>
+        <v-list>
+          <v-list-tile 
+            v-if="!$store.state.user"
+            @click="registerUser()"
+          >
+            <v-list-tile-title>Cadastre-se</v-list-tile-title>
+          </v-list-tile>
+          <v-list-tile 
+            v-if="!$store.state.user"
+            @click="handleAvatarClick()"
+          >
+            <v-list-tile-title>Entrar</v-list-tile-title>
+          </v-list-tile>
+          <v-list-tile 
+            v-if="$store.state.user"
+            @click="handleAvatarClick()"
+          >
+            <v-list-tile-title>Perfil</v-list-tile-title>
+          </v-list-tile>
+          <v-list-tile 
+            v-if="$store.state.user"
+            @click="userLogout()"
+          >
+            <v-list-tile-title>Sair</v-list-tile-title>
+          </v-list-tile>
+        </v-list>
+      </v-menu> -->
+
       <v-tooltip bottom>
         <a 
           slot="activator"
@@ -330,14 +356,12 @@
       disable-resize-watcher
       app>
       <v-list>
-      -->
-        <!-- <v-list-tile @click.native="right = !right">
+        <v-list-tile @click.native="right = !right">
           <v-list-tile-action>
             <v-icon light>compare_arrows</v-icon>
           </v-list-tile-action>
           <v-list-tile-title>Switch drawer (click me)</v-list-tile-title>
-        </v-list-tile> -->
-      <!--
+        </v-list-tile> 
         <v-list-tile>
           <v-list-tile-action>
             <v-icon light>language</v-icon>
@@ -426,7 +450,7 @@
           wrap
         >
           <img 
-            src="/static/smartlab/mpt-text.svg"
+            src="/static/smartlab/mpt-extended.svg"
             class="cursor-pointer mr-2" 
             alt="Ministério Público do Trabalho"
             height="40px"
@@ -445,7 +469,7 @@
             class="cursor-pointer mb-1 ml-2" 
             alt="Subsecretaria de Inspeção do Trabalho"
             height="40px"
-            @click="$navigationManager.constructor.pushRoute('https://www.gov.br/trabalho/pt-br/inspecao', true)" 
+            @click="$navigationManager.constructor.pushRoute($router, 'https://www.gov.br/trabalho/pt-br/inspecao', true)" 
           />
           <img
             src="/static/smartlab/cnmp.svg"
@@ -469,7 +493,7 @@
             alt="Fórum Nacional de Prevenção e Erradicação do Trabalho Infantil"
             max-height="80%"
             min-height="50%"
-            @click="$navigationManager.constructor.pushRoute('https://fnpeti.org.br', true)" 
+            @click="$navigationManager.constructor.pushRoute($router, 'https://fnpeti.org.br', true)" 
           />
           <img 
             v-if="currentObs == 'ti' || currentObs == 'td'"
@@ -477,7 +501,15 @@
             class="cursor-pointer mb-1 ml-0" 
             alt="Instituto Brasileiro de Geografia e Estatística"
             height="50px"
-            @click="$navigationManager.constructor.pushRoute('http:///ibge.gov.br', true)" 
+            @click="$navigationManager.constructor.pushRoute($router, 'http:///ibge.gov.br', true)" 
+          />
+          <img 
+            v-if="currentObs == 'ti'"
+            src="/static/smartlab/mcidadania.png"
+            class="cursor-pointer mb-1 ml-0" 
+            alt="Ministério da Cidadania"
+            height="50px"
+            @click="$navigationManager.constructor.pushRoute($router, 'https://www.gov.br/cidadania/pt-br', true)" 
           />
           <img 
             v-if="currentObs == 'des'"
@@ -486,7 +518,7 @@
             alt="Pacto Global - Rede Brasil"
             max-height="80%"
             min-height="50%"
-            @click="$navigationManager.constructor.pushRoute('https://www.pactoglobal.org.br', true)" 
+            @click="$navigationManager.constructor.pushRoute($router, 'https://www.pactoglobal.org.br', true)" 
           />
           <img 
             v-if="currentObs == 'des'"
@@ -494,7 +526,7 @@
             class="cursor-pointer ml-2" 
             alt="ONU Mulheres"
             height="20px" 
-            @click="$navigationManager.constructor.pushRoute('http://www.onumulheres.org.br/', true)" 
+            @click="$navigationManager.constructor.pushRoute($router, 'http://www.onumulheres.org.br/', true)" 
           />
         </v-layout>       
       </v-flex>
@@ -732,7 +764,7 @@
             :filter="customFilter"
             :loading="gsLoadingStatusSearchOptions == 'LOADING' ? true : false"
             :color="gsLoadingStatusSearchOptions == 'ERROR' ? 'error' :
-            (gsLoadingStatusSearchOptions == 'LOADING' ? 'warning' : 'accent')"
+              (gsLoadingStatusSearchOptions == 'LOADING' ? 'warning' : 'accent')"
             @blur="gsFavLocation = null"
           >
             <template 
@@ -758,42 +790,6 @@
         </v-card-text>
       </v-card>
     </v-dialog>
-    <!--
-    <v-dialog 
-      v-model="authMessageDialog"
-      width="500px" 
-    >
-      <v-card>
-        <v-card-title class="headline-obs">
-          Autenticação necessária
-        </v-card-title>
-        <v-card-text>
-          <p>Para baixar os dados, é necessário que você se autentique.</p>
-          <p>Clique no botão abaixo e faça o login na plataforma utilizando sua conta do Google ou Facebook.</p>
-        </v-card-text>
-        <v-layout 
-          align-center 
-          justify-center 
-          row 
-          fill-height
-        >
-          <v-btn 
-            class="theme--light mb-3 mt-0" 
-            color="accent" 
-            @click="handleAuthClick()"
-          >
-            <v-icon 
-              left 
-              color="white"
-            >
-              perm_identity
-            </v-icon>
-            Autenticar
-          </v-btn>
-        </v-layout>
-      </v-card>
-    </v-dialog>
-    -->
     <v-dialog 
       v-model="authMessageDialog"
       width="500px" 
@@ -811,6 +807,32 @@
           row 
           fill-height
         >
+          <!-- <v-btn 
+            class="theme--light mb-3 mt-0" 
+            color="accent" 
+            @click="handleRegisterClick()"
+          >
+            <v-icon 
+              left 
+              color="white"
+            >
+              perm_identity
+            </v-icon>
+            Cadastrar
+          </v-btn>
+          <v-btn 
+            class="theme--light mb-3 mt-0" 
+            color="accent" 
+            @click="handleAuthClick()"
+          >
+            <v-icon 
+              left 
+              color="white"
+            >
+              login
+            </v-icon>
+            Entrar
+          </v-btn> -->
           <v-btn 
             class="theme--light mb-3 mt-0" 
             color="accent" 
@@ -821,20 +843,43 @@
         </v-layout>
       </v-card>
     </v-dialog>
-    <v-layout text-xs-center pa-0 
-      class="footer-nav white--text">
-      <v-layout row wrap caption class="cursor-pointer">
-        <v-layout column scroll-menu v-if="!isPageBottom" pa-2
-          v-on:click="scrollDown()">
+
+    <v-layout 
+      text-xs-center 
+      pa-0 
+      class="footer-nav white--text"
+    >
+      <v-layout 
+        row 
+        wrap 
+        caption 
+        class="cursor-pointer"
+      >
+        <v-layout 
+          v-if="!isPageBottom" 
+          column 
+          scroll-menu 
+          pa-2
+          @click="scrollDown()"
+        >
           Leia mais
-          <v-icon dark>keyboard_arrow_down</v-icon>
+          <v-icon dark>
+            keyboard_arrow_down
+          </v-icon>
         </v-layout>
-        <v-layout column scroll-menu v-if="isPageBottom" pa-2
-          v-on:click="scrollTop()">
-          <v-icon dark>keyboard_arrow_up</v-icon>
+        <v-layout 
+          v-if="isPageBottom" 
+          column 
+          scroll-menu 
+          pa-2
+          @click="scrollTop()"
+        >
+          <v-icon dark>
+            keyboard_arrow_up
+          </v-icon>
           Para o topo
         </v-layout>
-       </v-layout>
+      </v-layout>
     </v-layout>
   </v-app>
 </template>
@@ -905,7 +950,9 @@
         currentAnalysisUnit: null,
         observatorios: null,
         currentObs: null,
-        dim: { label: null }
+        dim: { label: null },
+        userData: {additionalInformation:{}},
+        graviteeUser: {}
       }
     },
     computed: {
@@ -937,6 +984,16 @@
           let tmpObs = this.$observatories.getObservatoryById(this.currentObs);
           if (tmpObs) {
             observ = tmpObs;
+          } else if (this.$route.path.indexOf("perfil") != -1){ //Perfil
+            observ = {
+              short_title: "Perfil",
+              title: "Perfil"
+            };
+          } else if (this.$route.path.indexOf("mapasite") != -1){ //Mapa do Site
+            observ = {
+              short_title: "Mapa do Site",
+              title: "Mapa do Site"
+            };
           } else if (this.$route.path.indexOf("saibamais") != -1){ //Sobre
             observ = {
               short_title: "Sobre",
@@ -945,19 +1002,10 @@
           }
         }
         
-        // if (!this.visibleTitle || (this.$route && (this.$route.path.indexOf("localidade") != -1 || 
-        //                     this.$route.path.indexOf("localidade") != -1 || 
-        //                     this.$route.path.indexOf("estudo") != -1 || 
-        //                     this.$route.path.indexOf("saibamais") != -1 || 
-        //                     this.$route.path.indexOf("smartmap") != -1
-        //                     )))
-        // {
         if (this.$vuetify.breakpoint.mdAndDown) {
           return observ.short_title;
         }
         return observ.title;
-        // } 
-        // return '';
       },
       computedHashTag: function() {
         let hashTag = '';
@@ -1038,6 +1086,40 @@
         }
       }
     },
+    watch: {
+      '$route.fullPath': function(newVal, oldVal) {
+        this.currentObs = this.$observatories.constructor.identifyObservatory(this.$route.path.split('/')[1]);
+        this.dim = { label: null }
+        if (this.currentObs != null && (this.$route.query.dimensao || this.$route.params.idLocalidade)) {
+          this.$dimensions.getDimensionByObservatoryAndId(this.currentObs, this.$route.query.dimensao)
+            .then((result) => { this.dim = result; });
+        }
+      },
+      gsFavLocation(newVal, oldVal) {
+        if (newVal) {
+          this.$analysisUnitModel.setCurrentAnalysisUnit(newVal.id);
+          this.locationDialog = false;
+          
+          let findLoc = this.$analysisUnitModel.findPlaceByID(newVal.id);
+          if (findLoc instanceof Promise || findLoc.then) {
+            findLoc.then(response => {
+              this.changeMiddleToolbar(response);
+              if (newVal.id && newVal.id.length > 5) this.localidade = response;
+            })
+            .catch(error => { this.sendError(error); });
+          } else {
+            this.changeMiddleToolbar(findLoc);
+            if (newVal.id && newVal.id.length > 5) this.localidade = findLoc;
+          }
+
+          if(this.$route.path.indexOf("localidade") != -1){ //página de localidade
+            this.changeAnalysisUnit(this.$router, newVal);
+          } else if (this.$refs.currentRoute.setIdLocalidade) { //página de observatorio
+            this.$refs.currentRoute.setIdLocalidade(newVal.id);
+          }
+        }
+      }
+    },
     created () {    
       // console.log(process.env.GRAVITEE_AM_URL_BASE)
 
@@ -1077,40 +1159,6 @@
         });
 
       this.themeEval();
-    },
-    watch: {
-      '$route.fullPath': function(newVal, oldVal) {
-        this.currentObs = this.$observatories.constructor.identifyObservatory(this.$route.path.split('/')[1]);
-        this.dim = { label: null }
-        if (this.currentObs != null && (this.$route.query.dimensao || this.$route.params.idLocalidade)) {
-          this.$dimensions.getDimensionByObservatoryAndId(this.currentObs, this.$route.query.dimensao)
-            .then((result) => { this.dim = result; });
-        }
-      },
-      gsFavLocation(newVal, oldVal) {
-        if (newVal) {
-          this.$analysisUnitModel.setCurrentAnalysisUnit(newVal.id);
-          this.locationDialog = false;
-          
-          let findLoc = this.$analysisUnitModel.findPlaceByID(newVal.id);
-          if (findLoc instanceof Promise || findLoc.then) {
-            findLoc.then(response => {
-              this.changeMiddleToolbar(response);
-              if (newVal.id && newVal.id.length > 5) this.localidade = response;
-            })
-            .catch(error => { this.sendError(error); });
-          } else {
-            this.changeMiddleToolbar(findLoc);
-            if (newVal.id && newVal.id.length > 5) this.localidade = findLoc;
-          }
-
-          if(this.$route.path.indexOf("localidade") != -1){ //página de localidade
-            this.changeAnalysisUnit(this.$router, newVal);
-          } else if (this.$refs.currentRoute.setIdLocalidade) { //página de observatorio
-            this.$refs.currentRoute.setIdLocalidade(newVal.id);
-          }
-        }
-      }
     },
     mounted: function() {
 
@@ -1174,6 +1222,7 @@
       },      
       snackAlert(params) {
         this.snack_mode = params.snack_mode || '';
+        this.snack_timeout = params.timeout || 6000;
         this.snack_color = params.color;
         this.snackText = params.text;
         this.snackbar = true;
@@ -1213,6 +1262,14 @@
         this.authMessageDialog = false;
       },
 
+      handleRegisterClick: function() {
+        this.$navigationManager.constructor.pushRoute(this.$router, '/cadastro', false)
+      },
+
+      registerUser: function() {
+        this.$navigationManager.constructor.pushRoute(this.$router, '/cadastro', false)
+      },
+
       handleAvatarClick: function() {
         if (this.$store.state.user) {
           this.$navigationManager.constructor.pushRoute(this.$router, '/perfil', false)
@@ -1237,7 +1294,6 @@
             if (popupWindowPath.hash) {
               var params = popupWindowPath.hash.split("access_token=")[1]
               var access_token = params.split("&")[0]
-
               var bearer = 'Bearer ' + access_token
               axios({
                 method: "GET",
@@ -1245,13 +1301,11 @@
                 data: {},
                 headers: {'Authorization': bearer}
               }).then(function (response) {
-                let graviteeUser = {};
-                graviteeUser.name = response.data.name;
-                graviteeUser.email = response.data.email;
-                graviteeUser.picture = response.data.picture;
-                this_.updateUser(graviteeUser)
+                this_.graviteeUser = response.data;
+                this_.updateUser(this_.graviteeUser)
                 this_.snackAlert({ color : 'success', text: "Login realizado com sucesso." });
               }).catch(function(error) {
+                this_.userLogout();
                 // handle error
                 console.log(error)
                 throw new Error('Erro ao buscar informações do usuário.');
@@ -1267,6 +1321,11 @@
           }
         }, 250);
 
+      },
+
+      userLogout(){
+        this.$store.commit('setUser', null);
+        window.location = `${process.env.GRAVITEE_AM_BASE_URL}/logout?invalidate_tokens=true&target_url=${process.env.GRAVITEE_AM_REDIRECT_URL}`;
       },
 
       focusChangePlace(){
@@ -1327,7 +1386,6 @@
         this.bugText = '';
         this.$refs.bugForm.resetValidation()
       },
-
       sendBugReport(){
         if (this.$refs.bugForm.validate()) {
           this.sendingMail = true;

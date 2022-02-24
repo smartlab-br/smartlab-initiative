@@ -35,6 +35,15 @@
           </v-flex>
           -->
         </v-flex>
+
+        <v-flex xs12>
+          <v-layout row align-center justify-center>
+            <v-flex xs10 md4 pt-5 mt-3>
+              <flpo-search-bar/>
+            </v-flex>
+          </v-layout>
+        </v-flex>
+
         <v-flex xs12 text-xs-right px-5 mx-5 style="min-height:48px">
           <v-btn
             v-if="observatorio.prevalencia"

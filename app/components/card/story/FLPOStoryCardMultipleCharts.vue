@@ -180,7 +180,7 @@
           <v-card-actions class="px-3 pb-3">
             <v-spacer></v-spacer>
             <v-btn small class="theme--light" color="accent"
-              @click.native="downloadData()">
+              @click.native="handleDownloadClick()">
               <v-icon left>file_download</v-icon> <!-- list -->
               Baixar
             </v-btn>
@@ -197,6 +197,51 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
+
+        <!-- Modal com as citações -->
+          <v-dialog 
+              v-model="quotationDialog"
+              width="500px" 
+            >
+              <v-card>
+                <v-card-title class="headline-obs">
+                  Citações
+                </v-card-title>
+                <v-card-text>
+                    <p>As citações da plataforma, em regra, devem respeitar o formato ABNT para cada Observatório, incluindo-se, na consulta, a dimensão específica consultada.</p>
+                    <p>Exemplos:</p>
+                    <ul class="mention-examples">
+                    <li>Observatório do Trabalho Decente – Contexto Econômico e Social. SmartLab, 2021. Fonte original: (...). Disponível em: https://smartlabbr.org/trabalhodecente. Acesso em: 10 de ago. de 2021.</li>
+                    <li>Observatório de Segurança e Saúde no Trabalho – Covid 19. Fonte original: (...). SmartLab, 2021. Disponível em: https://smartlabbr.org/sst. Acesso em: 10 de ago. de 2021.</li>
+                    <li>Observatório da Erradicação do Trabalho Escravo e do Tráfico de Pessoas – Sinan/ Tráfico de Pessoas. Fonte original: (...). SmartLab, 2021. Disponível em: https://smartlabbr.org/trabalhoescravo. Acesso em: 10 de ago. de 2021.</li>
+                    <li>Observatório da Prevenção e da Erradicação do Trabalho Infantil – Áreas Prioritárias e Análise Comparativa. Fonte original: (...). SmartLab, 2021. Disponível em: https://smartlabbr.org/trabalhoinfantil. Acesso em: 10 de ago. de 2021.</li>
+                    <li>Observatório da Diversidade e Igualdade de Oportunidades no Trabalho – População em Situação de Rua. Fonte original: (...). SmartLab, 2021. Disponível em: https://smartlabbr.org/diversidade. Acesso em: 10 de ago. de 2021.</li>
+                    </ul>
+                </v-card-text>
+                <v-layout 
+                  align-center 
+                  justify-center 
+                  row 
+                  fill-height
+                >
+                  <v-btn 
+                    class="theme--light mb-3 mt-0" 
+                    color="accent" 
+                    @click="downloadData()"
+                  >
+                    <v-icon 
+                      left 
+                      color="white"
+                    >
+                      check
+                    </v-icon>
+                    OK
+                  </v-btn>
+                  
+                </v-layout>
+              </v-card>
+            </v-dialog>
+
     </v-flex>
   </v-layout>
 </template>
@@ -221,7 +266,8 @@
         invalidInterpol: false,
         chartFooter: {},
         updatedChartFooters: 0,
-        chartId: {}
+        chartId: {},
+        quotationDialog: false
       }
     },
     computed: {
@@ -509,10 +555,21 @@
         }
       },
 
+      handleDownloadClick() {
+        if (!this.$store.state.user) {
+          this.openAuthenticatioDialog();
+        } else {
+          this.quotationDialog = true;
+        }
+      },
+      
       downloadData() {
+        this.quotationDialog = false;
         for (let indexDS in this.dataset) {
+          let chart = this.structure.charts.filter(el => el.id == indexDS)[0];
+          let dtDownload = this.getDatatableData(this.dataset[indexDS], chart.headers);
           // Dataset to binary data
-          let datasetCsv = new Parser({delimiter: ';',withBOM: true}).parse(this.dataset[indexDS]);
+          let datasetCsv = new Parser({delimiter: ';',withBOM: true}).parse(dtDownload);
           datasetCsv = datasetCsv.replace(/<span>/g,"").replace(/<\/span>/g,"")
           const csvBin = new Blob([datasetCsv]);
           
