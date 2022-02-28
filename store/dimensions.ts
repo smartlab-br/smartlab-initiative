@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
-import Dimension from 'domain/model/dimensions'
+import Dimension from 'plugins/model/dimensions'
 
 export const state = () => ({
   dimensions: null as unknown as Dimension[],

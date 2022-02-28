@@ -1,14 +1,9 @@
-import NumberTransformService from './numberTransformService.js'
-import ObjectTransformService from './objectTransformService.js'
-import IndicatorsModel from '../../model/singleton/indicatorsModel.js';
+import { NumberTransformService } from "plugins/service/numberTransform"
 
 class TextTransformService {
-  constructor() {
-    this.numberTransformService = new NumberTransformService();
-    this.objectTransformService = new ObjectTransformService();
-  }
+  constructor() {}
 
-  applyInterpol(structure, customParams = {}, customFunctions = [], base_object = null, cbInvalidate = null) {
+  applyInterpol(structure: any, customParams: any = {}, customFunctions: any[] = [], base_object: any = null, cbInvalidate: any = null) {
     if (structure !== null && structure !== undefined) {
       let arrayStruct = [];
       let returnStruct = [];
@@ -66,11 +61,15 @@ class TextTransformService {
                 if (struct.args[indx].format == 'auto') {
                   formatRules = this.getFormatRules(struct.args[indx], iterArg);
                 }
-                iterArg = NumberTransformService.formatNumber(
-                  iterArg, formatRules.format, formatRules.precision,
-                  formatRules.multiplier, formatRules.collapse, formatRules.signed, 
-                  formatRules.uiTags
-                );
+                iterArg = NumberTransformService.formatNumber({
+                  valor: iterArg,
+                  formato: formatRules.format,
+                  casasDecimais: formatRules.precision,
+                  multiplier: formatRules.multiplier,
+                  collapse: formatRules.collapse,
+                  signed: formatRules.signed,
+                  uiTags: formatRules.uiTags
+                });
               }
               args.push(iterArg);
             } else if (struct.args[indx].required && cbInvalidate !== null) {
@@ -90,7 +89,7 @@ class TextTransformService {
     return '';
   }
 
-  getFormatRules(structure, indicator = null) {
+  getFormatRules(structure: any, indicator: any = null) {
     let formatRules = structure;
     let autoType = indicator.ds_indicador_prefixo;
 
@@ -135,34 +134,34 @@ class TextTransformService {
   }
 
   // Reposiciona os parâmetros, uma vez que recebe automaticamente um row do dataset como primeiro
-  applyInterpolReplaceDatasetParam(dataset_object, struct, customFunctions = [], customParams = {}, cbInvalidate = null) {
+  applyInterpolReplaceDatasetParam(dataset_object: any, struct: any, customFunctions: any[] = [], customParams: any = {}, cbInvalidate: any = null) {
     return this.applyInterpol(struct, customParams, customFunctions, dataset_object, cbInvalidate);
   }
 
-  replaceArgs(string, args, cbInvalidate = null) {
-    if (string === null || string === undefined) {
-      return '';
-    }
+  replaceArgs(strInput: string, args: any, cbInvalidate: any = null) {
+    if (!strInput) return '';
+    let result: string = strInput
     for (var i = 0; i < args.length; i ++) {
       var reg = new RegExp('\\{' + i + '\\}', 'gm');
-      string = string.replace(reg, args[i]);
+      result = result.replace(reg, args[i]);
     }
-    return string;
+    return result;
   }
-  replaceSpecialCharacters(string){
-    string = string.replace(/[áàâãä]/g,"a");
-    string = string.replace(/[ÁÀÂÃÄ]/g,"A");
-    string = string.replace(/[éèê]/g, "e");
-    string = string.replace(/[ÉÈÊ]/g, "E");
-    string = string.replace(/[íì]/g, "i");
-    string = string.replace(/[ÍÌ]/g, "I");
-    string = string.replace(/[óòôõö]/g, "o");
-    string = string.replace(/[ÓÒÔÕÖ]/g, "O");
-    string = string.replace(/[úùü]/g, "u");
-    string = string.replace(/[ÚÙÜ]/g, "U");
-    string = string.replace(/ç/g, "c");
-    string = string.replace(/Ç/g, "C");
-    return string;
+  replaceSpecialCharacters(strInput: string){
+    let result: string = strInput
+    result = result.replace(/[áàâãä]/g,"a");
+    result = result.replace(/[ÁÀÂÃÄ]/g,"A");
+    result = result.replace(/[éèê]/g, "e");
+    result = result.replace(/[ÉÈÊ]/g, "E");
+    result = result.replace(/[íì]/g, "i");
+    result = result.replace(/[ÍÌ]/g, "I");
+    result = result.replace(/[óòôõö]/g, "o");
+    result = result.replace(/[ÓÒÔÕÖ]/g, "O");
+    result = result.replace(/[úùü]/g, "u");
+    result = result.replace(/[ÚÙÜ]/g, "U");
+    result = result.replace(/ç/g, "c");
+    result = result.replace(/Ç/g, "C");
+    return result;
   }
 }
 

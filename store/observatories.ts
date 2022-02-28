@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
-import { Observatories, Observatory, ObservatoriesSection } from "domain/model/observatories"
+import { Observatories, Observatory, ObservatoriesSection } from "plugins/model/observatories"
 
 export const state = () => ({
   observatories: null as unknown as Observatory[],

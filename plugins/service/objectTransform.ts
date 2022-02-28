@@ -1,7 +1,6 @@
-import DateFormatService from './dateFormat.js'
-import NumberTransformService from './numberTransform'
-import TextTransformService from './textTransform'
-import IndicatorsModel from '../../model/singleton/indicatorsModel'
+import { DateFormatService } from "plugins/service/dateFormat"
+import { NumberTransformService } from "plugins/service/numberTransform"
+import { TextTransformService } from "plugins/service/textTransform"
 
 interface IFunctionArgument {
   fixed?: string
@@ -48,20 +47,19 @@ class ObjectTransformService {
       return localFunctions[struct.function].apply(null, args);
     }
     if (['formatDate', 'getWeekDay'].includes(struct.function)) {
-      return this.dateFormatService[struct.function].apply(this.dateFormatService, args);
+      return DateFormatService[struct.function].apply(null, args);
     }
     if (['calcClassIdh', 'getClassIdh', 'calcProportionSalary'].includes(struct.function)) {
       let model = new IndicatorsModel();
       return model[struct.function].apply(model, args);
     }
     if (['calcIndexPercentage', 'calcDeltaPercentage', 'getAbsoluteValue', 'getPaceString'].includes(struct.function)) {
-      return this.numberTransformService[struct.function].apply(null, args);
+      return NumberTransformService[struct.function].apply(null, args);
     }
     if (['applyInterpolReplaceDatasetParam'].includes(struct.function)) {
-      let textTransformService = new TextTransformService();
       args.push(localFunctions);
       args.push(customParams);
-      return textTransformService[struct.function].apply(textTransformService, args);
+      return TextTransformService[struct.function].apply(null, args);
     }
     if (this[struct.function]) {
       return this[struct.function].apply(null, args);
@@ -71,7 +69,8 @@ class ObjectTransformService {
     return null;
   }
   
-  valueCheck(value, baseValue = 0, returnTextInCaseOfHigherThanBaseValue = '', returnTextInCaseOfLowerThanBaseValue = '') {
+  // TODO - Do we need a function in object Transform just to check GT?
+  static valueCheck(value: number, baseValue: number = 0, returnTextInCaseOfHigherThanBaseValue: string = '', returnTextInCaseOfLowerThanBaseValue: string = '') {
     return value > baseValue ? returnTextInCaseOfHigherThanBaseValue : returnTextInCaseOfLowerThanBaseValue ;
   }
 }

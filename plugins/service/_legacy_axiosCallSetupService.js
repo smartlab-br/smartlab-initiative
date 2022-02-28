@@ -1,3 +1,4 @@
+// TODO - Remove in favor of using server-middlewares
 class AxiosCallSetupService {
   constructor(store) {
     this.store = store;
