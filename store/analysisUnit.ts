@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import VueCookies from 'vue-cookies'
 
 import { AnalysisUnit } from "plugins/model/analysisUnit"
 
@@ -14,15 +13,15 @@ export const mutations = {
         state.analysisUnits = AnalysisUnit.buildAllSearchOptions()
     },
     populateAnalysisUnit(state: any) {
-        state.currentAnalysisUnit = VueCookies.get("currentAnalysisUnit")
+        state.currentAnalysisUnit = Vue.prototype.$cookies.get("currentAnalysisUnit")
     },
     setCurrentAnalysisUnit(state: any, id: string) {
-        VueCookies.set("currentAnalysisUnit", id, -1); // Never expires
+        Vue.prototype.$cookies.set("currentAnalysisUnit", id, -1); // Never expires
         state.currentAnalysisUnit = id;
     },    
     isAnalysisUnitCurrent(state: any, id: string) {
         if (state.currentAnalysisUnit) return id == state.currentAnalysisUnit
-        return id == VueCookies.get("currentAnalysisUnit");
+        return id == Vue.prototype.$cookies.get("currentAnalysisUnit");
     }
 }
 

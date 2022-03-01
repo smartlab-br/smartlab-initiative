@@ -1,66 +1,190 @@
 import axios from 'axios'
 
-import AxiosCallSetupService from '../../service/singleton/axiosCallSetupService'
-import TextTransformService from '../../service/singleton/textTransformService'
-import NumberTransformService from '../../service/singleton/numberTransformService'
-import ObjectTransformService from '../../service/singleton/objectTransformService'
+class IDH {
+  cap!: number
+  name: string
+  description: string
 
-class IndicatorsModel {
-  options = []
-  loadStatus = {
-    places: null
+  constructor(data: any) {
+    this.cap = data.cap
+    this.name = data.name
+    this.description = data.description
   }
-  idhLevels = [
-    { cap: 0.5, name: "Muito baixo", description: "(Abaixo de 0,500)" },
-    { cap: 0.6, name: "Baixo", description: "(0.500 a 0.599)" },
-    { cap: 0.7, name: "Médio", description: "(0.600 a 0.699)" },
-    { cap: 0.8, name: "Alto", description: "(0.700 a 0.799)" },
-    { cap: null, name: "Muito alto", description: "(0.800 ou superior)" }
-  ]
-  datasetEndpoints = {
-    centralindicadores: {
-      municipio: '/indicadoresmunicipais?categorias=nm_municipio_uf,cd_uf,nm_uf,cd_dimensao,ds_indicador,ds_indicador_curto,ds_indicador_completo,ds_indicador_prefixo,ds_agreg_primaria,ds_agreg_secundaria,ds_indicador_radical,cd_indicador,nu_competencia,nu_competencia_min,nu_competencia_max,cd_mun_ibge,ds_fonte,vl_indicador,vl_indicador_txt,rank_uf,rank_br,rank_uf_total,rank_br_total,pct_uf,pct_br,media_uf,media_br,vl_indicador_br,vl_indicador_uf&filtros=eq-cd_mun_ibge-{0}&agregacao=DISTINCT',
-      estado: '/indicadoresestaduais?categorias=nm_uf,cd_dimensao,ds_indicador,ds_indicador_curto,ds_indicador_completo,ds_indicador_prefixo,ds_agreg_primaria,ds_agreg_secundaria,ds_indicador_radical,cd_indicador,nu_competencia,nu_competencia_max,nu_competencia_min,cd_mun_ibge,ds_fonte,vl_indicador,vl_indicador_txt,vl_indicador_br,rank_br,rank_br_total,rank_uf_total,pct_br,media_br&filtros=eq-cd_mun_ibge-{0}&agregacao=DISTINCT',
-      brasil: '/indicadoresnacionais?categorias=cd_dimensao,ds_indicador,ds_indicador_curto,ds_indicador_completo,ds_indicador_prefixo,ds_agreg_primaria,ds_agreg_secundaria,ds_indicador_radical,cd_indicador,nu_competencia,nu_competencia_min,nu_competencia_max,ds_fonte,vl_indicador,vl_indicador_txt&agregacao=DISTINCT',
-      mptreg: '/indicadoresmptunidades?categorias=cd_dimensao,ds_indicador,ds_indicador_curto,ds_indicador_completo,ds_indicador_prefixo,ds_agreg_primaria,ds_agreg_secundaria,ds_indicador_radical,cd_indicador,nu_competencia,nu_competencia_max,nu_competencia_min,cd_prt,ds_fonte,vl_indicador,vl_indicador_txt,vl_indicador_br,rank_br,rank_br_total,rank_prt_total,pct_br,media_br&filtros=eq-cd_prt-{0}&agregacao=DISTINCT',
-      prtptm: '/indicadoresmptunidades?categorias=cd_dimensao,ds_indicador,ds_indicador_curto,ds_indicador_completo,ds_indicador_prefixo,ds_agreg_primaria,ds_agreg_secundaria,ds_indicador_radical,cd_indicador,nu_competencia,nu_competencia_max,nu_competencia_min,cd_unidade,cd_prt,nm_unidade,sg_unidade,ds_fonte,vl_indicador,vl_indicador_txt,vl_indicador_br,rank_br,rank_br_total,rank_prt_total,pct_br,media_br&filtros=eq-cd_unidade-{0}&agregacao=DISTINCT',
-    },
-    trabalho_escravo: {
-      municipio: '/te/indicadoresmunicipais?categorias=nm_municipio_uf,cd_uf,cd_indicador,nu_competencia,nu_competencia_min,nu_competencia_max,cd_mun_ibge_dv,vl_indicador,rank_uf,rank_br,rank_uf_total,rank_br_total,pct_uf,pct_br,media_uf,media_br,vl_indicador_br,vl_indicador_uf&filtros=eq-cd_mun_ibge_dv-{0},and,nn-vl_indicador&agregacao=DISTINCT',
-      estado: '/te/indicadoresestaduais?categorias=nm_uf,cd_uf,cd_indicador,nu_competencia,nu_competencia_min,nu_competencia_max,vl_indicador,rank_br,rank_br_total,pct_br,media_br,vl_indicador_br&filtros=eq-cd_uf-{0},and,nn-vl_indicador&agregacao=DISTINCT',
-      brasil: '/te/indicadoresnacionais?categorias=cd_indicador,nu_competencia,nu_competencia_min,nu_competencia_max,vl_indicador&agregacao=DISTINCT&filtros=nn-vl_indicador'
-    },
-    trabalho_escravo_agr: {
-      municipio: '/te/indicadoresmunicipais?categorias=nm_municipio_uf,cd_uf,cd_indicador,nu_competencia_min,nu_competencia_max,cd_mun_ibge_dv&valor=vl_indicador&agregacao=SUM&filtros=eq-cd_mun_ibge_dv-{0},and,nn-vl_indicador',
-      estado: '/te/indicadoresestaduais?categorias=nm_uf,cd_uf,cd_indicador,nu_competencia_min,nu_competencia_max&valor=vl_indicador&agregacao=SUM&filtros=eq-cd_uf-{0},and,nn-vl_indicador',
-      brasil: '/te/indicadoresnacionais?categorias=cd_indicador,nu_competencia_min,nu_competencia_max&valor=vl_indicador&agregacao=SUM&filtros=nn-vl_indicador'
-    },
-    munic: {
-      municipio: '/estadicmunic?categorias=cd_indicador_spai-cd_indicador,cd_indicador-cd_indicador_externo,spai_ds,spai_ds_texto,ds_fonte,nu_ano_indicador-nu_competencia,vl_indicador,spai_vl_indicador_txt,ds_indicador,tema,sub_tema,spai_vl_indicador,total_br,presenca_total_br,pct_presenca_br,total_uf,presenca_total_uf,pct_presenca_uf,nm_municipio,nm_uf,sg_uf,nm_municipio_uf&filtros=eq-cd_mun_ibge-{0}',
-      estado: '/estadicmunic?categorias=cd_indicador_spai-cd_indicador,cd_indicador-cd_indicador_externo,spai_ds,spai_ds_texto,ds_fonte,nu_ano_indicador-nu_competencia,vl_indicador,spai_vl_indicador_txt,ds_indicador,tema,sub_tema,spai_vl_indicador,total_br,presenca_total_br,pct_presenca_br,total_uf,presenca_total_uf,pct_presenca_uf,rank_pct_uf,rank_pct_uf_max,nm_municipio,nm_uf,sg_uf,nm_municipio_uf&valor=cd_uf&agregacao=DISTINCT&filtros=eq-cd_uf-{0}',
-      brasil: '/estadicmunic?categorias=cd_indicador_spai-cd_indicador,cd_indicador-cd_indicador_externo,nu_ano_indicador-nu_competencia,tema,sub_tema,ds_indicador,ds_fonte,presenca_total_br,total_br,pct_presenca_br,spai_ds_texto&valor=cd_indicador_spai&agregacao=DISTINCT'
-    },
-    estadic: {
-      estado: '/estadicuf?categorias=cd_indicador_spai-cd_indicador,cd_indicador-cd_indicador_externo,spai_ds,spai_ds_texto,ds_fonte,nu_ano_indicador-nu_competencia,vl_indicador,spai_vl_indicador_txt,ds_indicador,tema,sub_tema,spai_vl_indicador,total_br,presenca_total_br,pct_presenca_br,nm_uf,sg_uf&filtros=eq-cd_uf-{0}',
-      brasil: '/estadicuf?categorias=cd_indicador_spai-cd_indicador,cd_indicador-cd_indicador_externo,spai_ds,spai_ds_texto,tema,ds_indicador,ds_fonte,sub_tema,presenca_total_br,pct_presenca_br,nu_ano_indicador-nu_competencia&agregacao=DISTINCT'
+
+  static getLevels() {
+    const fixedLevels: IDH[] = [
+      new IDH({ cap: 0.5, name: "Muito baixo", description: "(Abaixo de 0,500)" }),
+      new IDH({ cap: 0.6, name: "Baixo", description: "(0.500 a 0.599)" }),
+      new IDH({ cap: 0.7, name: "Médio", description: "(0.600 a 0.699)" }),
+      new IDH({ cap: 0.8, name: "Alto", description: "(0.700 a 0.799)" }),
+      new IDH({ name: "Muito alto", description: "(0.800 ou superior)" })
+    ]
+    return fixedLevels
+  }
+
+  // Funções migradas de contextos de componentes (customFunctions e methods)
+  static calcClassIdh(idhValue: number, showIdh: boolean = false, showParentheses: boolean = false, letterCaption: boolean = true) {
+    const prepend: string = `${showIdh ? idhValue+" " : ""}${showParentheses ? " (": ""}`
+    const append: string = `${showParentheses ? ")": ""}`
+
+    const allLevels: IDH[] = IDH.getLevels()
+    for (let level of allLevels) {
+      if (level.cap && idhValue < level.cap) {
+        return `${prepend}${letterCaption ? level.name : level.name.toLowerCase()}${append}`
+      }
+    }
+    return `${prepend}${letterCaption ? allLevels[allLevels.length - 1].name : allLevels[allLevels.length - 1].name.toLowerCase()}${append}`
+  }
+
+  getClassIdh(idhValue: number) {
+    if (!idhValue) return ""
+    const allLevels: IDH[] = IDH.getLevels()
+    for (let level of allLevels) {
+      if (level.cap && idhValue < level.cap) {
+        return level.description;
+      }
+    }
+    return allLevels[allLevels.length - 1].description;
+  }
+}
+
+class DictDatasetEndpoints {
+  [key: string]: DatasetEndpoint
+
+  constructor(data: any) {
+    for (const k, v of data) {
+      this[k] = new DatasetEndpoint(v)
     }
   }
-  globalDatasets = {}
 
-  constructor() {
-    this.textTransformService = new TextTransformService();
-    this.numberTransformService = new NumberTransformService();
-    this.objectTransformService = new ObjectTransformService();
+  static findAll() {
+    return new DictDatasetEndpoints(
+      {
+        centralindicadores: {
+          municipio: '/indicadoresmunicipais?categorias=nm_municipio_uf,cd_uf,nm_uf,cd_dimensao,ds_indicador,ds_indicador_curto,ds_indicador_completo,ds_indicador_prefixo,ds_agreg_primaria,ds_agreg_secundaria,ds_indicador_radical,cd_indicador,nu_competencia,nu_competencia_min,nu_competencia_max,cd_mun_ibge,ds_fonte,vl_indicador,vl_indicador_txt,rank_uf,rank_br,rank_uf_total,rank_br_total,pct_uf,pct_br,media_uf,media_br,vl_indicador_br,vl_indicador_uf&filtros=eq-cd_mun_ibge-{0}&agregacao=DISTINCT',
+          estado: '/indicadoresestaduais?categorias=nm_uf,cd_dimensao,ds_indicador,ds_indicador_curto,ds_indicador_completo,ds_indicador_prefixo,ds_agreg_primaria,ds_agreg_secundaria,ds_indicador_radical,cd_indicador,nu_competencia,nu_competencia_max,nu_competencia_min,cd_mun_ibge,ds_fonte,vl_indicador,vl_indicador_txt,vl_indicador_br,rank_br,rank_br_total,rank_uf_total,pct_br,media_br&filtros=eq-cd_mun_ibge-{0}&agregacao=DISTINCT',
+          brasil: '/indicadoresnacionais?categorias=cd_dimensao,ds_indicador,ds_indicador_curto,ds_indicador_completo,ds_indicador_prefixo,ds_agreg_primaria,ds_agreg_secundaria,ds_indicador_radical,cd_indicador,nu_competencia,nu_competencia_min,nu_competencia_max,ds_fonte,vl_indicador,vl_indicador_txt&agregacao=DISTINCT',
+          mptreg: '/indicadoresmptunidades?categorias=cd_dimensao,ds_indicador,ds_indicador_curto,ds_indicador_completo,ds_indicador_prefixo,ds_agreg_primaria,ds_agreg_secundaria,ds_indicador_radical,cd_indicador,nu_competencia,nu_competencia_max,nu_competencia_min,cd_prt,ds_fonte,vl_indicador,vl_indicador_txt,vl_indicador_br,rank_br,rank_br_total,rank_prt_total,pct_br,media_br&filtros=eq-cd_prt-{0}&agregacao=DISTINCT',
+          prtptm: '/indicadoresmptunidades?categorias=cd_dimensao,ds_indicador,ds_indicador_curto,ds_indicador_completo,ds_indicador_prefixo,ds_agreg_primaria,ds_agreg_secundaria,ds_indicador_radical,cd_indicador,nu_competencia,nu_competencia_max,nu_competencia_min,cd_unidade,cd_prt,nm_unidade,sg_unidade,ds_fonte,vl_indicador,vl_indicador_txt,vl_indicador_br,rank_br,rank_br_total,rank_prt_total,pct_br,media_br&filtros=eq-cd_unidade-{0}&agregacao=DISTINCT',
+        },
+        trabalho_escravo: {
+          municipio: '/te/indicadoresmunicipais?categorias=nm_municipio_uf,cd_uf,cd_indicador,nu_competencia,nu_competencia_min,nu_competencia_max,cd_mun_ibge_dv,vl_indicador,rank_uf,rank_br,rank_uf_total,rank_br_total,pct_uf,pct_br,media_uf,media_br,vl_indicador_br,vl_indicador_uf&filtros=eq-cd_mun_ibge_dv-{0},and,nn-vl_indicador&agregacao=DISTINCT',
+          estado: '/te/indicadoresestaduais?categorias=nm_uf,cd_uf,cd_indicador,nu_competencia,nu_competencia_min,nu_competencia_max,vl_indicador,rank_br,rank_br_total,pct_br,media_br,vl_indicador_br&filtros=eq-cd_uf-{0},and,nn-vl_indicador&agregacao=DISTINCT',
+          brasil: '/te/indicadoresnacionais?categorias=cd_indicador,nu_competencia,nu_competencia_min,nu_competencia_max,vl_indicador&agregacao=DISTINCT&filtros=nn-vl_indicador'
+        },
+        trabalho_escravo_agr: {
+          municipio: '/te/indicadoresmunicipais?categorias=nm_municipio_uf,cd_uf,cd_indicador,nu_competencia_min,nu_competencia_max,cd_mun_ibge_dv&valor=vl_indicador&agregacao=SUM&filtros=eq-cd_mun_ibge_dv-{0},and,nn-vl_indicador',
+          estado: '/te/indicadoresestaduais?categorias=nm_uf,cd_uf,cd_indicador,nu_competencia_min,nu_competencia_max&valor=vl_indicador&agregacao=SUM&filtros=eq-cd_uf-{0},and,nn-vl_indicador',
+          brasil: '/te/indicadoresnacionais?categorias=cd_indicador,nu_competencia_min,nu_competencia_max&valor=vl_indicador&agregacao=SUM&filtros=nn-vl_indicador'
+        },
+        munic: {
+          municipio: '/estadicmunic?categorias=cd_indicador_spai-cd_indicador,cd_indicador-cd_indicador_externo,spai_ds,spai_ds_texto,ds_fonte,nu_ano_indicador-nu_competencia,vl_indicador,spai_vl_indicador_txt,ds_indicador,tema,sub_tema,spai_vl_indicador,total_br,presenca_total_br,pct_presenca_br,total_uf,presenca_total_uf,pct_presenca_uf,nm_municipio,nm_uf,sg_uf,nm_municipio_uf&filtros=eq-cd_mun_ibge-{0}',
+          estado: '/estadicmunic?categorias=cd_indicador_spai-cd_indicador,cd_indicador-cd_indicador_externo,spai_ds,spai_ds_texto,ds_fonte,nu_ano_indicador-nu_competencia,vl_indicador,spai_vl_indicador_txt,ds_indicador,tema,sub_tema,spai_vl_indicador,total_br,presenca_total_br,pct_presenca_br,total_uf,presenca_total_uf,pct_presenca_uf,rank_pct_uf,rank_pct_uf_max,nm_municipio,nm_uf,sg_uf,nm_municipio_uf&valor=cd_uf&agregacao=DISTINCT&filtros=eq-cd_uf-{0}',
+          brasil: '/estadicmunic?categorias=cd_indicador_spai-cd_indicador,cd_indicador-cd_indicador_externo,nu_ano_indicador-nu_competencia,tema,sub_tema,ds_indicador,ds_fonte,presenca_total_br,total_br,pct_presenca_br,spai_ds_texto&valor=cd_indicador_spai&agregacao=DISTINCT'
+        },
+        estadic: {
+          estado: '/estadicuf?categorias=cd_indicador_spai-cd_indicador,cd_indicador-cd_indicador_externo,spai_ds,spai_ds_texto,ds_fonte,nu_ano_indicador-nu_competencia,vl_indicador,spai_vl_indicador_txt,ds_indicador,tema,sub_tema,spai_vl_indicador,total_br,presenca_total_br,pct_presenca_br,nm_uf,sg_uf&filtros=eq-cd_uf-{0}',
+          brasil: '/estadicuf?categorias=cd_indicador_spai-cd_indicador,cd_indicador-cd_indicador_externo,spai_ds,spai_ds_texto,tema,ds_indicador,ds_fonte,sub_tema,presenca_total_br,pct_presenca_br,nu_ano_indicador-nu_competencia&agregacao=DISTINCT'
+        }
+      }
+    )
+  }
+}
+
+class DatasetEndpoint {
+  municipio!: string
+  estado: string
+  brasil: string
+  mptreg!: string
+  prtptm!: string
+
+  constructor(data: any) {
+    this.municipio = data.municipio
+    this.estado = data.estado
+    this.brasil = data.Brasil
+    this.mptreg = data.mptreg
+    this.prtptm = data.prtptm
+  }
+}
+
+class Indicator {
+  cd_indicador: number | string
+  nu_competencia: number | string
+  vl_indicador: any
+
+  constructor(data: any) {
+    this.cd_indicador = data.cd_indicador
+    this.nu_competencia = data.nu_competencia
+    this.vl_indicador = data.vl_indicador
   }
 
-  setStore(store) {
-    this.store = store;
-    this.axiosSetup = new AxiosCallSetupService(store);
+  isMinOnSlice(indicators: Indicator[], prop: string = "vl_indicador") {
+    const min: any = indicators.reduce((prev: any, curr: Indicator) => {
+      if (curr.cd_indicador !== this.cd_indicador) return prev
+      const currVal: any = curr[prop as keyof typeof Indicator] as string | number
+      return prev && prev < currVal ? prev : currVal 
+    })
+    return this[prop as keyof typeof Indicator] <= min
   }
 
-  getOptions() {
-    return this.options;
+  isMaxOnSlice(indicators: Indicator[], prop: string = "vl_indicador") {
+    const max: any = indicators.reduce((prev: any, curr: Indicator) => {
+      if (curr.cd_indicador !== this.cd_indicador) return prev
+      const currVal: any = curr[prop as keyof typeof Indicator]
+      return prev && prev > currVal ? prev : currVal 
+    })
+    return this[prop as keyof typeof Indicator] >= min
   }
+
+  isMinInYear(indicators: Indicator[], prop: string = "vl_indicador") {
+    const min: any = indicators.reduce((prev: any, curr: Indicator) => {
+      if (curr.cd_indicador !== this.cd_indicador || curr.nu_competencia !== this.nu_competencia) return prev
+      const currVal: any = curr[prop as keyof tipeof Indicator]
+      return prev && prev < currVal ? prev : currVal 
+    })
+    return this[prop as keyof typeof Indicator] <= min
+  }
+
+  isMaxInYear(indicators: Indicator[], prop: string = "vl_indicador") {
+    const max: any = indicators.reduce((prev: any, curr: Indicator) => {
+      if (curr.cd_indicador !== this.cd_indicador || curr.nu_competencia !== this.nu_competencia) return prev
+      const currVal: any = curr[prop as keyof tipeof Indicator]
+      return prev && prev > currVal ? prev : currVal 
+    })
+    return this[prop as keyof typeof Indicator] >= max
+  }
+
+  getMinMax(indicators: Indicator[], prop: string = "vl_indicador") {
+    // Obtém o min e o max
+    return indicators.reduce((prev: any[], curr: Indicator) => {
+      let currVal: any = curr[prop as keyof typeof Indicator]
+      return [
+        prev && prev[0] && prev[0] < currVal ? prev[0] : parseFloat(currVal),
+        prev && prev[1] && prev[1] > currVal ? prev[1] : parseFloat(currVal)
+      ]
+    })
+  }
+
+  getMinMaxEachIndicator(indicators: Indicator[], prop: string = "vl_indicador") {
+    // Obtém o min e o max
+    return indicators.reduce((prev: any, curr: Indicator) => {
+      let currVal: any = curr[prop as keyof typeof Indicator]
+      if (prev.getKeys().includes(curr.cd_indicador)) {
+        const keyInPrev: number[] = prev[curr.cd_indicador]
+        prev[curr.cd_indicador] = [
+          keyInPrev && keyInPrev[0] && keyInPrev[0] < currVal ? keyInPrev[0] : parseFloat(currVal),
+          keyInPrev && keyInPrev[1] && keyInPrev[1] > currVal ? keyInPrev[1] : parseFloat(currVal)
+        ]
+      } else {
+        prev[curr.cd_indicador] = [parseFloat(currVal), parseFloat(currVal)]
+      }
+      return prev
+    })
+  }
+
+
+
+
 
   buildIndicatorsOptions(observatory = null) {
     this.loadStatus = 'LOADING';
@@ -176,71 +300,8 @@ class IndicatorsModel {
     return result;
   }
 
-  isMaxOnSlice(struct, indicators, current, prop) {
-    let tmpResult = current[prop];
-    for (var indxInd in indicators) {
-      if (indicators[indxInd].cd_indicador !== current.cd_indicador) {
-        continue;
-      }
-      if (tmpResult === null) {
-        tmpResult = indicators[indxInd][prop];
-      } else if (tmpResult < indicators[indxInd][prop]) {
-        tmpResult = indicators[indxInd][prop];
-      }
-    }
-    return tmpResult == current[prop];
-  }
-
-  isMaxInYear(struct, indicators, current, prop) {
-    let tmpResult = current[prop];
-    for (var indxInd in indicators) {
-      if (indicators[indxInd].cd_indicador !== current.cd_indicador) {
-        continue;
-      }
-      if (indicators[indxInd].nu_competencia !== current.nu_competencia) {
-        continue;
-      }
-      if (tmpResult === null) {
-        tmpResult = indicators[indxInd][prop];
-      } else if (tmpResult < indicators[indxInd][prop]) {
-        tmpResult = indicators[indxInd][prop];
-      }
-    }
-    return tmpResult == current[prop];
-  }
-
-  isMinOnSlice(struct, indicators, current, prop) {
-    let tmpResult = current[prop];
-    for (var indxInd in indicators) {
-      if (indicators[indxInd].cd_indicador !== current.cd_indicador) {
-        continue;
-      }
-      if (tmpResult === null) {
-        tmpResult = indicators[indxInd][prop];
-      } else if (tmpResult > indicators[indxInd][prop]) {
-        tmpResult = indicators[indxInd][prop];
-      }
-    }
-    return tmpResult == current[prop];
-  }
-
-  isMinInYear(struct, indicators, current, prop) {
-    let tmpResult = current[prop];
-    for (var indxInd in indicators) {
-      if (indicators[indxInd].cd_indicador !== current.cd_indicador) {
-        continue;
-      }
-      if (indicators[indxInd].nu_competencia !== current.nu_competencia) {
-        continue;
-      }
-      if (tmpResult === null) {
-        tmpResult = indicators[indxInd][prop];
-      } else if (tmpResult > indicators[indxInd][prop]) {
-        tmpResult = indicators[indxInd][prop];
-      }
-    }
-    return tmpResult == current[prop];
-  }
+  
+  
   
   combineIndicators(sliced, struct, functions = {}, place_id_field = null) {
     let result = [];
@@ -367,31 +428,7 @@ class IndicatorsModel {
     return value;
   }
 
-  // Funções migradas de contextos de componentes (customFunctions e methods)
-  calcClassIdh(idh, showIdh = false, showParentheses = false, letterCaption = true) { 
-    let returText = "";
-    
-    for (let level of this.idhLevels) {
-      if (level.cap == null || (level.cap && idh < level.cap)) {
-        returText = letterCaption ? level.name : level.name.toLowerCase();
-        break;
-      }
-    }
-    
-    returText = showParentheses ? " (" + returText + ")": returText;
-    returText = showIdh ? idh + " " + returText : returText;
-
-    return returText;
-  }
-
-  getClassIdh(idh) { 
-    for (let level of this.idhLevels) {
-      if (level.cap == null || (level.cap && idh < level.cap)) {
-        return level.description;
-      }
-    }
-    return "";
-  }
+  
 
   calcProportionSalary(value, salary) {
     let fieldText = " salários mínimos, à época";
@@ -556,62 +593,7 @@ class IndicatorsModel {
     return null;
   }
 
-  getMinMax(dataset, value_field) {
-    // Obtém o min e o max
-    let min, max = null;
-    for (let indxDS in dataset) {
-      if (min == null || min > parseFloat(dataset[indxDS][value_field])) {
-        min = parseFloat(dataset[indxDS][value_field]);
-      }
-      if (max == null || max < parseFloat(dataset[indxDS][value_field])) {
-        max = parseFloat(dataset[indxDS][value_field]);
-      }
-    }
-    return [min, max];
-  }
-
-  getMinMaxEachIndicator(dataset, value_field) {
-    // Obtém o min e o max
-    let min = [];
-    let max = [];
-    for (let indxDS in dataset) {
-      if (this.isMinInYear({}, dataset, dataset[indxDS], value_field)) {
-        min.push(dataset[indxDS]);
-      }
-      if (this.isMaxInYear({}, dataset, dataset[indxDS], value_field)) {
-        max.push(dataset[indxDS]);
-      }
-    }
-
-    // Itera no dataset, incluindo os atributos minVal e maxVal
-    for (let indxDS in dataset) {
-      // Atribui o minimo
-      for (let indxMin in min) {
-        if (dataset[indxDS].cd_indicador !== min[indxMin].cd_indicador) {
-          continue;
-        }
-        if (dataset[indxDS].nu_competencia !== min[indxMin].nu_competencia) {
-          continue;
-        }
-        dataset[indxDS].minVal = min[indxMin][value_field];
-        break;
-      }
-      // Atribui o maximo
-      for (let indxMax in max) {
-        if (dataset[indxDS].cd_indicador !== max[indxMax].cd_indicador) {
-          continue;
-        }
-        if (dataset[indxDS].nu_competencia !== max[indxMax].nu_competencia) {
-          continue;
-        }
-        dataset[indxDS].maxVal = max[indxMax][value_field];
-        break;
-      }
-    }
-    // Retorna o dataset preenchido
-    return dataset;
-  }
-
+  
   getGlobalDatasets() { return this.globalDatasets; }
 
   getGlobalDataset(dataset, scope, auId = null, suffix = "") {

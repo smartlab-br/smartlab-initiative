@@ -1,3 +1,4 @@
+// This is the current yaml structure, to be referenced by the platform while rewriting using typescript
 class DimensionView {
     principais: ViewDefinition[]
     secoes: DimensionViewSecao[]

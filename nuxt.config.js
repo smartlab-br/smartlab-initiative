@@ -22,9 +22,18 @@ export default {
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
-    {src: "~/plugins/model/dimensions.ts"},
-    {src: "~/plugins/service/dateFormat.ts"},
-    {src: "~/plugins/service/yamlFetcher.ts"},
+    {src: "@/plugins/vueCookies.ts"},
+    {src: "@/plugins/model/about.ts"},
+    {src: "@/plugins/model/analysisUnit.ts"},
+    {src: "@/plugins/model/dimensions.ts"},
+    {src: "@/plugins/model/observatories.ts"},
+    {src: "@/plugins/service/colors.ts"},
+    {src: "@/plugins/service/dateFormat.ts"},
+    {src: "@/plugins/service/navigation.ts"},
+    {src: "@/plugins/service/numberTransform.ts"},
+    {src: "@/plugins/service/observatory.ts"},
+    {src: "@/plugins/service/tooltipBuilding.ts"},
+    {src: "@/plugins/service/viewconf.ts"},
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -43,7 +52,8 @@ export default {
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
     // https://go.nuxtjs.dev/pwa
-    '@nuxtjs/pwa'
+    '@nuxtjs/pwa',
+    'vue-cookies',
   ],
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
