@@ -68,9 +68,6 @@ export default context => {
         store.state.MAILER_API_BASE_URL = process.env.MAILER_API_BASE_URL;     
         store.state.MAILER_APP_KEY = process.env.MAILER_APP_KEY;
       
-        store.state.ACIDENTOMETROS_API_BASE_URL = process.env.ACIDENTOMETROS_API_BASE_URL;     
-        store.state.ACIDENTOMETROS_APP_KEY = process.env.ACIDENTOMETROS_APP_KEY;
-
         store.state.GRAVITEE_AM_BASE_URL = process.env.GRAVITEE_AM_BASE_URL;
         store.state.GRAVITEE_AM_CLIENT_ID = process.env.GRAVITEE_AM_CLIENT_ID;
         store.state.GRAVITEE_AM_REDIRECT_URL = process.env.GRAVITEE_AM_REDIRECT_URL

@@ -24,7 +24,7 @@ GIT_VIEWCONF_TAG_URL=https://raw.githubusercontent.com/smartlab-br/smartlab-init
 
 Otherwise, if you want to be able to change the content and see it working locally, you have to fork and clone [this repository](https://github.com/smartlab-br/smartlab-initiative-viewconf) under the `/app/static/` dir.
 
-## Step 3. Subscribe to datahub-api & acidentometros-api
+## Step 3. Subscribe to datahub-api
 
 At the moment, we're working in a self-service subscription. Until it becomes a reality, please, send us an e-mail (smartlab-dev@mpt.mp.br) - we'll be glad to provide you with an API Key. Remember, though, that the access is not guaranteed - we might want to know you a little better (where you're from, if you're representing an organization, if there are more people in the organization that will use the data and so on...).
 
@@ -34,8 +34,6 @@ At the moment, we're working in a self-service subscription. Until it becomes a 
 DATAHUB_API_BASE_URL = <the endpoint to the datahub-api>
 DATAHUB_APP_KEY = <your application credential obtained in the subscription step>
       
-ACIDENTOMETROS_API_BASE_URL = <the endpoint to the datahub-api>
-ACIDENTOMETROS_APP_KEY = <your application credential obtained in the subscription step>
 ```
 
 ## Step 5. Run the project
