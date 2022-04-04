@@ -12,10 +12,9 @@ class AxiosCallSetupService {
     return process.env[key];
   }
 
-  getAxiosOptions(endpoint, key = 'DATAHUB') {
+  getAxiosOptions(endpoint, key = 'DATAHUB', noCache = false) {
     const urlMap = {
       DATAHUB : '/api-proxy/datahub',
-      ACIDENTOMETROS : '/api-proxy/odometros',
       MERCURIO : '/api-proxy/mercurio'
     }
 
@@ -29,7 +28,7 @@ class AxiosCallSetupService {
       'Request-Source': "application"
     }
 
-    if (key == 'ACIDENTOMETROS') {
+    if (noCache) {
       headers['Cache-Control'] = 'no-cache'
     }
     if (endpoint == '/mail') {

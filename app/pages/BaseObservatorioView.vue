@@ -156,8 +156,8 @@
         if (observatorio.prevalencia && observatorio.prevalencia.odometers){
           this.hasOdometers = true;
           if (this.idObservatorio == "sst"){
-            let url="/sst";
-            axios(this.$axiosCallSetupService.getAxiosOptions(url, 'ACIDENTOMETROS'))
+            let url="/odometros/sst";
+            axios(this.$axiosCallSetupService.getAxiosOptions(url, 'DATAHUB', true))
               .then(result => {
                 let odometros = JSON.parse(result.data);
                 this.customParams.odometros = odometros;

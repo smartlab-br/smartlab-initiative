@@ -193,9 +193,7 @@ app.get('/api-proxy/*', (req, res) => {
   if (req.headers['request-source'] == 'application' && req.headers['user-agent'] && req.headers['user-agent'].toLowerCase().indexOf('postman') == -1){
     const apiDataMap = { 
       datahub: [process.env.DATAHUB_API_BASE_URL, 
-                process.env.DATAHUB_APP_KEY],
-      odometros: [process.env.ACIDENTOMETROS_API_BASE_URL, 
-                process.env.ACIDENTOMETROS_APP_KEY] 
+                process.env.DATAHUB_APP_KEY]
     }
 
     const splitArray = req.url.split("/")
