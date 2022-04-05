@@ -90,10 +90,15 @@
 
       checkCurrentAnalysisUnit() {
         let currAU = this.$analysisUnitModel.getCurrentAnalysisUnit();
-        if (this.idObservatorio && this.idObservatorio == 'td' && currAU && currAU.toString().length != 7) {
+        if (this.idObservatorio && this.idObservatorio == 'td' && ((currAU && currAU.toString().length != 7) || (!currAU))) {
           this.$emit('showLocationDialog');
-        } else if (!currAU) { // Se não houver cookie, invoca o cliente geo_ip
-          GeoIpClient.getClientGeo(this.getClientGeoCallback);
+        } else if (!currAU) { // Se não houver cookie
+          // invoca o cliente geo_ip
+          // GeoIpClient.getClientGeo(this.getClientGeoCallback);
+          this.currentAnalysisUnit = '0'; //Brasil
+          this.idLocalidade = '0';
+          this.$analysisUnitModel.setCurrentAnalysisUnit('0');
+          // this.$emit('alterMiddleToolbar', { "localidade": result });
         } else {
           this.currentAnalysisUnit = currAU;
         }
