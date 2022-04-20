@@ -285,7 +285,8 @@ export default {
             }
 
             if (order_field){
-                this.customSort(sourceDS,order_field,true);
+                let isDescOrder = !(sourceStructure.pivot.order && sourceStructure.pivot.order === 'asc');
+                this.customSort(sourceDS,order_field,isDescOrder);
             }
             
             this.dataset = sourceDS;
