@@ -249,21 +249,6 @@ export default {
             required_column: null
         }
     },
-    watch: {
-        required_column: function(newVal, oldVal){
-            if (newVal){
-                this.pagination.page = 1;
-                let colId = isNaN(newVal) ? newVal : this.structure.headers[newVal-1].value;
-                this.dataset = this.dataset.filter(function(el) { 
-                    return el[colId] !== null 
-                            && el[colId] !== undefined 
-                            && el[colId].toString() !== "0"
-                })
-            } else {
-                this.dataset = this.data_items.slice();
-            }
-        }
-    },
     methods: {
         fillFromDataset(sourceDS, rules, sourceStructure, addedParams = null, metadata = null) {
             let hierarchicalDS = [];
