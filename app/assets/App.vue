@@ -464,7 +464,7 @@
             @click="$navigationManager.constructor.pushRoute($router, 'https://ilo.org', true)" 
           />
           <img 
-            v-if="currentObs == 'te' || currentObs == 'ti'"
+            
             src="/static/smartlab/sit.png"
             class="cursor-pointer mb-1 ml-2" 
             alt="Subsecretaria de Inspeção do Trabalho"
@@ -487,7 +487,7 @@
             @click="$navigationManager.constructor.pushRoute($router, 'https://ouvidoria.mdh.gov.br/portal', true)" 
           />
           <img 
-            v-if="currentObs == 'ti'"
+            
             src="/static/smartlab/fnpeti.svg"
             class="cursor-pointer mb-1 ml-0" 
             alt="Fórum Nacional de Prevenção e Erradicação do Trabalho Infantil"
@@ -496,7 +496,7 @@
             @click="$navigationManager.constructor.pushRoute($router, 'https://fnpeti.org.br', true)" 
           />
           <img 
-            v-if="currentObs == 'ti' || currentObs == 'td'"
+            
             src="/static/smartlab/ibge.png"
             class="cursor-pointer mb-1 ml-0" 
             alt="Instituto Brasileiro de Geografia e Estatística"
@@ -504,7 +504,7 @@
             @click="$navigationManager.constructor.pushRoute($router, 'http:///ibge.gov.br', true)" 
           />
           <img 
-            v-if="currentObs == 'ti'"
+            
             src="/static/smartlab/mcidadania.png"
             class="cursor-pointer mb-1 ml-0" 
             alt="Ministério da Cidadania"
@@ -512,7 +512,7 @@
             @click="$navigationManager.constructor.pushRoute($router, 'https://www.gov.br/cidadania/pt-br', true)" 
           />
           <img 
-            v-if="currentObs == 'des'"
+            
             src="/static/smartlab/pacto.svg"
             class="cursor-pointer mb-1 ml-0" 
             alt="Pacto Global - Rede Brasil"
@@ -521,7 +521,7 @@
             @click="$navigationManager.constructor.pushRoute($router, 'https://www.pactoglobal.org.br', true)" 
           />
           <img 
-            v-if="currentObs == 'des'"
+            
             src="/static/smartlab/onumulheres.svg"
             class="cursor-pointer ml-2" 
             alt="ONU Mulheres"

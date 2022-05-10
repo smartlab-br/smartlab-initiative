@@ -79,7 +79,7 @@
                 <th scope="colgroup" 
                     v-for="(header, idxHeader) in props.headers"
                     :key="idxHeader"
-                    :class="['column sortable', pagination.descending ? 'desc' : 'asc', header.value === pagination.sortBy ? 'active' : '']"
+                    :class="['column sortable', pagination.descending ? 'desc' : 'asc', header.value === pagination.sortBy ? 'active' : '', header.align]"
                     :width="header.width"
                     @click="changeSort(header.value)"
                 >
@@ -103,6 +103,7 @@
                 <td 
                     v-for="(hdr, idxHdr) in structure.headers" 
                     :key="idxHdr" 
+                    :class="hdr.align"
                     :style="(hdr.item_align?'text-align:'+hdr.item_align:'')"
                     pa-0 
                 >
@@ -186,17 +187,30 @@
                     </div>
                 </td> 
             </template>
-            <template slot="actions-prepend"                    
-                v-if="structure.search_position == 'bottom'"
-            >
-                <v-text-field
-                    v-model="search"
-                    append-icon="search"
-                    label="Procurar"
-                    single-line
-                    hide-details
-                    class='pa-2 ma-0'
-                />
+            <template slot="footer">
+                <tr><td colspan="15">
+                <v-layout row>
+                    <v-flex xs4  >
+                        <v-checkbox
+                            v-if="structure.check"
+                            v-model="required_column"
+                            :label="structure.check.label"
+                            :value="structure.check.column"
+                            class='pt-3 ma-0 flpo-datatable-checkbox'
+                        />
+                    </v-flex>
+                    <v-flex xs3>
+                        <v-text-field v-if="structure.search_position == 'bottom'"
+                            v-model="search"
+                            append-icon="search"
+                            label="Procurar"
+                            single-line
+                            hide-details
+                            class='pa-2 ma-0'
+                        />
+                    </v-flex>
+                </v-layout>
+                </td></tr>
             </template>
             <template slot="pageText"
                 slot-scope="props"
@@ -230,7 +244,9 @@ export default {
         return {
             first_cat: {},
             last_cat: {},
-            labels: {}
+            labels: {},
+            data_items: null,
+            required_column: null
         }
     },
     methods: {
@@ -241,46 +257,51 @@ export default {
             let series_last_cat = {};
 
             fromSource: for (let row of sourceDS) {
-                if (!allSeries.includes(row[sourceStructure.series_field])){ //new series
-                  allSeries.push(row[sourceStructure.series_field]);
-                  series_first_cat[row[sourceStructure.series_field]] = parseInt(row[sourceStructure.category_field]);
-                  series_last_cat[row[sourceStructure.series_field]] = parseInt(row[sourceStructure.category_field]);
+                if (row[sourceStructure.series_field] == undefined) {
+                    let mun_row = hierarchicalDS.find(reg => reg[sourceStructure.id_field] === row[sourceStructure.id_field]);
+                    Object.assign(mun_row, row);
                 } else {
-                    if (parseInt(row[sourceStructure.category_field]) < series_first_cat[row[sourceStructure.series_field]]){
-                         series_first_cat[row[sourceStructure.series_field]] = parseInt(row[sourceStructure.category_field]);
-                    }
-
-                    if (parseInt(row[sourceStructure.category_field]) > series_last_cat[row[sourceStructure.series_field]]){
-                         series_last_cat[row[sourceStructure.series_field]] = parseInt(row[sourceStructure.category_field]);
-                    }
-                }
-
-                let entryValue = row[sourceStructure.value_field] ? row[sourceStructure.value_field] : 0;
-                if (typeof entryValue !== "number") entryValue = parseFloat(entryValue);
-
-                let entry = { id: sourceStructure.series_field, cat_value: parseInt(row[sourceStructure.category_field]), value: entryValue };
-                
-                for (let eachInHierarchy of hierarchicalDS) {
-                    if (eachInHierarchy.id == row[sourceStructure.id_field]) { // found the instance
-
-                        if (eachInHierarchy[row[sourceStructure.series_field]] == null) { // new series
-                            
-                            eachInHierarchy[row[sourceStructure.series_field]] = [entry];
-
-                        } else { // Existing instance and series
-                            eachInHierarchy[row[sourceStructure.series_field]].push(entry);
-
+                    if (!allSeries.includes(row[sourceStructure.series_field])){ //new series
+                    allSeries.push(row[sourceStructure.series_field]);
+                    series_first_cat[row[sourceStructure.series_field]] = parseInt(row[sourceStructure.category_field]);
+                    series_last_cat[row[sourceStructure.series_field]] = parseInt(row[sourceStructure.category_field]);
+                    } else {
+                        if (parseInt(row[sourceStructure.category_field]) < series_first_cat[row[sourceStructure.series_field]]){
+                            series_first_cat[row[sourceStructure.series_field]] = parseInt(row[sourceStructure.category_field]);
                         }
-                        continue fromSource;
-                    }    
+
+                        if (parseInt(row[sourceStructure.category_field]) > series_last_cat[row[sourceStructure.series_field]]){
+                            series_last_cat[row[sourceStructure.series_field]] = parseInt(row[sourceStructure.category_field]);
+                        }
+                    }
+
+                    let entryValue = row[sourceStructure.value_field] ? row[sourceStructure.value_field] : 0;
+                    if (typeof entryValue !== "number") entryValue = parseFloat(entryValue);
+
+                    let entry = { id: sourceStructure.series_field, cat_value: parseInt(row[sourceStructure.category_field]), value: entryValue };
+                    
+                    for (let eachInHierarchy of hierarchicalDS) {
+                        if (eachInHierarchy.id == row[sourceStructure.id_field]) { // found the instance
+
+                            if (eachInHierarchy[row[sourceStructure.series_field]] == null) { // new series
+                                
+                                eachInHierarchy[row[sourceStructure.series_field]] = [entry];
+
+                            } else { // Existing instance and series
+                                eachInHierarchy[row[sourceStructure.series_field]].push(entry);
+
+                            }
+                            continue fromSource;
+                        }    
+                    }
+
+                    // If not found, create a new instance and push to the dataset
+                    let nuInstance = row;
+                    nuInstance.id = row[sourceStructure.id_field];
+
+                    nuInstance[row[sourceStructure.series_field]] = [entry];
+                    hierarchicalDS.push(nuInstance);
                 }
-
-                // If not found, create a new instance and push to the dataset
-                let nuInstance = row;
-                nuInstance.id = row[sourceStructure.id_field];
-
-                nuInstance[row[sourceStructure.series_field]] = [entry];
-                hierarchicalDS.push(nuInstance);
             }
 
             let fillZeros = sourceStructure.fillZeros == undefined ? true : sourceStructure.fillZeros;
@@ -314,6 +335,11 @@ export default {
             this.addHeadersLabels(allSeries);
             
             this.dataset = hierarchicalDS;
+            this.data_items = hierarchicalDS.slice();
+            if (this.structure.check && this.structure.check.checked) {
+                this.required_column = this.structure.check.column;
+            }
+
             this.loaded = true;
             this.$emit('dataset-loaded', this.dataset);
         },
@@ -494,6 +520,11 @@ export default {
                 } else if (this.labels[header.value.replace('fmt_','') + '_label']){
                     header.text = this.baseHeaders[i].text + (this.baseHeaders[i].text !== '' && this.baseHeaders[i].text !== undefined?' ':'') + this.labels[header.value.replace('fmt_','')  + '_label'];
                 }
+
+                if (this.structure.hidden_cols && this.structure.hidden_cols.includes(header.value)) {
+                    header.align = ' d-none';
+                } 
+
                 i++;
             }
 
@@ -586,6 +617,9 @@ export default {
   
   .flpo-datatable-head th div{
     margin: 0px !important;
+  }
+  .flpo-datatable-checkbox >>> label {
+    font-size: 12px !important;
   }
 
 </style>
