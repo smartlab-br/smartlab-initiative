@@ -79,7 +79,7 @@
                 <th scope="colgroup" 
                     v-for="(header, idxHeader) in props.headers"
                     :key="idxHeader"
-                    :class="['column sortable', pagination.descending ? 'desc' : 'asc', header.value === pagination.sortBy ? 'active' : '']"
+                    :class="['column sortable', pagination.descending ? 'desc' : 'asc', header.value === pagination.sortBy ? 'active' : '', header.align]"
                     :width="header.width"
                     @click="changeSort(header.value)"
                 >
@@ -102,6 +102,7 @@
                 <td 
                     v-for="(hdr, idxHdr) in structure.headers" 
                     :key="idxHdr" 
+                    :class="hdr.align"
                     :style="(hdr.item_align?'text-align:'+hdr.item_align:'')"
                     pa-0 
                 >
@@ -155,8 +156,9 @@
             <template slot="footer">
                 <tr><td colspan="15">
                 <v-layout row>
-                    <v-flex xs3  v-if="structure.check">
+                    <v-flex xs4  >
                         <v-checkbox
+                            v-if="structure.check"
                             v-model="required_column"
                             :label="structure.check.label"
                             :value="structure.check.column"
@@ -229,7 +231,7 @@ export default {
         required_column: function(newVal, oldVal){
             if (newVal){
                 this.pagination.page = 1;
-                let colId = Number.isNaN(newVal) ? newVal : this.structure.headers[newVal-1].value;
+                let colId = isNaN(newVal) ? newVal : this.structure.headers[newVal-1].value;
                 this.dataset = this.dataset.filter(function(el) { 
                     return el[colId] !== null 
                             && el[colId] !== undefined 
@@ -291,8 +293,12 @@ export default {
             
             this.dataset = sourceDS;
             this.data_items = sourceDS.slice();
+            if (this.structure.check && this.structure.check.checked) {
+                this.required_column = this.structure.check.column;
+            }
             this.loaded = true;
             this.$emit('dataset-loaded', this.dataset);
+
         },
 
         addHeadersFields(newCols){
@@ -300,8 +306,13 @@ export default {
             for (let col of newCols){
                 let header = {};
                 header.text = col;
-                header.align = 'center';
-                header.item_align = 'center';
+                if (this.structure.hidden_cols && this.structure.hidden_cols.includes(col)) {
+                    header.align = ' d-none';
+                } else {
+                    header.align = 'center';
+                    header.item_align = 'center';
+                }
+                
                 header.value = this.structure.pivot.fmt_value_field ? "fmt_"+col : col;
                 this.structure.headers.push(header);
             }
