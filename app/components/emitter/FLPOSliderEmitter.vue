@@ -79,7 +79,7 @@
           this.value = structure.default;
           this.sendDefaultSelection();
         //se default não informado, default = max para range = false
-        } else if (this.structure.range == false || this.structure.range == undefined ){ 
+        } else if (this.structure.range == undefined || !this.structure.range){ 
           this.value = this.max;
           this.sendDefaultSelection();
         }
