@@ -72,11 +72,15 @@
           let emptyThicks = parseInt((parseInt(this.max) - parseInt(this.min))/parseInt(this.step)) - 1
           this.items.push.apply(this.items,Array(emptyThicks).fill(""));
           this.items.push(this.max);
-          // se tiver valor default - executa filtro
-           this.value = this.max;
-        }
+        } 
+        
+        // executa filtro para valor default 
         if (structure.default != null &&  structure.default != undefined) {
           this.value = structure.default;
+          this.sendDefaultSelection();
+        //se default não informado, default = max para range = false
+        } else if (this.structure.range == false || this.structure.range == undefined ){ 
+          this.value = this.max;
           this.sendDefaultSelection();
         }
       },
