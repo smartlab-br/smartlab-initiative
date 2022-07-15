@@ -449,28 +449,27 @@
           justify-center
           wrap
         >
-          <img 
+          <img
             src="/static/smartlab/mpt-extended.svg"
             class="cursor-pointer mr-2" 
             alt="Ministério Público do Trabalho"
             height="40px"
             @click="$navigationManager.constructor.pushRoute($router, 'https://mpt.mp.br', true)" 
           />
-          <img 
+          <img
             src="/static/smartlab/oit.png"
             class="cursor-pointer mr-2 ml-2" 
             alt="Organização Internacional do Trabalho"
             height="40px"
             @click="$navigationManager.constructor.pushRoute($router, 'https://ilo.org', true)" 
           />
-          <img 
-            
+          <!-- <img 
             src="/static/smartlab/sit.png"
             class="cursor-pointer mb-1 ml-2" 
             alt="Subsecretaria de Inspeção do Trabalho"
             height="40px"
             @click="$navigationManager.constructor.pushRoute($router, 'https://www.gov.br/trabalho/pt-br/inspecao', true)" 
-          />
+          /> -->
           <img
             src="/static/smartlab/cnmp.svg"
             class="cursor-pointer mb-1 ml-2" 
@@ -479,15 +478,14 @@
             min-height="50%"
             @click="$navigationManager.constructor.pushRoute($router, 'http://cnmp.mp.br', true)" 
           />
-          <img 
+          <!-- <img
             src="/static/smartlab/mdh.png"
             class="cursor-pointer mr-2 ml-2" 
             alt="Ouvidoria Nacional dos Direitos Humanos"
             height="50px"
             @click="$navigationManager.constructor.pushRoute($router, 'https://ouvidoria.mdh.gov.br/portal', true)" 
-          />
-          <img 
-            
+          /> -->
+          <img
             src="/static/smartlab/fnpeti.svg"
             class="cursor-pointer mb-1 ml-0" 
             alt="Fórum Nacional de Prevenção e Erradicação do Trabalho Infantil"
@@ -495,24 +493,21 @@
             min-height="50%"
             @click="$navigationManager.constructor.pushRoute($router, 'https://fnpeti.org.br', true)" 
           />
-          <img 
-            
+          <img
             src="/static/smartlab/ibge.png"
             class="cursor-pointer mb-1 ml-0" 
             alt="Instituto Brasileiro de Geografia e Estatística"
             height="50px"
             @click="$navigationManager.constructor.pushRoute($router, 'http:///ibge.gov.br', true)" 
           />
-          <img 
-            
+          <!-- <img
             src="/static/smartlab/mcidadania.png"
             class="cursor-pointer mb-1 ml-0" 
             alt="Ministério da Cidadania"
             height="50px"
             @click="$navigationManager.constructor.pushRoute($router, 'https://www.gov.br/cidadania/pt-br', true)" 
-          />
-          <img 
-            
+          /> -->
+          <img
             src="/static/smartlab/pacto.svg"
             class="cursor-pointer mb-1 ml-0" 
             alt="Pacto Global - Rede Brasil"
@@ -520,15 +515,23 @@
             min-height="50%"
             @click="$navigationManager.constructor.pushRoute($router, 'https://www.pactoglobal.org.br', true)" 
           />
-          <img 
-            
+          <img
             src="/static/smartlab/onumulheres.svg"
             class="cursor-pointer ml-2" 
             alt="ONU Mulheres"
             height="20px" 
             @click="$navigationManager.constructor.pushRoute($router, 'http://www.onumulheres.org.br/', true)" 
           />
-        </v-layout>       
+        </v-layout>
+        <v-layout 
+          align-center 
+          justify-center
+          wrap
+          class="footer-colab-text"
+        >
+        Colaboração e apoio:<br/>
+        Subsecretaria de Inspeção do Trabalho (SIT) da Secretaria de Trabalho (STRAB) - Ministério do Trabalho e Previdência (MTP), <br/>Ministério da Cidadania (MC), Ministério da Mulher, da Família e dos Direitos Humanos (MMFDH), Ouvidoria Nacional dos Direitos Humanos (ONDH)
+        </v-layout>
       </v-flex>
       <v-flex  
         class="xs6 sm6 md6 lg1 xl3 text-md-left text-lg-center subheading"
@@ -1858,6 +1861,9 @@
   .v-tabs__icon--prev{
     background-color:  var(--v-accent-base) !important;
     border-color:  var(--v-accent-base) !important;    
+  }
+  .footer-colab-text {
+    font-size: x-small;
   }
   /*
   .v-btn--floating.v-btn--small {
