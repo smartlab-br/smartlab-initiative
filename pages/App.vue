@@ -1458,7 +1458,7 @@ export default {
 </script>
 
 <style>
-  @import "../node_modules/@fortawesome/fontawesome/styles.css";
+  /* @import "../node_modules/@fortawesome/fontawesome/styles.css"; */
   
   .v-toolbar {
     z-index: 101 !important;

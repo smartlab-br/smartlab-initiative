@@ -60,7 +60,8 @@ export default {
   buildModules: [
     // https://go.nuxtjs.dev/eslint
     '@nuxtjs/eslint-module',
-    '@nuxtjs/fontawesome'
+    '@nuxtjs/fontawesome',
+    '@nuxtjs/router'
   ],
 
   fontawesome:{
@@ -79,6 +80,24 @@ export default {
   axios: {
     // Workaround to avoid enforcing hard-coded localhost:3000: https://github.com/nuxt-community/axios-module/issues/308
     baseURL: '/'
+  },
+
+  proxy:{
+    '/mail': {
+      target: process.env.MAILER_API_BASE_URL,
+      headers: {
+        'X-Mpt-Api-Key': process.env.MAILER_APP_KEY
+      }
+    },
+    '/datahub':{
+      target: process.env.DATAHUB_API_BASE_URL,
+      "pathRewrite": {
+        "^/datahub": ""
+      },        
+      headers: {
+        'X-Mpt-Api-Key': process.env.DATAHUB_APP_KEY
+      }
+    }
   },
 
   // // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
@@ -106,4 +125,5 @@ export default {
     plugins: [new VuetifyLoaderPlugin()],
     extend(config, ctx) {}    
   }
+
 }
