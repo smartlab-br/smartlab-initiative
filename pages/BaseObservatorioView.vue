@@ -93,8 +93,9 @@ export default {
   },
   computed: {
     currentParallaxMapFile: function() {
-      return '/parallax/' + this.observatorio.map_image;
+      return this.observatorio.map_image ? '/parallax/' + this.observatorio.map_image: '';
     },
+
     sourceDesc: function() {
       return this.$indicatorsModel.getSourceDesc(this.observatorio.prevalencia, this.dataset, this.metadata);
     },

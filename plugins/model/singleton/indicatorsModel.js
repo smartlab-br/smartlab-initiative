@@ -622,7 +622,7 @@ export class IndicatorsModel {
   setGlobalDataset(dataset_name, scope, auId = null, suffix = "") {
     let url = this.context.$textTransformService.replaceArgs(this.datasetEndpoints[dataset_name][scope], [auId]);
     //busca indicadores da localidade
-    return axios(this.axiosSetup.getAxiosOptions(url))
+    return axios(this.context.$axiosCallSetupService.getAxiosOptions(url))
       .then((result) => {
         let dataset = { name: dataset_name, ds: result.data.dataset, valid: true, analysisUnit: {type: scope, id: auId} };
         this.globalDatasets[dataset_name + suffix] = dataset;

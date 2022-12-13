@@ -109,7 +109,9 @@ export class ColorsService {
     }
   }
 
-  constructor() {}
+  constructor() {
+    this.assessZebraTitleColor = this.assessZebraTitleColor.bind(this)
+  }
   
   getColorScale(scale = null, type = 'categorical', order = 'asc', levels = null) {
     let size = null;
@@ -185,7 +187,7 @@ export class ColorsService {
   getClassIfIsDark(hex, index, theme){
     if (hex == null) {
       if (index != null) {
-        hex = ColorsService.assessZebraBG(index, theme);
+        hex = this.assessZebraBG(index, theme);
       } else {
         return "";
       }
@@ -202,12 +204,12 @@ export class ColorsService {
   }
 
   assessZebraTitle(index = 0, theme = null) {
-    if (ColorsService.getClassIfIsDark(ColorsService.assessZebraBG(index, theme), theme) == "theme--dark") return 'white--text';
+    if (this.getClassIfIsDark(this.assessZebraBG(index, theme), theme) == "theme--dark") return 'white--text';
     return '';
   }
 
-  assessZebraTitleColor(index = 0, opacity = null, theme = null) {
-    if (ColorsService.getClassIfIsDark(ColorsService.assessZebraBG(index, theme), theme) == "theme--dark"){
+  assessZebraTitleColor (index = 0, opacity = null, theme = null) {
+    if (this.getClassIfIsDark(this.assessZebraBG(index, theme), theme) == "theme--dark"){
       if (opacity == null) return 'white';
       return "rgba(255, 255, 255, " + opacity + ")";
     }
@@ -216,7 +218,7 @@ export class ColorsService {
   }
 
   assessZebraAxesColor(index = 0, theme = null) {
-    if (ColorsService.getClassIfIsDark(ColorsService.assessZebraBG(index, theme), theme) == "theme--dark") return 'white';
+    if (this.getClassIfIsDark(this.assessZebraBG(index, theme), theme) == "theme--dark") return 'white';
     return colors.grey.base;
   }
 }

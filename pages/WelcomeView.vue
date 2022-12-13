@@ -232,7 +232,7 @@ export default {
   },
   computed: {
     currentParallax: function() {
-      return this.parallaxFile? "background-image:url('/parallax/" + this.parallaxFile + "');": "";
+      return this.parallaxFile ? "background-image:url('/parallax/" + this.parallaxFile + "');": "";
     },
   },
   methods: {

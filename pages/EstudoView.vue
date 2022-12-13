@@ -186,7 +186,7 @@
     },
     computed: {
       currentParallax: function() {
-        return 'background-image:url("/parallax/' + this.estudo.imagem + '.jpg"); background-position: center center; background-size: cover;';
+        return this.estudo.imagem ? 'background-image:url("/parallax/' + this.estudo.imagem + '.jpg"); background-position: center center; background-size: cover;': '';
       },
       sourceDesc: function() {
         return this.$indicatorsModel.getSourceDesc(this.structure, this.dataset, this.metadata);

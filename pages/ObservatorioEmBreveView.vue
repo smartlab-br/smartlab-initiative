@@ -46,7 +46,7 @@
     },
     computed: {
       currentParallaxFile: function() {
-        return '/parallax/' + this.observatorio.map_image + '.jpg';
+        return this.observatorio.map_image ? '/parallax/' + this.observatorio.map_image + '.jpg' : '';
       }
     },
     methods: {

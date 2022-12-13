@@ -418,7 +418,7 @@
     },
     computed: {
       currentParallax: function() {
-        return "background-image:url('/parallax/" + this.parallaxFile + "');";
+        return this.parallaxFile ? "background-image:url('/parallax/" + this.parallaxFile + "');": '';
       }
     },
     methods: {

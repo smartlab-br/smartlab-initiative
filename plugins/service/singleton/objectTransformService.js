@@ -48,7 +48,8 @@ export class ObjectTransformService {
       return this.context.$dateFormatService[struct.function].apply(this.context.$dateFormatService, args);
     }
     if (['calcClassIdh', 'getClassIdh', 'calcProportionSalary'].includes(struct.function)) {
-      return model[struct.function].apply(this.context.$indicatorsModel, args);
+      let model = this.context.$indicatorsModel;
+      return model[struct.function].apply(model, args);
     }
     if (['calcIndexPercentage', 'calcDeltaPercentage', 'getAbsoluteValue', 'getPaceString'].includes(struct.function)) {
       return this.context.$numberTransformService[struct.function].apply(null, args);

@@ -5,9 +5,11 @@ export class TooltipBuildingService {
 
   constructor(context) {
     this.context = context;
+    this.removeFromLabel = this.removeFromLabel.bind(this)
+    this.defaultTooltip = this.defaultTooltip.bind(this)
   }
 
-  removeFromLabel(label,removed_text_list){
+  removeFromLabel (label,removed_text_list) {
     for(let indxText in removed_text_list){
       if (Array.isArray(label)){
         for(let label_item in label){
@@ -32,7 +34,7 @@ export class TooltipBuildingService {
     }
     
     for(let item in tooltip_list){
-      value = TooltipBuildingService.removeFromLabel(d[tooltip_list[item].value],removed_text_list);
+      value = this.removeFromLabel(d[tooltip_list[item].value],removed_text_list);
       if (tooltip_list[item].format){
         let formatRules = tooltip_list[item];
         value = this.context.$numberTransformService.formatNumber(
