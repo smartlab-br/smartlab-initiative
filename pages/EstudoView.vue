@@ -205,7 +205,7 @@
       keepLoading() {
         this.$yamlFetcherService.loadYaml("br/estudo/" + this.idEstudo)
           .then((result) => {
-            this.$emit('alterToolbar', result.theme.toolbar);
+            this.$nuxt.$emit('alterToolbar', result.theme.toolbar);
             this.estudo = result;
             this.fetchVizLinks(result.secoes);
           });

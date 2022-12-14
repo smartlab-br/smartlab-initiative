@@ -135,7 +135,7 @@ export default {
     
     setObservatorio(content) {   
       let observatorio = content;
-      this.$emit('alterToolbar', observatorio.theme.toolbar);
+      this.$nuxt.$emit('alterToolbar', observatorio.theme.toolbar);
       this.observatorio = observatorio;
 
       // let thematic = ['centralindicadores'];

@@ -65,7 +65,7 @@ export default {
     getClientGeoCallback(info){
       var status = info.city;
       if (status === undefined) {
-        this.$emit('showLocationDialog');
+        this.$nuxt.$emit('showLocationDialog');
         // console.error(info.message);
         // this.sendError("Falha ao determinar a localidade. (Código 2)");
       } else {
@@ -76,22 +76,22 @@ export default {
               if (result != null) {
                 this.idLocalidade = result.cd_municipio_ibge_dv;
                 this.$analysisUnitModel.setCurrentAnalysisUnit(result.cd_municipio_ibge_dv);
-                this.$emit('alterMiddleToolbar', { "localidade": result });
+                this.$nuxt.$emit('alterMiddleToolbar', { "localidade": result });
               } else {
-                this.$emit('showLocationDialog');
+                this.$nuxt.$emit('showLocationDialog');
                 // console.error("Falha ao consultar API de municípios.");
                 // this.sendError("Não foi possível determinar a localidade IBGE.");
               }
             }
           )
-          .catch((error) => { this.$emit('showLocationDialog'); });
+          .catch((error) => { this.$nuxt.$emit('showLocationDialog'); });
       }
     },
 
     checkCurrentAnalysisUnit() {
       let currAU = this.$analysisUnitModel.getCurrentAnalysisUnit();
       if (this.idObservatorio && this.idObservatorio == 'td' && ((currAU && currAU.toString().length != 7) || (!currAU))) {
-        this.$emit('showLocationDialog');
+        this.$nuxt.$emit('showLocationDialog');
       } else if (!currAU) { // Se não houver cookie
         // invoca o cliente geo_ip
         // GeoIpClient.getClientGeo(this.getClientGeoCallback);

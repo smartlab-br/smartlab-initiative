@@ -223,7 +223,7 @@ export default {
   mounted: function() {
     this.checkCurrentAnalysisUnit();
 
-    this.$emit('alterToolbar', null);
+    this.$nuxt.$emit('alterToolbar', null);
     this.resizeFirstSection();
     window.addEventListener('resize', this.resizeFirstSection);
   },

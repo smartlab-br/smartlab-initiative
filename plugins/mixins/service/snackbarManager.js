@@ -17,22 +17,22 @@ if (!Vue.__snackbarManager__) {
     methods: {
       sendError(err) {
         if (typeof err == 'string'){
-          this.$emit('showSnackbar', { color : 'error', text: err });
+          this.$nuxt.$emit('showSnackbar', { color : 'error', text: err });
         } else {
-          this.$emit('showSnackbar', { color : 'error', text: "Houve uma falha. - " + err.message });
+          this.$nuxt.$emit('showSnackbar', { color : 'error', text: "Houve uma falha. - " + err.message });
         }
       },
       
       snackAlert(params) {
-        this.$emit('showSnackbar', params);
+        this.$nuxt.$emit('showSnackbar', params);
       },
 
       openBugDialog(cardTitle){
-        this.$emit('showBugDialog', cardTitle);
+        this.$nuxt.$emit('showBugDialog', cardTitle);
       },
 
       openAuthenticatioDialog() {
-        this.$emit('showAuthenticatioDialog');
+        this.$nuxt.$emit('showAuthenticatioDialog');
       },
       
       chartGen(id, chartType, structure, chartOptions, dataset, metadata, sectionIndex = 0) {

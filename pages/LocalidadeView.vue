@@ -869,7 +869,7 @@
           }
 
           this.thematicDatasets = thematicDatasets;
-          this.$emit('alterToolbar', result.theme.toolbar);
+          this.$nuxt.$emit('alterToolbar', result.theme.toolbar);
         });
     },
     watch: {
@@ -885,7 +885,7 @@
         }
       },
       localidade: function(){
-        this.$emit('alterMiddleToolbar', { "localidade": this.localidade });
+        this.$nuxt.$emit('alterMiddleToolbar', { "localidade": this.localidade });
       },
       unlockLoading: function(newVal){
         if (newVal){

@@ -334,16 +334,10 @@
           fluid 
           class="pa-0 fill-height"
         >
+          <!-- nuxt capture events in created() method-->
           <nuxt
             :key="reRenderPath" 
             ref="currentRoute"
-            @userChanged="updateUser" 
-            @showSnackbar="snackAlert"
-            @showLocationDialog="showLocationDialog" 
-            @showAuthenticatioDialog="showAuthenticatioDialog" 
-            @showBugDialog="showBugDialog" 
-            @alterToolbar="changeToolbar" 
-            @alterMiddleToolbar="changeMiddleToolbar" 
           />
           <v-slide-y-transition mode="out-in" />
         </v-container>
@@ -1120,7 +1114,37 @@ export default {
       }
     },
     created () {    
-      // console.log(process.env.GRAVITEE_AM_URL_BASE)
+      // nuxt component - capture events
+      // @userChanged="updateUser" 
+      // @showSnackbar="snackAlert"
+      // @showLocationDialog="showLocationDialog" 
+      // @showAuthenticatioDialog="showAuthenticatioDialog" 
+      // @showBugDialog="showBugDialog" 
+      // @alterToolbar="changeToolbar" 
+      // @alterMiddleToolbar="changeMiddleToolbar" 
+
+      this.$nuxt.$on('userChanged', () => {
+        this.updateUser()
+      })
+      this.$nuxt.$on('showSnackbar', () => {
+        this.snackAlert()
+      })
+      this.$nuxt.$on('showLocationDialog', () => {
+        this.showLocationDialog()
+      })
+      this.$nuxt.$on('showAuthenticatioDialog', () => {
+        this.showAuthenticatioDialog()
+      })
+      this.$nuxt.$on('showBugDialog', () => {
+        this.showBugDialog()
+      })
+      this.$nuxt.$on('alterToolbar', () => {
+        this.changeToolbar()
+      })
+      this.$nuxt.$on('alterMiddleToolbar', () => {
+        this.changeMiddleToolbar()
+      })
+
 
       let tmpObs = this.$observatories.getObservatories();
       if (tmpObs instanceof Promise) {

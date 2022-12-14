@@ -12,7 +12,14 @@ import Estudo from '~/pages/EstudoView.vue'
 import Fontes from '~/pages/sobre/FontesView.vue'
 import SaibaMais from '~/pages/sobre/SaibaMaisView.vue'
 
-// const WelcomePage = () => import('~/pages/WelcomeView.vue')
+const originalPush = Router.prototype.push
+Router.prototype.push = function push (location) {
+  return originalPush.call(this, location).catch((error) => {
+    if (error.name !== 'NavigationDuplicated') {
+      throw error
+    }
+  })
+}
 
 // The meta data for your routes
 const meta = require('~/router/meta.json')
