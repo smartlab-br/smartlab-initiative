@@ -1122,12 +1122,11 @@ export default {
       // @showBugDialog="showBugDialog" 
       // @alterToolbar="changeToolbar" 
       // @alterMiddleToolbar="changeMiddleToolbar" 
-
-      this.$nuxt.$on('userChanged', () => {
-        this.updateUser()
+      this.$nuxt.$on('userChanged', (params) => {
+        this.updateUser(params)
       })
-      this.$nuxt.$on('showSnackbar', () => {
-        this.snackAlert()
+      this.$nuxt.$on('showSnackbar', (params) => {
+        this.snackAlert(params)
       })
       this.$nuxt.$on('showLocationDialog', () => {
         this.showLocationDialog()
@@ -1138,11 +1137,11 @@ export default {
       this.$nuxt.$on('showBugDialog', () => {
         this.showBugDialog()
       })
-      this.$nuxt.$on('alterToolbar', () => {
-        this.changeToolbar()
+      this.$nuxt.$on('alterToolbar', (params) => {
+        this.changeToolbar(params)
       })
-      this.$nuxt.$on('alterMiddleToolbar', () => {
-        this.changeMiddleToolbar()
+      this.$nuxt.$on('alterMiddleToolbar', (params) => {
+        this.changeMiddleToolbar(params)
       })
 
 
