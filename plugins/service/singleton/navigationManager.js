@@ -44,7 +44,7 @@ export class NavigationManager {
       }
     }
     
-    NavigationManager.pushRoute(router, url);
+    this.pushRoute(router, url);
   }
   
   pushRoute(router, link, external=false, isGo=false) {

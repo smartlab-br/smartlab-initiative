@@ -69,7 +69,7 @@
       </v-layout>
       <v-layout px-5 pb-5 mb-5
         :class="{'mx-5': $vuetify.breakpoint.smAndUp, 'mx-0': $vuetify.breakpoint.xsOnly}">
-        <v-layout row wrap v-if="dims && $store && $store.state && $analysisUnitModel.getCurrentAnalysisUnit()" >
+        <v-layout row wrap v-if="dims && $analysisUnitModel.getCurrentAnalysisUnit()" >
           <v-flex v-for="(dimension, indxDim) in dims" :key="dimension.id"
             :class="'pa-3 ' + slicing">
             <!--

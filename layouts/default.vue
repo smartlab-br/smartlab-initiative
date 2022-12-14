@@ -1097,12 +1097,12 @@ export default {
           if (findLoc instanceof Promise || findLoc.then) {
             findLoc.then(response => {
               this.changeMiddleToolbar(response);
-              if (newVal.id && newVal.id.length > 5) this.localidade = response;
+              if (newVal.id && newVal.id.toString().length > 5) this.localidade = response;
             })
             .catch(error => { this.sendError(error); });
           } else {
             this.changeMiddleToolbar(findLoc);
-            if (newVal.id && newVal.id.length > 5) this.localidade = findLoc;
+            if (newVal.id && newVal.id.toString().length > 5) this.localidade = findLoc;
           }
 
           if(this.$route.path.indexOf("localidade") != -1){ //página de localidade
