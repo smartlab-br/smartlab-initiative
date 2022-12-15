@@ -1107,8 +1107,8 @@ export default {
 
           if(this.$route.path.indexOf("localidade") != -1){ //página de localidade
             this.changeAnalysisUnit(this.$router, newVal);
-          } else if (this.$refs.currentRoute.setIdLocalidade) { //página de observatorio
-            this.$refs.currentRoute.setIdLocalidade(newVal.id);
+          } else if (this.$refs.currentRoute.$children && this.$refs.currentRoute.$children[0].setIdLocalidade) { //página de observatorio
+            this.$refs.currentRoute.$children[0].setIdLocalidade(newVal.id);
           }
         }
       }
@@ -1134,8 +1134,8 @@ export default {
       this.$nuxt.$on('showAuthenticatioDialog', () => {
         this.showAuthenticatioDialog()
       })
-      this.$nuxt.$on('showBugDialog', () => {
-        this.showBugDialog()
+      this.$nuxt.$on('showBugDialog', (params) => {
+        this.showBugDialog(params)
       })
       this.$nuxt.$on('alterToolbar', (params) => {
         this.changeToolbar(params)
