@@ -53,13 +53,12 @@ app.post('/mail', (req, res) => {
       key: process.env.MAILER_APP_KEY
     }
 
-    const apiUrl = mercurio.url + '/' + req.url
-
+    const apiUrl = mercurio.url + req.url;
+    
     var header = {
       'Content-Type': 'application/json',
-      'X-Gravitee-Api-Key': mercurio.key
+      'X-Mpt-Api-Key': mercurio.key
     }
-    
     axios({
         method: "POST",
         url: apiUrl,
@@ -78,7 +77,7 @@ app.post('/mail', (req, res) => {
         }
       });
   } else {
-    res.status(401).send("Unauthorized");    
+    res.status(401).send("Unauthorized");
   }
 })
 
