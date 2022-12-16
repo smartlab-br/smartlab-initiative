@@ -40,13 +40,8 @@ export function createRouter () {
   const router = new Router({
     // base: __dirname,
     mode: 'history',
-    // scrollBehavior: () => ({ y: 0 }),
+    scrollBehavior: () => ({ y: 0 }),
     routes: [
-      // Definitivas
-      // {
-      //   path: '/',
-      //   component: WelcomePage
-      // },
       route('/', Welcome),
       route('/saibamais', SaibaMais),
       route('/saibamais/:tab', SaibaMais),
@@ -92,12 +87,12 @@ export function createRouter () {
       // route('/perfil', 'Perfil'),
       // route('/cadastro', 'Cadastro'),
 
-      route('/mapasite', MapaSite)
+      route('/mapasite', MapaSite),
 
       // Provisórias
       // route('/mapa/:nmIndicador', 'Mapa'),
       // Global redirect for 404
-      // { path: '*', redirect: '/' }
+      { path: '*', redirect: '/' }
 
     ]
   })
