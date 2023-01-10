@@ -83,7 +83,7 @@ export class TooltipBuildingService {
   defaultLeafletTooltip(target, route, tooltip_list = [], removed_text_list = [], options = null) { 
     let d = target.options.rowData;
     target.unbindPopup();
-    target.bindPopup(TooltipBuildingService.defaultTooltip(d, route, tooltip_list, removed_text_list, options)).openPopup();
+    target.bindPopup(this.$tooltipBuildingService.defaultTooltip(d, route, tooltip_list, removed_text_list, options)).openPopup();
   }
 
   getUrlByPlace(idLocalidade, route){

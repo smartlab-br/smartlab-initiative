@@ -8,9 +8,9 @@ import { ObjectTransformService } from './service/singleton/objectTransformServi
 import { TextTransformService } from './service/singleton/textTransformService'
 import { TooltipBuildingService } from './service/singleton/tooltipBuildingService'
 import { YamlFetcherService } from './service/singleton/yamlFetcherService'
+import { ChartBuilderService } from './service/singleton/chartBuilderService'
 
 export default ({ app }, inject) => {
-
     const axiosCallSetupService = new AxiosCallSetupService()
     inject('axiosCallSetupService', axiosCallSetupService)
 
@@ -41,4 +41,6 @@ export default ({ app }, inject) => {
     const yamlFetcherService = new YamlFetcherService()
     inject('yamlFetcherService', yamlFetcherService)
 
+    const chartBuilderService = new ChartBuilderService()
+    inject('chartBuilderService', chartBuilderService)
 }

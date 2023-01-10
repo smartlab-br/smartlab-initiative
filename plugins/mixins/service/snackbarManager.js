@@ -1,7 +1,7 @@
 // import TooltipBuildingService from '../../assets/service/singleton/tooltipBuildingService'
 import axios from 'axios'
 // import ColorsService from '../../assets/service/singleton/colorsService'
-import ChartBuilderService from '@smartlabbr/smartlab-charts'
+// import ChartBuilderService from '@smartlabbr/smartlab-charts'
 
 import Vue from "vue"
 
@@ -62,7 +62,7 @@ if (!Vue.__snackbarManager__) {
           } else {
             let additionalOptions = this.buildChartAdditionalOptions(id, chartType, structure, chartOptions, dataset, metadata, sectionIndex);
   
-            return ChartBuilderService.generateChart(
+            return this.$chartBuilderService.generateChart(
               chartType, 
               id,
               dataset,
@@ -76,7 +76,7 @@ if (!Vue.__snackbarManager__) {
         if (structure && chartOptions && this.validCharts.includes(chartType)) {
           let additionalOptions = this.buildChartAdditionalOptions(id, chartType, structure, chartOptions, dataset, metadata, sectionIndex);
 
-          return ChartBuilderService.regenerateChart(
+          return this.$chartBuilderService.regenerateChart(
             chartHandler,
             chartType, 
             id,

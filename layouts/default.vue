@@ -1301,53 +1301,53 @@ export default {
       },
 
       showLoginDialog: function(){
-        var loginUrl = `${process.env.GRAVITEE_AM_BASE_URL}/oauth/authorize?client_id=${process.env.GRAVITEE_AM_CLIENT_ID}&response_type=token&redirect_uri=${process.env.GRAVITEE_AM_REDIRECT_URL}`;
-        var popup = window.open(loginUrl, '_blank', 'width=550,height=450,resizable=no,scrollbars=yes')
+        // var loginUrl = `${process.env.GRAVITEE_AM_BASE_URL}/oauth/authorize?client_id=${process.env.GRAVITEE_AM_CLIENT_ID}&response_type=token&redirect_uri=${process.env.GRAVITEE_AM_REDIRECT_URL}`;
+        // var popup = window.open(loginUrl, '_blank', 'width=550,height=450,resizable=no,scrollbars=yes')
 
-        var this_ = this;
-        var poolingInterval = setInterval(function () {
-          if (!popup || popup.closed || popup.closed === undefined) {
-            clearInterval(poolingInterval);
-            poolingInterval = null;
-            throw new Error('Pop-up de login fechado.');
-          }
-          try {
-            var popupWindowPath = popup.location;             
-            if (popupWindowPath.hash) {
-              var params = popupWindowPath.hash.split("access_token=")[1]
-              var access_token = params.split("&")[0]
-              var bearer = 'Bearer ' + access_token
-              axios({
-                method: "GET",
-                url: `${process.env.GRAVITEE_AM_BASE_URL}/oidc/userinfo`,
-                data: {},
-                headers: {'Authorization': bearer}
-              }).then(function (response) {
-                this_.graviteeUser = response.data;
-                this_.updateUser(this_.graviteeUser)
-                this_.snackAlert({ color : 'success', text: "Login realizado com sucesso." });
-              }).catch(function(error) {
-                this_.userLogout();
-                // handle error
-                console.log(error)
-                throw new Error('Erro ao buscar informações do usuário.');
-              });
+        // var this_ = this;
+        // var poolingInterval = setInterval(function () {
+        //   if (!popup || popup.closed || popup.closed === undefined) {
+        //     clearInterval(poolingInterval);
+        //     poolingInterval = null;
+        //     throw new Error('Pop-up de login fechado.');
+        //   }
+        //   try {
+        //     var popupWindowPath = popup.location;             
+        //     if (popupWindowPath.hash) {
+        //       var params = popupWindowPath.hash.split("access_token=")[1]
+        //       var access_token = params.split("&")[0]
+        //       var bearer = 'Bearer ' + access_token
+        //       axios({
+        //         method: "GET",
+        //         url: `${process.env.GRAVITEE_AM_BASE_URL}/oidc/userinfo`,
+        //         data: {},
+        //         headers: {'Authorization': bearer}
+        //       }).then(function (response) {
+        //         this_.graviteeUser = response.data;
+        //         this_.updateUser(this_.graviteeUser)
+        //         this_.snackAlert({ color : 'success', text: "Login realizado com sucesso." });
+        //       }).catch(function(error) {
+        //         this_.userLogout();
+        //         // handle error
+        //         console.log(error)
+        //         throw new Error('Erro ao buscar informações do usuário.');
+        //       });
 
-              clearInterval(poolingInterval);
-              poolingInterval = null;
-              popup.close();
-            }
-          } catch(e) {
-            console.log(e.message)
-            // Ignore DOMException: Blocked a frame with origin from accessing a cross-origin frame.
-          }
-        }, 250);
+        //       clearInterval(poolingInterval);
+        //       poolingInterval = null;
+        //       popup.close();
+        //     }
+        //   } catch(e) {
+        //     console.log(e.message)
+        //     // Ignore DOMException: Blocked a frame with origin from accessing a cross-origin frame.
+        //   }
+        // }, 250);
 
       },
 
       userLogout(){
-        this.$store.commit('setUser', null);
-        window.location = `${process.env.GRAVITEE_AM_BASE_URL}/logout?invalidate_tokens=true&target_url=${process.env.GRAVITEE_AM_REDIRECT_URL}`;
+        // this.$store.commit('setUser', null);
+        // window.location = `${process.env.GRAVITEE_AM_BASE_URL}/logout?invalidate_tokens=true&target_url=${process.env.GRAVITEE_AM_REDIRECT_URL}`;
       },
 
       focusChangePlace(){
