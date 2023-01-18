@@ -47,12 +47,6 @@
                   </v-tooltip>
                   <div v-if="cmpTitleComment != null" class="title-comment" v-html="cmpTitleComment"></div>
                 </v-flex>
-                <!-- <v-spacer></v-spacer> -->
-                <!-- <v-btn small fill-height class="mb-0" flat :color="$colorsService.assessZebraTitleColor(this.sectionIndex, $vuetify.theme)"
-                  @click.native="downloadChart">
-                  <span class="hidden-sm-and-down body">Baixar gráfico</span>
-                  <v-icon right>file_download</v-icon>
-                </v-btn> -->
                 <v-flex xs2 text-xs-right pr-4>
                 <v-btn small flat :color="$colorsService.assessZebraTitleColor(this.sectionIndex, $vuetify.theme)"
                   @click.native="dialog = true" style="margin: 0px;">
@@ -585,16 +579,6 @@
           document.body.appendChild(dynaLink);
           dynaLink.click();
           document.body.removeChild(dynaLink);
-        }
-      },
-
-      downloadChart() {
-        var d3plusExport = require('d3plus-export/build/d3plus-export.min.js');
-        for (var eachChart in this.structure.charts) {
-
-           // chart_treemap_treemap_dirigentes_sexo
-          let svg = document.getElementById(this.chartId[this.structure.charts[eachChart].id]).getElementsByTagName('svg')[0];
-          d3plusExport.saveElement(svg, { filename: this.chartId[this.structure.charts[eachChart].id] });
         }
       }
     }

@@ -88,9 +88,9 @@
       },
 
       download() {
-        var d3plusExport = require('d3plus-export/build/d3plus-export.min.js');
-        let svg = document.getElementById(this.id).getElementsByTagName('svg')[0];
-        d3plusExport.saveElement(svg, { filename: this.id });
+        // var d3plusExport = require('d3plus-export/build/d3plus-export.min.js');
+        // let svg = document.getElementById(this.id).getElementsByTagName('svg')[0];
+        // d3plusExport.saveElement(svg, { filename: this.id });
       },
 
       redrawChart(dataset) {

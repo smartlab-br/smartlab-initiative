@@ -170,7 +170,7 @@ class LeafletChartBuilderService extends GeneralChartBuilderService {
         //   sizeModes: ['Current']
         // }).addTo(this.leafletMap); 
 
-        printPlugin.printMap('CurrentSize', 'teste');
+        // printPlugin.printMap('CurrentSize', 'teste');
 	}
 
     removeChart() {
