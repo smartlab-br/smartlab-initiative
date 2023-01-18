@@ -62,7 +62,8 @@ export default {
     // https://go.nuxtjs.dev/eslint
     '@nuxtjs/eslint-module',
     '@nuxtjs/fontawesome',
-    '@nuxtjs/router'
+    '@nuxtjs/router',
+    '@nuxtjs/google-analytics'
   ],
 
   fontawesome:{
@@ -70,7 +71,6 @@ export default {
       brands: ['faInstagram', 'faGithub', 'faDocker', 'faCreativeCommons', 'faOsi']
     }
   },
-
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
     // https://go.nuxtjs.dev/axios
@@ -92,6 +92,10 @@ export default {
     transpile: ['vuetify'],
     plugins: [new VuetifyLoaderPlugin()],
     extend(config, ctx) {}    
+  },
+
+  googleAnalytics: {
+    id: process.env.GOOGLE_ANALYTICS_ID
   }
 
 }
