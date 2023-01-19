@@ -95,7 +95,11 @@ export default {
   },
 
   googleAnalytics: {
-    id: process.env.GOOGLE_ANALYTICS_ID
+    id: process.env.GOOGLE_ANALYTICS_ID,
+    debug: {
+      enabled: true,
+      sendHitTask: true
+    }
   }
 
 }
