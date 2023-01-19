@@ -7,10 +7,10 @@ Vue.use(Vuetify)
 
 require('../../setup.js');
 
-import TranslationModel from '../../../assets/model/singleton/translationModel'
+import { TranslationModel } from '~/plugins/model/singleton/translationModel'
 
 // Imports a component to serve as a bridge to the mixin
-import FLPOSobreLayout from '../../../components/FLPOSobreLayout'
+import FLPOSobreLayout from '~/components/FLPOSobreLayout'
 
 // Sets the mixin in the Vue instance
 Vue.prototype.$translationModel = new TranslationModel();
@@ -18,9 +18,9 @@ Vue.prototype.$translationModel = new TranslationModel();
 // Tests
 describe('TranslationModel', () => {
   const locales = [
-    { lbl: 'Português', value: 'pt', flag: '/static/flags/br.svg',
+    { lbl: 'Português', value: 'pt', flag: '/flags/br.svg',
       browser_langs: ['pt', 'pt-br', 'pt-BR'] },
-    { lbl: 'English', value: 'en', flag: '/static/flags/us.svg',
+    { lbl: 'English', value: 'en', flag: '/flags/us.svg',
       browser_langs: ['en', 'en-gb', 'en-GB'] } 
   ];
 

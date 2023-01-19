@@ -7,16 +7,16 @@ Vue.use(Vuetify)
 
 require('../../setup.js');
 
-import ViewConfReader from '../../../mixins/service/viewConfReader'
-import NumberTransformService from '../../../assets/service/singleton/numberTransformService'
-import IndicatorsModel from '../../../assets/model/singleton/indicatorsModel'
-import ObjectTransformService from '../../../assets/service/singleton/objectTransformService'
+import { ViewConfReader } from '~/plugins/mixins/service/viewConfReader'
+import { NumberTransformService } from '~/plugins/service/singleton/numberTransformService'
+import { IndicatorsModel } from '~/plugins/model/singleton/indicatorsModel'
+import { ObjectTransformService } from '~/plugins/service/singleton/objectTransformService'
 
 // Imports a component to serve as a bridge to the mixin
-import FLPOSobreLayout from '../../../components/FLPOSobreLayout'
+import FLPOSobreLayout from '~/components/FLPOSobreLayout'
 
 // Sets the mixin in the Vue instance
-Vue.use(ViewConfReader)
+// Vue.use(ViewConfReader)
 Vue.prototype.$numberTransformService = new NumberTransformService();
 Vue.prototype.$indicatorsModel = new IndicatorsModel();
 Vue.prototype.$objectTransformService = new ObjectTransformService();

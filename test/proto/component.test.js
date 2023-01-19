@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import FLPOSobreLayout from '../../components/FLPOSobreLayout'
+import FLPOSobreLayout from '~/components/FLPOSobreLayout'
 
 // Imports custom elements from Vuetify
 import Vue from 'vue'
@@ -15,6 +15,6 @@ document.body.appendChild(app)
 describe('Component', () => {
   test('is a Vue instance', () => {
     const wrapper = mount(FLPOSobreLayout, { sync: false })
-    expect(wrapper.isVueInstance()).toBeTruthy()
+    expect(wrapper.vm).toBeTruthy();
   })
 })

@@ -8,8 +8,8 @@ Vue.use(Vuetify)
 require('../../setup.js');
 
 // Imports a component to serve as a bridge to the mixin
-import FLPOSobreLayout from '../../../components/FLPOSobreLayout'
-import AxiosCallSetupService from '../../../assets/service/singleton/axiosCallSetupService';
+// import FLPOSobreLayout from '~/components/FLPOSobreLayout'
+import { AxiosCallSetupService } from '~/plugins/service/singleton/axiosCallSetupService';
 
 // Sets the mixin in the Vue instance
 Vue.prototype.$axiosCallSetupService = new AxiosCallSetupService();

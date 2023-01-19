@@ -7,16 +7,18 @@ Vue.use(Vuetify)
 
 require('../../setup.js');
 
-import IndicatorsModel from '../../../assets/model/singleton/indicatorsModel'
-import NumberTransformService from '../../../assets/service/singleton/numberTransformService'
-import ViewConfReader from '../../../mixins/service/viewConfReader.js'
+import { IndicatorsModel } from '~/plugins/model/singleton/indicatorsModel'
+import { NumberTransformService } from '~/plugins/service/singleton/numberTransformService'
+import { ObjectTransformService } from '~/plugins/service/singleton/objectTransformService'
+import { ViewConfReader } from '~/plugins/mixins/service/viewConfReader.js'
 
 // Imports a component to serve as a bridge to the mixin
-import FLPOSobreLayout from '../../../components/FLPOSobreLayout'
+import FLPOSobreLayout from '~/components/FLPOSobreLayout'
 
 // Sets the mixin in the Vue instance
 Vue.prototype.$numberTransformService = new NumberTransformService()
-Vue.use(ViewConfReader)
+Vue.prototype.$objectTransformService = new ObjectTransformService();
+// Vue.use(ViewConfReader)
 Vue.prototype.$indicatorsModel = new IndicatorsModel();
 
 // Tests
@@ -58,6 +60,7 @@ describe('IndicatorsModel', () => {
         { named_prop: 'vl_indicador' }
       ]
     };
+    wrapper.vm.$indicatorsModel.context = wrapper.vm;
     let result = wrapper.vm.$indicatorsModel.getAttributeFromIndicatorInstance(structure, customFunctions, indicador);
     expect(result).toEqual(246.9);
   })
@@ -66,6 +69,7 @@ describe('IndicatorsModel', () => {
     const wrapper = mount(FLPOSobreLayout, { sync: false })
     let indicador = { vl_indicador: 123.45 };
     let structure = { named_prop: 'vl_indicador', format: 'inteiro'};
+    wrapper.vm.$indicatorsModel.context = wrapper.vm;
     let result = wrapper.vm.$indicatorsModel.getAttributeFromIndicatorInstance(structure, {}, indicador);
     expect(result).toEqual('123');
   })

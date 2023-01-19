@@ -8,10 +8,10 @@ Vue.use(Vuetify)
 require('../../setup.js');
 
 import colors from 'vuetify/es5/util/colors'
-import TooltipBuildingService from '../../../assets/service/singleton/tooltipBuildingService'
+import { TooltipBuildingService } from '~/plugins/service/singleton/tooltipBuildingService'
 
 // Imports a component to serve as a bridge to the mixin
-import FLPOSobreLayout from '../../../components/FLPOSobreLayout'
+import FLPOSobreLayout from '~/components/FLPOSobreLayout'
 
 // Sets the mixin in the Vue instance
 Vue.prototype.$tooltipBuildingService = new TooltipBuildingService();
@@ -30,7 +30,7 @@ describe('ThemeManager', () => {
       "teste4"
     ];
 
-    let result = wrapper.vm.$tooltipBuildingService.constructor.removeFromLabel(label, remove_list);
+    let result = wrapper.vm.$tooltipBuildingService.removeFromLabel(label, remove_list);
     expect(result).toEqual(["teste","teste2","teste3","teste4"]);
   })
 
@@ -39,7 +39,7 @@ describe('ThemeManager', () => {
 
     let label = "testeremovedelete";
 
-    let result = wrapper.vm.$tooltipBuildingService.constructor.removeFromLabel(label, remove_list);
+    let result = wrapper.vm.$tooltipBuildingService.removeFromLabel(label, remove_list);
     expect(result).toEqual("teste");
   })
 
@@ -48,7 +48,7 @@ describe('ThemeManager', () => {
 
     let indicador = { cd_indicador: 1, nu_competencia: 2099, vl_indicador: 123.45 };
     
-    let result = wrapper.vm.$tooltipBuildingService.constructor.defaultTooltip(indicador, null, null, remove_list);
+    let result = wrapper.vm.$tooltipBuildingService.defaultTooltip(indicador, null, null, remove_list);
     expect(result).toEqual('Tooltip!');
   })
 
@@ -60,7 +60,7 @@ describe('ThemeManager', () => {
                 { text: "Ano", value: "nu_competencia" },
                 { text: "Valor", value: "vl_indicador" }];
 
-    let result = wrapper.vm.$tooltipBuildingService.constructor.defaultTooltip(indicador, null, vals, remove_list);
+    let result = wrapper.vm.$tooltipBuildingService.defaultTooltip(indicador, null, vals, remove_list);
     expect(result).toEqual(
       "<p class='headline-obs'><b>1</b></p><hr class='tooltip_divider'>"+
       "<table width='100%' style='max-width:350px'>"+
