@@ -2,11 +2,12 @@ name: Node CI
 
 on: 
   push:
-    refs/heads:
+    branches:
       - master
       - staging
       - development
       - contrib
+  workflow_dispatch:
 
 jobs:
   test:
