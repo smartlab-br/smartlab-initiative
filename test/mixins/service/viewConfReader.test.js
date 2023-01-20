@@ -206,7 +206,7 @@ describe('ViewConfReader', () => {
 
     expect(result).toEqual([
       { cd_indicador: '1', nu_competencia: 2099, vl_indicador: 123.45, calc_custom: '247' }, 
-      { cd_indicador: '1', nu_competencia: 2047, vl_indicador: 678.9, calc_custom: '1,358' }
+      { cd_indicador: '1', nu_competencia: 2047, vl_indicador: 678.9, calc_custom: '1.358' }
     ]);
   })
 
@@ -232,8 +232,8 @@ describe('ViewConfReader', () => {
     let result = wrapper.vm.reformDataset(ds, options, wrapper.vm.customFunctions);
 
     expect(result).toEqual([
-      { cd_indicador: '1', nu_competencia: 2099, vl_indicador: 123.45, calc_custom: '246.9' }, 
-      { cd_indicador: '1', nu_competencia: 2047, vl_indicador: 678.9, calc_custom: '1,357.8' }
+      { cd_indicador: '1', nu_competencia: 2099, vl_indicador: 123.45, calc_custom: '246,9' }, 
+      { cd_indicador: '1', nu_competencia: 2047, vl_indicador: 678.9, calc_custom: '1.357,8' }
     ]);
   })
 

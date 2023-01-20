@@ -4,10 +4,10 @@ import VuetifyLoaderPlugin from "vuetify-loader/lib/plugin";
 export default {
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    titleTemplate: '%s - smartlab',
-    title: 'Plataforma SmartLab de Trabalho Decente',
+    titleTemplate: '%s - Promoção do Trabalho Decente',
+    title: 'Smartlab',
     htmlAttrs: {
-      lang: 'en'
+      lang: 'pt-br'
     },
     meta: [
       { charset: 'utf-8' },
@@ -15,7 +15,7 @@ export default {
       { hid: 'description', name: 'description', content: 'Iniciativa SmartLab de Trabalho Decente Políticas Públicas de Trabalho Decente Guiadas por Dados' },
       { name: 'format-detection', content: 'telephone=no' },
       { name:"theme-color", content:"#E0E0E0"},
-      { property:"og:title", content:"Plataforma SmartLab de Trabalho Decente" },
+      { property:"og:title", content:"Smartlab - Promoção do Trabalho Decente" },
       { property:"og:url", content:"https://smartlabbr.org" },
       { property:"og:image", content:"https://smartlabbr.org/static/icons/smartlab.png" }
   
@@ -91,8 +91,13 @@ export default {
   build: {
     transpile: ['vuetify'],
     plugins: [new VuetifyLoaderPlugin()],
-    extend(config, ctx) {},
-    babel: { compact: true }   
+    babel: { compact: true },
+    extend (config, { isClient, isDev }) {
+      // Extend only webpack config for client-bundle
+      if (isClient && isDev) {
+        config.devtool = '#source-map'
+      }
+    }    
   },
 
   googleAnalytics: {

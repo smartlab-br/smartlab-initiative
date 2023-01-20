@@ -217,7 +217,7 @@ describe('TextManager', () => {
 
     wrapper.vm.$textTransformService.context = wrapper.vm;
     let result = wrapper.vm.$textTransformService.applyInterpol(struct, {}, null, base_object);
-    expect(result).toEqual("Teste 23.40<span>%</span>");
+    expect(result).toEqual("Teste 23,40<span>%</span>");
   })
 
   test('Testa avaliação de interpolação com valor requerido não preenchido', () => {
