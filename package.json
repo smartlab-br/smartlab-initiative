@@ -7,7 +7,7 @@
     "build": "nuxt build",
     "start": "nuxt start",
     "generate": "nuxt generate",
-    "lint": "eslint --output-file=./lint/report.json --format=json --config=./lint/.eslintrc.js \"**/*.{js,vue}\"",
+    "lint": "eslint --output-file=./lint/report.json --format=json \"**/*.{js,vue}\"",
     "test": "jest"
   },
   "dependencies": {
