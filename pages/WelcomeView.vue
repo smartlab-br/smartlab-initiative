@@ -263,7 +263,7 @@ export default {
     buildShortText (fullText) {
       if (this.readMoreLimit) {
         if (fullText.length > parseInt(this.readMoreLimit)) {
-          const endCharRegex = new RegExp('[.,!?;& [:space:]](?!.*[.,!?;& [:space:]])', 'g')
+          const endCharRegex = /[.,!?;& [:space:]](?!.*[.,!?;& [:space:]])/g
           endCharRegex.exec(fullText.substring(0, this.readMoreLimit))
           return fullText.substring(0, endCharRegex.lastIndex) + '...'
         }

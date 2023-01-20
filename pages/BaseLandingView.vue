@@ -84,7 +84,7 @@ export default {
               }
             }
           )
-          .catch((error) => { this.$nuxt.$emit('showLocationDialog') })
+          .catch((_error) => { this.$nuxt.$emit('showLocationDialog') })
       }
     },
 

@@ -6,7 +6,7 @@ import Vuetify from 'vuetify'
 import { IndicatorsModel } from '~/plugins/model/singleton/indicatorsModel'
 import { NumberTransformService } from '~/plugins/service/singleton/numberTransformService'
 import { ObjectTransformService } from '~/plugins/service/singleton/objectTransformService'
-import { ViewConfReader } from '~/plugins/mixins/service/viewConfReader.js'
+// import { ViewConfReader } from '~/plugins/mixins/service/viewConfReader.js'
 
 // Imports a component to serve as a bridge to the mixin
 import FLPOSobreLayout from '~/components/FLPOSobreLayout'

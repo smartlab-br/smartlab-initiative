@@ -88,7 +88,7 @@ export default {
               }
             )
             this.fetchData()
-          }).catch((error) => { this.sendDataStructureError('Falha ao buscar dados do card ' + cardTitle) })
+          }).catch((_error) => { this.sendDataStructureError('Falha ao buscar dados do card ' + cardTitle) })
       } else {
         this.updateTopology()
         this.completeStructure()
@@ -120,11 +120,11 @@ export default {
       return items
     },
 
-    indicatorClass (previous_class, value, target, curve, threshold = null) {
+    indicatorClass (previous_class, _value, _target, _curve, _threshold = null) {
       return previous_class + ' red'
     },
 
-    changeTextToInvalidInterpol (payload) {
+    changeTextToInvalidInterpol (_payload) {
       this.invalidInterpol = true
     },
 

@@ -8,7 +8,7 @@ class PolygonsChartBuilderService extends LeafletChartBuilderService {
   }
 
   fillLayers (dataset, options, boundsZoom = null) {
-      	// https://blog.webkid.io/maps-with-leaflet-and-topojson/
+    // https://blog.webkid.io/maps-with-leaflet-and-topojson/
     // Gera o range
     const range = [null, null]
     if (options.colorScale && options.colorScale.range && options.colorScale.range.min_value) {
@@ -80,9 +80,9 @@ class PolygonsChartBuilderService extends LeafletChartBuilderService {
             }
 
             div.innerHTML +=
-									'<span style="display:inline-flex">' +
-									'<div style="width:9px;height:18px;display:inline-block;background:' +
-									d3chrom['interpolate' + scaleName](value) + '"></div></span>'
+              '<span style="display:inline-flex">' +
+              '<div style="width:9px;height:18px;display:inline-block;background:' +
+              d3chrom['interpolate' + scaleName](value) + '"></div></span>'
           }
 
           div.style.padding = '6px 8px'
@@ -129,7 +129,7 @@ class PolygonsChartBuilderService extends LeafletChartBuilderService {
       let fillColor = ''
       if (this.d3chrom['interpolate' + scaleName]) {
         fillColor = (value != null ? this.d3chrom['interpolate' + scaleName](value) : 'transparent')
-      }	else {
+      } else {
         fillColor = (value != null ? this.d3chrom.interpolateRdYlBu(value) : 'transparent')
       }
 

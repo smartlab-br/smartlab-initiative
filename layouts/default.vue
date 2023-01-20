@@ -1171,7 +1171,7 @@ export default {
         this.gsLoadingStatusSearchOptions = hasLoading ? 'LOADING' : 'SUCCESS'
         this.auOptions = this.$analysisUnitModel.getOptions()
       })
-      .catch((error) => {
+      .catch((_error) => {
         this.gsLoadingStatusSearchOptions = 'ERROR'
         this.auOptions = this.$analysisUnitModel.getOptions()
         this.sendError('Falha ao buscar lista das localidades')
@@ -1433,7 +1433,7 @@ export default {
           finishMailSend()
           snackAlert({ color: 'success', text: 'Formulário enviado com sucesso.' })
           closeBugDialog()
-        }).catch(function (error) {
+        }).catch(function (_error) {
           finishMailSend()
           snackAlert({ color: 'error', text: 'Falha no envio do formulário. Tente novamente mais tarde.' })
         })

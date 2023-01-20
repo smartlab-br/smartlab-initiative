@@ -1,5 +1,5 @@
 export class NumberTransformService {
-  constructor () {}
+  // constructor () {}
 
   formatNumber (valor, formato, casasDecimais, multiplier = 1, collapse = null, signed = false, uiTags = true) {
     if (isNaN(valor)) {

@@ -1,5 +1,5 @@
 export class ChartBuilderService {
-  constructor () {}
+  // constructor () {}
 
   generateChart (type, containerId, dataset, options, additionalOptions = {}) {
     return new Promise((resolve, reject) => {
@@ -65,7 +65,7 @@ export class ChartBuilderService {
               reject(err)
             }
           } else {
-            reject('Falha ao gerar o gráfico')
+            reject(new Error('Falha ao gerar o gráfico'))
           }
         }
       }, 0)

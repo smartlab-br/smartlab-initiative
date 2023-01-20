@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 export class GeoIpClient {
-  constructor () { }
+  // constructor () { }
 
   getClientGeo (callback) {
     const errorObj = { status: 'fail', message: 'Não foi possível identificar localização.' }
@@ -26,11 +26,11 @@ export class GeoIpClient {
                 // console.log(result.data);
                 callback(result.data.address)
               },
-              (error) => {
+              (_error) => {
                 callback(errorObj)
               }
             )
-            .catch(function (error) {
+            .catch(function (_error) {
               // handle error
               callback(errorObj)
             })

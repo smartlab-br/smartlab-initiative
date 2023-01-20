@@ -6,7 +6,7 @@ import Vuetify from 'vuetify'
 import { TextTransformService } from '~/plugins/service/singleton/textTransformService'
 import { ObjectTransformService } from '~/plugins/service/singleton/objectTransformService'
 import { NumberTransformService } from '~/plugins/service/singleton/numberTransformService'
-import { ViewConfReader } from '~/plugins/mixins/service/viewConfReader.js'
+// import { ViewConfReader } from '~/plugins/mixins/service/viewConfReader.js'
 
 // Imports a component to serve as a bridge to the mixin
 import FLPOSobreLayout from '~/components/FLPOSobreLayout'
@@ -142,7 +142,7 @@ describe('TextManager', () => {
     const wrapper = mount(FLPOSobreLayout, { sync: false })
 
     wrapper.vm.customFunctions = { customize: (a, b) => { return (a ? a.toString() : a) + (b ? b.toString() : b) } }
-    const base_object = { vl_indicador: '234' }
+    // const base_object = { vl_indicador: '234' }
     const struct = {
       template: 'Teste {0}',
       args: [
@@ -234,7 +234,7 @@ describe('TextManager', () => {
       ]
     }
     const cbInvalidate = () => { wrapper.vm.msg = 'requerido' }
-    const result = wrapper.vm.$textTransformService.applyInterpol(struct, {}, null, base_object, cbInvalidate)
+    wrapper.vm.$textTransformService.applyInterpol(struct, {}, null, base_object, cbInvalidate)
     expect(wrapper.vm.msg).toEqual('requerido')
   })
 })

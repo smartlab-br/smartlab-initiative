@@ -441,7 +441,7 @@ export default {
   },
   methods: {
     changeToCompareStructure (struct) {
-      let compareStruct = JSON.stringify(struct).replace(/idLocalidade/g, 'idLocalidade_compare').replace(/\"base_object\":\"localidade\"/g, '"base_object":"localidade_compare"')
+      let compareStruct = JSON.stringify(struct).replace(/idLocalidade/g, 'idLocalidade_compare').replace(/"base_object":"localidade"/g, '"base_object":"localidade_compare"')
       for (const dataset of this.thematicDatasets) {
         compareStruct = compareStruct.replace(new RegExp(dataset, 'g'), dataset + '_compare')
       }

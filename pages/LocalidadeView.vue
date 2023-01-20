@@ -947,7 +947,7 @@ export default {
         } else {
           Promise.all(datasetPromises).then(
             (result) => { this.keepLoading() },
-            (error) => { this.sendError(msgErro) }
+            (_error) => { this.sendError(msgErro) }
           )
         }
 
@@ -1170,7 +1170,7 @@ export default {
       } else {
         Promise.all(datasetPromises).then(
           (result) => { this.keepLoadingDimension() },
-          (error) => { this.sendError('Falha ao carregar indicadores temáticos') })
+          (_error) => { this.sendError('Falha ao carregar indicadores temáticos') })
       }
     },
 
@@ -1507,7 +1507,7 @@ export default {
               this.auOptions = this.$analysisUnitModel.getOptions()
               this.compareDialog = true
             })
-            .catch((error) => {
+            .catch((_error) => {
               this.auOptions = this.$analysisUnitModel.getOptions()
               this.sendError('Falha ao buscar lista das localidades')
             })

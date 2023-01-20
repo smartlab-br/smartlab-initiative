@@ -9,7 +9,7 @@ export class DateFormatService {
     dom: 'DOMINGO'
   }
 
-  constructor () {}
+  // constructor () {}
 
   formatDate (base_object, prop, formato = null, formatoFinal = null, stringAppend = '') {
     const stringOriginal = base_object[prop].toString()

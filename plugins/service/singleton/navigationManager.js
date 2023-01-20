@@ -9,7 +9,7 @@ export class NavigationManager {
     const route = router.currentRoute
 
     if (searchItem === null || searchItem === undefined) {
-      throw 'Nenhum item selecionado'
+      throw new Error('Nenhum item selecionado')
     }
 
     const obsAtual = this.context.$observatories.identifyObservatory(route.path.split('/')[1])
@@ -24,7 +24,7 @@ export class NavigationManager {
       }
     } else if (obsAtual) {
       if (searchItem.exclude_from && searchItem.exclude_from.includes(obsAtual)) {
-        throw 'A análise da localidade escolhida (' + searchItem.detail + ') não está disponível para esse observatório.'
+        throw new Error('A análise da localidade escolhida (' + searchItem.detail + ') não está disponível para esse observatório.')
       }
 
       url = '/' + this.context.$observatories.identifyObservatoryById(obsAtual) + searchItem.to

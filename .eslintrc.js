@@ -17,6 +17,10 @@ module.exports = {
     'jest'
   ],
   // add your custom rules here
-  rules: {},
+  rules: {
+    eqeqeq: 'warn',
+    camelcase: 'warn',
+    'vue/no-v-text-v-html-on-component': 'warn'
+  },
   ignorePatterns: ['**/node_modules/**']
 }

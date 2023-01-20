@@ -351,7 +351,7 @@ export default {
           return pattern.test(value) || 'E-mail inválido.'
         },
         website: (value) => {
-          const pattern = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/gm
+          const pattern = /[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/gm
           return pattern.test(value) || 'Site inválido.'
         },
         userResearchText: (value) => {

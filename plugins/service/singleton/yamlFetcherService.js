@@ -22,12 +22,12 @@ export class YamlFetcherService {
         axios.get(basePath + yamlArray[yamlConfIndex].main + '.yaml')
           .then((response) => {
             return yaml.safeLoad(response.data, { json: true })
-          }).catch((error) => {
+          }).catch((_error) => {
             if (yamlArray[yamlConfIndex].alt) {
               axios.get(basePath + yamlArray[yamlConfIndex].alt + '.yaml')
                 .then((response) => {
                   return yaml.safeLoad(response.data, { json: true })
-                }).catch((error) => { Promise.resolve(null) })
+                }).catch((_error) => { Promise.resolve(null) })
             }
           })
       )

@@ -3,7 +3,7 @@ import { mount } from '@vue/test-utils'
 import Vue from 'vue'
 import Vuetify from 'vuetify'
 
-import colors from 'vuetify/es5/util/colors'
+// import colors from 'vuetify/es5/util/colors'
 import { TooltipBuildingService } from '~/plugins/service/singleton/tooltipBuildingService'
 
 // Imports a component to serve as a bridge to the mixin

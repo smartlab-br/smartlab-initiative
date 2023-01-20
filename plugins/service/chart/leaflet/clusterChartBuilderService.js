@@ -1,9 +1,9 @@
 const LeafletChartBuilderService = require('./leafletChartBuilderService')
 
 class ClusterChartBuilderService extends LeafletChartBuilderService {
-  constructor () {
-    super()
-  }
+  // constructor () {
+  //   super()
+  // }
 
   fillLayers (dataset, options, boundsZoom = null) {
     // default icon = blue
@@ -41,8 +41,8 @@ class ClusterChartBuilderService extends LeafletChartBuilderService {
             [each_row[options.lat], each_row[options.long]],
             {
               rowData: each_row,
-						  icon: (options.markerIcons && options.markerIcons[each_row[id_field]] && typeof options.markerIcons[each_row[id_field]] !== 'string') ? options.markerIcons[each_row[id_field]] : defaultIcon,
-						  customOptions: options
+              icon: (options.markerIcons && options.markerIcons[each_row[id_field]] && typeof options.markerIcons[each_row[id_field]] !== 'string') ? options.markerIcons[each_row[id_field]] : defaultIcon,
+              customOptions: options
             }
           ).on('click', this.circleClick)
         )
