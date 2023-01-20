@@ -11,36 +11,36 @@ import { YamlFetcherService } from './service/singleton/yamlFetcherService'
 import { ChartBuilderService } from './service/singleton/chartBuilderService'
 
 export default ({ app }, inject) => {
-    const axiosCallSetupService = new AxiosCallSetupService()
-    inject('axiosCallSetupService', axiosCallSetupService)
+  const axiosCallSetupService = new AxiosCallSetupService()
+  inject('axiosCallSetupService', axiosCallSetupService)
 
-    const colorsService = new ColorsService()
-    inject('colorsService', colorsService)
+  const colorsService = new ColorsService()
+  inject('colorsService', colorsService)
 
-    const dateFormatService = new DateFormatService()
-    inject('dateFormatService', dateFormatService)
+  const dateFormatService = new DateFormatService()
+  inject('dateFormatService', dateFormatService)
 
-    const geoIpClient = new GeoIpClient()
-    inject('geoIpClient', geoIpClient)
+  const geoIpClient = new GeoIpClient()
+  inject('geoIpClient', geoIpClient)
 
-    const navigationManager = new NavigationManager(app)
-    inject('navigationManager', navigationManager)
+  const navigationManager = new NavigationManager(app)
+  inject('navigationManager', navigationManager)
 
-    const numberTransformService = new NumberTransformService()
-    inject('numberTransformService', numberTransformService)
+  const numberTransformService = new NumberTransformService()
+  inject('numberTransformService', numberTransformService)
 
-    const objectTransformService = new ObjectTransformService(app)
-    inject('objectTransformService', objectTransformService)
+  const objectTransformService = new ObjectTransformService(app)
+  inject('objectTransformService', objectTransformService)
 
-    const textTransformService = new TextTransformService(app)
-    inject('textTransformService', textTransformService)
+  const textTransformService = new TextTransformService(app)
+  inject('textTransformService', textTransformService)
 
-    const tooltipBuildingService = new TooltipBuildingService(app)
-    inject('tooltipBuildingService', tooltipBuildingService)
+  const tooltipBuildingService = new TooltipBuildingService(app)
+  inject('tooltipBuildingService', tooltipBuildingService)
 
-    const yamlFetcherService = new YamlFetcherService()
-    inject('yamlFetcherService', yamlFetcherService)
+  const yamlFetcherService = new YamlFetcherService()
+  inject('yamlFetcherService', yamlFetcherService)
 
-    const chartBuilderService = new ChartBuilderService()
-    inject('chartBuilderService', chartBuilderService)
+  const chartBuilderService = new ChartBuilderService()
+  inject('chartBuilderService', chartBuilderService)
 }
