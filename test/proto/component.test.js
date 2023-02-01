@@ -1,13 +1,13 @@
 import { mount } from '@vue/test-utils'
-import FLPOSobreLayout from '~/components/FLPOSobreLayout'
 
 // Imports custom elements from Vuetify
 import Vue from 'vue'
 import Vuetify from 'vuetify'
+import FLPOSobreLayout from '~/components/FLPOSobreLayout'
 Vue.use(Vuetify)
 
 // Skips Vuetify warning (v-app missing)
-var app = document.createElement('div')
+const app = document.createElement('div')
 app.setAttribute('data-app', true)
 document.body.appendChild(app)
 
@@ -15,6 +15,6 @@ document.body.appendChild(app)
 describe('Component', () => {
   test('is a Vue instance', () => {
     const wrapper = mount(FLPOSobreLayout, { sync: false })
-    expect(wrapper.vm).toBeTruthy();
+    expect(wrapper.vm).toBeTruthy()
   })
 })

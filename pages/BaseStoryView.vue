@@ -1,61 +1,62 @@
 <script>
-  import axios from 'axios'
+import axios from 'axios'
 
-  import BaseLandingView from './BaseLandingView.vue';
+import BaseLandingView from './BaseLandingView.vue'
 
-  export default {
-    extends: BaseLandingView,
-    methods: {
-      selectCoords(range, scope, id, suffix = "") {
-        let topoFile = "/topojson/" + scope + "/" + range + "/" + id + ".json";
-        axios.get(topoFile)
-          .then(response => {
-            this['topology' + suffix] = response.data;
-          });
-      },
+export default {
+  extends: BaseLandingView,
+  methods: {
+    selectCoords (range, scope, id, suffix = '') {
+      const topoFile = '/topojson/' + scope + '/' + range + '/' + id + '.json'
+      axios.get(topoFile)
+        .then((response) => {
+          this['topology' + suffix] = response.data
+        })
+    },
 
-      fetchVizLinks(sections) {
-        let indxViz = 0;
-        for (var indxSecao in sections) {
-          if(sections[indxSecao].name != ''){
-            this.cardLinks[indxViz] = {
-              title: sections[indxSecao].name
-            };
-            indxViz++;
+    fetchVizLinks (sections) {
+      let indxViz = 0
+      for (const indxSecao in sections) {
+        if (sections[indxSecao].name != '') {
+          this.cardLinks[indxViz] = {
+            title: sections[indxSecao].name
           }
-          for (var indxCard in sections[indxSecao].cards) {
-            if (sections[indxSecao].cards[indxCard].type &&
+          indxViz++
+        }
+        for (const indxCard in sections[indxSecao].cards) {
+          if (sections[indxSecao].cards[indxCard].type &&
                 sections[indxSecao].cards[indxCard].type == 'headline') {
-              this.cardLinks[indxViz] = {
-                title: sections[indxSecao].cards[indxCard].title.fixed
-              };
-              indxViz++;
-              continue;
+            this.cardLinks[indxViz] = {
+              title: sections[indxSecao].cards[indxCard].title.fixed
             }
-            
-            if (sections[indxSecao].cards[indxCard].card_template && (sections[indxSecao].cards[indxCard].title == null || sections[indxSecao].cards[indxCard].title == undefined )){
-              // let urlTitle = "/"+ sections[indxSecao].cards[indxCard].datasource+"?categorias=spai_ds&filtros=eq-cd_indicador_spai-'"+sections[indxSecao].cards[indxCard].cd_indicador+"'&limit=1"
-              // let title = {template: "{0}",
-              //             api: {fixed: urlTitle},
-              //             args: [{named_prop: "spai_ds"}]
-              //             }
-              // sections[indxSecao].cards[indxCard].title = title;
-              sections[indxSecao].cards[indxCard].title = {fixed: sections[indxSecao].cards[indxCard].id};
-            }
-            this.fillDataStructure(
-              sections[indxSecao].cards[indxCard].title,
-              this.customParams, this.customFunctions,
-              this.setCardLink,
-              { id: sections[indxSecao].cards[indxCard].id,
-                pos: indxViz
-              }
-            );
-            indxViz++;
+            indxViz++
+            continue
           }
+
+          if (sections[indxSecao].cards[indxCard].card_template && (sections[indxSecao].cards[indxCard].title == null || sections[indxSecao].cards[indxCard].title == undefined)) {
+            // let urlTitle = "/"+ sections[indxSecao].cards[indxCard].datasource+"?categorias=spai_ds&filtros=eq-cd_indicador_spai-'"+sections[indxSecao].cards[indxCard].cd_indicador+"'&limit=1"
+            // let title = {template: "{0}",
+            //             api: {fixed: urlTitle},
+            //             args: [{named_prop: "spai_ds"}]
+            //             }
+            // sections[indxSecao].cards[indxCard].title = title;
+            sections[indxSecao].cards[indxCard].title = { fixed: sections[indxSecao].cards[indxCard].id }
+          }
+          this.fillDataStructure(
+            sections[indxSecao].cards[indxCard].title,
+            this.customParams, this.customFunctions,
+            this.setCardLink,
+            {
+              id: sections[indxSecao].cards[indxCard].id,
+              pos: indxViz
+            }
+          )
+          indxViz++
         }
       }
     }
   }
+}
 </script>
 <style>
   .dim-menu {
@@ -76,9 +77,9 @@
   .dim-menu .flex:hover .hidden {
     display: block;
   }
-  
+
   .dim-menu .flex { cursor: pointer; }
-  
+
   .bg-black {
     background-color: black;
   }
@@ -109,9 +110,9 @@
   }
 
   .loadingPanel {
-    width: 100%; 
-    background-color: rgba(33, 33, 33, 0.9); 
-    position: absolute; 
+    width: 100%;
+    background-color: rgba(33, 33, 33, 0.9);
+    position: absolute;
     z-index:99;
   }
 </style>

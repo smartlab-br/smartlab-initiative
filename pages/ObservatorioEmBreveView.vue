@@ -1,10 +1,30 @@
 <template>
   <v-layout row wrap class="pa-0">
-    <v-flex fluid grid-list-lg xs12 overflow-hidden class="first-section pa-0" :style="displayHeight">
-      <v-layout xs12 class="bg-zoom bg-parallax" v-if="observatorio"
-        height="auto" :style="currentParallax"></v-layout>
-      <v-layout xs12 class="bg-parallax ma-0"></v-layout>
-      <v-layout row wrap px-3 align-center justify-center fill-height class="parallax-content">
+    <v-flex
+      fluid
+      grid-list-lg
+      xs12
+      overflow-hidden
+      class="first-section pa-0"
+      :style="displayHeight"
+    >
+      <v-layout
+        v-if="observatorio"
+        xs12
+        class="bg-zoom bg-parallax"
+        height="auto"
+        :style="currentParallax"
+      />
+      <v-layout xs12 class="bg-parallax ma-0" />
+      <v-layout
+        row
+        wrap
+        px-3
+        align-center
+        justify-center
+        fill-height
+        class="parallax-content"
+      >
         <v-flex shrink>
           <v-flex id="screenTitleSup" xs12 class="pb-0  headline ubuntu white--text text-xs-left">
             {{ observatorio ? observatorio.title_sup : '' }}
@@ -19,45 +39,41 @@
             <span class="soon">Em breve!</span>
           </v-flex>
         </v-flex>
-        
       </v-layout>
     </v-flex>
-
   </v-layout>
 </template>
 
 <script>
-  import BaseObservatorioView from './BaseObservatorioView.vue';
+import BaseObservatorioView from './BaseObservatorioView.vue'
 
-  export default {
-    extends: BaseObservatorioView,
-    data () {
-      return {
-        displayHeight: "auto",
-        dims: null
-      }
-    },
-    mounted: function() {
-      this.resizeFirstSection();
-      window.addEventListener('resize', this.resizeFirstSection);
-      this.idLocalidade = this.$analysisUnitModel.getCurrentAnalysisUnit();
-      this.checkCurrentAnalysisUnit();
-      
-    },
-    computed: {
-      currentParallaxFile: function() {
-        return this.observatorio.map_image ? '/parallax/' + this.observatorio.map_image + '.jpg' : '';
-      }
-    },
-    methods: {
-      resizeFirstSection(){
-        if (this.$vuetify.breakpoint.smAndDown){
-          this.displayHeight = "auto";
-        } else {
-          this.displayHeight = "min-height:" + (window.innerHeight - 64) + "px";
-        }
-        
+export default {
+  extends: BaseObservatorioView,
+  data () {
+    return {
+      displayHeight: 'auto',
+      dims: null
+    }
+  },
+  computed: {
+    currentParallaxFile: function () {
+      return this.observatorio.map_image ? '/parallax/' + this.observatorio.map_image + '.jpg' : ''
+    }
+  },
+  mounted: function () {
+    this.resizeFirstSection()
+    window.addEventListener('resize', this.resizeFirstSection)
+    this.idLocalidade = this.$analysisUnitModel.getCurrentAnalysisUnit()
+    this.checkCurrentAnalysisUnit()
+  },
+  methods: {
+    resizeFirstSection () {
+      if (this.$vuetify.breakpoint.smAndDown) {
+        this.displayHeight = 'auto'
+      } else {
+        this.displayHeight = 'min-height:' + (window.innerHeight - 64) + 'px'
       }
     }
   }
+}
 </script>

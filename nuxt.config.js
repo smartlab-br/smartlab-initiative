@@ -1,5 +1,5 @@
 // import colors from 'vuetify/es5/util/colors'
-import VuetifyLoaderPlugin from "vuetify-loader/lib/plugin";
+import VuetifyLoaderPlugin from 'vuetify-loader/lib/plugin'
 
 export default {
   // Global page headers: https://go.nuxtjs.dev/config-head
@@ -14,33 +14,32 @@ export default {
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
       { hid: 'description', name: 'description', content: 'Iniciativa SmartLab de Trabalho Decente Políticas Públicas de Trabalho Decente Guiadas por Dados' },
       { name: 'format-detection', content: 'telephone=no' },
-      { name:"theme-color", content:"#E0E0E0"},
-      { property:"og:title", content:"Smartlab - Promoção do Trabalho Decente" },
-      { property:"og:url", content:"https://smartlabbr.org" },
-      { property:"og:image", content:"https://smartlabbr.org/static/icons/smartlab.png" }
-  
+      { name: 'theme-color', content: '#E0E0E0' },
+      { property: 'og:title', content: 'Smartlab - Promoção do Trabalho Decente' },
+      { property: 'og:url', content: 'https://smartlabbr.org' },
+      { property: 'og:image', content: 'https://smartlabbr.org/static/icons/smartlab.png' }
 
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/icons/smartlab.png' },
-      { href:'https://fonts.googleapis.com/css?family=Material+Icons', rel:"stylesheet", type:"text/css"}
+      { href: 'https://fonts.googleapis.com/css?family=Material+Icons', rel: 'stylesheet', type: 'text/css' }
     ]
   },
 
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: [
     '~/assets/app.styl',
-    'leaflet/dist/leaflet.css'    
+    'leaflet/dist/leaflet.css'
   ],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
-    { src: '~/plugins/mixins/service/snackbarManager.js'},
-    { src: '~/plugins/mixins/service/viewConfReader.js'},
-    { src: '~/plugins/services.plugin.js'},
-    { src: '~/plugins/models.plugin.js'},
-    { src: '~/plugins/vue-cookies.js'},
-    { src: '~/plugins/vuetify.js'}
+    { src: '~/plugins/mixins/service/snackbarManager.js' },
+    { src: '~/plugins/mixins/service/viewConfReader.js' },
+    { src: '~/plugins/services.plugin.js' },
+    { src: '~/plugins/models.plugin.js' },
+    { src: '~/plugins/vue-cookies.js' },
+    { src: '~/plugins/vuetify.js' }
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -54,7 +53,7 @@ export default {
       '~/components/emitter',
       '~/components/text',
       '~/components/viz'
-    ]    
+    ]
   },
 
   // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
@@ -66,8 +65,8 @@ export default {
     '@nuxtjs/google-analytics'
   ],
 
-  fontawesome:{
-    icons:{
+  fontawesome: {
+    icons: {
       brands: ['faInstagram', 'faGithub', 'faDocker', 'faCreativeCommons', 'faOsi']
     }
   },
@@ -84,7 +83,7 @@ export default {
   // },
 
   serverMiddleware: [
-    '~/server-middleware/api.js' 
+    '~/server-middleware/api.js'
   ],
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
@@ -97,7 +96,7 @@ export default {
       if (isClient && isDev) {
         config.devtool = '#source-map'
       }
-    }    
+    }
   },
 
   googleAnalytics: {

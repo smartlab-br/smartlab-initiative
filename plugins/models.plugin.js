@@ -6,23 +6,21 @@ import { ObservatoriesModel } from './model/singleton/observatoriesModel'
 import { TranslationModel } from './model/singleton/translationModel'
 
 export default ({ app }, inject) => {
+  const about = new AboutModel(app)
+  inject('about', about)
 
-    const about = new AboutModel(app)
-    inject('about', about)
+  const analysisUnitModel = new AnalysisUnitModel(app)
+  inject('analysisUnitModel', analysisUnitModel)
 
-    const analysisUnitModel = new AnalysisUnitModel(app)
-    inject('analysisUnitModel', analysisUnitModel)
+  const dimensions = new DimensionsModel(app)
+  inject('dimensions', dimensions)
 
-    const dimensions = new DimensionsModel(app)
-    inject('dimensions', dimensions)
+  const indicatorsModel = new IndicatorsModel(app)
+  inject('indicatorsModel', indicatorsModel)
 
-    const indicatorsModel = new IndicatorsModel(app)
-    inject('indicatorsModel', indicatorsModel)
+  const observatories = new ObservatoriesModel(app)
+  inject('observatories', observatories)
 
-    const observatories = new ObservatoriesModel(app)
-    inject('observatories', observatories)
-
-    const translationModel = new TranslationModel()
-    inject('translationModel', translationModel)
-
+  const translationModel = new TranslationModel()
+  inject('translationModel', translationModel)
 }

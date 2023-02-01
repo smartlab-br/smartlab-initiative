@@ -1,63 +1,86 @@
 <template>
   <v-layout row wrap class="map_geo_full">
     <v-flex xs4 class="pa-4 filter_section">
-      <v-layout class="headline-obs">Apresentação</v-layout>
+      <v-layout class="headline-obs">
+        Apresentação
+      </v-layout>
 
       <!-- Tipo de mapa a ser plotado -->
-      <v-autocomplete :items="mapTypes" v-model="mapType"
-        label="Tipo de Mapa" item-text="name" item-value="id"
-        return-object>
-      </v-autocomplete>
+      <v-autocomplete
+        v-model="mapType"
+        :items="mapTypes"
+        label="Tipo de Mapa"
+        item-text="name"
+        item-value="id"
+        return-object
+      />
 
-      <v-layout class="headline-obs">Dados</v-layout>
+      <v-layout class="headline-obs">
+        Dados
+      </v-layout>
 
       <!-- Área do mapa que deve ser estudada -->
       <v-layout row wrap>
-        <v-autocomplete :items="places" v-model="place"
-          label="Escopo" item-text="label" item-value="id"
-          return-object>
+        <v-autocomplete
+          v-model="place"
+          :items="places"
+          label="Escopo"
+          item-text="label"
+          item-value="id"
+          return-object
+        >
           <template slot="item" slot-scope="data">
             <template>
               <v-list-tile-avatar>
                 <v-icon>{{ data.item.icon }}</v-icon>
               </v-list-tile-avatar>
               <v-list-tile-content>
-                <v-list-tile-title v-html="data.item.label"></v-list-tile-title>
-                <v-list-tile-sub-title v-html="data.item.detail"></v-list-tile-sub-title>
+                <v-list-tile-title v-html="data.item.label" />
+                <v-list-tile-sub-title v-html="data.item.detail" />
               </v-list-tile-content>
             </template>
-          </template>  
+          </template>
         </v-autocomplete>
         <v-progress-circular
           v-if="placesStatus !== 'SUCCESS'"
-          size="20" class="mt-4"
+          size="20"
+          class="mt-4"
           :indeterminate="placesStatus == 'LOADING'"
           :value="placesStatus == 'LOADING' ? 0 : 100"
           :color="placesStatus == 'ERROR' ? 'error' :
-                  (placesStatus == 'LOADING' ? 'warning' : 'success')"
-          background-color="primary">
-        </v-progress-circular>
+            (placesStatus == 'LOADING' ? 'warning' : 'success')"
+          background-color="primary"
+        />
       </v-layout>
 
       <!-- Agregação dos dados de indicador (uf, microrregião etc) -->
-      <v-autocomplete :items="mapAggregations" v-model="mapAggregation"
-        label="Agregação" item-text="name" item-value="id"
-        return-object>
-      </v-autocomplete>
+      <v-autocomplete
+        v-model="mapAggregation"
+        :items="mapAggregations"
+        label="Agregação"
+        item-text="name"
+        item-value="id"
+        return-object
+      />
 
       <!-- Indicadores a serem apresentados -->
-      <v-layout class="title-obs">Indicadores</v-layout>
+      <v-layout class="title-obs">
+        Indicadores
+      </v-layout>
       <!-- Múltiplos indicadores quando for mapa de bolhas -->
       <v-list v-show="mapType == null || mapType == undefined || mapType.id == 'bubbles'">
-        <v-divider></v-divider>
-        <v-list-tile v-for="eachSelectedIndicator in selectedIndicators"
-          :key="'sel_indic_' + eachSelectedIndicator.id">
+        <v-divider />
+        <v-list-tile
+          v-for="eachSelectedIndicator in selectedIndicators"
+          :key="'sel_indic_' + eachSelectedIndicator.id"
+        >
           <v-list-tile-action>
-            <v-switch class="ma-0"
+            <v-switch
               v-model="eachSelectedIndicator.visible"
+              class="ma-0"
               :color="eachSelectedIndicator.color !== null ? eachSelectedIndicator.color : 'primary'"
-              v-on:change="toggleLayer(eachSelectedIndicator)">
-            </v-switch>
+              @change="toggleLayer(eachSelectedIndicator)"
+            />
           </v-list-tile-action>
           <v-list-tile-content>
             <v-list-tile-title>
@@ -68,75 +91,89 @@
             </v-list-tile-sub-title>
           </v-list-tile-content>
           <v-list-tile-action>
-            <v-icon v-on:click="removeLayer(eachSelectedIndicator)">
+            <v-icon @click="removeLayer(eachSelectedIndicator)">
               delete
             </v-icon>
           </v-list-tile-action>
         </v-list-tile>
-        <v-divider></v-divider>
+        <v-divider />
         <v-list-tile>
           <v-list-tile-content>
             <v-layout row wrap pt-1>
-              <v-autocomplete :items="indicators" v-model="indicator"
-                label="Adicione um Indicador" item-text="label" item-value="id"
-                v-on:change="addLayer()"
-                return-object>
+              <v-autocomplete
+                v-model="indicator"
+                :items="indicators"
+                label="Adicione um Indicador"
+                item-text="label"
+                item-value="id"
+                return-object
+                @change="addLayer()"
+              >
                 <template slot="item" slot-scope="data">
                   <template>
                     <v-list-tile-avatar>
                       <v-icon>{{ data.item.icon }}</v-icon>
                     </v-list-tile-avatar>
                     <v-list-tile-content>
-                      <v-list-tile-title v-html="data.item.label"></v-list-tile-title>
-                      <v-list-tile-sub-title v-html="data.item.detail"></v-list-tile-sub-title>
+                      <v-list-tile-title v-html="data.item.label" />
+                      <v-list-tile-sub-title v-html="data.item.detail" />
                     </v-list-tile-content>
                   </template>
-                </template>  
+                </template>
               </v-autocomplete>
               <v-progress-circular
                 v-if="indicatorsStatus !== 'SUCCESS'"
-                size="20" class="mt-4"
+                size="20"
+                class="mt-4"
                 :indeterminate="indicatorsStatus == 'LOADING'"
                 :value="indicatorsStatus == 'LOADING' ? 0 : 100"
                 :color="indicatorsStatus == 'ERROR' ? 'error' :
-                        (indicatorsStatus == 'LOADING' ? 'warning' : 'success')"
-                background-color="primary">
-              </v-progress-circular>
+                  (indicatorsStatus == 'LOADING' ? 'warning' : 'success')"
+                background-color="primary"
+              />
             </v-layout>
           </v-list-tile-content>
         </v-list-tile>
-        <v-divider></v-divider>
+        <v-divider />
       </v-list>
       <!-- Único indicador, caso contrário -->
-      <v-layout row wrap v-show="mapType && mapType.id != 'bubbles'">
-        <v-autocomplete :items="indicators" v-model="indicator"
-          label="Selecione um Indicador" item-text="label" item-value="id"
-          v-on:change="addLayer()"
-          return-object>
+      <v-layout v-show="mapType && mapType.id != 'bubbles'" row wrap>
+        <v-autocomplete
+          v-model="indicator"
+          :items="indicators"
+          label="Selecione um Indicador"
+          item-text="label"
+          item-value="id"
+          return-object
+          @change="addLayer()"
+        >
           <template slot="item" slot-scope="data">
             <template>
               <v-list-tile-avatar>
                 <v-icon>{{ data.item.icon }}</v-icon>
               </v-list-tile-avatar>
               <v-list-tile-content>
-                <v-list-tile-title v-html="data.item.label"></v-list-tile-title>
-                <v-list-tile-sub-title v-html="data.item.detail"></v-list-tile-sub-title>
+                <v-list-tile-title v-html="data.item.label" />
+                <v-list-tile-sub-title v-html="data.item.detail" />
               </v-list-tile-content>
             </template>
-          </template>  
+          </template>
         </v-autocomplete>
         <v-progress-circular
           v-if="indicatorsStatus !== 'SUCCESS'"
-          size="20" class="mt-4"
+          size="20"
+          class="mt-4"
           :indeterminate="indicatorsStatus == 'LOADING'"
           :value="indicatorsStatus == 'LOADING' ? 0 : 100"
           :color="indicatorsStatus == 'ERROR' ? 'error' :
-                  (indicatorsStatus == 'LOADING' ? 'warning' : 'success')"
-          background-color="primary">
-        </v-progress-circular>
+            (indicatorsStatus == 'LOADING' ? 'warning' : 'success')"
+          background-color="primary"
+        />
       </v-layout>
 
-      <v-layout class="headline-obs">Filtros</v-layout>
+      <v-layout class="headline-obs">
+        Filtros
+      </v-layout>
 
       <!-- Filtro geral de ano -->
       <v-layout v-if="filters && filters.year" column>
@@ -144,26 +181,34 @@
           :custom-params="customParams"
           :structure="descSection"
           :custom-functions="customFunctions"
-          v-on:selection="triggerSelect">
-        </FLPOSliderEmitter>
+          @selection="triggerSelect"
+        />
       </v-layout>
 
       <!-- Gatilho da renderização do mapa com os parâmetros -->
-      <v-btn v-on:click="filter">Aplicar ></v-btn>
+      <v-btn @click="filter">
+        Aplicar >
+      </v-btn>
     </v-flex>
     <v-flex xs8 class="pa-0">
-      <div v-if="indicator" class="map_container fill-height" id="map" ref="map">
-      </div>
+      <div v-if="indicator" id="map" ref="map" class="map_container fill-height" />
     </v-flex>
-    <v-layout 
-      pa-3 row wrap justify-center align-center fill-height
+    <v-layout
       v-show="checkLoading"
-      class="loading">
+      pa-3
+      row
+      wrap
+      justify-center
+      align-center
+      fill-height
+      class="loading"
+    >
       <v-progress-circular
         :size="120"
         :width="8"
         color="primary"
-        indeterminate>
+        indeterminate
+      >
         Atualizando o mapa...
       </v-progress-circular>
     </v-layout>
@@ -171,13 +216,13 @@
 </template>
 
 <script>
-import axios from "axios";
-import * as d3 from 'd3';
-import * as d3chrom from 'd3-scale-chromatic'
-import * as d3plus from 'd3plus';
+// import axios from 'axios'
+// import * as d3 from 'd3'
+// import * as d3chrom from 'd3-scale-chromatic'
+// import * as d3plus from 'd3plus'
 
 export default {
-  data() {
+  data () {
     return {
     //   show: false,
     //   municipio: null,
@@ -225,7 +270,7 @@ export default {
 
     //   layers: {},
     //   loadedLayers: null
-    };
+    }
   },
   // created() {
   //   this.$indicatorsModel.buildIndicatorsOptions(this, this.$observatories.identifyObservatory(this.$route.path.split('/')[1]))
@@ -300,7 +345,7 @@ export default {
   //   require('leaflet-easyprint/dist/bundle.js')
   //   require('leaflet.heat/dist/leaflet-heat.js');
   //   require('leaflet.markercluster/dist/leaflet.markercluster.js');
-    
+
   //   this.reloadMap();
 
   //   if (this.$route.query.adicionais) {
@@ -410,7 +455,7 @@ export default {
     //     let group = L.heatLayer(heatPoints, {radius: 25})
     //       .on('add', this.addLoadedLayer)
     //       .on('remove', this.subLoadedLayer);
-        
+
     //     group.addTo(this.leafletMap);
     //   } else if (this.mapType && this.mapType.id == 'cluster') {
     //     var markers = L.markerClusterGroup();
@@ -426,7 +471,7 @@ export default {
     //     markers = markers
     //       .on('add', this.addLoadedLayer)
     //       .on('remove', this.subLoadedLayer);
-        
+
     //     markers.addTo(this.leafletMap);
     //   } else if (this.mapType && this.mapType.id == 'poligonos') {
     //     // https://blog.webkid.io/maps-with-leaflet-and-topojson/
@@ -443,20 +488,20 @@ export default {
 
     //     this.range = range;
 
-    //     L.TopoJSON = L.GeoJSON.extend({  
-    //       addData: function(jsonData) {    
+    //     L.TopoJSON = L.GeoJSON.extend({
+    //       addData: function(jsonData) {
     //         if (jsonData.type === 'Topology') {
     //           for (var key in jsonData.objects) {
     //             var geojson = topojson.feature(jsonData, jsonData.objects[key]);
-    //             L.GeoJSON.prototype.addData.call(this, geojson);               
+    //             L.GeoJSON.prototype.addData.call(this, geojson);
     //           }
-    //         }    
+    //         }
     //         else {
     //           L.GeoJSON.prototype.addData.call(this, jsonData);
     //         }
-    //       }  
+    //       }
     //     });
-        
+
     //     let layer = new L.TopoJSON();
     //     layer.addData(this.topology);
     //     layer.addTo(this.leafletMap);
@@ -539,10 +584,9 @@ export default {
     //   return coords;
     // },
 
-
     // generateTopoMap(dataset, value_field = 'vl_lognormal') {
     //   let viz = new d3plus.Geomap()
-    //     .shapeConfig({ 
+    //     .shapeConfig({
     //       labelConfig: { fontFamily: "titulos-observatorio" },
     //       Path: {
     //         fillOpacity: 0.9,
@@ -738,7 +782,7 @@ export default {
     //       // Percorre o dataset, calculando o log do valor normalizado para cálculo do tamanho da bolhas e escala de cores.
     //       // Obtém o min e o max
     //       var minMax = this.$indicatorsModel.getMinMax(dataset, value_field);
-          
+
     //       // Aplica o log sobre o valor normalizado
     //       for (let indxDS in dataset) {
     //         if (dataset[indxDS][value_field] != null) {
@@ -748,7 +792,7 @@ export default {
     //           );
     //         }
     //       }
-        
+
     //       // Armazena localmente o dataset obtido, usando o ID do indicador como chave
     //       dataset[indicador.id] = {
     //         data: dataset,
@@ -784,7 +828,7 @@ export default {
     //   );
     // }
   }
-};
+}
 </script>
 
 <style>

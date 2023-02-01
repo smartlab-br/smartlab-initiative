@@ -1,34 +1,35 @@
 <template>
-  <v-layout class="linked-view-card elevation-5" 
+  <v-layout
     v-ripple
+    class="linked-view-card elevation-5"
     :ripple="{ class: rippleColor }"
     @click="blocked ? snackBlocked() : $navigationManager.pushRoute($router, to, external)"
     @keyup.enter="blocked ? snackBlocked() : $navigationManager.pushRoute($router, to, external)"
   >
-    <v-img 
-      :tabindex = "indexTab"
+    <v-img
+      :tabindex="indexTab"
       :src="cmpMedia"
       :class="bgColor ? headerClass : headerClass + ' bg-transparent-buttom'"
       :height="height"
       :style="bgColor ? 'background-color:' + bgColor : ''"
       :aspect-ratio="16/9"
     >
-      <v-container 
-        fill-height 
-        pa-0 
+      <v-container
+        fill-height
+        pa-0
         ma-0
       >
-        <v-container 
-          fill-height  
+        <v-container
+          fill-height
           pa-0
         >
           <v-layout align-center>
             <v-layout column pa-0>
               <v-flex
-                :class = "detail ? 'linked-view-icon-container' : 'text-xs-center'"
+                :class="detail ? 'linked-view-icon-container' : 'text-xs-center'"
                 @click="blocked ? snackBlocked() : $navigationManager.pushRoute($router, to, external)"
               >
-                <v-btn 
+                <v-btn
                   v-if="icon || appIcon"
                   :color="btnColor ? btnColor : 'transparent'"
                   class="ma-0"
@@ -36,59 +37,62 @@
                   flat
                   small
                 >
-                  <v-icon 
+                  <v-icon
                     v-if="icon"
                     :color="iconColor ? iconColor : ''"
                   >
-                    {{icon}}
+                    {{ icon }}
                   </v-icon>
-                  <AppIcon 
+                  <AppIcon
                     v-else-if="appIcon"
                     :fill="iconColor ? iconColor : ''"
                     :icon="appIcon"
-                  >
-                  </AppIcon>
+                  />
                 </v-btn>
               </v-flex>
-              <v-flex 
-                px-2 
+              <v-flex
+                px-2
                 :class="titleColor ? 'linked-view-title-container text-xs-center ' + titleColor + '--text' : 'linked-view-title-container text-xs-center'"
               >
-                <v-flex 
-                  :style="(appIcon || icon) ? 'min-height: 70px' : ''" 
-                  class="headline-obs" 
+                <v-flex
+                  :style="(appIcon || icon) ? 'min-height: 70px' : ''"
+                  class="headline-obs"
                   v-html="title != null ? title.toUpperCase() : ''"
-                >
-                </v-flex>
+                />
               </v-flex>
-              <v-layout 
+              <v-layout
                 v-if="detail"
-                column 
-                pt-1 
-                pb-5 
+                column
+                pt-1
+                pb-5
                 class="linked-view-detail-container"
               >
-                <v-flex 
-                  caption 
-                  px-3 pb-4 pt-2 mt-4 
-                  text-xs-center 
+                <v-flex
+                  caption
+                  px-3
+                  pb-4
+                  pt-2
+                  mt-4
+                  text-xs-center
                   class="body-1"
                   @click="blocked ? snackBlocked() : $navigationManager.pushRoute($router, to, external)"
                 >
                   {{ detail.fixed }}
                 </v-flex>
-                <v-flex 
-                  v-if="tags" 
+                <v-flex
+                  v-if="tags"
                   pa-2
                 >
-                  <v-chip 
+                  <v-chip
                     v-for="(tag, tagIndx) in tags"
-                    small 
                     :key="'tag_'+tagIndx"
-                    :color="tag.color" 
+                    small
+                    :color="tag.color"
                     text-color="white"
                   >
-                    <v-icon left>label</v-icon>
+                    <v-icon left>
+                      label
+                    </v-icon>
                     <span>{{ tag.label }}</span>
                   </v-chip>
                 </v-flex>
@@ -99,11 +103,11 @@
       </v-container>
       <v-layout
         v-if="status"
-        caption 
-        font-weight-bold 
-        pa-1 
+        caption
+        font-weight-bold
+        pa-1
         text-xs-center
-        :class = "'tag ' + tagColor + ' ' + tagTextColor"
+        :class="'tag ' + tagColor + ' ' + tagTextColor"
       >
         {{ status }}
       </v-layout>
@@ -115,32 +119,32 @@
 </template>
 
 <script>
-  export default {
-    data () {
-      return {
-      }
+export default {
+  props: ['tagColor', 'status', 'icon', 'appIcon', 'media', 'to',
+    'external', 'title', 'titleColor', 'rippleColor', 'headerClass',
+    'bgColor', 'btnColor', 'blocked', 'indexTab',
+    'iconColor', 'tags', 'height', 'detail'],
+  data () {
+    return {
+    }
+  },
+  computed: {
+    tagTextColor: function () {
+      if (this.tagColor == 'warning') { return 'black--text' }
+      return 'white--text'
     },
-    created() {
-    },
-    props: ['tagColor', 'status', 'icon', 'appIcon', 'media', 'to',
-            'external', 'title', 'titleColor', 'rippleColor', 'headerClass',
-            'bgColor', 'btnColor', 'blocked', 'indexTab',
-            'iconColor', 'tags', 'height', 'detail'],
-    computed: {
-      tagTextColor: function() {
-        if (this.tagColor == 'warning') return 'black--text';
-        return 'white--text';
-      },
-      cmpMedia: function() {
-        return this.media;
-      }
-    },
-    methods: {
-      snackBlocked: function(){
-        this.$emit('showSnackbar', { color : 'orange darken-4', text: "Disponível em breve!" });
-      }
+    cmpMedia: function () {
+      return this.media
+    }
+  },
+  created () {
+  },
+  methods: {
+    snackBlocked: function () {
+      this.$emit('showSnackbar', { color: 'orange darken-4', text: 'Disponível em breve!' })
     }
   }
+}
 </script>
 
 <style>
@@ -152,7 +156,7 @@
     cursor: pointer;
   }
 
-  /* 
+  /*
   .linked-view-card .v-responsive__content {
     background-color: rgba(127,127,127,0.7);
   }
@@ -161,7 +165,7 @@
   .bg-transparent-buttom {
     background-color: rgba(255, 255, 255, 0.15);
     border: 1px solid rgba(255,255,255,0.4) !important;
-    border-radius:5px; 
+    border-radius:5px;
   }
 
   .bg-transparent-buttom:hover {
@@ -169,7 +173,7 @@
   }
 
   .rounded-border{
-    border-radius:5px; 
+    border-radius:5px;
   }
 
   .linked-view-card .v-responsive {
