@@ -13,27 +13,27 @@ class MigrationMapChartBuilderService extends LeafletChartBuilderService {
     if (options && options.radius && options.radius.base) { this.radius.base = options.radius.base }
 
     if (boundsZoom == null) { boundsZoom = this.chart.getZoom() }
-    const zoomIndex = boundsZoom > 5 ? Math.pow(boundsZoom / 4, 4) : 1
+    // const zoomIndex = boundsZoom > 5 ? Math.pow(boundsZoom / 4, 4) : 1
 
-    const multiplier = this.radius.multiplier / zoomIndex
+    // const multiplier = this.radius.multiplier / zoomIndex
 
-    const circleDataPoint = L.Circle.extend({ rowData: null })
+    // const CircleDataPoint = L.Circle.extend({ rowData: null })
 
     const value_field = options.value_field ? options.value_field : 'api_calc_ln_norm_pos_part'
-    const loc_size_field = options.loc_size_field ? options.loc_size_field : 'api_calc_ln_norm_pos_part'
+    // const loc_size_field = options.loc_size_field ? options.loc_size_field : 'api_calc_ln_norm_pos_part'
     const id_field = options.id_field ? options.id_field : 'cd_indicador'
 
     for (const ident of options.indicadores) {
-      const group = L.layerGroup()
+      const group = this.L.layerGroup()
       group.addTo(this.chart)
       this.layers[ident] = group
     }
 
     if (options.legendArray) {
-      const legend = L.control({ position: 'topright' })
+      const legend = this.L.control({ position: 'topright' })
 
       legend.onAdd = function (map) {
-        const div = L.DomUtil.create('div', 'legend')
+        const div = this.L.DomUtil.create('div', 'legend')
         const grades = options.colorArray
         const labels = options.legendArray
 
@@ -97,12 +97,12 @@ class MigrationMapChartBuilderService extends LeafletChartBuilderService {
         if (each_row[options.target.lat] && each_row[options.target.long] &&
                     each_row[options.target.lat] != 0 && each_row[options.target.long] != 0) {
           // Iterates over the layers
-          for (const [pos, ident] of options.indicadores.entries()) {
+          for (const [, ident] of options.indicadores.entries()) {
             // Checks if the row is for the layer (moves to next if different)
             if (ident != each_row[id_field]) { continue }
 
             // Gets the value for each layer
-            const value = each_row[loc_size_field]
+            // const value = each_row[loc_size_field]
 
             // Builds the marker (if not already built)
             if (!(builtMarkers.includes(each_row[options.target.id]))) {
@@ -183,7 +183,7 @@ class MigrationMapChartBuilderService extends LeafletChartBuilderService {
 
     // Iterates over the dataset, to build connections to the circles
     const thetaOffset = (3.14 / 10)
-    const durationBase = (options && options.path && options.path.animation && options.path.animation.base_duration) ? options.path.animation.base_duration : 2000
+    // const durationBase = (options && options.path && options.path.animation && options.path.animation.base_duration) ? options.path.animation.base_duration : 2000
 
     for (const each_row of dataset) {
       if (each_row[options.source.lat] && each_row[options.source.long] &&
@@ -206,17 +206,17 @@ class MigrationMapChartBuilderService extends LeafletChartBuilderService {
 
             // Calculating the curve
             const latlng1 = [each_row[options.source.lat], each_row[options.source.long]]
-	                        const latlng2 = [each_row[options.target.lat], each_row[options.target.long]]
+            const latlng2 = [each_row[options.target.lat], each_row[options.target.long]]
 
             const offsetX = latlng2[1] - latlng1[1]
-	                        const offsetY = latlng2[0] - latlng1[0]
+            const offsetY = latlng2[0] - latlng1[0]
 
             const r = Math.sqrt(Math.pow(offsetX, 2) + Math.pow(offsetY, 2))
-	                        const theta = Math.atan2(offsetY, offsetX)
+            const theta = Math.atan2(offsetY, offsetX)
 
             const theta2 = theta + thetaOffset
             const r2 = (r / 2) / (Math.cos(thetaOffset))
-            const duration = Math.round(Math.sqrt(Math.log(r + 1)) * durationBase)
+            // const duration = Math.round(Math.sqrt(Math.log(r + 1)) * durationBase)
 
             const midpointX = (r2 * Math.cos(theta2)) + latlng1[1]
             const midpointY = (r2 * Math.sin(theta2)) + latlng1[0]

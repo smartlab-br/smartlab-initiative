@@ -45,20 +45,16 @@ if (!Vue.__snackbarManager__) {
             const url = '/chart?from_viewconf=S&au=' + idLocalidade +
                       '&card_id=' + structure.id + '&observatory=' + idObservatorio +
                       '&dimension=' + dimension + '&scope=' + scope + '&as_image=N'
-            return new Promise((resolve, reject) => {
-              axios(this.$axiosCallSetupService.getAxiosOptions(url))
-                .then((result) => {
-                  const container = document.getElementById(id)
-                  if (container) {
-                    container.innerHTML = result.data
-                    container.style.display = 'inline'
-                  }
-                  resolve()
-                }).catch((error) => {
-                  this.sendDataStructureError('Falha ao buscar dados do card ' + id)
-                  reject()
-                })
-            })
+            return axios(this.$axiosCallSetupService.getAxiosOptions(url))
+              .then((result) => {
+                const container = document.getElementById(id)
+                if (container) {
+                  container.innerHTML = result.data
+                  container.style.display = 'inline'
+                }
+              }).catch(() => {
+                this.sendDataStructureError('Falha ao buscar dados do card ' + id)
+              })
           } else {
             const additionalOptions = this.buildChartAdditionalOptions(id, chartType, structure, chartOptions, dataset, metadata, sectionIndex)
 
@@ -679,14 +675,14 @@ if (!Vue.__snackbarManager__) {
           .then(axios.spread((resultCovidMun, resultDenunciaMPT, resultAcoesMPT, resultDestinacaoMPT) => {
             const dtCovidMun = resultCovidMun.data.dataset[0]
             const dtDenunciaMPT = resultDenunciaMPT.data.dataset[0]
-            const dtAcoesMPT = resultAcoesMPT.data.dataset
-            const dtDestinacaoMPT = resultDestinacaoMPT.data.dataset[0]
-            let total_acoes = 0
-            if (dtAcoesMPT) {
-              for (const item of dtAcoesMPT) {
-                total_acoes += item.agr_count
-              }
-            }
+            // const dtAcoesMPT = resultAcoesMPT.data.dataset
+            // const dtDestinacaoMPT = resultDestinacaoMPT.data.dataset[0]
+            // let total_acoes = 0
+            // if (dtAcoesMPT) {
+            //   for (const item of dtAcoesMPT) {
+            //     total_acoes += item.agr_count
+            //   }
+            // }
 
             let text = ''
             if (options && options.clickable) {

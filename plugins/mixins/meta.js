@@ -8,9 +8,9 @@ export default {
   },
 
   created () {
-    if (process.env.VUE_ENV === 'client') { return }
+    // if (process.env.VUE_ENV === 'client') { return }
 
-    const metaData = meta[this.$route.path] || {}
+    // const metaData = meta[this.$route.path] || {}
     // this.$ssrContext.title = metaData.title
     // this.$ssrContext.description = metaData.description
     // this.$ssrContext.keywords = metaData.keywords

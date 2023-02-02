@@ -17,13 +17,13 @@ class BubblesChartBuilderService extends LeafletChartBuilderService {
 
     const multiplier = this.radius.multiplier / zoomIndex
 
-    const circleDataPoint = L.Circle.extend({ rowData: null })
+    const CircleDataPoint = this.L.Circle.extend({ rowData: null })
 
     const value_field = options.value_field ? options.value_field : 'api_calc_ln_norm_pos_part'
     const id_field = options.id_field ? options.id_field : 'cd_indicador'
 
     for (const ident of options.indicadores) {
-      const group = L.layerGroup()
+      const group = this.L.layerGroup()
       group.addTo(this.chart)
       this.layers[ident] = group
     }
@@ -41,7 +41,7 @@ class BubblesChartBuilderService extends LeafletChartBuilderService {
           const value = each_row[value_field]
 
           // Builds the circle
-          const eachCircle = new circleDataPoint(
+          const eachCircle = new CircleDataPoint(
             [each_row[options.lat], each_row[options.long]],
             {
               rowData: each_row,

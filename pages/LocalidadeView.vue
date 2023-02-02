@@ -535,7 +535,7 @@ export default {
             detail += '<span> ' +
                 '<img  ' +
                 "  src='/smartlab/rank_br_ret_" + imgColorBR + ".svg'" +
-                "  title='" + this.$numberTransformService.formatNumber(rank_br, 'inteiro', 0) + "º no BR'" +
+                "  title='" + parent.$nuxt.$numberTransformService.formatNumber(rank_br, 'inteiro', 0) + "º no BR'" +
                 "  height='13px'  " +
                 '/> ' +
                 '</span>'
@@ -544,7 +544,7 @@ export default {
             detail += '<span> ' +
                 '<img  ' +
                 "  src='/smartlab/rank_uf_ret_" + imgColorUF + ".svg' " +
-                "  title='" + this.$numberTransformService.formatNumber(rank_uf, 'inteiro', 0) + "º na UF'" +
+                "  title='" + parent.$nuxt.$numberTransformService.formatNumber(rank_uf, 'inteiro', 0) + "º na UF'" +
                 "  height='13px'  " +
                 '/>' +
                 '</span>'
@@ -557,41 +557,41 @@ export default {
             case '(Admitidos - Desligados)':
             case '(Quantidade)':
             case 'Quantidade':
-              return this.$numberTransformService.formatNumber(
+              return parent.$nuxt.$numberTransformService.formatNumber(
                 value, 'inteiro', 0)
             case '(Percentual)':
-              return this.$numberTransformService.formatNumber(
+              return parent.$nuxt.$numberTransformService.formatNumber(
                 value, 'porcentagem', 1, null, null, false, false)
             case '(Índice)':
               if (ds_indicador.startsWith('IDH ')) {
                 if (value < 0.5) {
-                  return this.$numberTransformService.formatNumber(value, 'real', 3) + ' (Muito baixo)'
+                  return parent.$nuxt.$numberTransformService.formatNumber(value, 'real', 3) + ' (Muito baixo)'
                 } else if (value < 0.6) {
-                  return this.$numberTransformService.formatNumber(value, 'real', 3) + ' (Baixo)'
+                  return parent.$nuxt.$numberTransformService.formatNumber(value, 'real', 3) + ' (Baixo)'
                 } else if (value < 0.7) {
-                  return this.$numberTransformService.formatNumber(value, 'real', 3) + ' (Médio)'
+                  return parent.$nuxt.$numberTransformService.formatNumber(value, 'real', 3) + ' (Médio)'
                 } else if (value < 0.8) {
-                  return this.$numberTransformService.formatNumber(value, 'real', 3) + ' (Alto)'
+                  return parent.$nuxt.$numberTransformService.formatNumber(value, 'real', 3) + ' (Alto)'
                 } else {
-                  return this.$numberTransformService.formatNumber(value, 'real', 3) + ' (Muito alto)'
+                  return parent.$nuxt.$numberTransformService.formatNumber(value, 'real', 3) + ' (Muito alto)'
                 }
               } else {
-                return this.$numberTransformService.formatNumber(
+                return parent.$nuxt.$numberTransformService.formatNumber(
                   value, 'real', 3)
               }
 
             case '(em R$ x 1.000)':
-              return this.$numberTransformService.formatNumber(
+              return parent.$nuxt.$numberTransformService.formatNumber(
                 value, 'monetario', 2, 1000, { format: 'monetario', precision: 1 }, false, false)
             case '(R$)':
-              return this.$numberTransformService.formatNumber(
+              return parent.$nuxt.$numberTransformService.formatNumber(
                 value, 'monetario', 2, 1, null, false, false)
             case '(Razão)':
-              return this.$numberTransformService.formatNumber(
+              return parent.$nuxt.$numberTransformService.formatNumber(
                 value, 'real', 1)
             case '':
               if (ds_indicador.startsWith('Remuneração Média ')) {
-                return this.$numberTransformService.formatNumber(
+                return parent.$nuxt.$numberTransformService.formatNumber(
                   value, 'monetario', 2, 1, { format: 'monetario', precision: 1 }, false, false)
               } else {
                 return (value !== null && value !== undefined) ? value.toString() : ''
@@ -675,14 +675,15 @@ export default {
           return parseFloat(val)
         },
         get_week_status: function (d, reg_week) {
-          Date.prototype.getWeekNumber = function () {
+          const DateClass = Date
+          DateClass.prototype.getWeekNumber = function () {
             const dt = new Date(Date.UTC(this.getFullYear(), this.getMonth(), this.getDate()))
             const dayNum = dt.getUTCDay() || 7
             dt.setUTCDate(dt.getUTCDate() + 4 - dayNum)
             const yearStart = new Date(Date.UTC(dt.getUTCFullYear(), 0, 1))
             return Math.ceil((((dt - yearStart) / 86400000) + 1) / 7)
           }
-          const week = new Date().getFullYear() * 100 + new Date().getWeekNumber()
+          const week = new DateClass().getFullYear() * 100 + new DateClass().getWeekNumber()
           if (reg_week == week) {
             return 'Semana corrente'
           } else {
@@ -1273,7 +1274,7 @@ export default {
             }, (error) => {
               console.error(error.toString())
               this.sendError('Falha ao buscar total das localidades')
-              Promise.reject({ code: 500 })
+              Promise.reject(new Error('Falha ao buscar total das localidades'))
             })
         } else if (idLocalidade.length == 1) { // Região
           localidade = {

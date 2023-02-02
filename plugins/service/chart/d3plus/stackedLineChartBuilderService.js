@@ -1,10 +1,6 @@
 const D3PlusChartBuilderService = require('./d3plusChartBuilderService')
 
 class StackedLineChartBuilderService extends D3PlusChartBuilderService {
-  constructor () {
-    super()
-  }
-
   prepareChart (viz, slicedDS, containerId, options, additionalOptions) {
     if (options.id === null || options.id === undefined) {
       for (const row of slicedDS) {

@@ -1,10 +1,6 @@
 const D3PlusChartBuilderService = require('./d3plusChartBuilderService')
 
 class ScatterChartBuilderService extends D3PlusChartBuilderService {
-  constructor () {
-    super()
-  }
-
   prepareChart (viz, slicedDS, containerId, options, additionalOptions) {
     const grafico = viz
       .container(containerId) // container DIV to hold the visualization
@@ -25,7 +21,7 @@ class ScatterChartBuilderService extends D3PlusChartBuilderService {
     const removed_text_list = options.removed_text_list
 
     let label = ''
-    const viz = new this.d3plus.viz()
+    const viz = this.d3plus.viz()
       .noDataHTML(this.noDataMessage)
       .loadingHTML(this.loadingMessage)
       .data({ opacity: 0.7 }) // data to use with the visualization

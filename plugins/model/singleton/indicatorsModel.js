@@ -437,6 +437,7 @@ export class IndicatorsModel {
         }
         reg.reg_key = key_value
         key_field = 'reg_key'
+        return reg
       })
     }
     for (const indxDS in dataset) {

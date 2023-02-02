@@ -4,7 +4,7 @@ import * as yaml from 'js-yaml'
 import Vue from 'vue'
 
 if (!Vue.__viewConfReader__) {
-  	Vue.__viewConfReader__ = true
+  Vue.__viewConfReader__ = true
   Vue.mixin({
     data () {
       return {
@@ -48,14 +48,14 @@ if (!Vue.__viewConfReader__) {
                 axios.get(basePath + yamlArray[yamlConfIndex].alt + '.yaml')
                   .then((response) => {
                     resolve(yaml.safeLoad(response.data, { json: true }))
-                  }).catch((error) => { resolve(null) })
+                  }).catch(() => { resolve(null) })
               }
             )
           }
         }
 
         // Define a execução após a realização de todos os promises
-        Promise.all(promises).then(
+        await Promise.all(promises).then(
           (structs) => {
             const checked = []
             let result = currentStruct || {}
@@ -174,7 +174,7 @@ if (!Vue.__viewConfReader__) {
               })
             }
           } else if (addedParams && addedParams.react &&
-						structure.api_reactive !== null && structure.api_reactive !== undefined) {
+            structure.api_reactive !== null && structure.api_reactive !== undefined) {
             // If the structure defines an API call, execute the
             // callback after the axios call.
             const fusionParams = Object.assign(customParams, addedParams.react)
@@ -417,6 +417,7 @@ if (!Vue.__viewConfReader__) {
           for (const indxClone in reformOptions.clone) {
             dataset.map((reg) => {
               reg[reformOptions.clone[indxClone].new_column] = reg[reformOptions.clone[indxClone].id]
+              return reg
             })
           }
 
@@ -560,7 +561,7 @@ if (!Vue.__viewConfReader__) {
         if (idLocalidade == 0) { return 'brasil' }
         if (idLocalidade.includes('mptreg') || idLocalidade.includes('MPTREG')) { return 'mptreg' }
         if (idLocalidade.includes('prt') || idLocalidade.includes('PRT') ||
-					idLocalidade.includes('ptm') || idLocalidade.includes('PTM')) { return 'prtptm' }
+          idLocalidade.includes('ptm') || idLocalidade.includes('PTM')) { return 'prtptm' }
         switch (idLocalidade.length) {
           case 1:
             return 'regiao'
@@ -580,7 +581,7 @@ if (!Vue.__viewConfReader__) {
           return idLocalidade.substring(6)
         }
         if (idLocalidade.includes('prt') || idLocalidade.includes('PRT') ||
-					idLocalidade.includes('ptm') || idLocalidade.includes('PTM')) {
+          idLocalidade.includes('ptm') || idLocalidade.includes('PTM')) {
           return idLocalidade.substring(3)
         }
         return idLocalidade

@@ -73,10 +73,10 @@ export class AnalysisUnitModel {
             this.currentAnalysisUnit = infoMunicipio[0].cd_municipio_ibge_dv
             return infoMunicipio[0]
           } else {
-            throw 'Localidade não encontrada!'
+            throw new Error('Localidade não encontrada!')
           }
         },
-        (error) => { Promise.reject() }
+        (error) => { Promise.reject(error) }
       )
   }
 
@@ -102,8 +102,8 @@ export class AnalysisUnitModel {
         // } else {
         //    callback(null);
         }
-      }, (error) => {
-        Promise.reject('Falha ao buscar total das localidades')
+      }, () => {
+        Promise.reject(new Error('Falha ao buscar total das localidades'))
       })
   }
 
@@ -285,7 +285,7 @@ export class AnalysisUnitModel {
     return axios(this.context.$axiosCallSetupService.getAxiosOptions(url))
       .then(
         (result) => { return result.data.dataset.length },
-        (error) => { Promise.reject('Falha ao buscar total das localidades') }
+        () => { Promise.reject(new Error('Falha ao buscar total das localidades')) }
       )
   }
 
@@ -294,7 +294,7 @@ export class AnalysisUnitModel {
     return axios(this.context.$axiosCallSetupService.getAxiosOptions(url))
       .then(
         (result) => { return result.data.dataset.length },
-        (error) => { Promise.reject('Falha ao buscar total das localidades') }
+        () => { Promise.reject(new Error('Falha ao buscar total das localidades')) }
       )
   }
 
@@ -303,7 +303,7 @@ export class AnalysisUnitModel {
     return axios(this.context.$axiosCallSetupService.getAxiosOptions(url))
       .then(
         (result) => { return result.data.dataset },
-        (error) => { Promise.reject('Falha ao buscar Unidades Federativas') }
+        () => { Promise.reject(new Error('Falha ao buscar Unidades Federativas')) }
       )
   }
 
@@ -346,8 +346,8 @@ export class AnalysisUnitModel {
           localidade.img = '/thumbs/municipios/' + id + '.jpg'
 
           return localidade
-        }, (error) => {
-          Promise.reject('Falha ao buscar dados do estado')
+        }, () => {
+          Promise.reject(new Error('Falha ao buscar dados do estado'))
         })
     } else if (id.length == 4) { // Mesorregião
       url = '/municipios?categorias=cd_mesorregiao,nm_mesorregiao&filtros=eq-cd_mesorregiao-' + id
@@ -360,8 +360,8 @@ export class AnalysisUnitModel {
           localidade.img = '/thumbs/municipios/' + id + '.jpg'
 
           // return localidade;
-        }, (error) => {
-          Promise.reject('Falha ao buscar dados da mesorregião')
+        }, () => {
+          Promise.reject(new Error('Falha ao buscar dados da mesorregião'))
         })
     } else if (id.length == 5) { // Microrregião
       url = '/municipios?categorias=cd_microrregiao,nm_microrregiao,latitude,longitude&filtros=eq-cd_microrregiao-' + id
@@ -374,8 +374,8 @@ export class AnalysisUnitModel {
           localidade.img = '/thumbs/municipios/' + id + '.jpg'
 
           // return localidade;
-        }, (error) => {
-          Promise.reject('Falha ao buscar dados da microrregião')
+        }, () => {
+          Promise.reject(new Error('Falha ao buscar dados da microrregião'))
         })
     } else {
       url = '/municipio/' + id
@@ -387,8 +387,8 @@ export class AnalysisUnitModel {
           localidade.tipo = 'Município'
           localidade.img = '/thumbs/municipios/' + id + '.jpg'
           return localidade
-        }, (error) => {
-          Promise.reject('Falha ao buscar dados do município')
+        }, () => {
+          Promise.reject(new Error('Falha ao buscar dados do município'))
         })
     }
   }

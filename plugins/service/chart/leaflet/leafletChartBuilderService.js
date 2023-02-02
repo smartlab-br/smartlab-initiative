@@ -71,7 +71,7 @@ class LeafletChartBuilderService extends GeneralChartBuilderService {
           })
             .catch((error) => { additionalOptions.fnSendError(error) })
         } else {
-              	this.addDeafultMarker(findLoc, leaflet_map)
+          this.addDeafultMarker(findLoc, leaflet_map)
         }
       }
     }
@@ -232,8 +232,8 @@ class LeafletChartBuilderService extends GeneralChartBuilderService {
       }
 
       const tileLayer = this.createTileLayer(options)
-        	tileLayer.addTo(leaflet_map)
-        	this.createPrintPlugin(tileLayer).addTo(leaflet_map)
+      tileLayer.addTo(leaflet_map)
+      this.createPrintPlugin(tileLayer).addTo(leaflet_map)
 
       this.chart = leaflet_map
       this.fillLayers(dataset, Object.assign(options, additionalOptions), bounds ? leaflet_map.getBoundsZoom(bounds) : null)
@@ -242,7 +242,7 @@ class LeafletChartBuilderService extends GeneralChartBuilderService {
     }
   }
 
-	  adjustVisibleLayers (enabled) {
+  adjustVisibleLayers (enabled) {
     this.chart.removeLayer(this.mapLayer)
     this.additionalOptions.visibleLayers = enabled
     this.fillLayers(this.dataset, Object.assign(this.options, this.additionalOptions), this.bounds ? this.chart.getBoundsZoom(this.bounds) : null)

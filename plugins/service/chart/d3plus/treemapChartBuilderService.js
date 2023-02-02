@@ -1,10 +1,6 @@
 const D3PlusChartBuilderService = require('./d3plusChartBuilderService')
 
 class TreemapChartBuilderService extends D3PlusChartBuilderService {
-  constructor () {
-    super()
-  }
-
   prepareChart (viz, slicedDS, containerId, options, additionalOptions) {
     if (!options.colorScale && !options.color) { // default
       options.colorScale = {}

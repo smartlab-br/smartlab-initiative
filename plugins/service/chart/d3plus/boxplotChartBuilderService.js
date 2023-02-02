@@ -1,14 +1,10 @@
 const D3PlusChartBuilderService = require('./d3plusChartBuilderService')
 
 class BoxplotChartBuilderService extends D3PlusChartBuilderService {
-  constructor () {
-    super()
-  }
-
   prepareChart (viz, slicedDS, containerId, options, additionalOptions) {
     const grafico = viz
       .container(containerId) // container DIV to hold the visualization
-      .data(dataset) // data to use with the visualization
+      .data(slicedDS) // data to use with the visualization
       .id(options.id) // key for which our data is unique on
     // .text(this.options.text)
       .font({ family: 'titulos-observatorio' })
@@ -24,7 +20,7 @@ class BoxplotChartBuilderService extends D3PlusChartBuilderService {
     const tooltip_context = additionalOptions.context ? additionalOptions.context : null
     const removed_text_list = options.removed_text_list
 
-    const viz = new this.d3plus.viz()
+    const viz = this.d3plus.viz()
       .noDataHTML(this.noDataMessage)
       .loadingHTML(this.loadingMessage)
       .type('box') // visualization type

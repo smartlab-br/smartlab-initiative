@@ -150,7 +150,7 @@ export default {
         if (fullText.length <= parseInt(this.readMoreLimit)) {
           this.maxedOut = true
         } else {
-          const endCharRegex = new RegExp('[.,!?;& [:space:]](?!.*[.,!?;& [:space:]])', 'g')
+          const endCharRegex = /[.,!?;& [:space:]](?!.*[.,!?;& [:space:]])/g
           endCharRegex.exec(fullText.substring(0, this.readMoreLimit))
           this.finalShortText = this.finalText.substring(0, endCharRegex.lastIndex)
         }

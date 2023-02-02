@@ -66,11 +66,11 @@ class PolygonsChartBuilderService extends LeafletChartBuilderService {
           scaleName = 'RdYlBu'
         }
 
-        const legend = L.control({ position: 'topright' })
+        const legend = this.L.control({ position: 'topright' })
         const d3chrom = this.d3chrom
 
         legend.onAdd = function (map) {
-          const div = L.DomUtil.create('div', 'legend')
+          const div = this.L.DomUtil.create('div', 'legend')
           let value = 0
           for (let i = range[0]; i <= range[1]; i = i + (range[1] - range[0]) / 20) {
             if (options.scale_order === undefined || options.scale_order === 'ASC') {
@@ -105,7 +105,7 @@ class PolygonsChartBuilderService extends LeafletChartBuilderService {
     const range = this.range
     const options = this.options
     let value = null
-    let row = dataset.filter(function (obj) { if (obj[options.id_field] == layer.feature.properties[options.topo_key]) { return obj } })
+    let row = dataset.filter(function (obj) { if (obj[options.id_field] == layer.feature.properties[options.topo_key]) { return obj } else { return null } })
     if (row.length !== 0) {
       row = row[0]
       if (range && (range[0] !== range[1])) {

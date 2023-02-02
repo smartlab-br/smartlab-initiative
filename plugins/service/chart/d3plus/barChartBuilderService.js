@@ -1,10 +1,6 @@
 const D3PlusChartBuilderService = require('./d3plusChartBuilderService')
 
 class BarChartBuilderService extends D3PlusChartBuilderService {
-  constructor () {
-    super()
-  }
-
   prepareChart (viz, slicedDS, containerId, options, additionalOptions) {
     let colorArray = null
 
@@ -137,7 +133,7 @@ class BarChartBuilderService extends D3PlusChartBuilderService {
     } else if (options.multi === null || options.multi === undefined || !options.multi) {
       viz = viz.color(function (d) { return (d.color !== null && d.color !== undefined) ? d.color : '#2196F3' })
     } else {
-      viz = viz.colorScaleConfig({
+      viz = viz.colorScaleConfig({
         color: additionalOptions.colorHandlers.getColorScale(options.colorScale.name)
       })
       viz = viz.color('color')
@@ -223,7 +219,7 @@ class BarChartBuilderService extends D3PlusChartBuilderService {
         d[options.x] = dataset[i][options.x]
         d.id = accumID
         dataset[i][options.text] = this.formatNumber(dataset[i][options.y], accumDataType, accumDataPrecision, 1, accumDataCollapse, true, false)
-        var vl_indicador = dataset[i][options.y]
+        const vl_indicador = dataset[i][options.y]
         d[options.y] = accum
         if (options.fullBarLabel) {
           d[options.text] = this.formatNumber(accum + vl_indicador, accumDataType, accumDataPrecision, 1, accumDataCollapse, true, false)
@@ -237,7 +233,7 @@ class BarChartBuilderService extends D3PlusChartBuilderService {
         d[options.y] = dataset[i][options.y]
         d.id = accumID
         dataset[i][options.text] = this.formatNumber(dataset[i][options.x], accumDataType, accumDataPrecision, 1, accumDataCollapse, true, false)
-        var vl_indicador = dataset[i][options.x]
+        const vl_indicador = dataset[i][options.x]
         d[options.x] = accum
         if (options.fullBarLabel) {
           d[options.text] = this.formatNumber(accum + vl_indicador, accumDataType, accumDataPrecision, 1, accumDataCollapse, true, false)

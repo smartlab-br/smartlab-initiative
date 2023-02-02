@@ -1,10 +1,6 @@
 const D3PlusChartBuilderService = require('./d3plusChartBuilderService')
 
 class LineChartBuilderService extends D3PlusChartBuilderService {
-  constructor () {
-    super()
-  }
-
   prepareChart (viz, slicedDS, containerId, options, additionalOptions) {
     const colorCat = {}
     let colorArray = null

@@ -20,7 +20,11 @@ module.exports = {
   rules: {
     eqeqeq: 'warn',
     camelcase: 'warn',
-    'vue/no-v-text-v-html-on-component': 'warn'
+    'vue/no-v-text-v-html-on-component': 'warn',
+    'vue/no-useless-template-attributes': 'warn',
+    'no-labels': ['error', { allowLoop: true }],
+    'no-useless-call': 'warn',
+    'import/namespace': ['error', { allowComputed: true }]
   },
   ignorePatterns: ['**/node_modules/**']
 }

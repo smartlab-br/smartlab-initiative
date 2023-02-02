@@ -508,7 +508,7 @@ export default {
       this.datasetsComplete = 0
       this.metadata = {}
 
-      for (var eachChart of this.structure.charts) {
+      for (const eachChart of this.structure.charts) {
         let endpoint = ''
         if (payload.rules.filter) {
           let apiUrl = ''
@@ -526,7 +526,7 @@ export default {
           endpoint = this.$textTransformService.applyInterpol(payload.rules.api, this.customParams, this.customFunctions, this.customFilters)
         }
 
-        if (payload.type && payload.type === 'slider' || payload.type && payload.type === 'check') {
+        if ((payload.type && payload.type === 'slider') || (payload.type && payload.type === 'check')) {
           this.fillDataStructure(
             eachChart, this.customParams,
             this.customFunctions, this.setDataset,
@@ -535,7 +535,7 @@ export default {
               id: eachChart.id
             }
           )
-        } else {
+          // } else {
           // substitui a vírgula por '\,'
           // let payloadItem = Object.assign({}, payload.item);
           // for (let indexItem in payloadItem){
@@ -547,33 +547,32 @@ export default {
           // }
 
           // Troca a topologia se for um select de uf
-          if (payload.target && payload.target.scope && payload.target.range) {
-            const range = payload.target.range
-            const scope = payload.target.scope
-            const id = payload.item.id
-            const topoFile = '/topojson/' + scope + '/' + range + '/' + id + '.json'
-            axios.get(topoFile)
-              .then((response) => {
-                this.selectedTopology = response.data
-                this.fillDataStructure(
-                  eachChart, this.customParams,
-                  this.customFunctions, this.setDataset,
-                  {
-                    endpoint,
-                    id: eachChart.id
-                  }
-                )
-              })
-          } else {
-            this.fillDataStructure(
-              eachChart, this.customParams,
-              this.customFunctions, this.setDataset,
-              {
-                endpoint,
-                id: eachChart.id
-              }
-            )
-          }
+        } else if (payload.target && payload.target.scope && payload.target.range) {
+          const range = payload.target.range
+          const scope = payload.target.scope
+          const id = payload.item.id
+          const topoFile = '/topojson/' + scope + '/' + range + '/' + id + '.json'
+          axios.get(topoFile)
+            .then((response) => {
+              this.selectedTopology = response.data
+              this.fillDataStructure(
+                eachChart, this.customParams,
+                this.customFunctions, this.setDataset,
+                {
+                  endpoint,
+                  id: eachChart.id
+                }
+              )
+            })
+        } else {
+          this.fillDataStructure(
+            eachChart, this.customParams,
+            this.customFunctions, this.setDataset,
+            {
+              endpoint,
+              id: eachChart.id
+            }
+          )
         }
       }
     },

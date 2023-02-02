@@ -221,7 +221,7 @@ export default {
             null,
             result.data.metadata
           )
-        }).catch((error) => { this.sendDataStructureError('Falha ao carregar dados do componente.') })
+        }).catch((_error) => { this.sendDataStructureError('Falha ao carregar dados do componente.') })
     }
   }
 }
