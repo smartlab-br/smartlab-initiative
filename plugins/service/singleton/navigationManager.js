@@ -3,6 +3,7 @@
 export class NavigationManager {
   constructor (context) {
     this.context = context
+    this.searchAnalysisUnit = this.searchAnalysisUnit.bind(this)
   }
 
   searchAnalysisUnit (router, searchItem, idObservatorio = null, observatorios = null) {

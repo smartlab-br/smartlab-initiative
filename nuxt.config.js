@@ -29,7 +29,9 @@ export default {
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: [
     '~/assets/app.styl',
-    'leaflet/dist/leaflet.css'
+    'leaflet/dist/leaflet.css',
+    'leaflet.markercluster/dist/MarkerCluster.css',
+    'leaflet.markercluster/dist/MarkerCluster.Default.css'
   ],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
