@@ -107,6 +107,11 @@ export default {
       enabled: true,
       sendHitTask: true
     }
-  }
+  },
 
+  publicRuntimeConfig: {
+    googleAnalytics: {
+      id: process.env.GOOGLE_ANALYTICS_ID
+    }
+  }
 }
