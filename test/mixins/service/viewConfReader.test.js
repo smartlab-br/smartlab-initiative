@@ -3,7 +3,8 @@ import { mount } from '@vue/test-utils'
 import Vue from 'vue'
 import Vuetify from 'vuetify'
 
-// import { ViewConfReader } from '~/plugins/mixins/service/viewConfReader'
+// eslint-disable-next-line no-unused-vars
+import { ViewConfReader } from '~/plugins/mixins/service/viewConfReader'
 import { NumberTransformService } from '~/plugins/service/singleton/numberTransformService'
 import { IndicatorsModel } from '~/plugins/model/singleton/indicatorsModel'
 import { ObjectTransformService } from '~/plugins/service/singleton/objectTransformService'
