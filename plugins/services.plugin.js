@@ -38,7 +38,7 @@ export default ({ app }, inject) => {
   const tooltipBuildingService = new TooltipBuildingService(app)
   inject('tooltipBuildingService', tooltipBuildingService)
 
-  const yamlFetcherService = new YamlFetcherService()
+  const yamlFetcherService = new YamlFetcherService(app)
   inject('yamlFetcherService', yamlFetcherService)
 
   const chartBuilderService = new ChartBuilderService()

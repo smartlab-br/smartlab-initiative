@@ -2,8 +2,12 @@ import * as yaml from 'js-yaml'
 import axios from 'axios'
 
 export class YamlFetcherService {
+  constructor (context) {
+    this.context = context
+  }
+
   getBasePath () {
-    if (process.env.GIT_VIEWCONF_TAG_URL) { return process.env.GIT_VIEWCONF_TAG_URL }
+    if (this.context.$config.git_viewconf_url) { return this.context.$config.git_viewconf_url }
     return '/smartlab-initiative-viewconf/'
   }
 
