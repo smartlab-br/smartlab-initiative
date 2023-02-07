@@ -177,7 +177,7 @@ def generate_structure(view_conf_path):
     return obs_dim
 
 try:
-    view_conf_path =  str(pathlib.Path().resolve()).replace('scripts','app') + '\\static\\smartlab-initiative-viewconf\\br'   
+    view_conf_path =  str(pathlib.Path().resolve()).replace('scripts','static') + '\\smartlab-initiative-viewconf\\br'   
     struct = generate_structure(view_conf_path)
     file_path = view_conf_path + "\\mapa_site.yaml"
     struct_to_yaml(file_path, struct)
