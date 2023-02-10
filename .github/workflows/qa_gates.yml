@@ -22,8 +22,10 @@ jobs:
         node-version: 16
     - name: Install dependencies
       run: npm ci
-    - name: Linting (eslint)
+    - name: Lint (GitHub)
       run: npm run lint
+    - name: Lint (SonarCloud)
+      run: npm run lint:json
     - name: Unit tests
       run: npm run test
     #- name: Transform paths in reports
