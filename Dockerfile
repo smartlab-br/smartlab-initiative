@@ -4,7 +4,9 @@ EXPOSE 8080
 WORKDIR /app
 
 COPY . .
-RUN npm ci && \
+RUN apk update && \
+    apk upgrade && \
+    npm ci && \
     npm run build && \
     chown -R node:node /app 
 
