@@ -110,6 +110,7 @@ export default {
   },
 
   publicRuntimeConfig: {
+    git_viewconf_url: process.env.GIT_VIEWCONF_TAG_URL,
     googleAnalytics: {
       id: process.env.GOOGLE_ANALYTICS_ID
     }
