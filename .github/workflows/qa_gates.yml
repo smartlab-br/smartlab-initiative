@@ -28,11 +28,10 @@ jobs:
       run: npm run lint:json
     - name: Unit tests
       run: npm run test
-    #- name: Transform paths in reports
-    #  run: |
+    - name: Transform paths in reports
+      run: sed -i 's/\/home\/runner\/work\/smartlab-initiative\/smartlab-initiative/./' ./lint/report.json
     #    sed -i 's/\/home\/runner\/work\/smartlab-initiative\/smartlab-initiative/./' ./coverage/lcov.info
-    #    sed -i 's/\/home\/runner\/work\/smartlab-initiative\/smartlab-initiative/./' ./lint/report.json
-    #    # sed -i 's/\/home\/runner\/work\/smartlab-initiative\/smartlab-initiative/./' ./coverage/cobertura-coverage.xml
+         # sed -i 's/\/home\/runner\/work\/smartlab-initiative\/smartlab-initiative/./' ./coverage/cobertura-coverage.xml
     #    # sed -i 's/\/home\/runner\/work\/smartlab-initiative\/smartlab-initiative/./' ./test/report.xml
     - name: SonarCloud Scan
       uses: sonarsource/sonarcloud-github-action@master
