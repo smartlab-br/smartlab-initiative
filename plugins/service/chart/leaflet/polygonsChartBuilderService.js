@@ -3,7 +3,7 @@ const LeafletChartBuilderService = require('./leafletChartBuilderService')
 class PolygonsChartBuilderService extends LeafletChartBuilderService {
   constructor () {
     super()
-    this.topojson = require('topojson/dist/topojson.min.js')
+    this.topojson = require('topojson-client/dist/topojson-client.min.js')
     this.range = [null, null]
   }
 
