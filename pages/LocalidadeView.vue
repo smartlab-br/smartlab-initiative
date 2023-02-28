@@ -784,6 +784,14 @@ export default {
           const yq = typeof (quarter_yq) === 'number' ? quarter_yq.toString() : quarter_yq
           return yq.substr(5, 1) + 'º T ' + yq.substr(0, 4)
         },
+        format_gender_color_ds: function (d,gender,color){
+          if (color == 'BRANCA'){
+            return gender == 'Homens'? 'Homem Branco': 'Mulher Branca';
+          } else if (color == 'PRETA'){
+            return gender == 'Homens'? 'Homem Negro': 'Mulheres Negra';
+          }
+          return gender + ' ' + color;
+        },
         capitalize_first_letter (string) {
           return string.charAt(0).toUpperCase() + string.slice(1)
         },
