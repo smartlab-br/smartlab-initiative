@@ -711,7 +711,7 @@ export default {
         },
         concat_ds_vl: function (d, formato, casasDecimais) {
           let valor = null
-          if (d.vl_indicador === null || d.vl_indicador == undefined) {
+          if (d.vl_indicador === null || d.vl_indicador === undefined) {
             valor = '-'
           } else {
             valor = parseFloat(d.vl_indicador)
@@ -783,6 +783,14 @@ export default {
         format_quarter_ds_short: function (d, quarter_yq) {
           const yq = typeof (quarter_yq) === 'number' ? quarter_yq.toString() : quarter_yq
           return yq.substr(5, 1) + 'º T ' + yq.substr(0, 4)
+        },
+        format_gender_color_ds: function (d, gender, color) {
+          if (color === 'BRANCA') {
+            return gender === 'Homens' ? 'Homem Branco' : 'Mulher Branca'
+          } else if (color === 'PRETA') {
+            return gender === 'Homens' ? 'Homem Negro' : 'Mulher Negra'
+          }
+          return gender + ' ' + color
         },
         capitalize_first_letter (string) {
           return string.charAt(0).toUpperCase() + string.slice(1)
