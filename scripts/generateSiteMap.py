@@ -38,17 +38,17 @@ def get_indicator(datasource, cd_indicador):
 
 
 def generate_structure(view_conf_path):
-    obs_yaml = read_yaml(view_conf_path + "\\observatorios.yaml")   
+    obs_yaml = read_yaml(view_conf_path + "/observatorios.yaml")   
     obs = [{'id':item['id'], 'type':'observatorio', 'name':item['title'], 'short_title':item['short_title'], 'url': item['to'], 'search_text': item['title'], 'app_icon': item['app_icon']} for item in obs_yaml['observatorios']]
 
     obs_dim = []
     # Observatórios
     for obs_item in obs:
-        dimensions_yaml = read_yaml(view_conf_path + "\\dimensao\\" + obs_item['id'] + ".yaml")
+        dimensions_yaml = read_yaml(view_conf_path + "/dimensao/" + obs_item['id'] + ".yaml")
         dimensions = [] 
         
         # Apresentação search_text
-        obs_item_yaml = read_yaml(view_conf_path + "\\observatorio\\" + obs_item['id'] + ".yaml")
+        obs_item_yaml = read_yaml(view_conf_path + "/observatorio/" + obs_item['id'] + ".yaml")
         obs_search_text = 'Apresentação - ' + obs_item['name']
         for item_desc_obs in obs_item_yaml['prevalencia']['description']:
             if (item_desc_obs['type'] == 'text'):
@@ -131,7 +131,7 @@ def generate_structure(view_conf_path):
 
         # Dimensões
         for dim_item in dimensions_yaml['dimensoes']:
-            dim_yaml = read_yaml(view_conf_path + "\\observatorio\\" + obs_item['id'] + "\\localidade\\municipio\\" + dim_item['id'] + ".yaml")
+            dim_yaml = read_yaml(view_conf_path + "/observatorio/" + obs_item['id'] + "/localidade/municipio/" + dim_item['id'] + ".yaml")
             cards = []
             for section in dim_yaml['secoes']:
 
@@ -159,7 +159,7 @@ def generate_structure(view_conf_path):
         obs_dim.append({**obs_item, 'children': dimensions.copy()})
 
     # # Sobre
-    # about_yaml = read_yaml(view_conf_path + "\\about.yaml")
+    # about_yaml = read_yaml(view_conf_path + "/about.yaml")
     # about_text = "Sobre a Iniciativa Smartlab"
     # for item_about in about_yaml:
     #     for item_section in about_yaml[item_about]['sections']:
@@ -177,9 +177,9 @@ def generate_structure(view_conf_path):
     return obs_dim
 
 try:
-    view_conf_path =  str(pathlib.Path().resolve()).replace('scripts','static') + '\\smartlab-initiative-viewconf\\br'   
+    view_conf_path =  str(pathlib.Path().resolve()).replace('scripts','static') + '/smartlab-initiative-viewconf/br'   
     struct = generate_structure(view_conf_path)
-    file_path = view_conf_path + "\\mapa_site.yaml"
+    file_path = view_conf_path + "/mapa_site.yaml"
     struct_to_yaml(file_path, struct)
 except:
     traceback.print_exc()
