@@ -788,7 +788,7 @@ export default {
           if (color === 'BRANCA') {
             return gender === 'Homens' ? 'Homem Branco' : 'Mulher Branca'
           } else if (color === 'PRETA') {
-            return gender === 'Homens' ? 'Homem Negro' : 'Mulheres Negra'
+            return gender === 'Homens' ? 'Homem Negro' : 'Mulher Negra'
           }
           return gender + ' ' + color
         },
