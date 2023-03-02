@@ -91,3 +91,6 @@ sw.*
 
 #lint
 lint
+
+#VS Code
+.vscode
