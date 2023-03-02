@@ -239,9 +239,9 @@ export class IndicatorsModel {
   combineIndicators (sliced, struct, functions = {}, place_id_field = null) {
     const result = []
     for (const eachRow in sliced) {
-      const args = []
       let addedSelf = false
       for (const indxCmb in struct) {
+        const args = []
         const nuIndic = Object.assign({}, sliced[eachRow])
         const fnCmb = functions[struct[indxCmb].function]
 
