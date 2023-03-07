@@ -17,7 +17,7 @@ if (!Vue.__viewConfReader__) {
         const promises = []
         const promises_alt = []
 
-        const basePath = this.$config.git_viewconf_url ? this.$config.git_viewconf_url : '/smartlab-initiative-viewconf/'
+        const basePath = this.$config.gitViewConfUrl ? this.$config.gitViewConfUrl : '/smartlab-initiative-viewconf/'
 
         const fnSendDataStructureError = this.sendDataStructureError
         const errorMsg = 'Falha ao carregar a dimensão - não foi possível carregar o arquivo da dimensão (.yaml).'

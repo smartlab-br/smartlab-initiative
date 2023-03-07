@@ -1111,7 +1111,10 @@ export default {
       }
     }
   },
+
   created () {
+    axios.defaults.baseURL = "http://localhost:" + this.$config.axiosPort;
+
     // nuxt component - capture events
     // @userChanged="updateUser"
     // @showSnackbar="snackAlert"
