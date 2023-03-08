@@ -388,7 +388,7 @@ if (!Vue.__viewConfReader__) {
               reformOptions.cast.col_fields,
               reformOptions.cast.value_field ? reformOptions.cast.value_field : 'vl_indicador',
               reformOptions.cast.layer_field ? reformOptions.cast.layer_field : 'cd_indicador'
-            )
+            ).dataset
           }
 
           for (const indx in reformOptions.calcs) {
