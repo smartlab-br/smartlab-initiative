@@ -35,8 +35,6 @@ export class TooltipBuildingService {
     for (const item in tooltip_list) {
       if (d[tooltip_list[item].value] !== undefined) {
         value = this.removeFromLabel(d[tooltip_list[item].value], removed_text_list)
-      } else { // undefined
-        value = '-'
       }
 
       if (tooltip_list[item].format) {

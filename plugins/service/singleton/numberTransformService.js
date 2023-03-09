@@ -1,7 +1,7 @@
 export class NumberTransformService {
   // constructor () {}
 
-  formatNumber (valor, formato, casasDecimais, multiplier = 1, collapse = null, signed = false, uiTags = true) {
+  formatNumber (valor, formato, casasDecimais, multiplier = 1, collapse = null, signed = false, uiTags = true, null_value = null) {
     if (isNaN(valor)) {
       return valor
     }
@@ -41,6 +41,9 @@ export class NumberTransformService {
     let unitPrefix = ''
 
     if (valor === null || valor === undefined) {
+      if (null_value) {
+        return null_value
+      }
       return '-'
     }
     valor = parseFloat(valor) * multiplier
