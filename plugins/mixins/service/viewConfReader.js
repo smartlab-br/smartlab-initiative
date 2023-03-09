@@ -98,13 +98,22 @@ if (!Vue.__viewConfReader__) {
               // callback after the axios call.
               axios(this.$axiosCallSetupService.getAxiosOptions(addedParams.endpoint))
                 .then((result) => {
-                  cbFunction(
-                    this.reformDataset(
-                      result.data.dataset,
-                      structure.api.options,
+                  let dataset = this.reformDataset(
+                    result.data.dataset,
+                    structure.api.options,
+                    customFunctions,
+                    customParams
+                  )
+                  if (structure.api_options) {
+                    dataset = this.reformDataset(
+                      dataset,
+                      structure.api_options,
                       customFunctions,
                       customParams
-                    ),
+                    )
+                  }
+                  cbFunction(
+                    dataset,
                     structure.args,
                     structure,
                     addedParams,
@@ -253,13 +262,22 @@ if (!Vue.__viewConfReader__) {
               const url = this.$textTransformService.applyInterpol(structure.api, {}, customFunctions, customParams)
               axios(this.$axiosCallSetupService.getAxiosOptions(url))
                 .then((result) => {
-                  cbFunction(
-                    this.reformDataset(
-                      result.data.dataset,
-                      structure.api.options,
+                  let dataset = this.reformDataset(
+                    result.data.dataset,
+                    structure.api.options,
+                    customFunctions,
+                    customParams
+                  )
+                  if (structure.api_options) {
+                    dataset = this.reformDataset(
+                      dataset,
+                      structure.api_options,
                       customFunctions,
                       customParams
-                    ),
+                    )
+                  }
+                  cbFunction(
+                    dataset,
                     structure.args,
                     structure,
                     addedParams,
@@ -437,7 +455,8 @@ if (!Vue.__viewConfReader__) {
                 formatRules.multiplier,
                 formatRules.collapse,
                 formatRules.signed,
-                formatRules.uiTags
+                formatRules.uiTags,
+                formatRules.null_value
               )
             }
 

@@ -209,13 +209,22 @@ export default {
       }
       axios(this.$axiosCallSetupService.getAxiosOptions(apiUrl))
         .then((result) => {
-          this.fillMinicard(
-            this.reformDataset(
-              result.data.dataset,
-              this.structure.api.options,
+          let dataset = this.reformDataset(
+            result.data.dataset,
+            this.structure.api.options,
+            this.customFunctions,
+            this.customParams
+          )
+          if (this.structure.api_options) {
+            dataset = this.reformDataset(
+              dataset,
+              this.structure.api_options,
               this.customFunctions,
               this.customParams
-            ),
+            )
+          }
+          this.fillMinicard(
+            dataset,
             this.structure.args,
             this.structure,
             null,
