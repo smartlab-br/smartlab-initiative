@@ -607,6 +607,12 @@ export default {
         calc_percentage: function (parte, total) { return parte / total * 100 },
         calc_percentage_val1: function (val1, val2) { return val1 / (val1 + val2) * 100 },
         calc_percentage_2values: function (val1, val2, total) { return (val1 + val2) / total * 100 },
+        calc_percentage_difference: function (a, b, value_to_compare, min_value) {
+          if (value_to_compare < min_value || !a || !b) {
+            return null
+          }
+          return ((Math.abs(a - b) / a) * 100)
+        },
         calc_proportion: function (dividendo, divisor) { return dividendo / divisor },
         calc_proportion_ds: function (d, dividendo, divisor) {
           return divisor == 0 ? null : dividendo / divisor
