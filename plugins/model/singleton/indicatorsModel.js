@@ -272,8 +272,8 @@ export class IndicatorsModel {
             const regFiltered = sliced.find(function (el) {
               let returnValue = false
               returnValue = struct[indxCmb].fn_args[indxArgs].id === el.cd_indicador
-              if (struct[indxCmb].year) {
-                returnValue = returnValue && struct[indxCmb].year === el.nu_competencia
+              if (struct[indxCmb].fn_args[indxArgs].year) {
+                returnValue = returnValue && struct[indxCmb].fn_args[indxArgs].year === el.nu_competencia
               }
               if (place_id_field) {
                 returnValue = returnValue && uniquePlaces[i] === el[place_id_field]
@@ -292,7 +292,6 @@ export class IndicatorsModel {
             args.push(argValue)
           }
         }
-
         const prop = struct[indxCmb].named_prop ? struct[indxCmb].named_prop : 'vl_indicador'
         if (args.length === struct[indxCmb].fn_args.length) {
           nuIndic[prop] = fnCmb.apply(null, args)
