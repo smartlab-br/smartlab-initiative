@@ -79,12 +79,6 @@ export default {
     '@nuxtjs/axios'
   ],
 
-  // Axios module configuration: https://go.nuxtjs.dev/config-axios
-  axios: {
-    baseURL: process.env.BASE_URL || 'http://localhost:3000'
-  },
-  
-
   serverMiddleware: [
     '~/server-middleware/api.js'
   ],
@@ -110,7 +104,21 @@ export default {
     // }
   },
 
+  // Axios module configuration: https://go.nuxtjs.dev/config-axios
+  axios: {
+    baseURL: process.env.BASE_URL || 'http://localhost:3000'
+  },
+  
+  privateRuntimeConfig: {
+    axios: {
+      baseURL: process.env.BASE_URL
+    }
+  },
+
   publicRuntimeConfig: {
+    axios: {
+      browserBaseURL: process.env.BASE_URL
+    },
     gitViewConfUrl: process.env.GIT_VIEWCONF_TAG_URL,
     googleAnalytics: {
       id: process.env.GOOGLE_ANALYTICS_ID
