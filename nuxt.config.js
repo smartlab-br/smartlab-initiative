@@ -2,6 +2,12 @@
 import VuetifyLoaderPlugin from 'vuetify-loader/lib/plugin'
 
 export default {
+  
+  // Define base URL
+  env: {
+    baseUrl: process.env.BASE_URL || 'http://localhost:3000'
+  }
+  
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
     titleTemplate: '%s - Promoção do Trabalho Decente',
