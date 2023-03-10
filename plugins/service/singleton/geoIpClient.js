@@ -1,5 +1,3 @@
-import axios from 'axios'
-
 export class GeoIpClient {
   // constructor () { }
 
@@ -20,7 +18,7 @@ export class GeoIpClient {
             url: 'https://nominatim.openstreetmap.org/reverse?lat=' + lat + '&lon=' + lng + '&format=json&accept-language=pt-br',
             headers: {}
           }
-          axios(ajaxCall)
+          this.$axios(ajaxCall)
             .then(
               (result) => {
                 // console.log(result.data);

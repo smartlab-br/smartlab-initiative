@@ -1,5 +1,4 @@
 <script>
-import axios from 'axios'
 import BaseLandingView from './BaseLandingView.vue'
 
 export default {
@@ -116,9 +115,9 @@ export default {
     }
     // let topoFile = "/topojson/br-municipio.json";
     // // this['topologyBrLoaded'+ suffix] = true;
-    // axios.get(topoFile)
+    // this.$axios.$get(topoFile)
     //   .then(response => {
-    //     this['topology'] = response.data;
+    //     this['topology'] = response;
     //   });
   },
   beforeDestroy: function () {
@@ -157,7 +156,7 @@ export default {
         this.hasOdometers = true
         if (this.idObservatorio == 'sst') {
           const url = '/odometros/sst'
-          axios(this.$axiosCallSetupService.getAxiosOptions(url, true))
+          this.$axios(this.$axiosCallSetupService.getAxiosOptions(url, true))
             .then((result) => {
               const odometros = JSON.parse(result.data)
               this.customParams.odometros = odometros

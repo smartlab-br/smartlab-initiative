@@ -1,4 +1,3 @@
-import axios from 'axios'
 import * as yaml from 'js-yaml'
 
 import Vue from 'vue'
@@ -14,10 +13,11 @@ if (!Vue.__viewConfReader__) {
     },
     methods: {
       async loadYamlArray (currentStruct, yamlArray, finalCbFunction) {
+        const _this = this
         const promises = []
         const promises_alt = []
 
-        const basePath = this.$config.git_viewconf_url ? this.$config.git_viewconf_url : '/smartlab-initiative-viewconf/'
+        const basePath = this.$config.gitViewConfUrl ? this.$config.gitViewConfUrl : '/smartlab-initiative-viewconf/'
 
         const fnSendDataStructureError = this.sendDataStructureError
         const errorMsg = 'Falha ao carregar a dimensão - não foi possível carregar o arquivo da dimensão (.yaml).'
@@ -26,11 +26,11 @@ if (!Vue.__viewConfReader__) {
         for (const yamlConfIndex in yamlArray) {
           promises[yamlConfIndex] = new Promise(
             function (resolve, reject) {
-              axios.get(basePath + yamlArray[yamlConfIndex].main + '.yaml')
+              _this.$axios.$get(basePath + yamlArray[yamlConfIndex].main + '.yaml')
                 .then((response) => {
-                  resolve(yaml.safeLoad(response.data, { json: true }))
+                  resolve(yaml.safeLoad(response, { json: true }))
                 }).catch((error) => {
-                  if (error.reason == 'end of the stream or a document separator is expected') {
+                  if (error.reason === 'end of the stream or a document separator is expected') {
                     // yaml not found
                     resolve(null)
                   } else {
@@ -45,9 +45,9 @@ if (!Vue.__viewConfReader__) {
           if (yamlArray[yamlConfIndex].alt) {
             promises_alt[yamlConfIndex] = new Promise(
               function (resolve, reject) {
-                axios.get(basePath + yamlArray[yamlConfIndex].alt + '.yaml')
+                _this.$axios.$get(basePath + yamlArray[yamlConfIndex].alt + '.yaml')
                   .then((response) => {
-                    resolve(yaml.safeLoad(response.data, { json: true }))
+                    resolve(yaml.safeLoad(response, { json: true }))
                   }).catch(() => { resolve(null) })
               }
             )
@@ -80,8 +80,8 @@ if (!Vue.__viewConfReader__) {
         )
       },
 
-      fillDataStructure (structure, customParams, customFunctions,
-        cbFunction, addedParams) {
+      fillDataStructure (structure, customParams, customFunctions, cbFunction, addedParams) {
+        const _this = this
         if (structure !== null && structure !== undefined) {
           let msgError = 'Falha ao carregar dados do componente.'
           const fnSendDataStructureError = this.sendDataStructureError
@@ -96,15 +96,24 @@ if (!Vue.__viewConfReader__) {
             if (!Array.isArray(structure.api)) {
               // If the structure defines a single API call, execute the
               // callback after the axios call.
-              axios(this.$axiosCallSetupService.getAxiosOptions(addedParams.endpoint))
+              this.$axios(this.$axiosCallSetupService.getAxiosOptions(addedParams.endpoint))
                 .then((result) => {
-                  cbFunction(
-                    this.reformDataset(
-                      result.data.dataset,
-                      structure.api.options,
+                  let dataset = this.reformDataset(
+                    result.data.dataset,
+                    structure.api.options,
+                    customFunctions,
+                    customParams
+                  )
+                  if (structure.api_options) {
+                    dataset = this.reformDataset(
+                      dataset,
+                      structure.api_options,
                       customFunctions,
                       customParams
-                    ),
+                    )
+                  }
+                  cbFunction(
+                    dataset,
                     structure.args,
                     structure,
                     addedParams,
@@ -125,7 +134,7 @@ if (!Vue.__viewConfReader__) {
                 // Cria um promise
                 const promise = new Promise(
                   function (resolve, reject) {
-                    axios(apiCall)
+                    _this.$axios(apiCall)
                       .then((result) => {
                         resolve(
                           fnReformDataset(
@@ -181,7 +190,7 @@ if (!Vue.__viewConfReader__) {
             let url = this.$textTransformService.applyInterpol(structure.api_reactive, {}, customFunctions, fusionParams)
             // replace comma (,) with \\, inside quotes
             url = url.replace(/'[^']+'/g, s => s.replace(/,/g, '\\,'))
-            axios(this.$axiosCallSetupService.getAxiosOptions(url))
+            this.$axios(this.$axiosCallSetupService.getAxiosOptions(url))
               .then((result) => {
                 cbFunction(
                   this.reformDataset(
@@ -251,15 +260,24 @@ if (!Vue.__viewConfReader__) {
               // If the structure defines a single API call, execute the
               // callback after the axios call.
               const url = this.$textTransformService.applyInterpol(structure.api, {}, customFunctions, customParams)
-              axios(this.$axiosCallSetupService.getAxiosOptions(url))
+              this.$axios(this.$axiosCallSetupService.getAxiosOptions(url))
                 .then((result) => {
-                  cbFunction(
-                    this.reformDataset(
-                      result.data.dataset,
-                      structure.api.options,
+                  let dataset = this.reformDataset(
+                    result.data.dataset,
+                    structure.api.options,
+                    customFunctions,
+                    customParams
+                  )
+                  if (structure.api_options) {
+                    dataset = this.reformDataset(
+                      dataset,
+                      structure.api_options,
                       customFunctions,
                       customParams
-                    ),
+                    )
+                  }
+                  cbFunction(
+                    dataset,
                     structure.args,
                     structure,
                     addedParams,
@@ -279,7 +297,7 @@ if (!Vue.__viewConfReader__) {
                 // Cria um promise
                 const promise = new Promise(
                   function (resolve, reject) {
-                    axios(apiCall)
+                    _this.$axios(apiCall)
                       .then((result) => {
                         resolve(
                           fnReformDataset(
@@ -388,7 +406,7 @@ if (!Vue.__viewConfReader__) {
               reformOptions.cast.col_fields,
               reformOptions.cast.value_field ? reformOptions.cast.value_field : 'vl_indicador',
               reformOptions.cast.layer_field ? reformOptions.cast.layer_field : 'cd_indicador'
-            )
+            ).dataset
           }
 
           for (const indx in reformOptions.calcs) {
@@ -437,7 +455,8 @@ if (!Vue.__viewConfReader__) {
                 formatRules.multiplier,
                 formatRules.collapse,
                 formatRules.signed,
-                formatRules.uiTags
+                formatRules.uiTags,
+                formatRules.null_value
               )
             }
 

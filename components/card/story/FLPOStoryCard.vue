@@ -343,7 +343,6 @@
 </template>
 
 <script>
-import axios from 'axios'
 import { Parser } from 'json2csv'
 
 import FLPOBaseStoryCard from '../../FLPOBaseStoryCard.vue'
@@ -517,9 +516,9 @@ export default {
             const scope = payload.target.scope
             const id = payload.item.id
             const topoFile = '/topojson/' + scope + '/' + range + '/' + id + '.json'
-            axios.get(topoFile)
+            this.$axios.$get(topoFile)
               .then((response) => {
-                this.selectedTopology = response.data
+                this.selectedTopology = response
                 this.handleDataStructure(payload)
               })
           } else {

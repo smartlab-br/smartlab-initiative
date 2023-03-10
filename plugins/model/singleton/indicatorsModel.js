@@ -1,5 +1,3 @@
-import axios from 'axios'
-
 // import AxiosCallSetupService from '../../service/singleton/axiosCallSetupService'
 // import TextTransformService from '../../service/singleton/textTransformService'
 // import NumberTransformService from '../../service/singleton/numberTransformService'
@@ -67,7 +65,7 @@ export class IndicatorsModel {
       url = '/' + observatory + 'te/indicadoresmunicipais?categorias=ds_indicador,ds_indicador_radical,cd_indicador,ds_fonte&agregacao=distinct'
     }
 
-    return axios(this.context.$axiosCallSetupService.getAxiosOptions(url))
+    return this.context.$axios(this.context.$axiosCallSetupService.getAxiosOptions(url))
       .then((result) => {
         const todosIndicadores = result.data.dataset
 
@@ -238,86 +236,66 @@ export class IndicatorsModel {
 
   combineIndicators (sliced, struct, functions = {}, place_id_field = null) {
     const result = []
-    for (const eachRow in sliced) {
-      let addedSelf = false
-      for (const indxCmb in struct) {
-        const args = []
-        const nuIndic = Object.assign({}, sliced[eachRow])
-        const fnCmb = functions[struct[indxCmb].function]
+    for (const indxCmb in struct) {
+      const fnCmb = functions[struct[indxCmb].function]
+      let iLoop = 1
+      let uniquePlaces = []
+      if (place_id_field) {
+        uniquePlaces = sliced.map(item => item[place_id_field])
+          .filter(
+            (value, index, current_value) => current_value.indexOf(value) === index
+          )
+        iLoop = uniquePlaces.length
+      }
 
+      for (let i = 0; i < iLoop; i++) {
+        let regIndicadorBase = []
+        if (place_id_field) {
+          regIndicadorBase = sliced.find(el => el[place_id_field] === uniquePlaces[i])
+        } else {
+          regIndicadorBase = sliced[0]
+        }
+        const nuIndic = Object.assign({}, regIndicadorBase)
+        nuIndic.cd_indicador = struct[indxCmb].id
+        nuIndic.ds_indicador = struct[indxCmb].desc
+        nuIndic.ds_agreg_primaria = struct[indxCmb].ds_agreg_primaria
+        nuIndic.ds_agreg_secundaria = struct[indxCmb].ds_agreg_secundaria
+        nuIndic.ds_indicador_radical = struct[indxCmb].desc
+        nuIndic.vl_indicador = null
+
+        const args = []
         for (const indxArgs in struct[indxCmb].fn_args) {
-          if (struct[indxCmb].fn_args[indxArgs].fixed != null && struct[indxCmb].fn_args[indxArgs].fixed != undefined) {
+          if (struct[indxCmb].fn_args[indxArgs].fixed !== null && struct[indxCmb].fn_args[indxArgs].fixed !== undefined) {
             args.push(struct[indxCmb].fn_args[indxArgs].fixed)
           } else {
-            nuIndic.cd_indicador = struct[indxCmb].id
-            nuIndic.ds_indicador = struct[indxCmb].desc
-            nuIndic.ds_agreg_primaria = struct[indxCmb].ds_agreg_primaria
-            nuIndic.ds_agreg_secundaria = struct[indxCmb].ds_agreg_secundaria
-            nuIndic.ds_indicador_radical = struct[indxCmb].desc
-
-            if (!addedSelf) {
-              if (struct[indxCmb].fn_args[indxArgs].id !== undefined &&
-                  struct[indxCmb].fn_args[indxArgs].id !== sliced[eachRow].cd_indicador) {
-                continue
+            const argColumn = struct[indxCmb].fn_args[indxArgs].named_prop ? struct[indxCmb].fn_args[indxArgs].named_prop : 'vl_indicador'
+            const regFiltered = sliced.find(function (el) {
+              let returnValue = false
+              returnValue = struct[indxCmb].fn_args[indxArgs].id === el.cd_indicador
+              if (struct[indxCmb].fn_args[indxArgs].year) {
+                returnValue = returnValue && struct[indxCmb].fn_args[indxArgs].year === el.nu_competencia
               }
-              if (struct[indxCmb].year &&
-                  struct[indxCmb].year !== sliced[eachRow].nu_competencia) {
-                continue
+              if (place_id_field) {
+                returnValue = returnValue && uniquePlaces[i] === el[place_id_field]
               }
-              addedSelf = true
-
-              if (struct[indxCmb].fn_args[indxArgs].named_prop) {
-                args.push(sliced[eachRow][struct[indxCmb].fn_args[indxArgs].named_prop])
-              } else {
-                args.push(sliced[eachRow].vl_indicador)
-              }
-            } else {
-              for (const indxInd in sliced) {
-                if (struct[indxCmb].fn_args[indxArgs].id !== undefined &&
-                    struct[indxCmb].fn_args[indxArgs].id !== sliced[indxInd].cd_indicador) {
-                  continue
-                }
-                if (struct[indxCmb].fn_args[indxArgs].year &&
-                    struct[indxCmb].fn_args[indxArgs].year !== sliced[indxInd].nu_competencia) {
-                  continue
-                }
-                if (place_id_field && sliced[eachRow][place_id_field] !== sliced[indxInd][place_id_field]) {
-                  continue
-                }
-                if (struct[indxCmb].fn_args[indxArgs].named_prop) {
-                  args.push(sliced[indxInd][struct[indxCmb].fn_args[indxArgs].named_prop])
-                } else {
-                  args.push(sliced[indxInd].vl_indicador)
-                }
-                break
-              }
+              return returnValue
+            })
+            let argValue = null
+            if (regFiltered) {
+              argValue = regFiltered[argColumn]
             }
-          }
-          // Se não encontrou arg e existe um valor default - inclui valor default
-          if (args[indxArgs] == undefined && struct[indxCmb].fn_args[indxArgs].default) {
-            args.push(struct[indxCmb].fn_args[indxArgs].default)
+
+            // Se não encontrou arg e existe um valor default - inclui valor default
+            if (!argValue && struct[indxCmb].fn_args[indxArgs].default) {
+              argValue = struct[indxCmb].fn_args[indxArgs].default
+            }
+            args.push(argValue)
           }
         }
-
-        if (args.length == struct[indxCmb].fn_args.length) {
-          const prop = struct[indxCmb].named_prop ? struct[indxCmb].named_prop : 'vl_indicador'
+        const prop = struct[indxCmb].named_prop ? struct[indxCmb].named_prop : 'vl_indicador'
+        if (args.length === struct[indxCmb].fn_args.length) {
           nuIndic[prop] = fnCmb.apply(null, args)
-
-          // Verifica se já existem os registro no dataset combinado
-          let found = false
-          for (const indx in result) {
-            if (nuIndic.cd_indicador !== result[indx].cd_indicador) {
-              continue
-            }
-            if (nuIndic.nu_competencia !== result[indx].nu_competencia) {
-              continue
-            }
-            if (place_id_field != null && nuIndic[place_id_field] !== result[indx][place_id_field]) {
-              continue
-            }
-            found = true
-          }
-          if (!found) { result.push(nuIndic) }
+          result.push(nuIndic)
         }
       }
     }
@@ -625,7 +603,7 @@ export class IndicatorsModel {
   setGlobalDataset (dataset_name, scope, auId = null, suffix = '') {
     const url = this.context.$textTransformService.replaceArgs(this.datasetEndpoints[dataset_name][scope], [auId])
     // busca indicadores da localidade
-    return axios(this.context.$axiosCallSetupService.getAxiosOptions(url))
+    return this.context.$axios(this.context.$axiosCallSetupService.getAxiosOptions(url))
       .then((result) => {
         const dataset = { name: dataset_name, ds: result.data.dataset, valid: true, analysisUnit: { type: scope, id: auId } }
         this.globalDatasets[dataset_name + suffix] = dataset

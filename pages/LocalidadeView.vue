@@ -412,8 +412,6 @@
 </template>
 
 <script>
-import axios from 'axios'
-
 import BaseStoryView from './BaseStoryView.vue'
 // import NumberTransformService from '../assets/service/singleton/numberTransformService'
 
@@ -607,6 +605,12 @@ export default {
         calc_percentage: function (parte, total) { return parte / total * 100 },
         calc_percentage_val1: function (val1, val2) { return val1 / (val1 + val2) * 100 },
         calc_percentage_2values: function (val1, val2, total) { return (val1 + val2) / total * 100 },
+        calc_percentage_difference: function (a, b, value_to_compare, min_value) {
+          if (value_to_compare < min_value || !a || !b) {
+            return null
+          }
+          return ((Math.abs(a - b) / a) * 100)
+        },
         calc_proportion: function (dividendo, divisor) { return dividendo / divisor },
         calc_proportion_ds: function (d, dividendo, divisor) {
           return divisor == 0 ? null : dividendo / divisor
@@ -1244,7 +1248,7 @@ export default {
       } else {
         let localidade = {}
         let url = null
-        // axios(this.$axiosCallSetupService.getAxiosOptions("/municipios?categorias=nm_municipio,cd_uf,nm_uf,sigla_uf,lat,long,ano_instalacao,ano_extincao,altitude&filtros=eq-cd_municipio_ibge-" + idLocalidade))
+        // this.$axios(this.$axiosCallSetupService.getAxiosOptions("/municipios?categorias=nm_municipio,cd_uf,nm_uf,sigla_uf,lat,long,ano_instalacao,ano_extincao,altitude&filtros=eq-cd_municipio_ibge-" + idLocalidade))
         if (idLocalidade == 0) { // Brasil
           localidade = {
             id_localidade: 0,
@@ -1265,7 +1269,7 @@ export default {
         } else if (idLocalidade.includes('prt') || idLocalidade.includes('PRT') ||
                     idLocalidade.includes('ptm') || idLocalidade.includes('PTM')) {
           url = '/municipios?categorias=cd_unidade,nm_unidade,cd_uf&agregacao=distinct&filtros=eq-cd_unidade-' + idLocalidade.substring(3)
-          axios(this.$axiosCallSetupService.getAxiosOptions(url))
+          this.$axios(this.$axiosCallSetupService.getAxiosOptions(url))
             .then((result) => {
               const infoUnidade = result.data.dataset
               if (infoUnidade.length > 0) {
@@ -1297,7 +1301,7 @@ export default {
           this.$analysisUnitModel.setPlace(nm_var, localidade)
         } else if (idLocalidade.length == 2) { // Estado
           url = '/municipios?categorias=cd_uf,nm_uf&agregacao=distinct&filtros=eq-cd_uf-' + idLocalidade
-          axios(this.$axiosCallSetupService.getAxiosOptions(url))
+          this.$axios(this.$axiosCallSetupService.getAxiosOptions(url))
             .then((result) => {
               localidade = result.data.dataset[0]
               localidade.id_localidade = localidade.cd_uf
@@ -1314,7 +1318,7 @@ export default {
             })
         } else if (idLocalidade.length == 4) { // Mesorregião
           url = '/municipios?categorias=cd_mesorregiao,nm_mesorregiao&agregacao=distinct&filtros=eq-cd_mesorregiao-' + idLocalidade
-          axios(this.$axiosCallSetupService.getAxiosOptions(url))
+          this.$axios(this.$axiosCallSetupService.getAxiosOptions(url))
             .then((result) => {
               localidade = result.data.dataset[0]
               localidade.id_localidade = localidade.cd_mesorregiao
@@ -1331,7 +1335,7 @@ export default {
             })
         } else if (idLocalidade.length == 5) { // Microrregião
           url = '/municipios?categorias=cd_microrregiao,nm_microrregiao&agregacao=distinct&filtros=eq-cd_microrregiao-' + idLocalidade
-          axios(this.$axiosCallSetupService.getAxiosOptions(url))
+          this.$axios(this.$axiosCallSetupService.getAxiosOptions(url))
             .then((result) => {
               localidade = result.data.dataset[0]
               localidade.id_localidade = localidade.cd_microrregiao
@@ -1348,7 +1352,7 @@ export default {
             })
         } else {
           url = '/municipio/' + idLocalidade
-          axios(this.$axiosCallSetupService.getAxiosOptions(url))
+          this.$axios(this.$axiosCallSetupService.getAxiosOptions(url))
             .then((result) => {
               localidade = result.data[0]
               localidade.id_localidade = localidade.cd_municipio_ibge_dv

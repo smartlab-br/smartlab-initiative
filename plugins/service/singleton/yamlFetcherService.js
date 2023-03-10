@@ -1,5 +1,4 @@
 import * as yaml from 'js-yaml'
-import axios from 'axios'
 
 export class YamlFetcherService {
   constructor (context) {
@@ -7,13 +6,13 @@ export class YamlFetcherService {
   }
 
   getBasePath () {
-    if (this.context.$config.git_viewconf_url) { return this.context.$config.git_viewconf_url }
+    if (this.context.$config.gitViewConfUrl) { return this.context.$config.gitViewConfUrl }
     return '/smartlab-initiative-viewconf/'
   }
 
   async loadYaml (location) {
-    const response = await axios.get(this.getBasePath() + location + '.yaml')
-    return yaml.safeLoad(response.data, { json: true })
+    const response = await this.context.$axios.$get(this.getBasePath() + location + '.yaml')
+    return yaml.safeLoad(response, { json: true })
   }
 
   async loadYamlArray (currentStruct, yamlArray) {
@@ -23,14 +22,14 @@ export class YamlFetcherService {
     // TODO Need to intercept 404 errors thrown to the browser console.
     for (const yamlConfIndex in yamlArray) {
       promises.push(
-        axios.get(basePath + yamlArray[yamlConfIndex].main + '.yaml')
+        this.context.$axios.$get(basePath + yamlArray[yamlConfIndex].main + '.yaml')
           .then((response) => {
-            return yaml.safeLoad(response.data, { json: true })
+            return yaml.safeLoad(response, { json: true })
           }).catch((_error) => {
             if (yamlArray[yamlConfIndex].alt) {
-              axios.get(basePath + yamlArray[yamlConfIndex].alt + '.yaml')
+              this.context.$axios.$get(basePath + yamlArray[yamlConfIndex].alt + '.yaml')
                 .then((response) => {
-                  return yaml.safeLoad(response.data, { json: true })
+                  return yaml.safeLoad(response, { json: true })
                 }).catch((_error) => { Promise.resolve(null) })
             }
           })

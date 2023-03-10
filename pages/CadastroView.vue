@@ -338,7 +338,6 @@
 </template>
 
 <script>
-import axios from 'axios'
 export default {
   data () {
     return {
@@ -394,7 +393,7 @@ export default {
     sendUserData () {
       const this_ = this
       if (this.$refs.userDataForm.validate()) {
-        axios.post(
+        this.$axios.post(
           '/register',
           this.userData
         ).then((response) => {

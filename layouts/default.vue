@@ -884,8 +884,6 @@
 </template>
 
 <script>
-import axios from 'axios'
-
 export default {
   data () {
     return {
@@ -1111,6 +1109,7 @@ export default {
       }
     }
   },
+
   created () {
     // nuxt component - capture events
     // @userChanged="updateUser"
@@ -1419,7 +1418,7 @@ export default {
         const finishMailSend = () => { this.sendingMail = false }
         const closeBugDialog = () => { this.bugDialog = false }
 
-        axios(this.$axiosCallSetupService.getAxiosOptions(
+        this.$axios(this.$axiosCallSetupService.getAxiosOptions(
           '/mail', true,
           {
             mail: {

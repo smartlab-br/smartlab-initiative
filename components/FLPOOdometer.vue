@@ -42,8 +42,6 @@
 </template>
 
 <script>
-import axios from 'axios'
-
 import FLPOBaseLayout from './FLPOBaseLayout.vue'
 
 export default {
@@ -57,7 +55,7 @@ export default {
     }
   },
   mounted () {
-    axios(this.$axiosCallSetupService.getAxiosOptions('/odometros/sst', true))
+    this.$axios(this.$axiosCallSetupService.getAxiosOptions('/odometros/sst', true))
       .then((result) => {
         let dtOdometros = JSON.parse(result.data)
 
@@ -92,7 +90,7 @@ export default {
     for (const odometer of this.odometerItems) {
       if (odometer.api) {
         const url = odometer.api.fixed
-        axios(this.$axiosCallSetupService.getAxiosOptions(url))
+        this.$axios(this.$axiosCallSetupService.getAxiosOptions(url))
           .then((result) => {
             const options = Object.assign({}, odometer.options)
 
