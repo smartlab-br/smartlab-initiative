@@ -2,6 +2,7 @@
 import VuetifyLoaderPlugin from 'vuetify-loader/lib/plugin'
 
 export default {
+  
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
     titleTemplate: '%s - Promoção do Trabalho Decente',
@@ -78,12 +79,6 @@ export default {
     '@nuxtjs/axios'
   ],
 
-  // Axios module configuration: https://go.nuxtjs.dev/config-axios
-  // axios: {
-  //   // Workaround to avoid enforcing hard-coded localhost:3000: https://github.com/nuxt-community/axios-module/issues/308
-  //   baseURL: '/'
-  // },
-
   serverMiddleware: [
     '~/server-middleware/api.js'
   ],
@@ -109,7 +104,21 @@ export default {
     // }
   },
 
+  // Axios module configuration: https://go.nuxtjs.dev/config-axios
+  axios: {
+    baseURL: process.env.BASE_URL || 'http://localhost:3000'
+  },
+  
+  privateRuntimeConfig: {
+    axios: {
+      baseURL: process.env.BASE_URL
+    }
+  },
+
   publicRuntimeConfig: {
+    axios: {
+      browserBaseURL: process.env.BASE_URL
+    },
     gitViewConfUrl: process.env.GIT_VIEWCONF_TAG_URL,
     googleAnalytics: {
       id: process.env.GOOGLE_ANALYTICS_ID
