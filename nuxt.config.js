@@ -75,7 +75,7 @@ export default {
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
     // https://go.nuxtjs.dev/axios
-    // '@nuxtjs/axios'
+    '@nuxtjs/axios'
   ],
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
@@ -110,7 +110,6 @@ export default {
   },
 
   publicRuntimeConfig: {
-    axiosPort: process.env.PORT,
     gitViewConfUrl: process.env.GIT_VIEWCONF_TAG_URL,
     googleAnalytics: {
       id: process.env.GOOGLE_ANALYTICS_ID

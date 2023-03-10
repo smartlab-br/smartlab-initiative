@@ -19,7 +19,8 @@ module.exports = {
   // add your custom rules here
   rules: {
     eqeqeq: 'warn',
-    camelcase: 'warn',
+    camelcase: 'off',
+    'vue/no-v-html': 'warn',
     'vue/no-v-text-v-html-on-component': 'warn',
     'vue/no-useless-template-attributes': 'warn',
     'no-labels': ['error', { allowLoop: true }],

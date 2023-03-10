@@ -23,7 +23,6 @@
 </template>
 
 <script>
-import axios from 'axios'
 import FLPOBaseLayout from '../../FLPOBaseLayout.vue'
 
 export default {
@@ -207,7 +206,7 @@ export default {
       if (filterUrl) {
         apiUrl = apiUrl + filterUrl
       }
-      axios(this.$axiosCallSetupService.getAxiosOptions(apiUrl))
+      this.$axios(this.$axiosCallSetupService.getAxiosOptions(apiUrl))
         .then((result) => {
           let dataset = this.reformDataset(
             result.data.dataset,

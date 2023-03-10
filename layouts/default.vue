@@ -884,8 +884,6 @@
 </template>
 
 <script>
-import axios from 'axios'
-
 export default {
   data () {
     return {
@@ -1113,8 +1111,6 @@ export default {
   },
 
   created () {
-    axios.defaults.baseURL = "http://localhost:" + this.$config.axiosPort;
-
     // nuxt component - capture events
     // @userChanged="updateUser"
     // @showSnackbar="snackAlert"
@@ -1422,7 +1418,7 @@ export default {
         const finishMailSend = () => { this.sendingMail = false }
         const closeBugDialog = () => { this.bugDialog = false }
 
-        axios(this.$axiosCallSetupService.getAxiosOptions(
+        this.$axios(this.$axiosCallSetupService.getAxiosOptions(
           '/mail', true,
           {
             mail: {

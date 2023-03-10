@@ -1,4 +1,3 @@
-import axios from 'axios'
 import VueCookies from 'vue-cookies'
 
 // import AxiosCallSetupService from '../../service/singleton/axiosCallSetupService'
@@ -64,7 +63,7 @@ export class AnalysisUnitModel {
 
   getIdLocalidade (estado, municipio) {
     const url = '/municipios?categorias=cd_municipio_ibge_dv,nm_municipio_uf-nm_localidade&filtros=eq-nm_uf-"' + estado + '",and,eq-nm_municipio-"' + municipio + '"'
-    return axios(this.context.$axiosCallSetupService.getAxiosOptions(url))
+    return this.context.$axios(this.context.$axiosCallSetupService.getAxiosOptions(url))
       .then(
         (result) => {
           const infoMunicipio = result.data.dataset
@@ -90,7 +89,7 @@ export class AnalysisUnitModel {
 
   getPRTPTMInstance (scope, id) {
     const url = '/municipios?categorias=cd_unidade,nm_unidade,cd_uf&agregacao=distinct&filtros=eq-cd_unidade-' + id
-    return axios(this.context.$axiosCallSetupService.getAxiosOptions(url))
+    return this.context.$axios(this.context.$axiosCallSetupService.getAxiosOptions(url))
       .then((result) => {
         const infoUnidade = result.data.dataset
         if (infoUnidade.length > 0) {
@@ -126,7 +125,7 @@ export class AnalysisUnitModel {
   buildMPTOptions (scope = null) {
     if (scope == null || scope.includes('MPT')) {
       const url = '/municipios?categorias=cd_unidade,nm_unidade,cd_uf&agregacao=distinct'
-      return axios(this.context.$axiosCallSetupService.getAxiosOptions(url))
+      return this.context.$axios(this.context.$axiosCallSetupService.getAxiosOptions(url))
         .then((result) => {
           const unidadesMPT = result.data.dataset
 
@@ -165,7 +164,7 @@ export class AnalysisUnitModel {
     }
 
     const url = '/municipios?categorias=cd_municipio_ibge_dv,nm_municipio_uf,cd_uf,nm_uf,cd_mesorregiao,nm_mesorregiao,cd_microrregiao,nm_microrregiao&ordenacao=cd_municipio_ibge_dv'
-    return axios(this.context.$axiosCallSetupService.getAxiosOptions(url))
+    return this.context.$axios(this.context.$axiosCallSetupService.getAxiosOptions(url))
       .then((result) => {
         const municipios = result.data.dataset
         // let cd_regiao = 0;
@@ -282,7 +281,7 @@ export class AnalysisUnitModel {
 
   getTotalMunicipios () {
     const url = '/municipios?categorias=cd_municipio_ibge_dv'
-    return axios(this.context.$axiosCallSetupService.getAxiosOptions(url))
+    return this.context.$axios(this.context.$axiosCallSetupService.getAxiosOptions(url))
       .then(
         (result) => { return result.data.dataset.length },
         () => { Promise.reject(new Error('Falha ao buscar total das localidades')) }
@@ -291,7 +290,7 @@ export class AnalysisUnitModel {
 
   getTotalMunicipiosPorUF (uf) {
     const url = '/municipios?categorias=cd_municipio_ibge_dv,cd_uf&filtros=eq-cd_uf-' + uf
-    return axios(this.context.$axiosCallSetupService.getAxiosOptions(url))
+    return this.context.$axios(this.context.$axiosCallSetupService.getAxiosOptions(url))
       .then(
         (result) => { return result.data.dataset.length },
         () => { Promise.reject(new Error('Falha ao buscar total das localidades')) }
@@ -300,7 +299,7 @@ export class AnalysisUnitModel {
 
   findAllUF () {
     const url = '/municipios?categorias=cd_uf,sg_uf,nm_uf&valor=cd_uf&agregacao=distinct'
-    return axios(this.context.$axiosCallSetupService.getAxiosOptions(url))
+    return this.context.$axios(this.context.$axiosCallSetupService.getAxiosOptions(url))
       .then(
         (result) => { return result.data.dataset },
         () => { Promise.reject(new Error('Falha ao buscar Unidades Federativas')) }
@@ -337,7 +336,7 @@ export class AnalysisUnitModel {
       // return localidade;
     } else if (id.length == 2) { // Estado
       url = '/municipios?categorias=cd_uf,nm_uf&filtros=eq-cd_uf-' + id
-      return axios(this.context.$axiosCallSetupService.getAxiosOptions(url))
+      return this.context.$axios(this.context.$axiosCallSetupService.getAxiosOptions(url))
         .then((result) => {
           localidade = result.data.dataset[0]
           localidade.id_localidade = localidade.cd_uf
@@ -351,7 +350,7 @@ export class AnalysisUnitModel {
         })
     } else if (id.length == 4) { // Mesorregião
       url = '/municipios?categorias=cd_mesorregiao,nm_mesorregiao&filtros=eq-cd_mesorregiao-' + id
-      return axios(this.context.$axiosCallSetupService.getAxiosOptions(url))
+      return this.context.$axios(this.context.$axiosCallSetupService.getAxiosOptions(url))
         .then((result) => {
           localidade = result.data.dataset[0]
           localidade.id_localidade = localidade.cd_mesorregiao
@@ -365,7 +364,7 @@ export class AnalysisUnitModel {
         })
     } else if (id.length == 5) { // Microrregião
       url = '/municipios?categorias=cd_microrregiao,nm_microrregiao,latitude,longitude&filtros=eq-cd_microrregiao-' + id
-      return axios(this.context.$axiosCallSetupService.getAxiosOptions(url))
+      return this.context.$axios(this.context.$axiosCallSetupService.getAxiosOptions(url))
         .then((result) => {
           localidade = result.data.dataset[0]
           localidade.id_localidade = localidade.cd_microrregiao
@@ -379,7 +378,7 @@ export class AnalysisUnitModel {
         })
     } else {
       url = '/municipio/' + id
-      return axios(this.context.$axiosCallSetupService.getAxiosOptions(url))
+      return this.context.$axios(this.context.$axiosCallSetupService.getAxiosOptions(url))
         .then((result) => {
           localidade = result.data[0]
           localidade.id_localidade = localidade.cd_municipio_ibge_dv

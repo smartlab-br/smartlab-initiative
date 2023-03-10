@@ -1,6 +1,4 @@
 <script>
-import axios from 'axios'
-
 import FLPOBaseLayout from './FLPOBaseLayout.vue'
 
 export default {
@@ -65,7 +63,7 @@ export default {
           cardTitle = structure.title.fixed
         }
 
-        axios(this.$axiosCallSetupService.getAxiosOptions(url))
+        this.$axios(this.$axiosCallSetupService.getAxiosOptions(url))
           .then((result) => {
             structure = Object.assign(structure, result.data)
             this.structure = structure
@@ -416,9 +414,9 @@ export default {
           }
         }
         const topoFile = '/topojson/' + scope + '/' + range + '/' + id + '.json'
-        axios.get(topoFile)
+        this.$axios.$get(topoFile)
           .then((response) => {
-            this.selectedTopology = response.data
+            this.selectedTopology = response
             if (this.loadingStatusDataset == 'SUCCESS') {
               this.triggerChartUpdates()
             }

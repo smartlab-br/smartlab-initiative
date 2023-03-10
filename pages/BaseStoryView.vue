@@ -1,6 +1,4 @@
 <script>
-import axios from 'axios'
-
 import BaseLandingView from './BaseLandingView.vue'
 
 export default {
@@ -8,9 +6,9 @@ export default {
   methods: {
     selectCoords (range, scope, id, suffix = '') {
       const topoFile = '/topojson/' + scope + '/' + range + '/' + id + '.json'
-      axios.get(topoFile)
+      this.$axios.$get(topoFile)
         .then((response) => {
-          this['topology' + suffix] = response.data
+          this['topology' + suffix] = response
         })
     },
 

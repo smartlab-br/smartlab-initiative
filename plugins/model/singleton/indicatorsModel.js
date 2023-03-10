@@ -1,5 +1,3 @@
-import axios from 'axios'
-
 // import AxiosCallSetupService from '../../service/singleton/axiosCallSetupService'
 // import TextTransformService from '../../service/singleton/textTransformService'
 // import NumberTransformService from '../../service/singleton/numberTransformService'
@@ -67,7 +65,7 @@ export class IndicatorsModel {
       url = '/' + observatory + 'te/indicadoresmunicipais?categorias=ds_indicador,ds_indicador_radical,cd_indicador,ds_fonte&agregacao=distinct'
     }
 
-    return axios(this.context.$axiosCallSetupService.getAxiosOptions(url))
+    return this.context.$axios(this.context.$axiosCallSetupService.getAxiosOptions(url))
       .then((result) => {
         const todosIndicadores = result.data.dataset
 
@@ -606,7 +604,7 @@ export class IndicatorsModel {
   setGlobalDataset (dataset_name, scope, auId = null, suffix = '') {
     const url = this.context.$textTransformService.replaceArgs(this.datasetEndpoints[dataset_name][scope], [auId])
     // busca indicadores da localidade
-    return axios(this.context.$axiosCallSetupService.getAxiosOptions(url))
+    return this.context.$axios(this.context.$axiosCallSetupService.getAxiosOptions(url))
       .then((result) => {
         const dataset = { name: dataset_name, ds: result.data.dataset, valid: true, analysisUnit: { type: scope, id: auId } }
         this.globalDatasets[dataset_name + suffix] = dataset
