@@ -106,18 +106,18 @@ export default {
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
-    baseURL: process.env.BASE_URL || 'http://localhost:3000'
+    baseURL: 'http://localhost:3000' // Used as fallback if no runtime config is provided
   },
   
   privateRuntimeConfig: {
     axios: {
-      baseURL: process.env.BASE_URL
+      baseURL: process.env.BASE_URL || 'http://localhost:' + (process.env.PORT || '3000')
     }
   },
 
   publicRuntimeConfig: {
     axios: {
-      browserBaseURL: process.env.BASE_URL
+      browserBaseURL: process.env.BASE_URL || 'http://localhost:' + (process.env.PORT || '3000')
     },
     gitViewConfUrl: process.env.GIT_VIEWCONF_TAG_URL,
     googleAnalytics: {
