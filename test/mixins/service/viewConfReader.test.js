@@ -169,6 +169,21 @@ describe('ViewConfReader', () => {
     ])
   })
 
+  test('Verifica ordenação decrescente de dataset ', () => {
+    const wrapper = mount(FLPOSobreLayout, { sync: false })
+
+    const ds = [
+      { cd_indicador: '1', nu_competencia: 2047, vl_indicador: 678.9 },
+      { cd_indicador: '1', nu_competencia: 2099, vl_indicador: 123.45 }
+    ]
+    const result = wrapper.vm.reformDataset(ds, { order_field: '-nu_competencia' }, {})
+
+    expect(result).toEqual([
+      { cd_indicador: '1', nu_competencia: 2099, vl_indicador: 123.45 },
+      { cd_indicador: '1', nu_competencia: 2047, vl_indicador: 678.9 }
+    ])
+  })
+
   test('Verifica aplicação de formatters', () => {
     const wrapper = mount(FLPOSobreLayout, { sync: false })
 
