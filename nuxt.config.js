@@ -2,7 +2,7 @@
 import VuetifyLoaderPlugin from 'vuetify-loader/lib/plugin'
 
 export default {
-  
+
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
     titleTemplate: '%s - Promoção do Trabalho Decente',
@@ -108,7 +108,7 @@ export default {
   axios: {
     baseURL: 'http://localhost:3000' // Used as fallback if no runtime config is provided
   },
-  
+
   privateRuntimeConfig: {
     axios: {
       baseURL: process.env.BASE_URL || 'http://localhost:' + (process.env.PORT || '3000')

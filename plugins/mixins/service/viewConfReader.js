@@ -711,8 +711,8 @@ if (!Vue.__viewConfReader__) {
 
         if (options.order_field !== null && options.order_field !== undefined) {
           let order_field = options.order_field
-          const order = 'asc'
-          if (order_field.substring(0,1) === "-"){
+          let order = 'asc'
+          if (order_field.substring(0, 1) === '-') {
             order = 'desc'
             order_field = order_field.substring(1)
           }
