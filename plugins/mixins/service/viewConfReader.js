@@ -469,11 +469,11 @@ if (!Vue.__viewConfReader__) {
           if (reformOptions.order_field !== null && reformOptions.order_field !== undefined) {
             let order_field = reformOptions.order_field
             let order = 'asc'
-            if (order_field.substring(0,1) === "-"){
+            if (order_field.substring(0, 1) === '-') {
               order = 'desc'
               order_field = order_field.substring(1)
             }
-              dataset = this.$indicatorsModel.sortObject(dataset, order_field, order)
+            dataset = this.$indicatorsModel.sortObject(dataset, order_field, order)
           }
         }
 

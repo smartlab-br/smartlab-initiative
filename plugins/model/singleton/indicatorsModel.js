@@ -464,7 +464,7 @@ export class IndicatorsModel {
     return result
   }
 
-  sortObject (object, order_field, order='asc') {
+  sortObject (object, order_field, order = 'asc') {
     const orderModifier = (order === 'desc' ? -1 : 1)
     return object.sort(function (a, b) {
       if (a[order_field] > b[order_field]) {
