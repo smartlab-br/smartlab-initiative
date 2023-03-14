@@ -89,6 +89,18 @@ describe('NumberFormatter', () => {
     expect(result).toEqual('-')
   })
 
+  test('Texto padrão quando valor é NaN deve ser apenas "-"', () => {
+    const wrapper = mount(FLPOSobreLayout, { sync: false })
+    const result = wrapper.vm.$numberTransformService.formatNumber(NaN)
+    expect(result).toEqual('-')
+  })
+
+  test('Quando valor não é numérico retorna o próprio valor', () => {
+    const wrapper = mount(FLPOSobreLayout, { sync: false })
+    const result = wrapper.vm.$numberTransformService.formatNumber('teste')
+    expect(result).toEqual('teste')
+  })
+
   test('Formata um número com collapse (mil)', () => {
     const wrapper = mount(FLPOSobreLayout, { sync: false })
     const result = wrapper.vm.$numberTransformService.formatNumber('12345.678', 'real', 2, 1, true)

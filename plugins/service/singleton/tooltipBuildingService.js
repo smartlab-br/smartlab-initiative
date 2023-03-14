@@ -34,7 +34,8 @@ export class TooltipBuildingService {
     }
 
     for (const item in tooltip_list) {
-      if (d[tooltip_list[item].value] !== undefined) {
+      value = d[tooltip_list[item].value]
+      if (value !== undefined) {
         value = this.removeFromLabel(d[tooltip_list[item].value], removed_text_list)
       }
 
@@ -70,9 +71,9 @@ export class TooltipBuildingService {
       text += '</table>'
     }
 
-    if (text == '') { text = 'Tooltip!' }
+    if (text === '') { text = 'Tooltip!' }
     text += filter
-    if (options && options.clickable && options.visibleLayers == undefined) { // topojson
+    if (options && options.clickable && options.visibleLayers === undefined) { // topojson
       text += "<br/><hr class='tooltip_divider'>"
       text += '<br/><em>Clique na unidade geográfica para carregá-la</em>'
     }

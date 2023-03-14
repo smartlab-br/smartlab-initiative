@@ -796,6 +796,9 @@ export default {
           }
           return gender + ' ' + color
         },
+        format_gender_type_ds: function (d, gender, type) {
+          return gender === 'Homens' ? 'Homem ' + type : 'Mulher ' + type
+        },
         capitalize_first_letter (string) {
           return string.charAt(0).toUpperCase() + string.slice(1)
         },
