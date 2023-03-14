@@ -286,7 +286,7 @@ export class IndicatorsModel {
             }
 
             // Se não encontrou arg e existe um valor default - inclui valor default
-            if (!argValue && struct[indxCmb].fn_args[indxArgs].default) {
+            if (!argValue && struct[indxCmb].fn_args[indxArgs].default !== undefined) {
               argValue = struct[indxCmb].fn_args[indxArgs].default
             }
             args.push(argValue)

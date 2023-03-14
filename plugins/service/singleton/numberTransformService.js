@@ -2,7 +2,14 @@ export class NumberTransformService {
   // constructor () {}
 
   formatNumber (valor, formato, casasDecimais, multiplier = 1, collapse = null, signed = false, uiTags = true, null_value = null) {
-    if (isNaN(valor)) {
+    // Se valor == NaN|null|undefined
+    if (Number.isNaN(valor) || valor === null || valor === undefined || valor === 'NaN' || valor === 'null' || valor === 'undefined' ) {
+      if (null_value) {
+        return null_value
+      }
+      return '-'
+    // Se valor não númérico retorna valor
+    } else if (isNaN(valor)) {
       return valor
     }
 
@@ -40,12 +47,6 @@ export class NumberTransformService {
 
     let unitPrefix = ''
 
-    if (valor === null || valor === undefined) {
-      if (null_value) {
-        return null_value
-      }
-      return '-'
-    }
     valor = parseFloat(valor) * multiplier
 
     // Verifica a ordem de grandeza do número, para poder reduzir o tamanho da string
