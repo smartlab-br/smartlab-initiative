@@ -3,7 +3,7 @@ export class NumberTransformService {
 
   formatNumber (valor, formato, casasDecimais, multiplier = 1, collapse = null, signed = false, uiTags = true, null_value = null) {
     // Se valor == NaN|null|undefined
-    if (Number.isNaN(valor) || valor === null || valor === undefined || valor === 'NaN' || valor === 'null' || valor === 'undefined' ) {
+    if (Number.isNaN(valor) || valor === null || valor === undefined || valor === 'NaN' || valor === 'null' || valor === 'undefined') {
       if (null_value) {
         return null_value
       }
