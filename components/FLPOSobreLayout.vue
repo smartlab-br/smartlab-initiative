@@ -122,7 +122,7 @@ export default {
   },
   destroyed () {
     const embeds = document.querySelectorAll("[data-stack-embed='true']")
-    for (const eachStack in embeds) {
+    for (const eachStack of embeds) {
       eachStack.parentNode.removeChild(eachStack.parentNode.childNodes[0])
     }
     if (window.addEventListener) {
