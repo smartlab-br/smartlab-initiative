@@ -187,9 +187,9 @@ if (!Vue.__viewConfReader__) {
             // If the structure defines an API call, execute the
             // callback after the axios call.
             const fusionParams = Object.assign(customParams, addedParams.react)
-            let url = this.$textTransformService.applyInterpol(structure.api_reactive, {}, customFunctions, fusionParams)
+            const url = this.$textTransformService.applyInterpol(structure.api_reactive, {}, customFunctions, fusionParams)
             // replace comma (,) with \\, inside quotes
-            url = url.replace(/'([^']*)+'/g, s => s.replace(/,/g, '\\,'))
+            // url = url.replace(/'([^']*)+'/g, s => s.replace(/,/g, '\,'))
             this.$axios(this.$axiosCallSetupService.getAxiosOptions(url))
               .then((result) => {
                 cbFunction(

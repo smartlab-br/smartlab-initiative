@@ -14,7 +14,7 @@ export class AxiosCallSetupService {
       endpoint = '/datahub' + endpoint
     }
 
-    options.url = endpoint
+    options.url = this.getValidDatahubUrl(endpoint)
 
     const headers = {
       'Content-Type': 'application/json',
@@ -29,5 +29,14 @@ export class AxiosCallSetupService {
       options,
       { headers }
     )
+  }
+
+  getValidDatahubUrl (url) {
+    // Datahub api uses comma and minus to split options
+    // replace comma (,) with '\,' inside quotes
+    url = url.replace(/'([^']*)+'/g, s => s.replace(/,/g, '\\,'))
+    // replace '-' with '\-' inside quotes
+    url = url.replace(/'([^']*)+'/g, s => s.replace(/-/g, '\\-'))
+    return url
   }
 }

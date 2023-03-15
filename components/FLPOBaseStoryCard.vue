@@ -296,8 +296,8 @@ export default {
               item_value = item[itemCustomFilterName]
               if (typeof item_value === 'string') {
                 // substitui a vírgula e o hífen por '\,' e '\-'
-                item_value = item_value.replace(/,/g, '\\,')
-                item_value = item_value.replace(/-/g, '\\-')
+                // item_value = item_value.replace(/,/g, '\\,')
+                // item_value = item_value.replace(/-/g, '\\-')
 
                 if (i == 0) {
                   value += "'" + item_value + "'"
@@ -321,8 +321,8 @@ export default {
             item_value = payload.item[itemCustomFilterName]
             if (typeof item_value === 'string') {
               // substitui a vírgula e o hífen por '\,' e '\-'
-              item_value = item_value.replace(/,/g, '\\,')
-              item_value = item_value.replace(/-/g, '\\-')
+              // item_value = item_value.replace(/,/g, '\\,')
+              // item_value = item_value.replace(/-/g, '\\-')
             }
             this.customFilters[itemCustomFilterName] = item_value
             this.customFilters[itemCustomFilterName + '_label'] = payload.item.label
