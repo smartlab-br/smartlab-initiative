@@ -14,7 +14,7 @@ export class AxiosCallSetupService {
       endpoint = '/datahub' + endpoint
     }
 
-    options.url = this.getDatahubValidUrl(endpoint)
+    options.url = this.getValidDatahubUrl(endpoint)
 
     const headers = {
       'Content-Type': 'application/json',
