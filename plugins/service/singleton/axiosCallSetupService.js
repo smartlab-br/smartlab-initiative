@@ -31,7 +31,7 @@ export class AxiosCallSetupService {
     )
   }
 
-  getValidDatahubUrl(url){
+  getValidDatahubUrl (url) {
     // Datahub api uses comma and minus to split options
     // replace comma (,) with '\,' inside quotes
     url = url.replace(/'([^']*)+'/g, s => s.replace(/,/g, '\\,'))
