@@ -411,7 +411,7 @@
         app
       >
         <v-flex
-          class="xs2 sm1 md1 lg2 xl2"
+          class="xs2 sm1"
           :class="{'pt-5 pb-3': $vuetify.breakpoint.mdAndDown }"
         >
           <v-layout
@@ -436,7 +436,7 @@
           </v-layout>
         </v-flex>
         <v-flex
-          class="xs10 sm11 md11 lg8 xl4 text-xs-right text-md-center"
+          class="xs10 sm11 lg9 text-xs-right text-md-center"
           :class="{'pt-5 pb-3': $vuetify.breakpoint.mdAndDown }"
         >
           <v-layout
@@ -459,13 +459,14 @@
           <v-layout
             align-center
             justify-center
+            text-xs-center
             wrap
             class="footer-colab-text"
             v-html="footerText"
-          ></v-layout>
+          />
         </v-flex>
         <v-flex
-          class="xs6 sm6 md6 lg1 xl3 text-md-left text-lg-center subheading"
+          class="xs6 sm6 md6 lg1 text-md-left text-lg-center subheading"
           :class="{'pt-5 pb-3 ': $vuetify.breakpoint.mdAndDown }"
         >
           <a
@@ -488,7 +489,7 @@
           </a>
         </v-flex>
         <v-flex
-          class="xs6 sm6 md6 lg1 xl3 text-xs-right subheading"
+          class="xs6 sm6 md6 lg1 text-xs-right subheading"
           :class="{'pt-5 pb-3': $vuetify.breakpoint.mdAndDown }"
         >
           <div class="caption mr-1 mb-1">
