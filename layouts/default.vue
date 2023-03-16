@@ -444,7 +444,7 @@
             justify-center
             wrap
           >
-            <img 
+            <img
               v-for="(footerImg, footerImgIndex) in footerImages"
               :key="footerImgIndex"
               :src="footerImg.src"
