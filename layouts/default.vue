@@ -209,7 +209,7 @@
                 <v-list-tile-action style="min-width: 120px">
                   <v-layout row>
                     <v-layout
-                      v-for="(search_item, indxSearch) in $observatories.getObservatories()"
+                      v-for="(search_item, indxSearch) in observatorios"
                       :key="'search_item_obs_' + indxSearch"
                       @click="changeAnalysisUnit($router, data.item, search_item.id)"
                     >
@@ -523,10 +523,8 @@
             justify-center
             wrap
             class="footer-colab-text"
-          >
-            Colaboração e apoio:<br>
-            Subsecretaria de Inspeção do Trabalho (SIT) da Secretaria de Trabalho (STRAB) - Ministério do Trabalho e Previdência (MTP), <br>Ministério da Cidadania (MC), Ministério da Mulher, da Família e dos Direitos Humanos (MMFDH), Ouvidoria Nacional dos Direitos Humanos (ONDH)
-          </v-layout>
+            v-html="'Colaboração e apoio:<br>' + footerText"
+          ></v-layout>
         </v-flex>
         <v-flex
           class="xs6 sm6 md6 lg1 xl3 text-md-left text-lg-center subheading"
@@ -940,6 +938,7 @@ export default {
       hintAutocomplete: '',
       currentAnalysisUnit: null,
       observatorios: null,
+      footerText: null,
       currentObs: null,
       dim: { label: null },
       userData: { additionalInformation: {} },
@@ -1141,14 +1140,10 @@ export default {
       this.changeMiddleToolbar(params)
     })
 
-    const tmpObs = this.$observatories.getObservatories()
-    if (tmpObs instanceof Promise) {
-      tmpObs.then((result) => {
-        this.observatorios = result
-      })
-    } else {
-      this.observatorios = tmpObs
-    }
+    this.$observatories.getContent().then((content) => {
+      this.observatorios = content.observatorios
+      this.footerText = content.rodape.apoio
+    })
 
     this.dim = { label: null }
     this.currentObs = this.$observatories.identifyObservatory(this.$route.path.split('/')[1])

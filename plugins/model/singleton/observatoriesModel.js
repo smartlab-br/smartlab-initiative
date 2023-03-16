@@ -7,6 +7,11 @@ export class ObservatoriesModel {
     this.context = context
   }
 
+  setContent (content) {
+    this.content = content
+    return this.content
+  }
+
   setObservatories (content) {
     this.observatories = content.observatorios
     return this.observatories
@@ -22,37 +27,48 @@ export class ObservatoriesModel {
     return this.sections
   }
 
-  getBackgroundImages () {
-    if (this.background_images == null && this.background_images == undefined) { // Start loading only once
-      return this.context.$yamlFetcherService.loadYaml('br/observatorios')
-        .then((result) => {
-          return this.setBackgroundImages(result)
-        })
-    } else {
-      return this.background_images
-    }
+  setFooter (content) {
+    this.footer = content.rodape
+    return this.footer
   }
 
-  getObservatories () {
-    if (this.observatories == null && this.observatories == undefined) { // Start loading only once
-      return this.context.$yamlFetcherService.loadYaml('br/observatorios')
-        .then((result) => {
-          return this.setObservatories(result)
-        })
-    } else {
-      return this.observatories
+  async getContent () {
+    if (this.content == null || this.content == undefined) {
+      this.content = await this.context.$yamlFetcherService.loadYaml('br/observatorios')
     }
+    return this.content
   }
 
-  getSections () {
-    if (this.section == null && this.section == undefined) { // Start loading only once
-      return this.context.$yamlFetcherService.loadYaml('br/observatorios')
-        .then((result) => {
-          return this.setSections(result)
-        })
-    } else {
-      return this.sections
+  async getBackgroundImages () {
+    if (this.background_images == null || this.background_images == undefined) {
+      this.content = await this.getContent()
+      this.background_images = this.content.background_images
     }
+    return this.background_images
+  }
+
+  async getObservatories () {
+    if (this.observatories == null || this.observatories == undefined) {
+      this.content = await this.getContent()
+      this.observatories = this.content.observatorios
+    }
+    return this.observatories
+  }
+
+  async getSections () {
+    if (this.sections == null || this.sections == undefined) {
+      this.content = await this.getContent()
+      this.sections = this.content.secoes
+    }
+    return this.sections
+  }
+
+  async getFooter () {
+    if (this.footer == null || this.footer == undefined) {
+      this.content = await this.getContent()
+      this.footer = this.content.rodape
+    }
+    return this.footer
   }
 
   getObservatoryById (id) {

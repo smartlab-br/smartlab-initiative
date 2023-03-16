@@ -195,41 +195,18 @@ export default {
     }
   },
   created () {
-    const tmpObs = this.$observatories.getObservatories()
-
-    if ((tmpObs instanceof Promise) || tmpObs.then) {
-      tmpObs.then((result) => { this.observatorios = result })
-    } else {
-      this.observatorios = tmpObs
-    }
-
-    const tmpSections = this.$observatories.getSections()
-    if ((tmpSections instanceof Promise) || tmpSections.then) {
-      tmpSections.then((result) => {
-        this.secoes = result
-      }
-      )
-    } else {
-      this.secoes = tmpSections
-    }
+    this.$observatories.getContent().then((content) => {
+      this.observatorios = content.observatorios
+      this.secoes = content.secoes
+      this.background_images = content.background_images
+      this.parallaxFile = this.background_images[this.idParallaxfile]
+      setInterval(this.setParallaxFile, 20000)
+    })
 
     if (this.$vuetify.breakpoint.smAndDown) {
       this.obsMaxSlice = 11
       this.obsSlice = 0
       this.obsSliceSize = 1
-    }
-
-    const tmpBackgroundImages = this.$observatories.getBackgroundImages()
-    if ((tmpBackgroundImages instanceof Promise) || tmpBackgroundImages.then) {
-      tmpBackgroundImages.then((result) => {
-        this.background_images = result
-        this.parallaxFile = this.background_images[this.idParallaxfile]
-        setInterval(this.setParallaxFile, 20000)
-      })
-    } else {
-      this.background_images = tmpBackgroundImages
-      this.parallaxFile = this.background_images[this.idParallaxfile]
-      setInterval(this.setParallaxFile, 20000)
     }
   },
   mounted: function () {
