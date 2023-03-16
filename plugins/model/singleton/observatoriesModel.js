@@ -7,66 +7,69 @@ export class ObservatoriesModel {
     this.context = context
   }
 
-  setContent (content) {
-    this.content = content
-    return this.content
+  async setContent () {
+    this.content = await this.context.$yamlFetcherService.loadYaml('br/observatorios')
   }
 
-  setObservatories (content) {
-    this.observatories = content.observatorios
-    return this.observatories
+  async setObservatories () {
+    if (this.content == null || this.content == undefined) {
+      this.content = await this.context.$yamlFetcherService.loadYaml('br/observatorios')
+    }
+    this.observatories = this.content.observatorios
   }
 
-  setBackgroundImages (content) {
-    this.background_images = content.background_images
-    return this.background_images
+  async setBackgroundImages () {
+    if (this.content == null || this.content == undefined) {
+      this.content = await this.context.$yamlFetcherService.loadYaml('br/observatorios')
+    }
+    this.background_images = this.content.background_images
   }
 
-  setSections (content) {
-    this.sections = content.secoes
-    return this.sections
+  async setSections () {
+    if (this.content == null || this.content == undefined) {
+      this.content = await this.context.$yamlFetcherService.loadYaml('br/observatorios')
+    }
+    this.sections = this.content.secoes
   }
 
-  setFooter (content) {
-    this.footer = content.rodape
-    return this.footer
+  async setFooter () {
+    if (this.content == null || this.content == undefined) {
+      await this.setContent()
+    }
+    this.footer = this.content.rodape
   }
 
   async getContent () {
     if (this.content == null || this.content == undefined) {
-      this.content = await this.context.$yamlFetcherService.loadYaml('br/observatorios')
+      await this.setContent()
     }
     return this.content
   }
 
   async getBackgroundImages () {
     if (this.background_images == null || this.background_images == undefined) {
-      this.content = await this.getContent()
-      this.background_images = this.content.background_images
+      await this.setBackgroundImages()
     }
     return this.background_images
   }
 
   async getObservatories () {
     if (this.observatories == null || this.observatories == undefined) {
-      this.content = await this.getContent()
-      this.observatories = this.content.observatorios
+      await this.setObservatories()
     }
     return this.observatories
   }
 
   async getSections () {
     if (this.sections == null || this.sections == undefined) {
-      this.content = await this.getContent()
-      this.sections = this.content.secoes
+      await this.setSections()
     }
     return this.sections
   }
 
   async getFooter () {
     if (this.footer == null || this.footer == undefined) {
-      this.content = await this.getContent()
-      this.footer = this.content.rodape
+      await this.setFooter()
     }
     return this.footer
   }
