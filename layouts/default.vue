@@ -209,7 +209,7 @@
                 <v-list-tile-action style="min-width: 120px">
                   <v-layout row>
                     <v-layout
-                      v-for="(search_item, indxSearch) in $observatories.getObservatories()"
+                      v-for="(search_item, indxSearch) in observatorios"
                       :key="'search_item_obs_' + indxSearch"
                       @click="changeAnalysisUnit($router, data.item, search_item.id)"
                     >
@@ -445,77 +445,15 @@
             wrap
           >
             <img
-              src="/smartlab/mpt-extended.svg"
-              class="cursor-pointer mr-2"
-              alt="Ministério Público do Trabalho"
-              height="40px"
-              @click="$navigationManager.pushRoute($router, 'https://mpt.mp.br', true)"
-            >
-            <img
-              src="/smartlab/oit.png"
-              class="cursor-pointer mr-2 ml-2"
-              alt="Organização Internacional do Trabalho"
-              height="40px"
-              @click="$navigationManager.pushRoute($router, 'https://ilo.org', true)"
-            >
-            <!-- <img
-              src="/smartlab/sit.png"
-              class="cursor-pointer mb-1 ml-2"
-              alt="Subsecretaria de Inspeção do Trabalho"
-              height="40px"
-              @click="$navigationManager.pushRoute($router, 'https://www.gov.br/trabalho/pt-br/inspecao', true)"
-            /> -->
-            <img
-              src="/smartlab/cnmp.svg"
-              class="cursor-pointer mb-1 ml-2"
-              alt="Conselho Nacional do Ministério Público"
-              max-height="80%"
-              min-height="50%"
-              @click="$navigationManager.pushRoute($router, 'http://cnmp.mp.br', true)"
-            >
-            <!-- <img
-              src="/smartlab/mdh.png"
-              class="cursor-pointer mr-2 ml-2"
-              alt="Ouvidoria Nacional dos Direitos Humanos"
-              height="50px"
-              @click="$navigationManager.pushRoute($router, 'https://ouvidoria.mdh.gov.br/portal', true)"
-            /> -->
-            <img
-              src="/smartlab/fnpeti.svg"
-              class="cursor-pointer mb-1 ml-0"
-              alt="Fórum Nacional de Prevenção e Erradicação do Trabalho Infantil"
-              max-height="80%"
-              min-height="50%"
-              @click="$navigationManager.pushRoute($router, 'https://fnpeti.org.br', true)"
-            >
-            <img
-              src="/smartlab/ibge.png"
-              class="cursor-pointer mb-1 ml-0"
-              alt="Instituto Brasileiro de Geografia e Estatística"
-              height="50px"
-              @click="$navigationManager.pushRoute($router, 'http:///ibge.gov.br', true)"
-            >
-            <!-- <img
-              src="/smartlab/mcidadania.png"
-              class="cursor-pointer mb-1 ml-0"
-              alt="Ministério da Cidadania"
-              height="50px"
-              @click="$navigationManager.pushRoute($router, 'https://www.gov.br/cidadania/pt-br', true)"
-            /> -->
-            <img
-              src="/smartlab/pacto.svg"
-              class="cursor-pointer mb-1 ml-0"
-              alt="Pacto Global - Rede Brasil"
-              max-height="80%"
-              min-height="50%"
-              @click="$navigationManager.pushRoute($router, 'https://www.pactoglobal.org.br', true)"
-            >
-            <img
-              src="/smartlab/onumulheres.svg"
-              class="cursor-pointer ml-2"
-              alt="ONU Mulheres"
-              height="20px"
-              @click="$navigationManager.pushRoute($router, 'http://www.onumulheres.org.br/', true)"
+              v-for="(footerImg, footerImgIndex) in footerImages"
+              :key="footerImgIndex"
+              :src="footerImg.src"
+              :class="footerImg.class"
+              :alt="footerImg.title"
+              :height="footerImg.height ? footerImg.height : ''"
+              :max-height="footerImg.maxHeight ? footerImg.maxHeight : ''"
+              :min-height="footerImg.minHeight ? footerImg.minHeight : ''"
+              @click="$navigationManager.pushRoute($router, footerImg.url, true)"
             >
           </v-layout>
           <v-layout
@@ -523,10 +461,8 @@
             justify-center
             wrap
             class="footer-colab-text"
-          >
-            Colaboração e apoio:<br>
-            Subsecretaria de Inspeção do Trabalho (SIT) da Secretaria de Trabalho (STRAB) - Ministério do Trabalho e Previdência (MTP), <br>Ministério da Cidadania (MC), Ministério da Mulher, da Família e dos Direitos Humanos (MMFDH), Ouvidoria Nacional dos Direitos Humanos (ONDH)
-          </v-layout>
+            v-html="footerText"
+          ></v-layout>
         </v-flex>
         <v-flex
           class="xs6 sm6 md6 lg1 xl3 text-md-left text-lg-center subheading"
@@ -940,6 +876,8 @@ export default {
       hintAutocomplete: '',
       currentAnalysisUnit: null,
       observatorios: null,
+      footerText: null,
+      footerImages: [],
       currentObs: null,
       dim: { label: null },
       userData: { additionalInformation: {} },
@@ -1045,22 +983,6 @@ export default {
       }
       return null
     },
-    // computedMiddleTitle: function() {
-    //   if (this.$route.path.includes('localidade')) {
-    //     if (this.miniTitle) {
-    //       return this.middleToolbar;
-    //     }
-    //   }
-    //   return '';
-    // },
-    // computedMiddleSubtitle: function() {
-    //   if (this.$route.path.includes('localidade')) {
-    //     if (this.miniTitle) {
-    //       return this.middleToolbarSubtitle;
-    //     }
-    //   }
-    //   return '';
-    // },
     computedSearchItemsMunicipio: function () {
       const items = this.auOptions
       return items.filter(function (el) {
@@ -1141,14 +1063,11 @@ export default {
       this.changeMiddleToolbar(params)
     })
 
-    const tmpObs = this.$observatories.getObservatories()
-    if (tmpObs instanceof Promise) {
-      tmpObs.then((result) => {
-        this.observatorios = result
-      })
-    } else {
-      this.observatorios = tmpObs
-    }
+    this.$observatories.getContent().then((content) => {
+      this.observatorios = content.observatorios
+      this.footerText = content.rodape.apoio
+      this.footerImages = content.rodape.imagens
+    })
 
     this.dim = { label: null }
     this.currentObs = this.$observatories.identifyObservatory(this.$route.path.split('/')[1])

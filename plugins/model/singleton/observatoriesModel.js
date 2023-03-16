@@ -7,52 +7,71 @@ export class ObservatoriesModel {
     this.context = context
   }
 
-  setObservatories (content) {
-    this.observatories = content.observatorios
-    return this.observatories
+  async setContent () {
+    this.content = await this.context.$yamlFetcherService.loadYaml('br/observatorios')
   }
 
-  setBackgroundImages (content) {
-    this.background_images = content.background_images
+  async setObservatories () {
+    if (this.content == null || this.content == undefined) {
+      this.content = await this.context.$yamlFetcherService.loadYaml('br/observatorios')
+    }
+    this.observatories = this.content.observatorios
+  }
+
+  async setBackgroundImages () {
+    if (this.content == null || this.content == undefined) {
+      this.content = await this.context.$yamlFetcherService.loadYaml('br/observatorios')
+    }
+    this.background_images = this.content.background_images
+  }
+
+  async setSections () {
+    if (this.content == null || this.content == undefined) {
+      this.content = await this.context.$yamlFetcherService.loadYaml('br/observatorios')
+    }
+    this.sections = this.content.secoes
+  }
+
+  async setFooter () {
+    if (this.content == null || this.content == undefined) {
+      await this.setContent()
+    }
+    this.footer = this.content.rodape
+  }
+
+  async getContent () {
+    if (this.content == null || this.content == undefined) {
+      await this.setContent()
+    }
+    return this.content
+  }
+
+  async getBackgroundImages () {
+    if (this.background_images == null || this.background_images == undefined) {
+      await this.setBackgroundImages()
+    }
     return this.background_images
   }
 
-  setSections (content) {
-    this.sections = content.secoes
+  async getObservatories () {
+    if (this.observatories == null || this.observatories == undefined) {
+      await this.setObservatories()
+    }
+    return this.observatories
+  }
+
+  async getSections () {
+    if (this.sections == null || this.sections == undefined) {
+      await this.setSections()
+    }
     return this.sections
   }
 
-  getBackgroundImages () {
-    if (this.background_images == null && this.background_images == undefined) { // Start loading only once
-      return this.context.$yamlFetcherService.loadYaml('br/observatorios')
-        .then((result) => {
-          return this.setBackgroundImages(result)
-        })
-    } else {
-      return this.background_images
+  async getFooter () {
+    if (this.footer == null || this.footer == undefined) {
+      await this.setFooter()
     }
-  }
-
-  getObservatories () {
-    if (this.observatories == null && this.observatories == undefined) { // Start loading only once
-      return this.context.$yamlFetcherService.loadYaml('br/observatorios')
-        .then((result) => {
-          return this.setObservatories(result)
-        })
-    } else {
-      return this.observatories
-    }
-  }
-
-  getSections () {
-    if (this.section == null && this.section == undefined) { // Start loading only once
-      return this.context.$yamlFetcherService.loadYaml('br/observatorios')
-        .then((result) => {
-          return this.setSections(result)
-        })
-    } else {
-      return this.sections
-    }
+    return this.footer
   }
 
   getObservatoryById (id) {
