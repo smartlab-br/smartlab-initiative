@@ -9,33 +9,9 @@ export class ObservatoriesModel {
 
   async setContent () {
     this.content = await this.context.$yamlFetcherService.loadYaml('br/observatorios')
-  }
-
-  async setObservatories () {
-    if (this.content == null || this.content == undefined) {
-      this.content = await this.context.$yamlFetcherService.loadYaml('br/observatorios')
-    }
     this.observatories = this.content.observatorios
-  }
-
-  async setBackgroundImages () {
-    if (this.content == null || this.content == undefined) {
-      this.content = await this.context.$yamlFetcherService.loadYaml('br/observatorios')
-    }
     this.background_images = this.content.background_images
-  }
-
-  async setSections () {
-    if (this.content == null || this.content == undefined) {
-      this.content = await this.context.$yamlFetcherService.loadYaml('br/observatorios')
-    }
     this.sections = this.content.secoes
-  }
-
-  async setFooter () {
-    if (this.content == null || this.content == undefined) {
-      await this.setContent()
-    }
     this.footer = this.content.rodape
   }
 
@@ -48,28 +24,28 @@ export class ObservatoriesModel {
 
   async getBackgroundImages () {
     if (this.background_images == null || this.background_images == undefined) {
-      await this.setBackgroundImages()
+      await this.setContent()
     }
     return this.background_images
   }
 
   async getObservatories () {
     if (this.observatories == null || this.observatories == undefined) {
-      await this.setObservatories()
+      await this.setContent()
     }
     return this.observatories
   }
 
   async getSections () {
     if (this.sections == null || this.sections == undefined) {
-      await this.setSections()
+      await this.setContent()
     }
     return this.sections
   }
 
   async getFooter () {
     if (this.footer == null || this.footer == undefined) {
-      await this.setFooter()
+      await this.setContent()
     }
     return this.footer
   }
