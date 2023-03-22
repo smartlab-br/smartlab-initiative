@@ -88,6 +88,17 @@ export default {
     transpile: ['vuetify'],
     plugins: [new VuetifyLoaderPlugin()],
     babel: { compact: true },
+    parallel: true,
+    watch: [
+      '~/assets/**',
+      '~/components/**',
+      '~/pages/**',
+      '~/plugins/**',
+      '~/router/**',
+      '~/scirpts/**',
+      '~/server-middleware/**',
+      '~/static/**'
+    ],
     extend (config, { isClient, isDev }) {
       // Extend only webpack config for client-bundle
       if (isClient && isDev) {

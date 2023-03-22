@@ -11,7 +11,8 @@
     "lint:fix": "eslint --fix \"**/*.{js,vue}\"",
     "lint:quiet": "eslint --quiet \"**/*.{js,vue}\"",
     "lint": "eslint \"**/*.{js,vue}\"",
-    "test": "jest"
+    "test": "jest",
+    "viewconf": "run='static/smartlab-initiative-viewconf/run.py'; if [ -f $run ]; then $run; else echo $run not found!; fi"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.2.1",
