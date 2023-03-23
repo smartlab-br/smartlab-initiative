@@ -269,7 +269,9 @@ export default {
       fromSource: for (const row of sourceDS) {
         if (row[sourceStructure.series_field] == undefined) {
           const mun_row = hierarchicalDS.find(reg => reg[sourceStructure.id_field] === row[sourceStructure.id_field])
-          Object.assign(mun_row, row)
+          if (mun_row) {
+            Object.assign(mun_row, row)
+          }
         } else {
           if (!allSeries.includes(row[sourceStructure.series_field])) { // new series
             allSeries.push(row[sourceStructure.series_field])
