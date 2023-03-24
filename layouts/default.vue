@@ -444,21 +444,27 @@
             justify-center
             wrap
           >
-            <v-layout
+            <v-flex
+              xs12
+              offset-xl1
+              xl11
+              text-xs-left
               class="footer-colab-text"
               v-html="footerTitle"
             />
-            <img
-              v-for="(footerImg, footerImgIndex) in footerImages"
-              :key="footerImgIndex"
-              :src="footerImg.src"
-              :class="footerImg.class"
-              :alt="footerImg.title"
-              :height="footerImg.height ? footerImg.height : ''"
-              :max-height="footerImg.maxHeight ? footerImg.maxHeight : ''"
-              :min-height="footerImg.minHeight ? footerImg.minHeight : ''"
-              @click="$navigationManager.pushRoute($router, footerImg.url, true)"
-            >
+            <v-flex>
+              <img
+                v-for="(footerImg, footerImgIndex) in footerImages"
+                :key="footerImgIndex"
+                :src="footerImg.src"
+                :class="footerImg.class"
+                :alt="footerImg.title"
+                :height="footerImg.height ? footerImg.height : ''"
+                :max-height="footerImg.maxHeight ? footerImg.maxHeight : ''"
+                :min-height="footerImg.minHeight ? footerImg.minHeight : ''"
+                @click="$navigationManager.pushRoute($router, footerImg.url, true)"
+              >
+            </v-flex>
           </v-layout>
           <v-layout
             align-center
