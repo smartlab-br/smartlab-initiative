@@ -444,17 +444,27 @@
             justify-center
             wrap
           >
-            <img
-              v-for="(footerImg, footerImgIndex) in footerImages"
-              :key="footerImgIndex"
-              :src="footerImg.src"
-              :class="footerImg.class"
-              :alt="footerImg.title"
-              :height="footerImg.height ? footerImg.height : ''"
-              :max-height="footerImg.maxHeight ? footerImg.maxHeight : ''"
-              :min-height="footerImg.minHeight ? footerImg.minHeight : ''"
-              @click="$navigationManager.pushRoute($router, footerImg.url, true)"
-            >
+            <v-flex
+              xs12
+              offset-xl1
+              xl11
+              text-xs-left
+              class="footer-colab-text"
+              v-html="footerTitle"
+            />
+            <v-flex>
+              <img
+                v-for="(footerImg, footerImgIndex) in footerImages"
+                :key="footerImgIndex"
+                :src="footerImg.src"
+                :class="footerImg.class"
+                :alt="footerImg.title"
+                :height="footerImg.height ? footerImg.height : ''"
+                :max-height="footerImg.maxHeight ? footerImg.maxHeight : ''"
+                :min-height="footerImg.minHeight ? footerImg.minHeight : ''"
+                @click="$navigationManager.pushRoute($router, footerImg.url, true)"
+              >
+            </v-flex>
           </v-layout>
           <v-layout
             align-center
@@ -878,6 +888,7 @@ export default {
       currentAnalysisUnit: null,
       observatorios: null,
       footerText: null,
+      footerTitle: null,
       footerImages: [],
       currentObs: null,
       dim: { label: null },
@@ -1066,6 +1077,7 @@ export default {
 
     this.$observatories.getContent().then((content) => {
       this.observatorios = content.observatorios
+      this.footerTitle = content.rodape.titulo
       this.footerText = content.rodape.apoio
       this.footerImages = content.rodape.imagens
     })
