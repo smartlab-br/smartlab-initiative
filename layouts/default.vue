@@ -444,6 +444,10 @@
             justify-center
             wrap
           >
+            <v-layout
+              class="footer-colab-text"
+              v-html="footerTitle"
+            />
             <img
               v-for="(footerImg, footerImgIndex) in footerImages"
               :key="footerImgIndex"
@@ -878,6 +882,7 @@ export default {
       currentAnalysisUnit: null,
       observatorios: null,
       footerText: null,
+      footerTitle: null,
       footerImages: [],
       currentObs: null,
       dim: { label: null },
@@ -1066,6 +1071,7 @@ export default {
 
     this.$observatories.getContent().then((content) => {
       this.observatorios = content.observatorios
+      this.footerTitle = content.rodape.titulo
       this.footerText = content.rodape.apoio
       this.footerImages = content.rodape.imagens
     })
