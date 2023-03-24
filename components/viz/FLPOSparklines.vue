@@ -454,7 +454,7 @@ export default {
               row['fmt_last_rate_' + series_value] = 'de 0 para ' + this.$numberTransformService.formatNumber(last_year_value, 'inteiro')
               row['last_rate_' + series_value] = null
             } else {
-              row['fmt_last_rate_' + series_value] = 'sem incidência'
+              row['fmt_last_rate_' + series_value] = 'sem dados'
               row['last_rate_' + series_value] = null
             }
           } else {
@@ -483,7 +483,7 @@ export default {
           return 'red--text'
         } else if (value.substr(0, 1) == '-' || value.endsWith('para 0')) {
           return 'orange--text text--darken-1'
-        } else if (value == 'sem incidência') {
+        } else if (value == 'sem dados') {
           return 'grey--text'
         }
       } else if (columnField.startsWith('last_rate_')) {
