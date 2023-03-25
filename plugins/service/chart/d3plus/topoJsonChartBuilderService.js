@@ -130,19 +130,20 @@ class TopoJsonChartBuilderService extends D3PlusChartBuilderService {
       .topojsonId((t) => { return t.properties[options.topo_key] })
       .detectResize(true)
 
-    let clickedPlace = ''
+    let currentPlace = ''
     const hasTouch = this.hasTouch
     if (options.clickable) {
       viz = viz.on('click', function (d) {
-        if (clickedPlace == d[options.id_field] || !hasTouch()) {
+        const clickedKey = d[options.id_field] !== undefined ? d[options.id_field] : d.properties[options.topo_key]
+        if (currentPlace == clickedKey || !hasTouch()) {
           if (this._tooltip) { this._tooltipClass.data([]).render() }
           if (additionalOptions.navigate) {
             const args = additionalOptions.navigate.openingArgs ? additionalOptions.navigate.openingArgs : []
-            args.push(String(d[options.id_field]))
+            args.push(String(clickedKey))
             if (additionalOptions.navigate.fnNav) { additionalOptions.navigate.fnNav.apply(additionalOptions.context, args) }
           }
         }
-        clickedPlace = d[options.id_field]
+        currentPlace = clickedKey
       })
     }
     return grafico
