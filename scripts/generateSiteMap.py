@@ -31,6 +31,10 @@ def get_indicator(datasource, cd_indicador):
         url = f"{api_url}/{datasource}?categorias=spai_ds&filtros=eq-cd_indicador_spai-'{cd_indicador}'&limit=1"
         response = requests.get(url, headers = headers).json()
         return response['dataset'][0]['spai_ds']
+    elif not datasource.startswith('indicadores') :
+        url = f"{api_url}/thematic/{datasource}?categorias=ds_indicador&filtros=eq-cd_indicador-'{cd_indicador}'&limit=1"
+        response = requests.get(url, headers = headers).json()
+        return response['dataset'][0]['ds_indicador']
     else:
         url = f"{api_url}/{datasource}?categorias=ds_indicador&filtros=eq-cd_indicador-'{cd_indicador}'&limit=1"
         response = requests.get(url, headers = headers).json()
