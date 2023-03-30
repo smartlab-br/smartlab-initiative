@@ -6,7 +6,7 @@ export class YamlFetcherService {
   }
 
   getBasePath () {
-    if (this.context.$config.gitViewConfUrl) { return this.context.$config.gitViewConfUrl }
+    if (this.context.$config.gitViewConfUrl) { return '/viewconf/' }
     return '/smartlab-initiative-viewconf/'
   }
 

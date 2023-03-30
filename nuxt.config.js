@@ -106,7 +106,12 @@ export default {
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
-    baseURL: 'http://localhost:3000' // Used as fallback if no runtime config is provided
+    baseURL: 'http://localhost:3000', // Used as fallback if no runtime config is provided
+    proxy: true
+  },
+
+  proxy: {
+    '/viewconf/': { target: process.env.GIT_VIEWCONF_TAG_URL, pathRewrite: { '^/viewconf/': '' } }
   },
 
   privateRuntimeConfig: {
