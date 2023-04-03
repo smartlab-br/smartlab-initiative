@@ -435,7 +435,6 @@ export default {
       return url.toString().replace('http://temp.com', '')
     }
 
-
   }
 }
 </script>
