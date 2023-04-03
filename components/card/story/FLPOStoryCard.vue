@@ -484,11 +484,11 @@ export default {
             }
             const filters = this.getFilters()
             if (!Array.isArray(apiUrl)) {
-              endpoint = apiUrl + filters
+              endpoint = this.updateUrlFilters(apiUrl, filters)
             } else {
               endpoint = []
               for (const item of apiUrl) {
-                endpoint.push(item + filters)
+                endpoint.push(this.updateUrlFilters(item, filters))
               }
             }
 
@@ -542,11 +542,11 @@ export default {
       if (payload.rules.filter) {
         const filters = this.getFilters()
         if (!Array.isArray(apiUrl)) {
-          endpoint = apiUrl + filters
+          endpoint = this.updateUrlFilters(apiUrl, filters)
         } else {
           endpoint = []
           for (const item of apiUrl) {
-            endpoint.push(item + filters)
+            endpoint.push(this.updateUrlFilters(item, filters))
           }
         }
         if (this.structure.chart_options) {

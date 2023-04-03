@@ -422,7 +422,19 @@ export default {
             }
           })
       }
+    },
+
+    updateUrlFilters (urlString, filters) {
+      const url = new URL('http://temp.com' + urlString)
+      const urlFiltros = url.searchParams.get('filtros')
+      if (urlFiltros === null) {
+        url.searchParams.append('filtros', filters.substring(5))
+      } else {
+        url.searchParams.set('filtros', urlFiltros + filters)
+      }
+      return url.toString().replace('http://temp.com', '')
     }
+
 
   }
 }
