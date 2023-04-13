@@ -433,6 +433,9 @@ export default {
       } else {
         url.set('filtros', urlFiltros + filters)
       }
+      if (url.get('filtros') === '') {
+        url.delete('filtros')
+      }
       return decodeURIComponent(url.toString())
     }
 
