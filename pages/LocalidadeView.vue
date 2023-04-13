@@ -489,7 +489,7 @@ export default {
             }
           }
           // return "Mais de " + bins[bins.length-1].toLocaleString('pt-br', {maximumFractionDigits: 0});
-          return value.toLocaleString('pt-br', { maximumFractionDigits: 0 })
+          return value
         },
         get_bin_faixa_etaria: function (d, age_prop) {
           if (d[age_prop] <= 17) { return '01' } // < 18
