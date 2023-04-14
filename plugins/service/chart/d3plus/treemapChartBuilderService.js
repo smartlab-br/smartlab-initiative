@@ -59,9 +59,9 @@ class TreemapChartBuilderService extends D3PlusChartBuilderService {
           if (options.colorScale) {
             if (options.colorScale.type == 'categorical') {
               viz = viz.colorScale(options.id)
-            } else if (options.last_values_array) {
+            } else if (options.last_categories_array) {
               viz = viz.colorScale((d) => {
-                if (options.last_values_array.includes(d[options.id])) {
+                if (options.last_categories_array.includes(d[options.id])) {
                   return 0
                 }
                 return d[options.size]
@@ -95,12 +95,12 @@ class TreemapChartBuilderService extends D3PlusChartBuilderService {
       viz = viz.groupBy(options.id)
     }
 
-    if (options.last_values_array) {
+    if (options.last_categories_array) {
       viz = viz.sort((a, b) => {
-        if (options.last_values_array.includes(a.data.key)) {
+        if (options.last_categories_array.includes(a.data.key)) {
           return 1
         }
-        if (options.last_values_array.includes(b.data.key)) {
+        if (options.last_categories_array.includes(b.data.key)) {
           return -1
         }
         return b.value - a.value
