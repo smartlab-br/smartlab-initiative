@@ -519,7 +519,15 @@ export default {
           // if (this.customFilters.radioApi){
           //   apiUrl = this.customFilters.radioApi;
           // }
-          endpoint = apiUrl + this.getFilters()
+          const filters = this.getFilters()
+          if (!Array.isArray(apiUrl)) {
+            endpoint = this.updateUrlFilters(apiUrl, filters)
+          } else {
+            endpoint = []
+            for (const item of apiUrl) {
+              endpoint.push(this.updateUrlFilters(item, filters))
+            }
+          }
           eachChart.options.filterText = this.customFilters.filterText
         } else {
           endpoint = this.$textTransformService.applyInterpol(payload.rules.api, this.customParams, this.customFunctions, this.customFilters)

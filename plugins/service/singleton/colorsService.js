@@ -173,7 +173,7 @@ export class ColorsService {
 
   getThemeFromId (id) {
     if (id) {
-      return this._themeLibrary[id] ? Object.assign({}, this._themeLibrary[id]) : null
+      return Object.assign({}, this._themeLibrary[id] ? this._themeLibrary[id] : this._themeLibrary.default)
     } else {
       return Object.assign({}, this._themeLibrary.default)
     }

@@ -9,7 +9,7 @@ export class ObservatoriesModel {
 
   async setContent () {
     this.content = await this.context.$yamlFetcherService.loadYaml('br/observatorios')
-    this.observatories = this.content.observatorios
+    this.observatories = this.content.observatorios.filter(obs => !obs.external)
     this.background_images = this.content.background_images
     this.sections = this.content.secoes
     this.footer = this.content.rodape

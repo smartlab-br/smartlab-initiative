@@ -39,9 +39,9 @@
           </v-layout>
           <div />
         </v-flex>
-        <v-layout v-show="observatorios" px-5 :class="{'justify-center': $vuetify.breakpoint.xlOnly }" row wrap>
+        <v-layout v-show="observatoriosLinks" px-5 :class="{'justify-center': $vuetify.breakpoint.xlOnly }" row wrap>
           <v-flex
-            v-for="(observatorio, indxObs) in observatorios"
+            v-for="(observatorio, indxObs) in observatoriosLinks"
             :key="'linked_card_obs_' + indxObs"
             :class="obsSliceClass"
             pa-3
@@ -176,6 +176,7 @@ export default {
       readMoreLimit: 437,
 
       observatorios: null,
+      observatoriosLinks: null,
       obsSlice: 0,
       obsSliceSize: 2,
       obsSliceClass: 'xs12 sm6 md4 xl2',
@@ -196,7 +197,8 @@ export default {
   },
   created () {
     this.$observatories.getContent().then((content) => {
-      this.observatorios = content.observatorios
+      this.observatorios = content.observatorios.filter(obs => !obs.external)
+      this.observatoriosLinks = content.observatorios
       this.secoes = content.secoes
       this.background_images = content.background_images
       this.parallaxFile = this.background_images[this.idParallaxfile]
