@@ -427,14 +427,13 @@ export default {
     updateUrlFilters (urlString, filters) {
       const url = new URLSearchParams(urlString)
       const urlFiltros = url.get('filtros')
-      if (urlFiltros === null) {
-        // sem filtros, retira ',and,' do início
-        url.append('filtros', filters.substring(5))
-      } else {
-        url.set('filtros', urlFiltros + filters)
-      }
-      if (url.get('filtros') === '') {
-        url.delete('filtros')
+      if (filters !== '') {
+        if (urlFiltros === null) {
+          // sem filtros, retira ',and,' do início
+          url.append('filtros', filters.substring(5))
+        } else {
+          url.set('filtros', urlFiltros + filters)
+        }
       }
       return decodeURIComponent(url.toString())
     }
