@@ -42,7 +42,11 @@ export class TextTransformService {
             continue
           } else if (struct.args[indx].named_prop) {
             if (base_object) {
-              iterArg = base_object[struct.args[indx].named_prop]
+              if (!Array.isArray(base_object)) {
+                iterArg = base_object[struct.args[indx].named_prop]
+              } else {
+                iterArg = base_object[0][struct.args[indx].named_prop]
+              }
             }
             if (iterArg === null || iterArg === undefined) {
               if (struct.args[indx].base_object) {
