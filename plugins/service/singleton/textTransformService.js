@@ -44,7 +44,7 @@ export class TextTransformService {
             if (base_object) {
               if (!Array.isArray(base_object)) {
                 iterArg = base_object[struct.args[indx].named_prop]
-              } else {
+              } else if (base_object.length > 0) {
                 iterArg = base_object[0][struct.args[indx].named_prop]
               }
             }
