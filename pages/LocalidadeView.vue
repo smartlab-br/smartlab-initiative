@@ -474,7 +474,7 @@ export default {
           }
           return d[prop_val]
         },
-        get_bin: function (d, value, bins = [10, 50, 100, 500]) {
+        get_bin: function (d, value, bins = [10, 50, 100, 500], decimal = 0) {
           // [10,50,100,500,1000,2000,5000,10000,20000,40000,50000]
           if (value == 0) {
             return 'Nenhum'
@@ -482,9 +482,9 @@ export default {
           for (const i in bins) {
             if (value <= bins[i]) {
               if (i == 0) {
-                return 'Até ' + bins[i].toLocaleString('pt-br', { maximumFractionDigits: 0 })
+                return 'Até ' + bins[i].toLocaleString('pt-br', { maximumFractionDigits: decimal })
               } else {
-                return 'De ' + (bins[i - 1] + 1).toLocaleString('pt-br', { maximumFractionDigits: 0 }) + ' a ' + bins[i].toLocaleString('pt-br', { maximumFractionDigits: 0 })
+                return 'De ' + (bins[i - 1] + (1 * (decimal === 0 ? 1 : (1 / (10 ** decimal))))).toLocaleString('pt-br', { maximumFractionDigits: decimal }) + ' a ' + bins[i].toLocaleString('pt-br', { maximumFractionDigits: decimal })
               }
             }
           }
