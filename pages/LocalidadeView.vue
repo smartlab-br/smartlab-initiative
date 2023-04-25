@@ -601,6 +601,7 @@ export default {
         calc_subtraction_ds: function (d, a, b) { return a - b },
         calc_addition_ids_ds: function (d, a, b, multiplier = 10000000) { return a * multiplier + b },
         calc_multiplication_ds: function (d, a, b) { return a * b },
+        calc_percentage_ds: function (d, parte, total) { return parte / total * 100 },
         calc_addition: function (a, b) { return a + b },
         calc_percentage: function (parte, total) { return parte / total * 100 },
         calc_percentage_val1: function (val1, val2) { return val1 / (val1 + val2) * 100 },
