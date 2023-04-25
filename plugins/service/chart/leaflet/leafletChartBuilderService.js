@@ -48,7 +48,7 @@ class LeafletChartBuilderService extends GeneralChartBuilderService {
     if (options.colorArray === null || options.colorArray === undefined) { options.colorArray = this.d3chrom.schemeDark2 }
 
     const leaflet_map = this.L.map(containerId).setView([-15.793889, -47.882778], 5)
-    leaflet_map.options.minZoom = 4
+    leaflet_map.options.minZoom = options.minZoom ? options.minZoom : 4
 
     let bounds
     if (additionalOptions.limCoords) {

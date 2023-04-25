@@ -378,6 +378,19 @@ if (!Vue.__viewConfReader__) {
             dataset = this.$indicatorsModel.getMinMaxEachIndicator(dataset, minmax_field)
           }
 
+          // Adiciona o total de um campo a todas as linhas do dataset
+          if (reformOptions.recalc_sum) {
+            const sum_field = (reformOptions.sum_field) ? reformOptions.sum_field : 'vl_indicador'
+            let sum = 0
+            for (const eachRow of dataset) {
+              sum += eachRow[sum_field]
+            }
+            const nuField = 'sum_' + sum_field
+            for (const eachRow of dataset) {
+              eachRow[nuField] = sum
+            }
+          }
+
           if (reformOptions.combine) {
             dataset = dataset.concat(this.$indicatorsModel.combineIndicators(dataset, reformOptions.combine, customFunctions, reformOptions.place_id_field))
 
