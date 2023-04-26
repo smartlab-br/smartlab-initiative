@@ -380,7 +380,7 @@ if (!Vue.__viewConfReader__) {
 
           // Adiciona o total de um campo a todas as linhas do dataset
           if (reformOptions.recalc_sum) {
-            const sum_field = (reformOptions.sum_field) ? reformOptions.sum_field : 'vl_indicador'
+            const sum_field = (reformOptions.recalc_sum.sum_field) ? reformOptions.recalc_sum.sum_field : 'vl_indicador'
             let sum = 0
             for (const eachRow of dataset) {
               sum += eachRow[sum_field]
