@@ -515,6 +515,11 @@ export default {
           if (d[age_prop] <= 59) { return '55-59' }
           return '> 60'
         },
+        get_frequencia_fluxo: function (d, quantidade) {
+          if (quantidade <= 10) { return 'Baixa Frequència' } // <= 10
+          if (quantidade <= 30) { return 'Média Frequència' } // 11-30
+          return 'Alta Frequência' // > 30
+        },
         get_detail_value: function (d, class_indicador = '', value = null, rank_br = null, rank_uf = null, media_br = null, media_uf = null) {
           let detail = ''
           let imgColorBR = 'grey'
