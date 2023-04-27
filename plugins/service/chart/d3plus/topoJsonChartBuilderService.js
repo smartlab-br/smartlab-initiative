@@ -167,7 +167,18 @@ class TopoJsonChartBuilderService extends D3PlusChartBuilderService {
         labelConfig: { fontFamily: additionalOptions.fontFamily ? additionalOptions.fontFamily : this._fontFamily },
         Path: {
           fillOpacity: 0.9,
-          strokeWidth: function (d) { return (additionalOptions.idAU !== null && additionalOptions.idAU !== undefined && (d[options.id_field] == additionalOptions.idAU || (d.properties && d.properties[options.topo_key] == additionalOptions.idAU))) ? 5 : 0.2 },
+          strokeWidth: function (d) {
+            if (additionalOptions.idAU !== null && additionalOptions.idAU !== undefined &&
+                (
+                  (d[options.id_field] && d[options.id_field].toString() == additionalOptions.idAU.substring(0, d[options.id_field].toString().length)) ||
+                  (d.properties && d.properties[options.topo_key].toString() == additionalOptions.idAU.substring(0, d.properties[options.topo_key].toString().length))
+                )
+            ) {
+              return 5
+            } else {
+              return 0.2
+            }
+          },
           stroke: 'black'
         }
       })
