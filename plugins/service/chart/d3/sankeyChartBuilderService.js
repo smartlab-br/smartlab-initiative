@@ -6,11 +6,11 @@ class SankeyChartBuilderService {
   }
 
   generateChart (containerId, dataset, options, additionalOptions) {
-    const sankey_data = additionalOptions.metadata.sankey_data
+    const sankey_data = (additionalOptions.metadata && additionalOptions.metadata.sankey_data) ? additionalOptions.metadata.sankey_data : null
     let sankey_nodes = []
     let sankey_links = []
     const flags = []
-    if (sankey_data == undefined || sankey_data == null) {
+    if (sankey_data === undefined || sankey_data === null) {
       const source_field = options.source_field ? options.source_field : 'source'
       const target_field = options.target_field ? options.target_field : 'target'
       const value_field = options.value_field ? options.value_field : 'agr_count'
@@ -27,8 +27,8 @@ class SankeyChartBuilderService {
         }
       }
     } else {
-      sankey_nodes = additionalOptions.metadata.sankey_data.nodes
-      sankey_links = additionalOptions.metadata.sankey_data.links
+      sankey_nodes = sankey_data.nodes
+      sankey_links = sankey_data.links
     }
     if (sankey_nodes.length > 0) {
       const lns = sankey_links.map((obj) => {
@@ -92,8 +92,13 @@ class SankeyChartBuilderService {
         .style('stroke', '#000')
         .style('stroke-opacity', '.2')
 
-      link.append('title')
-        .text(d => `${d.source.id} → ${d.target.id}\n${d.value.toLocaleString()}`)
+      if (options.hide_value) {
+        link.append('title')
+          .text(d => `${d.source.id} → ${d.target.id}`)
+      } else {
+        link.append('title')
+          .text(d => `${d.source.id} → ${d.target.id}\n${d.value.toLocaleString()}`)
+      }
 
       svg.append('g')
         .style('font', '10px sans-serif')

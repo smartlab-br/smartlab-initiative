@@ -474,7 +474,7 @@ export default {
           }
           return d[prop_val]
         },
-        get_bin: function (d, value, bins = [10, 50, 100, 500]) {
+        get_bin: function (d, value, bins = [10, 50, 100, 500], decimal = 0) {
           // [10,50,100,500,1000,2000,5000,10000,20000,40000,50000]
           if (value == 0) {
             return 'Nenhum'
@@ -482,9 +482,9 @@ export default {
           for (const i in bins) {
             if (value <= bins[i]) {
               if (i == 0) {
-                return 'Até ' + bins[i].toLocaleString('pt-br', { maximumFractionDigits: 0 })
+                return 'Até ' + bins[i].toLocaleString('pt-br', { maximumFractionDigits: decimal })
               } else {
-                return 'De ' + (bins[i - 1] + 1).toLocaleString('pt-br', { maximumFractionDigits: 0 }) + ' a ' + bins[i].toLocaleString('pt-br', { maximumFractionDigits: 0 })
+                return 'De ' + (bins[i - 1] + (1 * (decimal === 0 ? 1 : (1 / (10 ** decimal))))).toLocaleString('pt-br', { maximumFractionDigits: decimal }) + ' a ' + bins[i].toLocaleString('pt-br', { maximumFractionDigits: decimal })
               }
             }
           }
@@ -514,6 +514,11 @@ export default {
           if (d[age_prop] <= 54) { return '50-54' }
           if (d[age_prop] <= 59) { return '55-59' }
           return '> 60'
+        },
+        get_frequencia_fluxo: function (d, quantidade) {
+          if (quantidade <= 10) { return 'Baixa Frequència' } // <= 10
+          if (quantidade <= 30) { return 'Média Frequència' } // 11-30
+          return 'Alta Frequência' // > 30
         },
         get_detail_value: function (d, class_indicador = '', value = null, rank_br = null, rank_uf = null, media_br = null, media_uf = null) {
           let detail = ''
@@ -601,6 +606,7 @@ export default {
         calc_subtraction_ds: function (d, a, b) { return a - b },
         calc_addition_ids_ds: function (d, a, b, multiplier = 10000000) { return a * multiplier + b },
         calc_multiplication_ds: function (d, a, b) { return a * b },
+        calc_percentage_ds: function (d, parte, total) { return parte / total * 100 },
         calc_addition: function (a, b) { return a + b },
         calc_percentage: function (parte, total) { return parte / total * 100 },
         calc_percentage_val1: function (val1, val2) { return val1 / (val1 + val2) * 100 },
@@ -990,7 +996,7 @@ export default {
   methods: {
     setSiblingDimensions (content) {
       const dimensoesTmp = []
-      for (const dim of content.dimensoes) {
+      for (const dim of content.dimensoes.filter(dim => !dim.external)) {
         if (!dim.blocked) {
           dimensoesTmp.push(dim)
         }

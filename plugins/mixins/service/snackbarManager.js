@@ -169,172 +169,197 @@ if (!Vue.__snackbarManager__) {
       },
 
       async obsTETooltip (target, route, tooltip_list = [], removed_text_list = [], options = null) {
-        let url = "/te/indicadoresmunicipais/rerank?categorias=cd_mun_ibge,cd_uf,cd_indicador,nm_municipio_uf,nu_competencia_max,nu_competencia_min&valor=vl_indicador&agregacao=sum&filtros=nn-vl_indicador,and,in-cd_indicador-'te_ope'-'te_sit_trab_resgatados'-'te_nat'-'te_res'-'te_inspecoes'-'te_insp_rgt',and,post-eq-cd_mun_ibge-" + target.options.rowData.cd_mun_ibge
-        // let url = "/te/indicadoresmunicipais?categorias=cd_mun_ibge,nm_municipio_uf,nu_competencia_max,nu_competencia_min&valor=vl_indicador&agregacao=sum&pivot=cd_indicador&filtros=nn-vl_indicador,and,in-cd_indicador-'te_ope'-'te_rgt'-'te_nat'-'te_res'-'te_inspecoes',and,eq-cd_mun_ibge-"+ target.options.rowData.cd_mun_ibge;
-        const urlIndicadores = "/indicadoresmunicipais?categorias=cd_indicador,ds_indicador_radical,nu_competencia,nu_competencia_max,nu_competencia_min,vl_indicador&filtros=nn-vl_indicador,and,in-cd_indicador-'06_01_09_01'-'01_16_02_00'-'01_15_01_00'-'01_14_13_00',and,eq-cd_mun_ibge-" + target.options.rowData.cd_mun_ibge + ',and,eq-nu_competencia-nu_competencia_max&ordenacao=ds_indicador_radical'
         let text = ''
-        if (options && options.clickable) {
-          text += "<p class='text-xs-right ma-0'><a href='" + this.$tooltipBuildingService.getUrlByPlace(target.options.rowData.cd_mun_ibge, route) + "' class='primary--text font-weight-black'>IR PARA</a></p>"
-        }
-        if (this.customParams.filterUrl && this.customParams.filterUrl != '') {
-          url = url + this.customParams.filterUrl
-          text += 'Considerados os seguintes filtros: ' + this.customParams.filterText
-        }
-        if (this.customFilters && this.customFilters.filterUrl && this.customFilters.filterUrl != '') {
-          url = url + this.customFilters.filterUrl
-          text += 'Considerados os seguintes filtros: ' + this.customFilters.filterText
-        }
-        this.changeCursor(target.options.customOptions.containerId, 'wait')
-        const [result, resultIndicadores] = await Promise.all([
-          this.$axios(this.$axiosCallSetupService.getAxiosOptions(url)),
-          this.$axios(this.$axiosCallSetupService.getAxiosOptions(urlIndicadores))
-        ])
-
-        // this.$axios.all([this.$axios(this.$axiosCallSetupService.getAxiosOptions(url)),
-        //   this.$axios(this.$axiosCallSetupService.getAxiosOptions(urlIndicadores))])
-        //   .then(this.$axios.spread((result, resultIndicadores) => {
-        const dt = result.data.dataset
-        const dtIndicadores = resultIndicadores.data.dataset
-        // let source = result.data).metadata.fonte;
-        let ano_min
-        let ano_max
-
-        text += "<p class='headline-obs'>Município: <b>" + dt[0].nm_municipio_uf + '</b></p>'
-        text += "<table width='100%'>"
-        let vl_ope = 0
-        let vl_ope_nu_competencia_min
-        let vl_ope_nu_competencia_max
-        let vl_inspecoes = 0
-        let vl_insp_rgt = 0
-        let vl_rgt = 0
-        let vl_rgt_rank_uf = 0
-        let vl_rgt_pct_uf = 0
-        let vl_rgt_rank_br = 0
-        let vl_rgt_pct_br = 0
-        let vl_rgt_nu_competencia_min
-        let vl_rgt_nu_competencia_max
-        let vl_nat = 0
-        let vl_nat_rank_uf = 0
-        let vl_nat_pct_uf = 0
-        let vl_nat_rank_br = 0
-        let vl_nat_pct_br = 0
-        let vl_nat_nu_competencia_min
-        let vl_nat_nu_competencia_max
-        let vl_res = 0
-        let vl_res_rank_uf = 0
-        let vl_res_pct_uf = 0
-        let vl_res_rank_br = 0
-        let vl_res_pct_br = 0
-        let vl_res_nu_competencia_min
-        let vl_res_nu_competencia_max
-        for (const item of dt) {
-          switch (item.cd_indicador) {
-            case 'te_ope': // Operações
-              vl_ope_nu_competencia_max = item.nu_competencia_max ? item.nu_competencia_max : null
-              vl_ope_nu_competencia_min = item.nu_competencia_min ? item.nu_competencia_min : null
-              vl_ope = item.agr_sum_vl_indicador ? item.agr_sum_vl_indicador : 0
-              vl_ope_nu_competencia_max = item.nu_competencia_max ? item.nu_competencia_max : null
-              vl_ope_nu_competencia_min = item.nu_competencia_min ? item.nu_competencia_min : null
-              break
-            case 'te_inspecoes': // Inspeções
-              vl_inspecoes = item.agr_sum_vl_indicador ? item.agr_sum_vl_indicador : 0
-              break
-            case 'te_insp_rgt': // Inspeções com resgate
-              vl_insp_rgt = item.agr_sum_vl_indicador ? item.agr_sum_vl_indicador : 0
-              break
-            case 'te_sit_trab_resgatados': // Resgates
-              vl_rgt_nu_competencia_max = item.nu_competencia_max ? item.nu_competencia_max : null
-              vl_rgt_nu_competencia_min = item.nu_competencia_min ? item.nu_competencia_min : null
-              vl_rgt = item.agr_sum_vl_indicador ? item.agr_sum_vl_indicador : 0
-              vl_rgt_rank_uf = item.rerank_rank_uf ? this.$numberTransformService.formatNumber(item.rerank_rank_uf, 'inteiro') : 0
-              vl_rgt_rank_br = item.rerank_rank_br ? this.$numberTransformService.formatNumber(item.rerank_rank_br, 'inteiro') : 0
-              vl_rgt_pct_uf = item.rerank_rank_uf ? this.$numberTransformService.formatNumber(item.rerank_perc_uf, 'porcentagem', 2, 100) : 0
-              vl_rgt_pct_br = item.rerank_rank_br ? this.$numberTransformService.formatNumber(item.rerank_perc_br, 'porcentagem', 3, 100) : 0
-              break
-            case 'te_nat': // Resgatados Naturais
-              vl_nat_nu_competencia_max = item.nu_competencia_max ? item.nu_competencia_max : null
-              vl_nat_nu_competencia_min = item.nu_competencia_min ? item.nu_competencia_min : null
-              vl_nat = item.agr_sum_vl_indicador ? item.agr_sum_vl_indicador : 0
-              vl_nat_rank_uf = item.rerank_rank_uf ? this.$numberTransformService.formatNumber(item.rerank_rank_uf, 'inteiro') : 0
-              vl_nat_rank_br = item.rerank_rank_br ? this.$numberTransformService.formatNumber(item.rerank_rank_br, 'inteiro') : 0
-              vl_nat_pct_uf = item.rerank_rank_uf ? this.$numberTransformService.formatNumber(item.rerank_perc_uf, 'porcentagem', 2, 100) : 0
-              vl_nat_pct_br = item.rerank_rank_br ? this.$numberTransformService.formatNumber(item.rerank_perc_br, 'porcentagem', 3, 100) : 0
-              break
-            case 'te_res': // Resgatados Residentes
-              vl_res_nu_competencia_max = item.nu_competencia_max ? item.nu_competencia_max : null
-              vl_res_nu_competencia_min = item.nu_competencia_min ? item.nu_competencia_min : null
-              vl_res = item.agr_sum_vl_indicador ? item.agr_sum_vl_indicador : 0
-              vl_res_rank_uf = item.rerank_rank_uf ? this.$numberTransformService.formatNumber(item.rerank_rank_uf, 'inteiro') : 0
-              vl_res_rank_br = item.rerank_rank_br ? this.$numberTransformService.formatNumber(item.rerank_rank_br, 'inteiro') : 0
-              vl_res_pct_uf = item.rerank_rank_uf ? this.$numberTransformService.formatNumber(item.rerank_perc_uf, 'porcentagem', 2, 100) : 0
-              vl_res_pct_br = item.rerank_rank_br ? this.$numberTransformService.formatNumber(item.rerank_perc_br, 'porcentagem', 3, 100) : 0
-              break
+        if (target.options.rowData.cd_mun_ibge) { // Brasileiros
+          let url = "/te/indicadoresmunicipais/rerank?categorias=cd_mun_ibge,cd_uf,cd_indicador,nm_municipio_uf,nu_competencia_max,nu_competencia_min&valor=vl_indicador&agregacao=sum&filtros=nn-vl_indicador,and,in-cd_indicador-'te_ope'-'te_sit_trab_resgatados'-'te_nat'-'te_res'-'te_inspecoes'-'te_insp_rgt',and,post-eq-cd_mun_ibge-" + target.options.rowData.cd_mun_ibge
+          // let url = "/te/indicadoresmunicipais?categorias=cd_mun_ibge,nm_municipio_uf,nu_competencia_max,nu_competencia_min&valor=vl_indicador&agregacao=sum&pivot=cd_indicador&filtros=nn-vl_indicador,and,in-cd_indicador-'te_ope'-'te_rgt'-'te_nat'-'te_res'-'te_inspecoes',and,eq-cd_mun_ibge-"+ target.options.rowData.cd_mun_ibge;
+          const urlIndicadores = "/indicadoresmunicipais?categorias=cd_indicador,ds_indicador_radical,nu_competencia,nu_competencia_max,nu_competencia_min,vl_indicador&filtros=nn-vl_indicador,and,in-cd_indicador-'06_01_09_01'-'01_16_02_00'-'01_15_01_00'-'01_14_13_00',and,eq-cd_mun_ibge-" + target.options.rowData.cd_mun_ibge + ',and,eq-nu_competencia-nu_competencia_max&ordenacao=ds_indicador_radical'
+          if (options && options.clickable) {
+            text += "<p class='text-xs-right ma-0'><a href='" + this.$tooltipBuildingService.getUrlByPlace(target.options.rowData.cd_mun_ibge, route) + "' class='primary--text font-weight-black'>IR PARA</a></p>"
           }
-        }
-
-        text += "<tr><td class='font-weight-bold green--text accent-4'>RESGATES</td></tr>"
-        text += '<tr><td>' + this.$numberTransformService.formatNumber(vl_rgt, 'inteiro') + ' resgates</td></tr>'
-        if (vl_rgt != 0) {
-          text += '<tr><td>' + vl_rgt_rank_uf + 'ª posição no Estado com ' + vl_rgt_pct_uf + ' do total</td></tr>'
-          text += '<tr><td>' + vl_rgt_rank_br + 'ª posição no Brasil com ' + vl_rgt_pct_br + ' do total</td></tr>'
-          ano_min = this.customParams.value_min && this.customParams.value_min >= vl_rgt_nu_competencia_min ? this.customParams.value_min : vl_rgt_nu_competencia_min
-          ano_max = this.customParams.value_max && this.customParams.value_max <= vl_rgt_nu_competencia_max ? this.customParams.value_max : vl_rgt_nu_competencia_max
-          text += '<tr><td>Fonte: Radar SIT - Painel de Informações e Estatísticas da Inspeção do Trabalho no Brasil</td></tr>'
-          text += '<tr><td>Período: ' + ano_min + (ano_min != ano_max ? ' a ' + ano_max : '') + '<br/><br/></td></tr>'
-        }
-        text += "<tr><td class='font-weight-bold accent-4'>OPERAÇÕES</td></tr>"
-        text += '<tr><td>' + this.$numberTransformService.formatNumber(vl_ope, 'inteiro') + ' operações</td></tr>'
-        if (vl_ope != 0) {
-          text += '<tr><td>' + this.$numberTransformService.formatNumber(vl_rgt / vl_ope, 'real', 2) + ' resgates por operação (envolvendo ' + vl_inspecoes + ' inspeções/fiscalizações)</td></tr>'
-        }
-        if (vl_inspecoes != 0) {
-          text += '<tr><td>' + this.$numberTransformService.formatNumber(vl_insp_rgt / vl_inspecoes, 'real', 2, 100) + '% de inspeções/fiscalizações com resgates</td></tr>'
-        }
-        if (vl_ope != 0) {
-          ano_min = this.customParams.value_min && this.customParams.value_min >= vl_ope_nu_competencia_min ? this.customParams.value_min : vl_ope_nu_competencia_min
-          ano_max = this.customParams.value_max && this.customParams.value_max <= vl_ope_nu_competencia_max ? this.customParams.value_max : vl_ope_nu_competencia_max
-          text += '<tr><td>Fonte: COETE</td></tr>'
-          text += '<tr><td>Período: ' + ano_min + (ano_min != ano_max ? ' a ' + ano_max : '') + '<br/><br/></td></tr>'
-        }
-        text += "<tr><td class='font-weight-bold red--text'>RESGATADOS NATURAIS</td></tr>"
-        text += '<tr><td>' + this.$numberTransformService.formatNumber(vl_nat, 'inteiro') + ' trabalhadores regatados nascidos no município em destaque</td></tr>'
-        if (vl_nat != 0) {
-          text += '<tr><td>' + vl_nat_rank_uf + 'ª posição no Estado com ' + vl_nat_pct_uf + ' do total</td></tr>'
-          text += '<tr><td>' + vl_nat_rank_br + 'ª posição no Brasil com ' + vl_nat_pct_br + ' do total</td></tr>'
-          ano_min = this.customParams.value_min && this.customParams.value_min >= vl_nat_nu_competencia_min ? this.customParams.value_min : vl_nat_nu_competencia_min
-          ano_max = this.customParams.value_max && this.customParams.value_max <= vl_nat_nu_competencia_max ? this.customParams.value_max : vl_nat_nu_competencia_max
-          text += '<tr><td>Fonte: Seguro Desemprego do Trabalhador Resgatado (MTb)</td></tr>'
-          text += '<tr><td>Período: ' + ano_min + (ano_min != ano_max ? ' a ' + ano_max : '') + '<br/><br/></td></tr>'
-        }
-        text += "<tr><td class='font-weight-bold light-blue--text'>RESGATADOS RESIDENTES</td></tr>"
-        text += '<tr><td>' + this.$numberTransformService.formatNumber(vl_res, 'inteiro') + ' trabalhadores resgatados que declararam residir, no momento do resgate, no município em destaque</td></tr>'
-        if (vl_res != 0) {
-          text += '<tr><td>' + vl_res_rank_uf + 'ª posição no Estado com ' + vl_res_pct_uf + ' do total</td></tr>'
-          text += '<tr><td>' + vl_res_rank_br + 'ª posição no Brasil com ' + vl_res_pct_br + ' do total</td></tr>'
-          ano_min = this.customParams.value_min && this.customParams.value_min >= vl_res_nu_competencia_min ? this.customParams.value_min : vl_res_nu_competencia_min
-          ano_max = this.customParams.value_max && this.customParams.value_max <= vl_res_nu_competencia_max ? this.customParams.value_max : vl_res_nu_competencia_max
-          text += '<tr><td>Fonte: Seguro Desemprego do Trabalhador Resgatado (MTb)</td></tr>'
-          text += '<tr><td>Período: ' + ano_min + (ano_min != ano_max ? ' a ' + ano_max : '') + '<br/><br/></td></tr>'
-        }
-
-        text += "<tr><td class='font-weight-bold'><br/>INDICADORES MUNICIPAIS:</td></tr>"
-        for (const item of dtIndicadores) {
-          switch (item.cd_indicador) {
-            case '01_15_01_00': // População
-              text += '<tr><td>' + item.ds_indicador_radical + ': ' + this.$numberTransformService.formatNumber(item.vl_indicador, 'inteiro') + ' (' + item.nu_competencia + ')</td></tr>'
-              break
-            case '06_01_09_01': // IDHM
-              text += '<tr><td>' + item.ds_indicador_radical + ': ' + this.$numberTransformService.formatNumber(item.vl_indicador, 'real', 3) + ' (' + item.nu_competencia + ')</td></tr>'
-              break
-            case '01_14_13_00': // Proporção Pobreza
-              text += '<tr><td>' + item.ds_indicador_radical + ': ' + this.$numberTransformService.formatNumber(item.vl_indicador, 'porcentagem') + ' (' + item.nu_competencia + ')</td></tr>'
-              break
-            case '01_16_02_00': // PIB per capita
-              text += '<tr><td>' + item.ds_indicador_radical + ': ' + this.$numberTransformService.formatNumber(item.vl_indicador, 'monetario', 2) + ' (' + item.nu_competencia + ')</td></tr>'
-              break
+          if (this.customParams.filterUrl && this.customParams.filterUrl != '') {
+            url = url + this.customParams.filterUrl
+            text += 'Considerados os seguintes filtros: ' + this.customParams.filterText
           }
+          if (this.customFilters && this.customFilters.filterUrl && this.customFilters.filterUrl != '') {
+            url = url + this.customFilters.filterUrl
+            text += 'Considerados os seguintes filtros: ' + this.customFilters.filterText
+          }
+          this.changeCursor(target.options.customOptions.containerId, 'wait')
+          const [result, resultIndicadores] = await Promise.all([
+            this.$axios(this.$axiosCallSetupService.getAxiosOptions(url)),
+            this.$axios(this.$axiosCallSetupService.getAxiosOptions(urlIndicadores))
+          ])
+
+          // this.$axios.all([this.$axios(this.$axiosCallSetupService.getAxiosOptions(url)),
+          //   this.$axios(this.$axiosCallSetupService.getAxiosOptions(urlIndicadores))])
+          //   .then(this.$axios.spread((result, resultIndicadores) => {
+          const dt = result.data.dataset
+          const dtIndicadores = resultIndicadores.data.dataset
+          // let source = result.data).metadata.fonte;
+          let ano_min
+          let ano_max
+
+          text += "<p class='headline-obs'>Município: <b>" + dt[0].nm_municipio_uf + '</b></p>'
+          text += "<table width='100%'>"
+          let vl_ope = 0
+          let vl_ope_nu_competencia_min
+          let vl_ope_nu_competencia_max
+          let vl_inspecoes = 0
+          let vl_insp_rgt = 0
+          let vl_rgt = 0
+          let vl_rgt_rank_uf = 0
+          let vl_rgt_pct_uf = 0
+          let vl_rgt_rank_br = 0
+          let vl_rgt_pct_br = 0
+          let vl_rgt_nu_competencia_min
+          let vl_rgt_nu_competencia_max
+          let vl_nat = 0
+          let vl_nat_rank_uf = 0
+          let vl_nat_pct_uf = 0
+          let vl_nat_rank_br = 0
+          let vl_nat_pct_br = 0
+          let vl_nat_nu_competencia_min
+          let vl_nat_nu_competencia_max
+          let vl_res = 0
+          let vl_res_rank_uf = 0
+          let vl_res_pct_uf = 0
+          let vl_res_rank_br = 0
+          let vl_res_pct_br = 0
+          let vl_res_nu_competencia_min
+          let vl_res_nu_competencia_max
+          for (const item of dt) {
+            switch (item.cd_indicador) {
+              case 'te_ope': // Operações
+                vl_ope_nu_competencia_max = item.nu_competencia_max ? item.nu_competencia_max : null
+                vl_ope_nu_competencia_min = item.nu_competencia_min ? item.nu_competencia_min : null
+                vl_ope = item.agr_sum_vl_indicador ? item.agr_sum_vl_indicador : 0
+                vl_ope_nu_competencia_max = item.nu_competencia_max ? item.nu_competencia_max : null
+                vl_ope_nu_competencia_min = item.nu_competencia_min ? item.nu_competencia_min : null
+                break
+              case 'te_inspecoes': // Inspeções
+                vl_inspecoes = item.agr_sum_vl_indicador ? item.agr_sum_vl_indicador : 0
+                break
+              case 'te_insp_rgt': // Inspeções com resgate
+                vl_insp_rgt = item.agr_sum_vl_indicador ? item.agr_sum_vl_indicador : 0
+                break
+              case 'te_sit_trab_resgatados': // Resgates
+                vl_rgt_nu_competencia_max = item.nu_competencia_max ? item.nu_competencia_max : null
+                vl_rgt_nu_competencia_min = item.nu_competencia_min ? item.nu_competencia_min : null
+                vl_rgt = item.agr_sum_vl_indicador ? item.agr_sum_vl_indicador : 0
+                vl_rgt_rank_uf = item.rerank_rank_uf ? this.$numberTransformService.formatNumber(item.rerank_rank_uf, 'inteiro') : 0
+                vl_rgt_rank_br = item.rerank_rank_br ? this.$numberTransformService.formatNumber(item.rerank_rank_br, 'inteiro') : 0
+                vl_rgt_pct_uf = item.rerank_rank_uf ? this.$numberTransformService.formatNumber(item.rerank_perc_uf, 'porcentagem', 2, 100) : 0
+                vl_rgt_pct_br = item.rerank_rank_br ? this.$numberTransformService.formatNumber(item.rerank_perc_br, 'porcentagem', 3, 100) : 0
+                break
+              case 'te_nat': // Resgatados Naturais
+                vl_nat_nu_competencia_max = item.nu_competencia_max ? item.nu_competencia_max : null
+                vl_nat_nu_competencia_min = item.nu_competencia_min ? item.nu_competencia_min : null
+                vl_nat = item.agr_sum_vl_indicador ? item.agr_sum_vl_indicador : 0
+                vl_nat_rank_uf = item.rerank_rank_uf ? this.$numberTransformService.formatNumber(item.rerank_rank_uf, 'inteiro') : 0
+                vl_nat_rank_br = item.rerank_rank_br ? this.$numberTransformService.formatNumber(item.rerank_rank_br, 'inteiro') : 0
+                vl_nat_pct_uf = item.rerank_rank_uf ? this.$numberTransformService.formatNumber(item.rerank_perc_uf, 'porcentagem', 2, 100) : 0
+                vl_nat_pct_br = item.rerank_rank_br ? this.$numberTransformService.formatNumber(item.rerank_perc_br, 'porcentagem', 3, 100) : 0
+                break
+              case 'te_res': // Resgatados Residentes
+                vl_res_nu_competencia_max = item.nu_competencia_max ? item.nu_competencia_max : null
+                vl_res_nu_competencia_min = item.nu_competencia_min ? item.nu_competencia_min : null
+                vl_res = item.agr_sum_vl_indicador ? item.agr_sum_vl_indicador : 0
+                vl_res_rank_uf = item.rerank_rank_uf ? this.$numberTransformService.formatNumber(item.rerank_rank_uf, 'inteiro') : 0
+                vl_res_rank_br = item.rerank_rank_br ? this.$numberTransformService.formatNumber(item.rerank_rank_br, 'inteiro') : 0
+                vl_res_pct_uf = item.rerank_rank_uf ? this.$numberTransformService.formatNumber(item.rerank_perc_uf, 'porcentagem', 2, 100) : 0
+                vl_res_pct_br = item.rerank_rank_br ? this.$numberTransformService.formatNumber(item.rerank_perc_br, 'porcentagem', 3, 100) : 0
+                break
+            }
+          }
+
+          text += "<tr><td class='font-weight-bold green--text accent-4'>RESGATES</td></tr>"
+          text += '<tr><td>' + this.$numberTransformService.formatNumber(vl_rgt, 'inteiro') + ' resgates</td></tr>'
+          if (vl_rgt != 0) {
+            text += '<tr><td>' + vl_rgt_rank_uf + 'ª posição no Estado com ' + vl_rgt_pct_uf + ' do total</td></tr>'
+            text += '<tr><td>' + vl_rgt_rank_br + 'ª posição no Brasil com ' + vl_rgt_pct_br + ' do total</td></tr>'
+            ano_min = this.customParams.value_min && this.customParams.value_min >= vl_rgt_nu_competencia_min ? this.customParams.value_min : vl_rgt_nu_competencia_min
+            ano_max = this.customParams.value_max && this.customParams.value_max <= vl_rgt_nu_competencia_max ? this.customParams.value_max : vl_rgt_nu_competencia_max
+            text += '<tr><td>Fonte: Radar SIT - Painel de Informações e Estatísticas da Inspeção do Trabalho no Brasil</td></tr>'
+            text += '<tr><td>Período: ' + ano_min + (ano_min != ano_max ? ' a ' + ano_max : '') + '<br/><br/></td></tr>'
+          }
+          text += "<tr><td class='font-weight-bold accent-4'>OPERAÇÕES</td></tr>"
+          text += '<tr><td>' + this.$numberTransformService.formatNumber(vl_ope, 'inteiro') + ' operações</td></tr>'
+          if (vl_ope != 0) {
+            text += '<tr><td>' + this.$numberTransformService.formatNumber(vl_rgt / vl_ope, 'real', 2) + ' resgates por operação (envolvendo ' + vl_inspecoes + ' inspeções/fiscalizações)</td></tr>'
+          }
+          if (vl_inspecoes != 0) {
+            text += '<tr><td>' + this.$numberTransformService.formatNumber(vl_insp_rgt / vl_inspecoes, 'real', 2, 100) + '% de inspeções/fiscalizações com resgates</td></tr>'
+          }
+          if (vl_ope != 0) {
+            ano_min = this.customParams.value_min && this.customParams.value_min >= vl_ope_nu_competencia_min ? this.customParams.value_min : vl_ope_nu_competencia_min
+            ano_max = this.customParams.value_max && this.customParams.value_max <= vl_ope_nu_competencia_max ? this.customParams.value_max : vl_ope_nu_competencia_max
+            text += '<tr><td>Fonte: COETE</td></tr>'
+            text += '<tr><td>Período: ' + ano_min + (ano_min != ano_max ? ' a ' + ano_max : '') + '<br/><br/></td></tr>'
+          }
+          text += "<tr><td class='font-weight-bold red--text'>RESGATADOS NATURAIS</td></tr>"
+          text += '<tr><td>' + this.$numberTransformService.formatNumber(vl_nat, 'inteiro') + ' trabalhadores regatados nascidos no município em destaque</td></tr>'
+          if (vl_nat != 0) {
+            text += '<tr><td>' + vl_nat_rank_uf + 'ª posição no Estado com ' + vl_nat_pct_uf + ' do total</td></tr>'
+            text += '<tr><td>' + vl_nat_rank_br + 'ª posição no Brasil com ' + vl_nat_pct_br + ' do total</td></tr>'
+            ano_min = this.customParams.value_min && this.customParams.value_min >= vl_nat_nu_competencia_min ? this.customParams.value_min : vl_nat_nu_competencia_min
+            ano_max = this.customParams.value_max && this.customParams.value_max <= vl_nat_nu_competencia_max ? this.customParams.value_max : vl_nat_nu_competencia_max
+            text += '<tr><td>Fonte: Seguro Desemprego do Trabalhador Resgatado (MTb)</td></tr>'
+            text += '<tr><td>Período: ' + ano_min + (ano_min != ano_max ? ' a ' + ano_max : '') + '<br/><br/></td></tr>'
+          }
+          text += "<tr><td class='font-weight-bold light-blue--text'>RESGATADOS RESIDENTES</td></tr>"
+          text += '<tr><td>' + this.$numberTransformService.formatNumber(vl_res, 'inteiro') + ' trabalhadores resgatados que declararam residir, no momento do resgate, no município em destaque</td></tr>'
+          if (vl_res != 0) {
+            text += '<tr><td>' + vl_res_rank_uf + 'ª posição no Estado com ' + vl_res_pct_uf + ' do total</td></tr>'
+            text += '<tr><td>' + vl_res_rank_br + 'ª posição no Brasil com ' + vl_res_pct_br + ' do total</td></tr>'
+            ano_min = this.customParams.value_min && this.customParams.value_min >= vl_res_nu_competencia_min ? this.customParams.value_min : vl_res_nu_competencia_min
+            ano_max = this.customParams.value_max && this.customParams.value_max <= vl_res_nu_competencia_max ? this.customParams.value_max : vl_res_nu_competencia_max
+            text += '<tr><td>Fonte: Seguro Desemprego do Trabalhador Resgatado (MTb)</td></tr>'
+            text += '<tr><td>Período: ' + ano_min + (ano_min != ano_max ? ' a ' + ano_max : '') + '<br/><br/></td></tr>'
+          }
+
+          text += "<tr><td class='font-weight-bold'><br/>INDICADORES MUNICIPAIS:</td></tr>"
+          for (const item of dtIndicadores) {
+            switch (item.cd_indicador) {
+              case '01_15_01_00': // População
+                text += '<tr><td>' + item.ds_indicador_radical + ': ' + this.$numberTransformService.formatNumber(item.vl_indicador, 'inteiro') + ' (' + item.nu_competencia + ')</td></tr>'
+                break
+              case '06_01_09_01': // IDHM
+                text += '<tr><td>' + item.ds_indicador_radical + ': ' + this.$numberTransformService.formatNumber(item.vl_indicador, 'real', 3) + ' (' + item.nu_competencia + ')</td></tr>'
+                break
+              case '01_14_13_00': // Proporção Pobreza
+                text += '<tr><td>' + item.ds_indicador_radical + ': ' + this.$numberTransformService.formatNumber(item.vl_indicador, 'porcentagem') + ' (' + item.nu_competencia + ')</td></tr>'
+                break
+              case '01_16_02_00': // PIB per capita
+                text += '<tr><td>' + item.ds_indicador_radical + ': ' + this.$numberTransformService.formatNumber(item.vl_indicador, 'monetario', 2) + ' (' + item.nu_competencia + ')</td></tr>'
+                break
+            }
+          }
+          text += '</table>'
+        } else {
+          const urlEntrada = "/thematic/tefluxointernacional?categorias=fluxos_local_entrada&agregacao=distinct&ordenacao=fluxos_local_entrada&filtros=eq-fluxos_local_origem-'" + target.options.rowData.fluxos_local_origem + "'"
+          const urlResgate = "/thematic/tefluxointernacional?categorias=fluxos_local_resid_brasil_resgate&agregacao=distinct&ordenacao=fluxos_local_resid_brasil_resgate&filtros=eq-fluxos_local_origem-'" + target.options.rowData.fluxos_local_origem + "'"
+          const [resultEntrada, resultResgate] = await Promise.all([
+            this.$axios(this.$axiosCallSetupService.getAxiosOptions(urlEntrada)),
+            this.$axios(this.$axiosCallSetupService.getAxiosOptions(urlResgate))
+          ])
+          const dtMunEntrada = resultEntrada.data.dataset
+          const dtMunResgate = resultResgate.data.dataset
+          text += "<p class='headline-obs'>Local: <b>" + target.options.rowData.fluxos_local_origem + '</b></p>' +
+                  "<table width='100%' style='border-collapse: collapse;'>" +
+                  "<tr><td colspan='4' class='title-obs font-weight-bold brown--text pt-3 pb-1'>Municípios Brasileiros de Entrada</td></tr>" +
+                  "<tr style='border-bottom: 1px solid rgba(0,0,0,0.15);'><td width='55%' class='font-weight-bold'>Município</td></tr>"
+          for (const item of dtMunEntrada) {
+            text += "<tr style='border-bottom: 1px solid rgba(0,0,0,0.15);'><td>" + item.fluxos_local_entrada + '</td></tr>'
+          }
+          text += "</table><table width='100%' style='border-collapse: collapse;'>" +
+                  "<tr><td colspan='4' class='title-obs font-weight-bold brown--text pt-3 pb-1'>Municípios Brasileiros de Resgate</td></tr>" +
+                  "<tr style='border-bottom: 1px solid rgba(0,0,0,0.15);'><td width='55%' class='font-weight-bold'>Município</td></tr>"
+          for (const item of dtMunResgate) {
+            text += "<tr style='border-bottom: 1px solid rgba(0,0,0,0.15);'><td>" + item.fluxos_local_resid_brasil_resgate + '</td></tr>'
+          }
+          text += '</table>'
         }
-        text += '</table>'
         target.bindPopup(text, { maxHeight: 300, minWidth: 400 }).openPopup()
         this.changeCursor(target.options.customOptions.containerId, '')
         // }, (error) => {

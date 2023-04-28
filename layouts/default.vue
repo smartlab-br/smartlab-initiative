@@ -1076,7 +1076,7 @@ export default {
     })
 
     this.$observatories.getContent().then((content) => {
-      this.observatorios = content.observatorios
+      this.observatorios = content.observatorios.filter(obs => !obs.external)
       this.footerTitle = content.rodape.titulo
       this.footerText = content.rodape.apoio
       this.footerImages = content.rodape.imagens
