@@ -996,7 +996,7 @@ export default {
   methods: {
     setSiblingDimensions (content) {
       const dimensoesTmp = []
-      for (const dim of content.dimensoes) {
+      for (const dim of content.dimensoes.filter(dim => !dim.external)) {
         if (!dim.blocked) {
           dimensoesTmp.push(dim)
         }
