@@ -18,6 +18,13 @@ export default {
       cmpTitleComment: null,
       customParams: {},
       customFunctions: {
+        get_log_norm: function (d, campo = 'vl_indicador', min = 'minVal', max = 'maxVal') {
+          if (d[max] - d[min] == 0) {
+            return Math.log10(1.5)
+          } else {
+            return Math.log10(((d[campo] - d[min]) / (d[max] - d[min]) + 1.0001))
+          }
+        },
         calc_subtraction: function (a, b) { return a - b },
         calc_subtraction_ds: function (d, a, b) {
           return d[a] - d[b]

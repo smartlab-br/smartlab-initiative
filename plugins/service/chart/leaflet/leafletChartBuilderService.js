@@ -53,8 +53,14 @@ class LeafletChartBuilderService extends GeneralChartBuilderService {
     let bounds
     if (additionalOptions.limCoords) {
       bounds = new this.L.LatLngBounds(
-        [additionalOptions.limCoords.ymin, additionalOptions.limCoords.xmin],
-        [additionalOptions.limCoords.ymax, additionalOptions.limCoords.xmax]
+        [
+          (additionalOptions.limCoords.ymin < -33.691 ? -33.691 : additionalOptions.limCoords.ymin),
+          (additionalOptions.limCoords.xmin < -72.896 ? -72.896 : additionalOptions.limCoords.xmin)
+        ],
+        [
+          (additionalOptions.limCoords.ymax > 4.596 ? 4.596 : additionalOptions.limCoords.ymax),
+          (additionalOptions.limCoords.xmax > -32.411 ? -32.411 : additionalOptions.limCoords.xmax)
+        ]
       )
       leaflet_map.fitBounds(bounds, { padding: [10, 10] })
     }
@@ -209,8 +215,14 @@ class LeafletChartBuilderService extends GeneralChartBuilderService {
       let bounds
       if (additionalOptions.limCoords) {
         bounds = new this.L.LatLngBounds(
-          [additionalOptions.limCoords.ymin, additionalOptions.limCoords.xmin],
-          [additionalOptions.limCoords.ymax, additionalOptions.limCoords.xmax]
+          [
+            (additionalOptions.limCoords.ymin < -33.691 ? -33.691 : additionalOptions.limCoords.ymin),
+            (additionalOptions.limCoords.xmin < -72.896 ? -72.896 : additionalOptions.limCoords.xmin)
+          ],
+          [
+            (additionalOptions.limCoords.ymax > 4.596 ? 4.596 : additionalOptions.limCoords.ymax),
+            (additionalOptions.limCoords.xmax > -32.411 ? -32.411 : additionalOptions.limCoords.xmax)
+          ]
         )
         // console.log(this.customParams.limCoords);
         leaflet_map.fitBounds(bounds, { padding: [10, 10] })
