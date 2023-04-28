@@ -330,7 +330,7 @@ export default {
     },
 
     applyFilters () {
-      let apiObject = this.observatorio.prevalencia.api
+      let apiObject = this.observatorio.prevalencia.api_avancado ? this.observatorio.prevalencia.api_avancado : this.observatorio.prevalencia.api
       if (this.observatorio.prevalencia.apiBase) {
         apiObject = this.observatorio.prevalencia.apiBase
       }
