@@ -507,7 +507,9 @@ export class IndicatorsModel {
 
   getAnalysisDesc (structure, dataset, metadata) {
     if (structure) {
-      if (structure.analysis && structure.analysis.desc) {
+      if (structure.analysis && structure.analysis.hide_analysis) {
+        return null
+      } else if (structure.analysis && structure.analysis.desc) {
         return structure.analysis.desc
       } else if (dataset && structure.analysis && structure.analysis.desc_field && dataset[0]) {
         return dataset[0][structure.analysis.desc_field] != null ? dataset[0][structure.analysis.desc_field] : null
