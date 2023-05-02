@@ -96,7 +96,7 @@ class BubblesChartBuilderService extends LeafletChartBuilderService {
     this.chart.fitBounds(bounds, { padding: [10, 10] })
   }
 
-  getBounds(dataset, options) {
+  getBounds (dataset, options) {
     const bounds = this.L.latLngBounds()
     for (const each_row of dataset) {
       bounds.extend([each_row[options.lat], each_row[options.long]])
