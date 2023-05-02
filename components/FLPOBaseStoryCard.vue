@@ -9,8 +9,7 @@ export default {
       customFilters: {},
       reactiveFilter: null,
       errorMessage: null,
-      selectedTopology: this.topology,
-      limCoords: { xmin: null, ymin: null, xmax: null, ymax: null }
+      selectedTopology: this.topology
     }
   },
 

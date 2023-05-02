@@ -7,7 +7,7 @@ class PolygonsChartBuilderService extends LeafletChartBuilderService {
     this.range = [null, null]
   }
 
-  fillLayers (dataset, options, boundsZoom = null) {
+  fillLayers (dataset, options) {
     // https://blog.webkid.io/maps-with-leaflet-and-topojson/
     // Gera o range
     const range = [null, null]

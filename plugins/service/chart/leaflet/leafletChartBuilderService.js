@@ -50,22 +50,6 @@ class LeafletChartBuilderService extends GeneralChartBuilderService {
     const leaflet_map = this.L.map(containerId).setView([-15.793889, -47.882778], 5)
     leaflet_map.options.minZoom = options.minZoom ? options.minZoom : 4
 
-    let bounds
-    if (options.fit_brasil) { // coords Brasil
-      bounds = new this.L.LatLngBounds(
-        [-33.691, -72.896],
-        [4.596, -32.411]
-      )
-      leaflet_map.fitBounds(bounds, { padding: [10, 10] })
-    } else if (additionalOptions.limCoords) {
-      bounds = new this.L.LatLngBounds(
-        [additionalOptions.limCoords.ymin, additionalOptions.limCoords.xmin],
-        [additionalOptions.limCoords.ymax, additionalOptions.limCoords.xmax]
-      )
-      leaflet_map.fitBounds(bounds, { padding: [10, 10] })
-    }
-    this.bounds = bounds
-
     // Adiciona o marker do município apenas se houver idLocalidade
     // TODO Check possible problem with promise
     if (options.hide_place_marker == undefined || !options.hide_place_marker) {
@@ -89,7 +73,7 @@ class LeafletChartBuilderService extends GeneralChartBuilderService {
     additionalOptions.containerId = containerId
 
     this.chart = leaflet_map
-    this.fillLayers(dataset, Object.assign(options, additionalOptions), bounds ? leaflet_map.getBoundsZoom(bounds) : null)
+    this.fillLayers(dataset, Object.assign(options, additionalOptions))
 
     window.addEventListener('resize', this.resizeMapArea(containerId))
 
@@ -187,71 +171,71 @@ class LeafletChartBuilderService extends GeneralChartBuilderService {
     }
   }
 
-  reloadMap (map, containerId, dataset, options, additionalOptions) {
-    this.dataset = dataset
-    this.options = options
-    this.additionalOptions = additionalOptions
+  // reloadMap (map, containerId, dataset, options, additionalOptions) {
+  //   this.dataset = dataset
+  //   this.options = options
+  //   this.additionalOptions = additionalOptions
 
-    if (map !== null && map !== undefined) {
-      map.off()
-      map.remove()
-      map = null
-    }
+  //   if (map !== null && map !== undefined) {
+  //     map.off()
+  //     map.remove()
+  //     map = null
+  //   }
 
-    const chartContainer = document.getElementById(containerId)
+  //   const chartContainer = document.getElementById(containerId)
 
-    if (chartContainer != null) {
-      chartContainer.innerHTML = ''
+  //   if (chartContainer != null) {
+  //     chartContainer.innerHTML = ''
 
-      // var width = parseInt(chartContainer.offsetWidth);
-      const height = parseInt(chartContainer.offsetWidth / this.heightProportion)
-      chartContainer.style.height = height + 'px'
+  //     // var width = parseInt(chartContainer.offsetWidth);
+  //     const height = parseInt(chartContainer.offsetWidth / this.heightProportion)
+  //     chartContainer.style.height = height + 'px'
 
-      if (options.colorArray === null || options.colorArray === undefined) { options.colorArray = this.d3chrom.schemeDark2 }
+  //     if (options.colorArray === null || options.colorArray === undefined) { options.colorArray = this.d3chrom.schemeDark2 }
 
-      const leaflet_map = this.L.map(containerId).setView([-15.793889, -47.882778], 5)
-      leaflet_map.options.minZoom = 4
+  //     const leaflet_map = this.L.map(containerId).setView([-15.793889, -47.882778], 5)
+  //     leaflet_map.options.minZoom = 4
 
-      let bounds
-      if (options.fit_brasil) {
-        bounds = new this.L.LatLngBounds(
-          [-33.691, -72.896],
-          [4.596, -32.411]
-        )
-        leaflet_map.fitBounds(bounds, { padding: [10, 10] })
-      } else if (additionalOptions.limCoords) {
-        bounds = new this.L.LatLngBounds(
-          [additionalOptions.limCoords.ymin, additionalOptions.limCoords.xmin],
-          [additionalOptions.limCoords.ymax, additionalOptions.limCoords.xmax]
-        )
-        leaflet_map.fitBounds(bounds, { padding: [10, 10] })
-      }
-      this.bounds = bounds
+  //     let bounds
+  //     if (options.fit_brasil) {
+  //       bounds = new this.L.LatLngBounds(
+  //         [-33.691, -72.896],
+  //         [4.596, -32.411]
+  //       )
+  //       leaflet_map.fitBounds(bounds, { padding: [10, 10] })
+  //     } else if (additionalOptions.limCoords) {
+  //       bounds = new this.L.LatLngBounds(
+  //         [additionalOptions.limCoords.ymin, additionalOptions.limCoords.xmin],
+  //         [additionalOptions.limCoords.ymax, additionalOptions.limCoords.xmax]
+  //       )
+  //       leaflet_map.fitBounds(bounds, { padding: [10, 10] })
+  //     }
+  //     this.bounds = bounds
 
-      // Adiciona o marker do município apenas se houver idLocalidade
-      // TODO Check possible problem with promise
-      if (options.hide_place_marker == undefined || !options.hide_place_marker) {
-        if (additionalOptions && additionalOptions.idAU && additionalOptions.idAU.length == 7) {
-          const findLoc = additionalOptions.au
-          if (findLoc && (findLoc instanceof Promise || findLoc.then)) {
-            findLoc.then((response) => { this.addDeafultMarker(response, leaflet_map) })
-              .catch((error) => { additionalOptions.fnSendError(error) })
-          } else {
-            this.addDeafultMarker(findLoc, leaflet_map)
-          }
-        }
-      }
+  //     // Adiciona o marker do município apenas se houver idLocalidade
+  //     // TODO Check possible problem with promise
+  //     if (options.hide_place_marker == undefined || !options.hide_place_marker) {
+  //       if (additionalOptions && additionalOptions.idAU && additionalOptions.idAU.length == 7) {
+  //         const findLoc = additionalOptions.au
+  //         if (findLoc && (findLoc instanceof Promise || findLoc.then)) {
+  //           findLoc.then((response) => { this.addDeafultMarker(response, leaflet_map) })
+  //             .catch((error) => { additionalOptions.fnSendError(error) })
+  //         } else {
+  //           this.addDeafultMarker(findLoc, leaflet_map)
+  //         }
+  //       }
+  //     }
 
-      const tileLayer = this.createTileLayer(options)
-      tileLayer.addTo(leaflet_map)
-      this.createPrintPlugin(tileLayer).addTo(leaflet_map)
+  //     const tileLayer = this.createTileLayer(options)
+  //     tileLayer.addTo(leaflet_map)
+  //     this.createPrintPlugin(tileLayer).addTo(leaflet_map)
 
-      this.chart = leaflet_map
-      this.fillLayers(dataset, Object.assign(options, additionalOptions), bounds ? leaflet_map.getBoundsZoom(bounds) : null)
+  //     this.chart = leaflet_map
+  //     this.fillLayers(dataset, Object.assign(options, additionalOptions), bounds ? leaflet_map.getBoundsZoom(bounds) : null)
 
-      return this
-    }
-  }
+  //     return this
+  //   }
+  // }
 
   adjustVisibleLayers (enabled) {
     this.chart.removeLayer(this.mapLayer)

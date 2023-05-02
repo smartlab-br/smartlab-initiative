@@ -132,12 +132,6 @@ if (!Vue.__snackbarManager__) {
         if (this.leafletBasedCharts.includes(chartType)) {
           if (chartOptions.tooltip_function == null) { additionalOptions.tooltipFunction = this.$tooltipBuildingService.defaultLeafletTooltip }
 
-          if (this.limCoords) {
-            additionalOptions.limCoords = this.limCoords
-          } else if (this.customParams && this.customParams.limCoords) {
-            additionalOptions.limCoords = this.customParams.limCoords
-          }
-
           if (chartType == 'MAP_MIGRATION') {
             additionalOptions.targetTooltipFunction = chartOptions.target.tooltip_function ? this[chartOptions.target.tooltip_function] : this.$tooltipBuildingService.defaultLeafletTooltip
           }

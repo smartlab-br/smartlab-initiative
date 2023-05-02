@@ -7,12 +7,19 @@ class BubblesChartBuilderService extends LeafletChartBuilderService {
     this.fCircleSize = this.d3.scaleLog().range([1, 4001])
   }
 
-  fillLayers (dataset, options, boundsZoom = null) {
+  fillLayers (dataset, options) {
     // Sets the bubbles size handlers
     if (options && options.radius && options.radius.multiplier) { this.radius.multiplier = options.radius.multiplier }
     if (options && options.radius && options.radius.base) { this.radius.base = options.radius.base }
 
-    if (boundsZoom == null) { boundsZoom = this.chart.getZoom() }
+    // if (boundsZoom == null) { boundsZoom = this.chart.getZoom() }
+    let boundsZoom
+    if (options.idAU) {
+      boundsZoom = options.idAU == '0' ? 1 : 7
+    } else {
+      const bounds = this.getBounds(dataset, options)
+      boundsZoom = bounds ? this.chart.getBoundsZoom(bounds) : 1
+    }
     const zoomIndex = boundsZoom > 5 ? Math.pow(boundsZoom / 4, 4) : 1
 
     const multiplier = this.radius.multiplier / zoomIndex
@@ -23,7 +30,7 @@ class BubblesChartBuilderService extends LeafletChartBuilderService {
     const id_field = options.id_field ? options.id_field : 'cd_indicador'
 
     for (const ident of options.indicadores) {
-      const group = this.L.layerGroup()
+      const group = new this.L.FeatureGroup()
       group.addTo(this.chart)
       this.layers[ident] = group
     }
@@ -76,14 +83,25 @@ class BubblesChartBuilderService extends LeafletChartBuilderService {
 
   adjustVisibleLayers (enabled) {
     this.additionalOptions.visibleLayers = enabled
+    const bounds = this.L.latLngBounds()
     for (const indx in enabled) {
       if (enabled[indx]) {
         this.chart.addLayer(this.layers[indx])
+        bounds.extend(this.layers[indx].getBounds())
       } else {
         this.chart.removeLayer(this.layers[indx])
       }
       // this.visibleLayers[indx] = options.enabled[indx];
     }
+    this.chart.fitBounds(bounds, { padding: [10, 10] })
+  }
+
+  getBounds(dataset, options) {
+    const bounds = this.L.latLngBounds()
+    for (const each_row of dataset) {
+      bounds.extend([each_row[options.lat], each_row[options.long]])
+    }
+    return bounds
   }
 }
 
