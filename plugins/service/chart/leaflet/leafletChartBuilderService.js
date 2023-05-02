@@ -49,6 +49,7 @@ class LeafletChartBuilderService extends GeneralChartBuilderService {
 
     const leaflet_map = this.L.map(containerId).setView([-15.793889, -47.882778], 5)
     leaflet_map.options.minZoom = options.minZoom ? options.minZoom : 4
+    leaflet_map.options.maxZoom = options.maxZoom ? options.maxZoom : 16
 
     // Adiciona o marker do município apenas se houver idLocalidade
     // TODO Check possible problem with promise
