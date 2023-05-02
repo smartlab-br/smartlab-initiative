@@ -633,18 +633,18 @@ if (!Vue.__viewConfReader__) {
           options = structure.options
         }
 
-        for (const eachRow in dataset) {
-          if (options.pct_field !== null && options.pct_field !== undefined) {
-            dataset[eachRow].pct_indicador = dataset[eachRow][options.pct_field]
-          }
-          if (structure.chart_type == 'TREEMAP' && options.format_function !== null && options.format_function !== undefined) {
-            if (this.customFunctions && this.customFunctions[options.format_function]) {
-              dataset[eachRow][options.id] = this.customFunctions[options.format_function](dataset[eachRow], options)
-            } else {
-              dataset[eachRow][options.id] = this[options.format_function](dataset[eachRow], options)
-            }
-          }
-        }
+        // for (const eachRow in dataset) {
+        //   if (options.pct_field !== null && options.pct_field !== undefined) {
+        //     dataset[eachRow].pct_indicador = dataset[eachRow][options.pct_field]
+        //   }
+        //   if (structure.chart_type == 'TREEMAP' && options.format_function !== null && options.format_function !== undefined) {
+        //     if (this.customFunctions && this.customFunctions[options.format_function]) {
+        //       dataset[eachRow][options.id] = this.customFunctions[options.format_function](dataset[eachRow], options)
+        //     } else {
+        //       dataset[eachRow][options.id] = this[options.format_function](dataset[eachRow], options)
+        //     }
+        //   }
+        // }
 
         if (options.order_field !== null && options.order_field !== undefined) {
           let order_field = options.order_field
