@@ -449,9 +449,9 @@ export default {
     completeStructure () {
       this.setReferenceInStructure()
 
-      if (this.structure.chart_options && this.structure.chart_options.format_function !== null && this.structure.chart_options.format_function !== undefined) {
-        this.structure.chart_options.format = this.customFunctions[this.structure.chart_options.format_function]
-      }
+      // if (this.structure.chart_options && this.structure.chart_options.format_function !== null && this.structure.chart_options.format_function !== undefined) {
+      //   this.structure.chart_options.format = this.customFunctions[this.structure.chart_options.format_function]
+      // }
       if (this.structure.chart_options && this.structure.chart_options.y_function !== null && this.structure.chart_options.y_function !== undefined) {
         this.structure.chart_options.y = this.customFunctions[this.structure.chart_options.y_function]
       }

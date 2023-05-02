@@ -5,7 +5,7 @@ class ClusterChartBuilderService extends LeafletChartBuilderService {
   //   super()
   // }
 
-  fillLayers (dataset, options, boundsZoom = null) {
+  fillLayers (dataset, options) {
     // default icon = blue
     const defaultIcon = new this.L.Icon({
       iconUrl: '/markers/marker-icon-2x-blue.png',
@@ -51,6 +51,13 @@ class ClusterChartBuilderService extends LeafletChartBuilderService {
 
     this.mapLayer = mapLayer
     this.chart.addLayer(mapLayer)
+    this.fitBounds(mapLayer.getBounds())
+  }
+
+  adjustVisibleLayers (enabled) {
+    this.chart.removeLayer(this.mapLayer)
+    this.additionalOptions.visibleLayers = enabled
+    this.fillLayers(this.dataset, Object.assign(this.options, this.additionalOptions))
   }
 }
 
