@@ -431,9 +431,9 @@ export default {
       this.setReferenceInStructure()
       this.updatedChartFooters = 0
       for (const eachChart in this.structure.charts) {
-        if (this.structure.charts[eachChart].options.format_function !== null && this.structure.charts[eachChart].options.format_function !== undefined) {
-          this.structure.charts[eachChart].options.format = this.customFunctions[this.structure.charts[eachChart].options.format_function]
-        }
+        // if (this.structure.charts[eachChart].options.format_function !== null && this.structure.charts[eachChart].options.format_function !== undefined) {
+        //   this.structure.charts[eachChart].options.format = this.customFunctions[this.structure.charts[eachChart].options.format_function]
+        // }
         if (this.structure.charts[eachChart].options.y_function !== null && this.structure.charts[eachChart].options.y_function !== undefined) {
           this.structure.charts[eachChart].options.y = this.customFunctions[this.structure.charts[eachChart].options.y_function]
         }
