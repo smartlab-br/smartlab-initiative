@@ -302,7 +302,7 @@ class MigrationMapChartBuilderService extends LeafletChartBuilderService {
       }
       // this.visibleLayers[indx] = options.enabled[indx];
     }
-    this.chart.fitBounds(bounds, { padding: [10, 10] })
+    this.fitBounds(bounds)
   }
 }
 

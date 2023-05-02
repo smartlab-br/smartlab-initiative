@@ -17,7 +17,7 @@ class HeatChartBuilderService extends LeafletChartBuilderService {
     }
 
     this.mapLayer = this.L.heatLayer(heatPoints, { radius: 25, maxZoom: 14 }).addTo(this.chart)
-    this.chart.fitBounds(bounds, { padding: [10, 10] })
+    this.fitBounds(bounds)
   }
 }
 

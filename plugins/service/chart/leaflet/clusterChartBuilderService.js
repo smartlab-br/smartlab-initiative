@@ -51,7 +51,7 @@ class ClusterChartBuilderService extends LeafletChartBuilderService {
 
     this.mapLayer = mapLayer
     this.chart.addLayer(mapLayer)
-    this.chart.fitBounds(mapLayer.getBounds(), { padding: [10, 10] })
+    this.fitBounds(mapLayer.getBounds())
   }
 
   adjustVisibleLayers (enabled) {

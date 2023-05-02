@@ -242,6 +242,12 @@ class LeafletChartBuilderService extends GeneralChartBuilderService {
     this.additionalOptions.visibleLayers = enabled
     this.fillLayers(this.dataset, Object.assign(this.options, this.additionalOptions), this.bounds ? this.chart.getBoundsZoom(this.bounds) : null)
   }
+
+  fitBounds (bounds) {
+    if (bounds.isValid()) {
+      this.chart.fitBounds(bounds, { padding: [10, 10] })
+    }
+  }
 }
 
 module.exports = LeafletChartBuilderService
