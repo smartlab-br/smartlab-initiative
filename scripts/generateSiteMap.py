@@ -42,12 +42,15 @@ def get_indicator(datasource, cd_indicador):
 
 
 def generate_structure(view_conf_path):
-    obs_yaml = read_yaml(view_conf_path + "/observatorios.yaml")   
-    obs = [{'id':item['id'], 'type':'observatorio', 'name':item['title'], 'short_title':item['short_title'], 'url': item['to'], 'search_text': item['title'], 'app_icon': item['app_icon']} for item in obs_yaml['observatorios']]
-
+    obs_yaml = read_yaml(view_conf_path + "/observatorios.yaml") 
+    obs = [] 
+    for item in obs_yaml['observatorios']:
+        if not item['external']:
+            obs.append({'id':item['id'], 'type':'observatorio', 'name':item['title'], 'short_title':item['short_title'], 'url': item['to'], 'search_text': item['title'], 'app_icon': item['app_icon']})
     obs_dim = []
     # Observatórios
     for obs_item in obs:
+        
         dimensions_yaml = read_yaml(view_conf_path + "/dimensao/" + obs_item['id'] + ".yaml")
         dimensions = [] 
         
@@ -135,31 +138,32 @@ def generate_structure(view_conf_path):
 
         # Dimensões
         for dim_item in dimensions_yaml['dimensoes']:
-            dim_yaml = read_yaml(view_conf_path + "/observatorio/" + obs_item['id'] + "/localidade/municipio/" + dim_item['id'] + ".yaml")
-            cards = []
-            for section in dim_yaml['secoes']:
+            if not 'external' in dim_item or ('external' in dim_item and not dim_item['external']):
+                dim_yaml = read_yaml(view_conf_path + "/observatorio/" + obs_item['id'] + "/localidade/municipio/" + dim_item['id'] + ".yaml")
+                cards = []
+                for section in dim_yaml['secoes']:
 
-                # Cards
-                for card in section['cards']:
-                    if (('type' in card) and (card['type'] == 'headline')):
-                            continue
-                    card_search_text = card['id'] + ' ' + card['title']['fixed']
-                    
-                    if ('card_template' in card):
-                        indicador = get_indicator(card['datasource'],card['cd_indicador'])
-                        if (card['title']['fixed'] != indicador):
-                            card_search_text += ' ' + indicador
-                    else:            
-                        for item_desc in card['description']:
-                            if(item_desc['type']== 'text'):
-                                if (('title' in item_desc) and (item_desc['title'] != '')):
-                                    card_search_text += ' ' + item_desc['title']
-                                if ('fixed' in item_desc['content']):
-                                    card_search_text += ' ' + item_desc['content']['fixed']
-                                if ('template' in item_desc['content']):
-                                    card_search_text += ' ' + item_desc['content']['template']
-                    cards.append({'id': card['id'], 'type':'card', 'name': card['title']['fixed'], 'url': dim_item['to'] + '#' + card['id'],'search_text': card_search_text.replace('<br/>', ' ')})
-            dimensions.append({'id': dim_item['id'], 'type':'dimensao','name':dim_item['short_desc'], 'url': dim_item['to'], 'search_text': dim_item['label'], 'children': cards})
+                    # Cards
+                    for card in section['cards']:
+                        if (('type' in card) and (card['type'] == 'headline')):
+                                continue
+                        card_search_text = card['id'] + ' ' + card['title']['fixed']
+                        
+                        if ('card_template' in card):
+                            indicador = get_indicator(card['datasource'],card['cd_indicador'])
+                            if (card['title']['fixed'] != indicador):
+                                card_search_text += ' ' + indicador
+                        else:            
+                            for item_desc in card['description']:
+                                if(item_desc['type']== 'text'):
+                                    if (('title' in item_desc) and (item_desc['title'] != '')):
+                                        card_search_text += ' ' + item_desc['title']
+                                    if ('fixed' in item_desc['content']):
+                                        card_search_text += ' ' + item_desc['content']['fixed']
+                                    if ('template' in item_desc['content']):
+                                        card_search_text += ' ' + item_desc['content']['template']
+                        cards.append({'id': card['id'], 'type':'card', 'name': card['title']['fixed'], 'url': dim_item['to'] + '#' + card['id'],'search_text': card_search_text.replace('<br/>', ' ')})
+                dimensions.append({'id': dim_item['id'], 'type':'dimensao','name':dim_item['short_desc'], 'url': dim_item['to'], 'search_text': dim_item['label'], 'children': cards})
         obs_dim.append({**obs_item, 'children': dimensions.copy()})
 
     # # Sobre
