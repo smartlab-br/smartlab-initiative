@@ -25,6 +25,9 @@ export default {
             return Math.log10(((d[campo] - d[min]) / (d[max] - d[min]) + 1.0001))
           }
         },
+        get_trunc: function (valor, multiplier = 1) {
+          return Math.trunc(valor * multiplier)
+        },
         calc_subtraction: function (a, b) { return a - b },
         calc_subtraction_ds: function (d, a, b) {
           return d[a] - d[b]
