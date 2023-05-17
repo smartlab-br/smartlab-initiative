@@ -1,8 +1,10 @@
 const axios = require('axios')
 const bodyParser = require('body-parser')
 const app = require('express')()
+const compression = require('compression')
 
 app.use(bodyParser.json())
+app.use(compression())
 app.get('/datahub/*', (req, res) => {
   if (req.headers['request-source'] === 'application' && req.headers['user-agent'] && !req.headers['user-agent'].toLowerCase().includes('postman')) {
     const datahub = {
@@ -12,7 +14,8 @@ app.get('/datahub/*', (req, res) => {
 
     const apiUrl = datahub.url + req.url.replace('/datahub', '')
     const header = {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'Accept-Encoding': 'gzip, deflate, br'
     }
 
     header['X-Mpt-Api-Key'] = datahub.key
