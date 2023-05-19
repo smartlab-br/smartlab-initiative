@@ -431,35 +431,35 @@ if (!Vue.__snackbarManager__) {
 
         text += "<p class='headline-obs ma-0'>Município: <b>" + municipio + '</b></p>'
         text += "<table width='100%'>"
-        text += "<tr><td class='font-weight-bold indigo--text darken-2'>CRIANÇAS E ADOLESCENTES OCUPADOS</td></tr>"
-        text += '<tr><td>' + (dtCenso && dtCenso.agr_sum_vl_indicador ? this.$numberTransformService.formatNumber(dtCenso.agr_sum_vl_indicador, 'inteiro') + ' crianças e adolescentes ocupados entre 10 e 17 anos' : 'Nenhum registro de crianças e adolescentes ocupados entre 10 e 17 anos') + '</td></tr>'
-        text += '<tr><td>Fonte: IBGE - Censo Demográfico 2010</td></tr>'
-        text += "<tr><td class='font-weight-bold purple--text'>TRABALHANDO FORA DE CASA</td></tr>"
-        text += '<tr><td>' + (dtProvaBrasil && dtProvaBrasil.agr_sum_vl_indicador ? this.$numberTransformService.formatNumber(dtProvaBrasil.agr_sum_vl_indicador, 'inteiro') + ' declararam trabalhar fora de casa' : 'Nenhum estudante declarou trabalhar fora de casa') + '</td></tr>'
-        text += '<tr><td>Fonte: Prova Brasil 2017 (5º e 9º ano)</td></tr>'
-        text += "<tr><td class='font-weight-bold cyan--text darken-2'>CRIANÇAS E ADOLESCENTES OCUPADOS EM ESTABELECIMENOS AGROPECUÁRIOS</td></tr>"
-        text += '<tr><td>' + (dtCensoAgro && dtCensoAgro.agr_sum_vl_indicador ? this.$numberTransformService.formatNumber(dtCensoAgro.agr_sum_vl_indicador, 'inteiro') + ' menores de 14 anos ocupados em estabelecimentos agropecuários' : 'Nenhum registro de menores de 14 anos ocupados em estabelecimentos agropecuários') + '</td></tr>'
-        text += '<tr><td>Fonte: IBGE - Censo Agropecuário 2017</td></tr>'
         text += "<tr><td class='font-weight-bold'>SOFRENDO ACIDENTES</td></tr>"
         text += "<tr><td class='font-weight-bold brown--text'>COM VÍNCULOS DE EMPREGO</td></tr>"
         text += '<tr><td>' + (dtCatMenores && dtCatMenores.agr_count_cd_municipio_ibge ? this.$numberTransformService.formatNumber(dtCatMenores.agr_count_cd_municipio_ibge, 'inteiro') + ' notificações de acidentes de menores de 18 anos' : 'Não houve notificações de acidentes de menores de 18 anos') + '</td></tr>'
         text += '<tr><td>Fonte: CATWEB 2012 a 2020</td></tr>'
-        text += "<tr><td class='font-weight-bold orange--text'>SEGUNDO AS NOTIFICAÇÕES SINAN</td></tr>"
+        text += "<tr><td class='font-weight-bold red--text'>SEGUNDO AS NOTIFICAÇÕES SINAN</td></tr>"
         text += '<tr><td>' + (dtSinan && dtSinan.agr_sum_vl_indicador ? this.$numberTransformService.formatNumber(dtSinan.agr_sum_vl_indicador, 'inteiro') + ' notificações de ' + dtSinan.ds_agreg_primaria : 'Não houve notificações de acidente de trabalho grave de Crianças e Adolescentes ( 0 a 17 anos)') + '</td></tr>'
         text += '<tr><td>Fonte: MS - SINAN 2007 a 2020</td></tr>'
+        text += "<tr><td class='font-weight-bold cyan--text darken-2'>CRIANÇAS E ADOLESCENTES OCUPADOS EM ESTABELECIMENOS AGROPECUÁRIOS</td></tr>"
+        text += '<tr><td>' + (dtCensoAgro && dtCensoAgro.agr_sum_vl_indicador ? this.$numberTransformService.formatNumber(dtCensoAgro.agr_sum_vl_indicador, 'inteiro') + ' menores de 14 anos ocupados em estabelecimentos agropecuários' : 'Nenhum registro de menores de 14 anos ocupados em estabelecimentos agropecuários') + '</td></tr>'
+        text += '<tr><td>Fonte: IBGE - Censo Agropecuário 2017</td></tr>'
         text += "<tr><td class='font-weight-bold'>EXPLORADOS PELO TRABALHO ESCRAVO</td></tr>"
-        text += "<tr><td class='font-weight-bold red--text'>LOCAL DE NASCIMENTO</td></tr>"
+        text += "<tr><td class='font-weight-bold orange--text'>LOCAL DE NASCIMENTO</td></tr>"
         text += '<tr><td>' + (dtTENascimento && dtTENascimento.agr_sum_vl_indicador ? this.$numberTransformService.formatNumber(dtTENascimento.agr_sum_vl_indicador, 'inteiro') + ' menores resgatados do trabalho escravo são naturais do município' : 'Não houve menores resgatados do trabalho escravo naturais desse município') + '</td></tr>'
         text += '<tr><td>Fonte: Seguro Desemprego, 2003-2018</td></tr>'
         // text += "<tr><td class='font-weight-bold light-blue--text'>LOCAL DE RESIDÊNCIA</td></tr>";
         // text += "<tr><td>" + (dtTEResidencia && dtTEResidencia.agr_sum_vl_indicador ? this.$numberTransformService.formatNumber(dtTEResidencia.agr_sum_vl_indicador,"inteiro") + " menores resgatados do trabalho escravo são residentes do município" : "Não houve menores resgatados do trabalho escravo residentes nesse município")+ "</td></tr>";
         // text += "<tr><td>Fonte: Seguro Desemprego, 2003-2018</td></tr>";
+        text += "<tr><td class='font-weight-bold purple--text'>TRABALHANDO FORA DE CASA</td></tr>"
+        text += '<tr><td>' + (dtProvaBrasil && dtProvaBrasil.agr_sum_vl_indicador ? this.$numberTransformService.formatNumber(dtProvaBrasil.agr_sum_vl_indicador, 'inteiro') + ' declararam trabalhar fora de casa' : 'Nenhum estudante declarou trabalhar fora de casa') + '</td></tr>'
+        text += '<tr><td>Fonte: Prova Brasil 2017 (5º e 9º ano)</td></tr>'
         text += "<tr><td class='font-weight-bold'>RISCOS DE EXPLORAÇÃO SEXUAL COMERCIAL</td></tr>"
         text += '<tr><td>' + (dtMapear && dtMapear.agr_count ? this.$numberTransformService.formatNumber(dtMapear.agr_count, 'inteiro') + ' pontos de riscos de exploração sexual de menores em rodovias federais do município' : 'Não foram registrados locais de riscos de exploração sexual de menores em rodovias federais do município') + '</td></tr>'
         text += '<tr><td>Fonte: Mapear/PRF</td></tr>'
         text += "<tr><td class='font-weight-bold green--text accent-4'>POTENCIAL DE COTAS DE APRENDIZAGEM</td></tr>"
         text += '<tr><td>' + (dtPotAprendizes && dtPotAprendizes.agr_sum_vl_indicador ? this.$numberTransformService.formatNumber(dtPotAprendizes.agr_sum_vl_indicador, 'inteiro') + ' vagas de cotas de aprendizagem' : 'Nenhuma vaga de cotas de aprendizagem') + '</td></tr>'
         text += '<tr><td>Fonte: ME – IDEB/SIT, janeiro de 2021</td></tr>'
+        text += "<tr><td class='font-weight-bold indigo--text darken-2'>CRIANÇAS E ADOLESCENTES OCUPADOS</td></tr>"
+        text += '<tr><td>' + (dtCenso && dtCenso.agr_sum_vl_indicador ? this.$numberTransformService.formatNumber(dtCenso.agr_sum_vl_indicador, 'inteiro') + ' crianças e adolescentes ocupados entre 10 e 17 anos' : 'Nenhum registro de crianças e adolescentes ocupados entre 10 e 17 anos') + '</td></tr>'
+        text += '<tr><td>Fonte: IBGE - Censo Demográfico 2010</td></tr>'
         text += '</table>'
         target.bindPopup(text, { maxHeight: 300, minWidth: 400 }).openPopup()
         // }))
