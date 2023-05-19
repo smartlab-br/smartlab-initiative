@@ -435,14 +435,14 @@ if (!Vue.__snackbarManager__) {
         text += "<tr><td class='font-weight-bold brown--text'>COM VÍNCULOS DE EMPREGO</td></tr>"
         text += '<tr><td>' + (dtCatMenores && dtCatMenores.agr_count_cd_municipio_ibge ? this.$numberTransformService.formatNumber(dtCatMenores.agr_count_cd_municipio_ibge, 'inteiro') + ' notificações de acidentes de menores de 18 anos' : 'Não houve notificações de acidentes de menores de 18 anos') + '</td></tr>'
         text += '<tr><td>Fonte: CATWEB 2012 a 2020</td></tr>'
-        text += "<tr><td class='font-weight-bold orange--text'>SEGUNDO AS NOTIFICAÇÕES SINAN</td></tr>"
+        text += "<tr><td class='font-weight-bold red--text'>SEGUNDO AS NOTIFICAÇÕES SINAN</td></tr>"
         text += '<tr><td>' + (dtSinan && dtSinan.agr_sum_vl_indicador ? this.$numberTransformService.formatNumber(dtSinan.agr_sum_vl_indicador, 'inteiro') + ' notificações de ' + dtSinan.ds_agreg_primaria : 'Não houve notificações de acidente de trabalho grave de Crianças e Adolescentes ( 0 a 17 anos)') + '</td></tr>'
         text += '<tr><td>Fonte: MS - SINAN 2007 a 2020</td></tr>'
         text += "<tr><td class='font-weight-bold cyan--text darken-2'>CRIANÇAS E ADOLESCENTES OCUPADOS EM ESTABELECIMENOS AGROPECUÁRIOS</td></tr>"
         text += '<tr><td>' + (dtCensoAgro && dtCensoAgro.agr_sum_vl_indicador ? this.$numberTransformService.formatNumber(dtCensoAgro.agr_sum_vl_indicador, 'inteiro') + ' menores de 14 anos ocupados em estabelecimentos agropecuários' : 'Nenhum registro de menores de 14 anos ocupados em estabelecimentos agropecuários') + '</td></tr>'
         text += '<tr><td>Fonte: IBGE - Censo Agropecuário 2017</td></tr>'
         text += "<tr><td class='font-weight-bold'>EXPLORADOS PELO TRABALHO ESCRAVO</td></tr>"
-        text += "<tr><td class='font-weight-bold red--text'>LOCAL DE NASCIMENTO</td></tr>"
+        text += "<tr><td class='font-weight-bold orange--text'>LOCAL DE NASCIMENTO</td></tr>"
         text += '<tr><td>' + (dtTENascimento && dtTENascimento.agr_sum_vl_indicador ? this.$numberTransformService.formatNumber(dtTENascimento.agr_sum_vl_indicador, 'inteiro') + ' menores resgatados do trabalho escravo são naturais do município' : 'Não houve menores resgatados do trabalho escravo naturais desse município') + '</td></tr>'
         text += '<tr><td>Fonte: Seguro Desemprego, 2003-2018</td></tr>'
         // text += "<tr><td class='font-weight-bold light-blue--text'>LOCAL DE RESIDÊNCIA</td></tr>";
