@@ -624,9 +624,9 @@ export default {
         get_flag_value_ds: function (d, valor) {
           switch (valor) {
             case null:
-              return 'Não informado'
+              return 'Sem casos mapeados'
             case 0:
-              return 'Não'
+              return 'Sem casos mapeados'
             default:
               return 'Sim'
           }
@@ -634,9 +634,9 @@ export default {
         get_flag_value: function (valor) {
           switch (valor) {
             case null:
-              return 'Não informado'
+              return 'Sem casos mapeados'
             case 0:
-              return 'Não'
+              return 'Sem casos mapeados'
             default:
               return 'Sim'
           }
