@@ -360,6 +360,8 @@ export default {
         }
       } else if (!isNaN(parseFloat(value)) && value < 0) {
         return 'red--text'
+      } else if (value && value.toString().length > 200) {
+        return 'fixed-height'
       }
       return ''
     },
@@ -402,6 +404,11 @@ export default {
 
   .FLPODatatable-checkbox >>> label {
     font-size: 12px !important;
+  }
+
+  .fixed-height {
+    height: 80px;
+    overflow-y: scroll;
   }
 
 </style>
