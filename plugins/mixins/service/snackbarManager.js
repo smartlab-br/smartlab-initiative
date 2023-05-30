@@ -164,8 +164,9 @@ if (!Vue.__snackbarManager__) {
 
       async obsTETooltip (target, route, tooltip_list = [], removed_text_list = [], options = null) {
         let text = ''
-        if (target.options.rowData.cd_mun_ibge) { // Brasileiros
+        if (target.options.rowData.cd_mun_ibge) { // Brasileiros ou Sobreviventes Atendidos pelo SUAS
           let url = "/te/indicadoresmunicipais/rerank?categorias=cd_mun_ibge,cd_uf,cd_indicador,nm_municipio_uf,nu_competencia_max,nu_competencia_min&valor=vl_indicador&agregacao=sum&filtros=nn-vl_indicador,and,in-cd_indicador-'te_ope'-'te_sit_trab_resgatados'-'te_nat'-'te_res'-'te_inspecoes'-'te_insp_rgt',and,post-eq-cd_mun_ibge-" + target.options.rowData.cd_mun_ibge
+          let urlSUAS = "/indicadoresmunicipais?categorias=cd_mun_ibge,cd_uf,cd_indicador,nm_municipio_uf,nu_competencia,vl_indicador&filtros=nn-vl_indicador,and,eq-nu_competencia-nu_competencia_max,and,eq-cd_indicador-'g1_CREAS',and,eq-cd_municipio_ibge_dv-" + target.options.rowData.cd_mun_ibge
           // let url = "/te/indicadoresmunicipais?categorias=cd_mun_ibge,nm_municipio_uf,nu_competencia_max,nu_competencia_min&valor=vl_indicador&agregacao=sum&pivot=cd_indicador&filtros=nn-vl_indicador,and,in-cd_indicador-'te_ope'-'te_rgt'-'te_nat'-'te_res'-'te_inspecoes',and,eq-cd_mun_ibge-"+ target.options.rowData.cd_mun_ibge;
           const urlIndicadores = "/indicadoresmunicipais?categorias=cd_indicador,ds_indicador_radical,nu_competencia,nu_competencia_max,nu_competencia_min,vl_indicador&filtros=nn-vl_indicador,and,in-cd_indicador-'06_01_09_01'-'01_16_02_00'-'01_15_01_00'-'01_14_13_00',and,eq-cd_mun_ibge-" + target.options.rowData.cd_mun_ibge + ',and,eq-nu_competencia-nu_competencia_max&ordenacao=ds_indicador_radical'
           if (options && options.clickable) {
@@ -173,15 +174,18 @@ if (!Vue.__snackbarManager__) {
           }
           if (this.customParams.filterUrl && this.customParams.filterUrl != '') {
             url = url + this.customParams.filterUrl
+            urlSUAS = urlSUAS + this.customParams.filterUrl
             text += 'Considerados os seguintes filtros: ' + this.customParams.filterText
           }
           if (this.customFilters && this.customFilters.filterUrl && this.customFilters.filterUrl != '') {
             url = url + this.customFilters.filterUrl
+            urlSUAS = urlSUAS + this.customFilters.filterUrl
             text += 'Considerados os seguintes filtros: ' + this.customFilters.filterText
           }
           this.changeCursor(target.options.customOptions.containerId, 'wait')
-          const [result, resultIndicadores] = await Promise.all([
+          const [result, resultSUAS, resultIndicadores] = await Promise.all([
             this.$axios(this.$axiosCallSetupService.getAxiosOptions(url)),
+            this.$axios(this.$axiosCallSetupService.getAxiosOptions(urlSUAS)),
             this.$axios(this.$axiosCallSetupService.getAxiosOptions(urlIndicadores))
           ])
 
@@ -189,12 +193,13 @@ if (!Vue.__snackbarManager__) {
           //   this.$axios(this.$axiosCallSetupService.getAxiosOptions(urlIndicadores))])
           //   .then(this.$axios.spread((result, resultIndicadores) => {
           const dt = result.data.dataset
+          const dtSUAS = resultSUAS.data.dataset
           const dtIndicadores = resultIndicadores.data.dataset
           // let source = result.data).metadata.fonte;
           let ano_min
           let ano_max
 
-          text += "<p class='headline-obs'>Município: <b>" + dt[0].nm_municipio_uf + '</b></p>'
+          text += "<p class='headline-obs'>Município: <b>" + (dt[0] && dt[0].nm_municipio_uf ? dt[0].nm_municipio_uf : dtSUAS[0].nm_municipio_uf) + '</b></p>'
           text += "<table width='100%'>"
           let vl_ope = 0
           let vl_ope_nu_competencia_min
@@ -275,9 +280,9 @@ if (!Vue.__snackbarManager__) {
             ano_min = this.customParams.value_min && this.customParams.value_min >= vl_rgt_nu_competencia_min ? this.customParams.value_min : vl_rgt_nu_competencia_min
             ano_max = this.customParams.value_max && this.customParams.value_max <= vl_rgt_nu_competencia_max ? this.customParams.value_max : vl_rgt_nu_competencia_max
             text += '<tr><td>Fonte: Radar SIT - Painel de Informações e Estatísticas da Inspeção do Trabalho no Brasil</td></tr>'
-            text += '<tr><td>Período: ' + ano_min + (ano_min != ano_max ? ' a ' + ano_max : '') + '<br/><br/></td></tr>'
+            text += '<tr><td>Período: ' + ano_min + (ano_min != ano_max ? ' a ' + ano_max : '') + '</td></tr>'
           }
-          text += "<tr><td class='font-weight-bold accent-4'>OPERAÇÕES</td></tr>"
+          text += "<tr><td class='font-weight-bold accent-4'><br/>OPERAÇÕES</td></tr>"
           text += '<tr><td>' + this.$numberTransformService.formatNumber(vl_ope, 'inteiro') + ' operações</td></tr>'
           if (vl_ope != 0) {
             text += '<tr><td>' + this.$numberTransformService.formatNumber(vl_rgt / vl_ope, 'real', 2) + ' resgates por operação (envolvendo ' + vl_inspecoes + ' inspeções/fiscalizações)</td></tr>'
@@ -289,9 +294,9 @@ if (!Vue.__snackbarManager__) {
             ano_min = this.customParams.value_min && this.customParams.value_min >= vl_ope_nu_competencia_min ? this.customParams.value_min : vl_ope_nu_competencia_min
             ano_max = this.customParams.value_max && this.customParams.value_max <= vl_ope_nu_competencia_max ? this.customParams.value_max : vl_ope_nu_competencia_max
             text += '<tr><td>Fonte: COETE</td></tr>'
-            text += '<tr><td>Período: ' + ano_min + (ano_min != ano_max ? ' a ' + ano_max : '') + '<br/><br/></td></tr>'
+            text += '<tr><td>Período: ' + ano_min + (ano_min != ano_max ? ' a ' + ano_max : '') + '</td></tr>'
           }
-          text += "<tr><td class='font-weight-bold red--text'>RESGATADOS NATURAIS</td></tr>"
+          text += "<tr><td class='font-weight-bold red--text'><br/>RESGATADOS NATURAIS</td></tr>"
           text += '<tr><td>' + this.$numberTransformService.formatNumber(vl_nat, 'inteiro') + ' trabalhadores regatados nascidos no município em destaque</td></tr>'
           if (vl_nat != 0) {
             text += '<tr><td>' + vl_nat_rank_uf + 'ª posição no Estado com ' + vl_nat_pct_uf + ' do total</td></tr>'
@@ -299,9 +304,9 @@ if (!Vue.__snackbarManager__) {
             ano_min = this.customParams.value_min && this.customParams.value_min >= vl_nat_nu_competencia_min ? this.customParams.value_min : vl_nat_nu_competencia_min
             ano_max = this.customParams.value_max && this.customParams.value_max <= vl_nat_nu_competencia_max ? this.customParams.value_max : vl_nat_nu_competencia_max
             text += '<tr><td>Fonte: Seguro Desemprego do Trabalhador Resgatado (MTb)</td></tr>'
-            text += '<tr><td>Período: ' + ano_min + (ano_min != ano_max ? ' a ' + ano_max : '') + '<br/><br/></td></tr>'
+            text += '<tr><td>Período: ' + ano_min + (ano_min != ano_max ? ' a ' + ano_max : '') + '</td></tr>'
           }
-          text += "<tr><td class='font-weight-bold light-blue--text'>RESGATADOS RESIDENTES</td></tr>"
+          text += "<tr><td class='font-weight-bold light-blue--text'><br/>RESGATADOS RESIDENTES</td></tr>"
           text += '<tr><td>' + this.$numberTransformService.formatNumber(vl_res, 'inteiro') + ' trabalhadores resgatados que declararam residir, no momento do resgate, no município em destaque</td></tr>'
           if (vl_res != 0) {
             text += '<tr><td>' + vl_res_rank_uf + 'ª posição no Estado com ' + vl_res_pct_uf + ' do total</td></tr>'
@@ -309,8 +314,12 @@ if (!Vue.__snackbarManager__) {
             ano_min = this.customParams.value_min && this.customParams.value_min >= vl_res_nu_competencia_min ? this.customParams.value_min : vl_res_nu_competencia_min
             ano_max = this.customParams.value_max && this.customParams.value_max <= vl_res_nu_competencia_max ? this.customParams.value_max : vl_res_nu_competencia_max
             text += '<tr><td>Fonte: Seguro Desemprego do Trabalhador Resgatado (MTb)</td></tr>'
-            text += '<tr><td>Período: ' + ano_min + (ano_min != ano_max ? ' a ' + ano_max : '') + '<br/><br/></td></tr>'
+            text += '<tr><td>Período: ' + ano_min + (ano_min != ano_max ? ' a ' + ano_max : '') + '</td></tr>'
           }
+          text += "<tr><td class='font-weight-bold purple--text'><br/>SOBREVIVENTES ATENDIDOS PELA ASSISTÊNCIA</td></tr>"
+          text += '<tr><td>' + this.$numberTransformService.formatNumber(dtSUAS[0].vl_indicador, 'inteiro') + ' sobreviventes de tráfico de pessoas com acompanhamento pelo Serviço de Proteção e Atendimento Especializado a Famílias e Indivíduos (PAEFI) no Centro de Referência Especializado de Assistência Social (CREAS)</td></tr>'
+          text += '<tr><td>Fonte: Seguro Desemprego do Trabalhador Resgatado (MTb)</td></tr>'
+          text += '<tr><td>Ano: ' + dtSUAS[0].nu_competencia + '</td></tr>'
 
           text += "<tr><td class='font-weight-bold'><br/>INDICADORES MUNICIPAIS:</td></tr>"
           for (const item of dtIndicadores) {
