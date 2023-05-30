@@ -360,7 +360,7 @@ export default {
         }
       } else if (!isNaN(parseFloat(value)) && value < 0) {
         return 'red--text'
-      } else if (value && value.toString().length > 200) {
+      } else if (value && value.toString().length > 300) {
         return 'fixed-height'
       }
       return ''
