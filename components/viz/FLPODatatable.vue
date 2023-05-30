@@ -408,7 +408,7 @@ export default {
 
   .fixed-height {
     height: 80px;
-    overflow-y: scroll;
+    overflow-y: auto;
   }
 
 </style>
