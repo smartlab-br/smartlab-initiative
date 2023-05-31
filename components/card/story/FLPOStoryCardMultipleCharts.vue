@@ -192,7 +192,9 @@
                 v-for="chart in structure.charts"
                 :key="chartId[chart.id]"
               >
-                {{ chart.dataset_title ? chart.dataset_title : chart.title }}
+                <span>
+                  {{ chart.title ? chart.title : chartFooter[chart.id] }}
+                </span>
               </v-tab>
               <v-tab-item
                 v-for="chart in structure.charts"

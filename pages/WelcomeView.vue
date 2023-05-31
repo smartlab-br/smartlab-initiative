@@ -37,7 +37,6 @@
               <FLPOSearchBar />
             </v-flex>
           </v-layout>
-          <div />
         </v-flex>
         <v-layout v-show="observatoriosLinks" px-5 :class="{'justify-center': $vuetify.breakpoint.xlOnly }" row wrap>
           <v-flex
