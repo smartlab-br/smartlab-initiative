@@ -317,9 +317,9 @@ if (!Vue.__snackbarManager__) {
             text += '<tr><td>Período: ' + ano_min + (ano_min != ano_max ? ' a ' + ano_max : '') + '</td></tr>'
           }
           text += "<tr><td class='font-weight-bold purple--text'><br/>SOBREVIVENTES ATENDIDOS PELA ASSISTÊNCIA</td></tr>"
-          text += '<tr><td>' + this.$numberTransformService.formatNumber(dtSUAS[0].vl_indicador, 'inteiro') + ' sobreviventes de tráfico de pessoas com acompanhamento pelo Serviço de Proteção e Atendimento Especializado a Famílias e Indivíduos (PAEFI) no Centro de Referência Especializado de Assistência Social (CREAS)</td></tr>'
-          text += '<tr><td>Fonte: Seguro Desemprego do Trabalhador Resgatado (MTb)</td></tr>'
-          text += '<tr><td>Ano: ' + dtSUAS[0].nu_competencia + '</td></tr>'
+          text += '<tr><td>' + (dtSUAS && dtSUAS[0].vl_indicador ? this.$numberTransformService.formatNumber(dtSUAS[0].vl_indicador, 'inteiro') + ' sobreviventes de tráfico de pessoas com acompanhamento pelo Serviço de Proteção e Atendimento Especializado a Famílias e Indivíduos (PAEFI) no Centro de Referência Especializado de Assistência Social (CREAS)' : 'Nenhum registro de sobreviventes de tráfico de pessoas com acompanhamento pelo Serviço de Proteção e Atendimento Especializado a Famílias e Indivíduos (PAEFI) no Centro de Referência Especializado de Assistência Social (CREAS)') + '</td></tr>'
+          text += '<tr><td>Fonte: Ministério do Desenvolvimento e Assistência Social, Família e Combate à Fome, 2022</td></tr>'
+          text += '<tr><td>Ano: 2022</td></tr>'
 
           text += "<tr><td class='font-weight-bold'><br/>INDICADORES MUNICIPAIS:</td></tr>"
           for (const item of dtIndicadores) {
@@ -382,6 +382,7 @@ if (!Vue.__snackbarManager__) {
         let urlMapear = '/ti/mapear?categorias=nm_municipio_uf&agregacao=count&filtros=eq-nu_competencia-nu_competencia_max,and,eq-cd_municipio_ibge_dv-' + target.options.rowData.cd_mun_ibge
         let urlCenso = "/indicadoresmunicipais?categorias=nm_municipio_uf,ds_agreg_primaria,ds_fonte,nu_competencia&valor=vl_indicador&agregacao=sum&filtros=eq-cd_indicador-'06_01_01_01',and,eq-nu_competencia-nu_competencia_max,and,eq-cd_mun_ibge-" + target.options.rowData.cd_mun_ibge
         let urlCensoAgro = "/indicadoresmunicipais?categorias=nm_municipio_uf,ds_agreg_primaria,ds_fonte,nu_competencia&valor=vl_indicador&agregacao=sum&filtros=eq-cd_indicador-'CAGRO_TICA01',and,eq-nu_competencia-nu_competencia_max,and,eq-cd_mun_ibge-" + target.options.rowData.cd_mun_ibge
+        let urlAssistTI = "/indicadoresmunicipais?categorias=nm_municipio_uf,ds_agreg_primaria,ds_fonte,nu_competencia&valor=vl_indicador&agregacao=sum&filtros=eq-cd_indicador-'G_CREAS_00_17',and,eq-nu_competencia-nu_competencia_max,and,eq-cd_mun_ibge-" + target.options.rowData.cd_mun_ibge
         let text = ''
         if (options && options.clickable) {
           text += "<p class='text-xs-right ma-0'><a href='" + this.$tooltipBuildingService.getUrlByPlace(target.options.rowData.cd_mun_ibge, route) + "' class='primary--text font-weight-black'>IR PARA</a></p>"
@@ -396,9 +397,10 @@ if (!Vue.__snackbarManager__) {
           urlMapear = urlMapear + this.customParams.filterUrl
           urlCenso = urlCenso + this.customParams.filterUrl
           urlCensoAgro = urlCensoAgro + this.customParams.filterUrl
+          urlAssistTI = urlAssistTI + this.customParams.filterUrl
           text += 'Considerados os seguintes filtros: ' + this.customParams.filterText
         }
-        const [resultSinan, resultCatMenores, resultProvaBrasil, resultPotAprendizes, resultTENascimento, resultMapear, resultCenso, resultCensoAgro] = await Promise.all([
+        const [resultSinan, resultCatMenores, resultProvaBrasil, resultPotAprendizes, resultTENascimento, resultMapear, resultCenso, resultAssistTI, resultCensoAgro] = await Promise.all([
           this.$axios(this.$axiosCallSetupService.getAxiosOptions(urlSinan)),
           this.$axios(this.$axiosCallSetupService.getAxiosOptions(urlCatMenores)),
           this.$axios(this.$axiosCallSetupService.getAxiosOptions(urlProvaBrasil)),
@@ -406,6 +408,7 @@ if (!Vue.__snackbarManager__) {
           this.$axios(this.$axiosCallSetupService.getAxiosOptions(urlTENascimento)),
           this.$axios(this.$axiosCallSetupService.getAxiosOptions(urlMapear)),
           this.$axios(this.$axiosCallSetupService.getAxiosOptions(urlCenso)),
+          this.$axios(this.$axiosCallSetupService.getAxiosOptions(urlAssistTI)),
           this.$axios(this.$axiosCallSetupService.getAxiosOptions(urlCensoAgro))])
         // this.$axios.all([
         // this.$axios(this.$axiosCallSetupService.getAxiosOptions(urlSinan)),
@@ -436,6 +439,7 @@ if (!Vue.__snackbarManager__) {
         const dtMapear = resultMapear.data.dataset[0]
         const dtCenso = resultCenso.data.dataset[0]
         const dtCensoAgro = resultCensoAgro.data.dataset[0]
+        const dtAssistTI = resultAssistTI.data.dataset[0]
         const municipio = dtCenso && dtCenso.nm_municipio_uf ? dtCenso.nm_municipio_uf : dtProvaBrasil && dtProvaBrasil.nm_municipio_uf ? dtProvaBrasil.nm_municipio_uf : dtCatMenores && dtCatMenores.nm_municipio_uf ? dtCatMenores.nm_municipio_uf : dtSinan.nm_municipio_uf
 
         text += "<p class='headline-obs ma-0'>Município: <b>" + municipio + '</b></p>'
@@ -443,17 +447,17 @@ if (!Vue.__snackbarManager__) {
         text += "<tr><td class='font-weight-bold'>SOFRENDO ACIDENTES</td></tr>"
         text += "<tr><td class='font-weight-bold brown--text'>COM VÍNCULOS DE EMPREGO</td></tr>"
         text += '<tr><td>' + (dtCatMenores && dtCatMenores.agr_count_cd_municipio_ibge ? this.$numberTransformService.formatNumber(dtCatMenores.agr_count_cd_municipio_ibge, 'inteiro') + ' notificações de acidentes de menores de 18 anos' : 'Não houve notificações de acidentes de menores de 18 anos') + '</td></tr>'
-        text += '<tr><td>Fonte: CATWEB 2012 a 2020</td></tr>'
+        text += '<tr><td>Fonte: CATWEB 2012 a 2022</td></tr>'
         text += "<tr><td class='font-weight-bold red--text'>SEGUNDO AS NOTIFICAÇÕES SINAN</td></tr>"
         text += '<tr><td>' + (dtSinan && dtSinan.agr_sum_vl_indicador ? this.$numberTransformService.formatNumber(dtSinan.agr_sum_vl_indicador, 'inteiro') + ' notificações de ' + dtSinan.ds_agreg_primaria : 'Não houve notificações de acidente de trabalho grave de Crianças e Adolescentes ( 0 a 17 anos)') + '</td></tr>'
-        text += '<tr><td>Fonte: MS - SINAN 2007 a 2020</td></tr>'
+        text += '<tr><td>Fonte: MS - SINAN 2007 a 2022</td></tr>'
         text += "<tr><td class='font-weight-bold cyan--text darken-2'>CRIANÇAS E ADOLESCENTES OCUPADOS EM ESTABELECIMENOS AGROPECUÁRIOS</td></tr>"
         text += '<tr><td>' + (dtCensoAgro && dtCensoAgro.agr_sum_vl_indicador ? this.$numberTransformService.formatNumber(dtCensoAgro.agr_sum_vl_indicador, 'inteiro') + ' menores de 14 anos ocupados em estabelecimentos agropecuários' : 'Nenhum registro de menores de 14 anos ocupados em estabelecimentos agropecuários') + '</td></tr>'
         text += '<tr><td>Fonte: IBGE - Censo Agropecuário 2017</td></tr>'
         text += "<tr><td class='font-weight-bold'>EXPLORADOS PELO TRABALHO ESCRAVO</td></tr>"
         text += "<tr><td class='font-weight-bold orange--text'>LOCAL DE NASCIMENTO</td></tr>"
         text += '<tr><td>' + (dtTENascimento && dtTENascimento.agr_sum_vl_indicador ? this.$numberTransformService.formatNumber(dtTENascimento.agr_sum_vl_indicador, 'inteiro') + ' menores resgatados do trabalho escravo são naturais do município' : 'Não houve menores resgatados do trabalho escravo naturais desse município') + '</td></tr>'
-        text += '<tr><td>Fonte: Seguro Desemprego, 2003-2018</td></tr>'
+        text += '<tr><td>Fonte: Seguro Desemprego, 2002-2022</td></tr>'
         // text += "<tr><td class='font-weight-bold light-blue--text'>LOCAL DE RESIDÊNCIA</td></tr>";
         // text += "<tr><td>" + (dtTEResidencia && dtTEResidencia.agr_sum_vl_indicador ? this.$numberTransformService.formatNumber(dtTEResidencia.agr_sum_vl_indicador,"inteiro") + " menores resgatados do trabalho escravo são residentes do município" : "Não houve menores resgatados do trabalho escravo residentes nesse município")+ "</td></tr>";
         // text += "<tr><td>Fonte: Seguro Desemprego, 2003-2018</td></tr>";
@@ -465,10 +469,13 @@ if (!Vue.__snackbarManager__) {
         text += '<tr><td>Fonte: Mapear/PRF</td></tr>'
         text += "<tr><td class='font-weight-bold green--text accent-4'>POTENCIAL DE COTAS DE APRENDIZAGEM</td></tr>"
         text += '<tr><td>' + (dtPotAprendizes && dtPotAprendizes.agr_sum_vl_indicador ? this.$numberTransformService.formatNumber(dtPotAprendizes.agr_sum_vl_indicador, 'inteiro') + ' vagas de cotas de aprendizagem' : 'Nenhuma vaga de cotas de aprendizagem') + '</td></tr>'
-        text += '<tr><td>Fonte: ME – IDEB/SIT, janeiro de 2021</td></tr>'
+        text += '<tr><td>Fonte: ME – IDEB/SIT, março de 2023</td></tr>'
         text += "<tr><td class='font-weight-bold indigo--text darken-2'>CRIANÇAS E ADOLESCENTES OCUPADOS</td></tr>"
         text += '<tr><td>' + (dtCenso && dtCenso.agr_sum_vl_indicador ? this.$numberTransformService.formatNumber(dtCenso.agr_sum_vl_indicador, 'inteiro') + ' crianças e adolescentes ocupados entre 10 e 17 anos' : 'Nenhum registro de crianças e adolescentes ocupados entre 10 e 17 anos') + '</td></tr>'
         text += '<tr><td>Fonte: IBGE - Censo Demográfico 2010</td></tr>'
+        text += "<tr><td class='font-weight-bold teal--text darken-1'>CRIANÇAS E ADOLESCENTES SOBREVIVENTES ATENDIDOS PELA ASSISTÊNCIA SOCIAL</td></tr>"
+        text += '<tr><td>' + (dtAssistTI && dtAssistTI.agr_sum_vl_indicador ? this.$numberTransformService.formatNumber(dtAssistTI.agr_sum_vl_indicador, 'inteiro') + ' crianças e adolescentes sobreviventes de tráfico de pessoas com acompanhamento pelo Serviço de Proteção e Atendimento Especializado a Famílias e Indivíduos (PAEFI) no Centro de Referência Especializado de Assistência Social (CREAS)' : 'Nenhum registro de crianças e adolescentes sobreviventes de tráfico de pessoas com acompanhamento pelo Serviço de Proteção e Atendimento Especializado a Famílias e Indivíduos (PAEFI) no Centro de Referência Especializado de Assistência Social (CREAS)') + '</td></tr>'
+        text += '<tr><td>Fonte: Ministério do Desenvolvimento e Assistência Social, Família e Combate à Fome, 2022</td></tr>'
         text += '</table>'
         target.bindPopup(text, { maxHeight: 300, minWidth: 400 }).openPopup()
         // }))

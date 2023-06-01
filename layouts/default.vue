@@ -1787,6 +1787,17 @@ export default {
     font-weight: bold;
   }
 
+  .v-dialog .v-tabs__container {
+    flex: 1 0 auto;
+    display: flex;
+    height: 100%;
+    min-height: 48px;
+    list-style-type: none;
+    transition: transform 0.6s cubic-bezier(0.86, 0, 0.07, 1);
+    white-space: nowrap;
+    position: relative;
+  }
+
   .v-tabs__icon--next{
     background-color:  var(--v-accent-base) !important;
     border-color:  var(--v-accent-base) !important;
