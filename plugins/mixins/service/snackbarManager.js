@@ -166,7 +166,7 @@ if (!Vue.__snackbarManager__) {
         let text = ''
         if (target.options.rowData.cd_mun_ibge) { // Brasileiros ou Sobreviventes Atendidos pelo SUAS
           let url = "/te/indicadoresmunicipais/rerank?categorias=cd_mun_ibge,cd_uf,cd_indicador,nm_municipio_uf,nu_competencia_max,nu_competencia_min&valor=vl_indicador&agregacao=sum&filtros=nn-vl_indicador,and,in-cd_indicador-'te_ope'-'te_sit_trab_resgatados'-'te_nat'-'te_res'-'te_inspecoes'-'te_insp_rgt',and,post-eq-cd_mun_ibge-" + target.options.rowData.cd_mun_ibge
-          let urlSUAS = "/indicadoresmunicipais?categorias=cd_mun_ibge,cd_uf,cd_indicador,nm_municipio_uf,nu_competencia,vl_indicador&filtros=nn-vl_indicador,and,eq-nu_competencia-nu_competencia_max,and,eq-cd_indicador-'g1_CREAS',and,eq-cd_municipio_ibge_dv-" + target.options.rowData.cd_mun_ibge
+          let urlSUAS = "/indicadoresmunicipais?categorias=cd_mun_ibge,cd_uf,nm_municipio_uf&valor=vl_indicador&agregacao=SUM&filtros=nn-vl_indicador,and,in-cd_indicador-'G_CREAS_00_17'-'G_CREAS_18_99',and,eq-cd_municipio_ibge_dv-" + target.options.rowData.cd_mun_ibge
           // let url = "/te/indicadoresmunicipais?categorias=cd_mun_ibge,nm_municipio_uf,nu_competencia_max,nu_competencia_min&valor=vl_indicador&agregacao=sum&pivot=cd_indicador&filtros=nn-vl_indicador,and,in-cd_indicador-'te_ope'-'te_rgt'-'te_nat'-'te_res'-'te_inspecoes',and,eq-cd_mun_ibge-"+ target.options.rowData.cd_mun_ibge;
           const urlIndicadores = "/indicadoresmunicipais?categorias=cd_indicador,ds_indicador_radical,nu_competencia,nu_competencia_max,nu_competencia_min,vl_indicador&filtros=nn-vl_indicador,and,in-cd_indicador-'06_01_09_01'-'01_16_02_00'-'01_15_01_00'-'01_14_13_00',and,eq-cd_mun_ibge-" + target.options.rowData.cd_mun_ibge + ',and,eq-nu_competencia-nu_competencia_max&ordenacao=ds_indicador_radical'
           if (options && options.clickable) {
@@ -317,9 +317,9 @@ if (!Vue.__snackbarManager__) {
             text += '<tr><td>Período: ' + ano_min + (ano_min != ano_max ? ' a ' + ano_max : '') + '</td></tr>'
           }
           text += "<tr><td class='font-weight-bold purple--text'><br/>SOBREVIVENTES ATENDIDOS PELA ASSISTÊNCIA</td></tr>"
-          text += '<tr><td>' + (dtSUAS && dtSUAS[0].vl_indicador ? this.$numberTransformService.formatNumber(dtSUAS[0].vl_indicador, 'inteiro') + ' sobreviventes de tráfico de pessoas com acompanhamento pelo Serviço de Proteção e Atendimento Especializado a Famílias e Indivíduos (PAEFI) no Centro de Referência Especializado de Assistência Social (CREAS)' : 'Nenhum registro de sobreviventes de tráfico de pessoas com acompanhamento pelo Serviço de Proteção e Atendimento Especializado a Famílias e Indivíduos (PAEFI) no Centro de Referência Especializado de Assistência Social (CREAS)') + '</td></tr>'
-          text += '<tr><td>Fonte: Ministério do Desenvolvimento e Assistência Social, Família e Combate à Fome, 2022</td></tr>'
-          text += '<tr><td>Ano: 2022</td></tr>'
+          text += '<tr><td>' + (dtSUAS && dtSUAS[0] ? 'Possui sobreviventes de tráfico de pessoas com acompanhamento pelo Serviço de Proteção e Atendimento Especializado a Famílias e Indivíduos (PAEFI) no Centro de Referência Especializado de Assistência Social (CREAS)' : 'Nenhum registro de sobreviventes de tráfico de pessoas com acompanhamento pelo Serviço de Proteção e Atendimento Especializado a Famílias e Indivíduos (PAEFI) no Centro de Referência Especializado de Assistência Social (CREAS)') + '</td></tr>'
+          text += '<tr><td>Fonte: Ministério do Desenvolvimento e Assistência Social, Família e Combate à Fome</td></tr>'
+          text += '<tr><td>Período: 2017 a 2022</td></tr>'
 
           text += "<tr><td class='font-weight-bold'><br/>INDICADORES MUNICIPAIS:</td></tr>"
           for (const item of dtIndicadores) {
@@ -382,7 +382,7 @@ if (!Vue.__snackbarManager__) {
         let urlMapear = '/ti/mapear?categorias=nm_municipio_uf&agregacao=count&filtros=eq-nu_competencia-nu_competencia_max,and,eq-cd_municipio_ibge_dv-' + target.options.rowData.cd_mun_ibge
         let urlCenso = "/indicadoresmunicipais?categorias=nm_municipio_uf,ds_agreg_primaria,ds_fonte,nu_competencia&valor=vl_indicador&agregacao=sum&filtros=eq-cd_indicador-'06_01_01_01',and,eq-nu_competencia-nu_competencia_max,and,eq-cd_mun_ibge-" + target.options.rowData.cd_mun_ibge
         let urlCensoAgro = "/indicadoresmunicipais?categorias=nm_municipio_uf,ds_agreg_primaria,ds_fonte,nu_competencia&valor=vl_indicador&agregacao=sum&filtros=eq-cd_indicador-'CAGRO_TICA01',and,eq-nu_competencia-nu_competencia_max,and,eq-cd_mun_ibge-" + target.options.rowData.cd_mun_ibge
-        let urlAssistTI = "/indicadoresmunicipais?categorias=nm_municipio_uf,ds_agreg_primaria,ds_fonte,nu_competencia&valor=vl_indicador&agregacao=sum&filtros=eq-cd_indicador-'G_CREAS_00_17',and,eq-nu_competencia-nu_competencia_max,and,eq-cd_mun_ibge-" + target.options.rowData.cd_mun_ibge
+        let urlAssistTI = "/indicadoresmunicipais?categorias=nm_municipio_uf,ds_agreg_primaria,ds_fonte&valor=vl_indicador&agregacao=sum&filtros=eq-cd_indicador-'G_CREAS_00_17',and,eq-cd_mun_ibge-" + target.options.rowData.cd_mun_ibge
         let text = ''
         if (options && options.clickable) {
           text += "<p class='text-xs-right ma-0'><a href='" + this.$tooltipBuildingService.getUrlByPlace(target.options.rowData.cd_mun_ibge, route) + "' class='primary--text font-weight-black'>IR PARA</a></p>"
@@ -474,8 +474,8 @@ if (!Vue.__snackbarManager__) {
         text += '<tr><td>' + (dtCenso && dtCenso.agr_sum_vl_indicador ? this.$numberTransformService.formatNumber(dtCenso.agr_sum_vl_indicador, 'inteiro') + ' crianças e adolescentes ocupados entre 10 e 17 anos' : 'Nenhum registro de crianças e adolescentes ocupados entre 10 e 17 anos') + '</td></tr>'
         text += '<tr><td>Fonte: IBGE - Censo Demográfico 2010</td></tr>'
         text += "<tr><td class='font-weight-bold teal--text darken-1'>CRIANÇAS E ADOLESCENTES SOBREVIVENTES ATENDIDOS PELA ASSISTÊNCIA SOCIAL</td></tr>"
-        text += '<tr><td>' + (dtAssistTI && dtAssistTI.agr_sum_vl_indicador ? this.$numberTransformService.formatNumber(dtAssistTI.agr_sum_vl_indicador, 'inteiro') + ' crianças e adolescentes sobreviventes de tráfico de pessoas com acompanhamento pelo Serviço de Proteção e Atendimento Especializado a Famílias e Indivíduos (PAEFI) no Centro de Referência Especializado de Assistência Social (CREAS)' : 'Nenhum registro de crianças e adolescentes sobreviventes de tráfico de pessoas com acompanhamento pelo Serviço de Proteção e Atendimento Especializado a Famílias e Indivíduos (PAEFI) no Centro de Referência Especializado de Assistência Social (CREAS)') + '</td></tr>'
-        text += '<tr><td>Fonte: Ministério do Desenvolvimento e Assistência Social, Família e Combate à Fome, 2022</td></tr>'
+        text += '<tr><td>' + (dtAssistTI && dtAssistTI.agr_sum_vl_indicador ? 'Possui crianças e adolescentes sobreviventes de tráfico de pessoas com acompanhamento pelo Serviço de Proteção e Atendimento Especializado a Famílias e Indivíduos (PAEFI) no Centro de Referência Especializado de Assistência Social (CREAS)' : 'Nenhum registro de crianças e adolescentes sobreviventes de tráfico de pessoas com acompanhamento pelo Serviço de Proteção e Atendimento Especializado a Famílias e Indivíduos (PAEFI) no Centro de Referência Especializado de Assistência Social (CREAS)') + '</td></tr>'
+        text += '<tr><td>Fonte: Ministério do Desenvolvimento e Assistência Social, Família e Combate à Fome, 2017-2022</td></tr>'
         text += '</table>'
         target.bindPopup(text, { maxHeight: 300, minWidth: 400 }).openPopup()
         // }))
