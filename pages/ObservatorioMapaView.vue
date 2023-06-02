@@ -397,6 +397,9 @@ export default {
     },
 
     fetchMapData (endpoint = null) {
+      if (this.observatorio.prevalencia.api_avancado) {
+        this.observatorio.prevalencia.api = this.observatorio.prevalencia.api_avancado
+      }
       this.dialogMapLoading = true
       this.fillDataStructure(
         this.observatorio.prevalencia,
