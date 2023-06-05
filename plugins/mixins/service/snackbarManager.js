@@ -383,6 +383,7 @@ if (!Vue.__snackbarManager__) {
         let urlCenso = "/indicadoresmunicipais?categorias=nm_municipio_uf,ds_agreg_primaria,ds_fonte,nu_competencia&valor=vl_indicador&agregacao=sum&filtros=eq-cd_indicador-'06_01_01_01',and,eq-nu_competencia-nu_competencia_max,and,eq-cd_mun_ibge-" + target.options.rowData.cd_mun_ibge
         let urlCensoAgro = "/indicadoresmunicipais?categorias=nm_municipio_uf,ds_agreg_primaria,ds_fonte,nu_competencia&valor=vl_indicador&agregacao=sum&filtros=eq-cd_indicador-'CAGRO_TICA01',and,eq-nu_competencia-nu_competencia_max,and,eq-cd_mun_ibge-" + target.options.rowData.cd_mun_ibge
         let urlAssistTI = "/indicadoresmunicipais?categorias=nm_municipio_uf,ds_agreg_primaria,ds_fonte&valor=vl_indicador&agregacao=sum&filtros=eq-cd_indicador-'G_CREAS_00_17',and,eq-cd_mun_ibge-" + target.options.rowData.cd_mun_ibge
+        let urlFamiliasTI = "/indicadoresmunicipais?categorias=nm_municipio_uf,ds_agreg_primaria,ds_fonte&valor=vl_indicador&agregacao=sum&filtros=eq-cd_indicador-'TICAD_23_001',and,eq-cd_mun_ibge-" + target.options.rowData.cd_mun_ibge
         let text = ''
         if (options && options.clickable) {
           text += "<p class='text-xs-right ma-0'><a href='" + this.$tooltipBuildingService.getUrlByPlace(target.options.rowData.cd_mun_ibge, route) + "' class='primary--text font-weight-black'>IR PARA</a></p>"
@@ -398,9 +399,10 @@ if (!Vue.__snackbarManager__) {
           urlCenso = urlCenso + this.customParams.filterUrl
           urlCensoAgro = urlCensoAgro + this.customParams.filterUrl
           urlAssistTI = urlAssistTI + this.customParams.filterUrl
+          urlFamiliasTI = urlFamiliasTI + this.customParams.filterUrl
           text += 'Considerados os seguintes filtros: ' + this.customParams.filterText
         }
-        const [resultSinan, resultCatMenores, resultProvaBrasil, resultPotAprendizes, resultTENascimento, resultMapear, resultCenso, resultAssistTI, resultCensoAgro] = await Promise.all([
+        const [resultSinan, resultCatMenores, resultProvaBrasil, resultPotAprendizes, resultTENascimento, resultMapear, resultCenso, resultAssistTI, resultCensoAgro, resultFamiliasTI] = await Promise.all([
           this.$axios(this.$axiosCallSetupService.getAxiosOptions(urlSinan)),
           this.$axios(this.$axiosCallSetupService.getAxiosOptions(urlCatMenores)),
           this.$axios(this.$axiosCallSetupService.getAxiosOptions(urlProvaBrasil)),
@@ -409,27 +411,9 @@ if (!Vue.__snackbarManager__) {
           this.$axios(this.$axiosCallSetupService.getAxiosOptions(urlMapear)),
           this.$axios(this.$axiosCallSetupService.getAxiosOptions(urlCenso)),
           this.$axios(this.$axiosCallSetupService.getAxiosOptions(urlAssistTI)),
-          this.$axios(this.$axiosCallSetupService.getAxiosOptions(urlCensoAgro))])
-        // this.$axios.all([
-        // this.$axios(this.$axiosCallSetupService.getAxiosOptions(urlSinan)),
-        // this.$axios(this.$axiosCallSetupService.getAxiosOptions(urlCatMenores)),
-        // this.$axios(this.$axiosCallSetupService.getAxiosOptions(urlProvaBrasil)),
-        // this.$axios(this.$axiosCallSetupService.getAxiosOptions(urlPotAprendizes)),
-        // this.$axios(this.$axiosCallSetupService.getAxiosOptions(urlTENascimento)),
-        // //  this.$axios(this.$axiosCallSetupService.getAxiosOptions(urlTEResidencia)),
-        // this.$axios(this.$axiosCallSetupService.getAxiosOptions(urlMapear)),
-        // this.$axios(this.$axiosCallSetupService.getAxiosOptions(urlCenso)),
-        // this.$axios(this.$axiosCallSetupService.getAxiosOptions(urlCensoAgro))])
-        // .then(this.$axios.spread((
-        //   resultSinan,
-        //   resultCatMenores,
-        //   resultProvaBrasil,
-        //   resultPotAprendizes,
-        //   resultTENascimento,
-        //   // resultTEResidencia,
-        //   resultMapear,
-        //   resultCenso,
-        //   resultCensoAgro) => {
+          this.$axios(this.$axiosCallSetupService.getAxiosOptions(urlCensoAgro)),
+          this.$axios(this.$axiosCallSetupService.getAxiosOptions(urlFamiliasTI))
+        ])
         const dtSinan = resultSinan.data.dataset[0]
         const dtProvaBrasil = resultProvaBrasil.data.dataset[0]
         const dtCatMenores = resultCatMenores.data.dataset[0]
@@ -440,6 +424,7 @@ if (!Vue.__snackbarManager__) {
         const dtCenso = resultCenso.data.dataset[0]
         const dtCensoAgro = resultCensoAgro.data.dataset[0]
         const dtAssistTI = resultAssistTI.data.dataset[0]
+        const dtFamiliasTI = resultFamiliasTI.data.dataset[0]
         const municipio = dtCenso && dtCenso.nm_municipio_uf ? dtCenso.nm_municipio_uf : dtProvaBrasil && dtProvaBrasil.nm_municipio_uf ? dtProvaBrasil.nm_municipio_uf : dtCatMenores && dtCatMenores.nm_municipio_uf ? dtCatMenores.nm_municipio_uf : dtSinan.nm_municipio_uf
 
         text += "<p class='headline-obs ma-0'>Município: <b>" + municipio + '</b></p>'
@@ -476,6 +461,9 @@ if (!Vue.__snackbarManager__) {
         text += "<tr><td class='font-weight-bold teal--text darken-1'>CRIANÇAS E ADOLESCENTES SOBREVIVENTES ATENDIDOS PELA ASSISTÊNCIA SOCIAL</td></tr>"
         text += '<tr><td>' + (dtAssistTI && dtAssistTI.agr_sum_vl_indicador ? 'Possui crianças e adolescentes sobreviventes de tráfico de pessoas com acompanhamento pelo Serviço de Proteção e Atendimento Especializado a Famílias e Indivíduos (PAEFI) no Centro de Referência Especializado de Assistência Social (CREAS)' : 'Nenhum registro de crianças e adolescentes sobreviventes de tráfico de pessoas com acompanhamento pelo Serviço de Proteção e Atendimento Especializado a Famílias e Indivíduos (PAEFI) no Centro de Referência Especializado de Assistência Social (CREAS)') + '</td></tr>'
         text += '<tr><td>Fonte: Ministério do Desenvolvimento e Assistência Social, Família e Combate à Fome, 2017-2022</td></tr>'
+        text += "<tr><td class='font-weight-bold pink--text darken-2'>FAMÍLIAS COM SITUAÇÃO DE TRABALHO INFANTIL</td></tr>"
+        text += '<tr><td>' + (dtFamiliasTI && dtFamiliasTI.agr_sum_vl_indicador ? this.$numberTransformService.formatNumber(dtFamiliasTI.agr_sum_vl_indicador, 'inteiro') + ' famílias com algum membro em situação de trabalho infantil' : 'Nenhum registro de famílias com algum membro em situação de trabalho infantil.') + '</td></tr>'
+        text += '<tr><td>Fonte: Ministério do Desenvolvimento e Assistência Social, Família e Combate à Fome, março 2023</td></tr>'
         text += '</table>'
         target.bindPopup(text, { maxHeight: 300, minWidth: 400 }).openPopup()
         // }))
