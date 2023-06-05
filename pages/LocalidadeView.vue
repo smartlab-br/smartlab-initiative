@@ -468,6 +468,9 @@ export default {
         calc_complemetary_absolut_from_percentage: function (percentage, abs_total) {
           return (abs_total * (100 - percentage)) / 100
         },
+        calc_distinct_count_ds (d, strValues, separator = ', ') {
+          return new Set(strValues.split(separator)).size
+        },
         oppose: function (d, prop_ref, value_ref, prop_val) {
           if (d[prop_ref] == value_ref) {
             return -d[prop_val]
