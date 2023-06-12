@@ -468,6 +468,9 @@ export default {
         calc_complemetary_absolut_from_percentage: function (percentage, abs_total) {
           return (abs_total * (100 - percentage)) / 100
         },
+        calc_distinct_count_ds (d, strValues, separator = ', ') {
+          return new Set(strValues.split(separator)).size
+        },
         oppose: function (d, prop_ref, value_ref, prop_val) {
           if (d[prop_ref] == value_ref) {
             return -d[prop_val]
@@ -624,9 +627,9 @@ export default {
         get_flag_value_ds: function (d, valor) {
           switch (valor) {
             case null:
-              return 'Não informado'
+              return 'Sem casos mapeados'
             case 0:
-              return 'Não'
+              return 'Sem casos mapeados'
             default:
               return 'Sim'
           }
@@ -634,9 +637,9 @@ export default {
         get_flag_value: function (valor) {
           switch (valor) {
             case null:
-              return 'Não informado'
+              return 'Sem casos mapeados'
             case 0:
-              return 'Não'
+              return 'Sem casos mapeados'
             default:
               return 'Sim'
           }
