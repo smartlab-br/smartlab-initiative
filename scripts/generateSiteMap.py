@@ -138,7 +138,7 @@ def generate_structure(view_conf_path):
 
         # Dimensões
         for dim_item in dimensions_yaml['dimensoes']:
-            if not 'external' in dim_item or ('external' in dim_item and not dim_item['external']):
+            if (not 'external' in dim_item or ('external' in dim_item and not dim_item['external'])) and not dim_item['blocked']:
                 dim_yaml = read_yaml(view_conf_path + "/observatorio/" + obs_item['id'] + "/localidade/municipio/" + dim_item['id'] + ".yaml")
                 cards = []
                 for section in dim_yaml['secoes']:
