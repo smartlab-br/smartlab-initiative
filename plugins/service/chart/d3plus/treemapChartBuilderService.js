@@ -34,6 +34,7 @@ class TreemapChartBuilderService extends D3PlusChartBuilderService {
         aColorScale = options.colorScale.colorArray
         viz = viz.colorScale(options.size)
         viz = viz.colorScaleConfig({
+          scale: 'linear',
           color: aColorScale,
           axisConfig: this.constructor.getTransparentXYConfig(),
           rectConfig: { stroke: additionalOptions.colorHandlers.assessZebraTitleColor(additionalOptions.sectionIndex, null, additionalOptions.theme) }
@@ -72,6 +73,7 @@ class TreemapChartBuilderService extends D3PlusChartBuilderService {
             if (options.colorScale.type == null || options.colorScale.type == undefined) { options.colorScale.type = 'divergent' }
 
             viz = viz.colorScaleConfig({
+              scale: 'linear',
               color: aColorScale,
               axisConfig: this.constructor.getTransparentXYConfig(),
               rectConfig: { stroke: additionalOptions.colorHandlers.assessZebraTitleColor(additionalOptions.sectionIndex, null, additionalOptions.theme) }

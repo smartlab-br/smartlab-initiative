@@ -134,6 +134,7 @@ class BarChartBuilderService extends D3PlusChartBuilderService {
       viz = viz.color(function (d) { return (d.color !== null && d.color !== undefined) ? d.color : '#2196F3' })
     } else {
       viz = viz.colorScaleConfig({
+        scale: 'linear',
         color: additionalOptions.colorHandlers.getColorScale(options.colorScale.name)
       })
       viz = viz.color('color')
