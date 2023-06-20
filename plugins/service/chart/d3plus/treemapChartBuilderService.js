@@ -39,7 +39,6 @@ class TreemapChartBuilderService extends D3PlusChartBuilderService {
           axisConfig: this.constructor.getTransparentXYConfig(),
           rectConfig: { stroke: additionalOptions.colorHandlers.assessZebraTitleColor(additionalOptions.sectionIndex, null, additionalOptions.theme) }
         })
-        viz = viz.colorScalePosition(options.show_scale ? 'right' : false)
       } else if (options.colorScale.color_array) {
         viz = viz.color((d) => { return options.colorScale.color_array[d[options.id]] })
       } else {
@@ -79,7 +78,6 @@ class TreemapChartBuilderService extends D3PlusChartBuilderService {
               rectConfig: { stroke: additionalOptions.colorHandlers.assessZebraTitleColor(additionalOptions.sectionIndex, null, additionalOptions.theme) }
             })
           }
-          viz = viz.colorScalePosition(options.show_scale ? 'right' : false)
         } else {
           viz = viz.color((d) => { return aColorScale })
         }
@@ -109,7 +107,7 @@ class TreemapChartBuilderService extends D3PlusChartBuilderService {
       })
     }
 
-    const grafico = viz
+    viz = viz
       .select(containerId) // container DIV to hold the visualization
       .data(slicedDS) // data to use with the visualization
       .label((d) => {
@@ -119,7 +117,7 @@ class TreemapChartBuilderService extends D3PlusChartBuilderService {
       .detectResize(true)
       .sum(options.size) // key to use for x-axis
 
-    return grafico
+    return viz
   }
 
   generateViz (options, additionalOptions) {
