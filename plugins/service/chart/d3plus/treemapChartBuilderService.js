@@ -116,6 +116,7 @@ class TreemapChartBuilderService extends D3PlusChartBuilderService {
       })
       .detectResize(true)
       .sum(options.size) // key to use for x-axis
+      .colorScalePosition('right')
 
     return viz
   }
