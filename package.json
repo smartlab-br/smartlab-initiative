@@ -35,7 +35,7 @@
     "leaflet-easyprint": "2.1.9",
     "leaflet.heat": "0.2.0",
     "leaflet.markercluster": "1.4.0",
-    "nuxt": "^2.15.8",
+    "nuxt": "^3.6.0",
     "odometer": "^0.4.8",
     "topojson-client": "3.1.0",
     "vue": "^2.7.10",
