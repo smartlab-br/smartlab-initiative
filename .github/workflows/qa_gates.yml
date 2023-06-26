@@ -4,10 +4,8 @@ on:
   workflow_dispatch:
   pull_request:
     branches:
-      - main
-      - master
+      - release-*
       - staging
-      - development
 
 jobs:
   test:
@@ -30,9 +28,6 @@ jobs:
       run: npm run test
     - name: Transform paths in reports
       run: sed -i 's/\/home\/runner\/work\/smartlab-initiative\/smartlab-initiative/./' ./lint/report.json
-    #    sed -i 's/\/home\/runner\/work\/smartlab-initiative\/smartlab-initiative/./' ./coverage/lcov.info
-         # sed -i 's/\/home\/runner\/work\/smartlab-initiative\/smartlab-initiative/./' ./coverage/cobertura-coverage.xml
-    #    # sed -i 's/\/home\/runner\/work\/smartlab-initiative\/smartlab-initiative/./' ./test/report.xml
     - name: SonarCloud Scan
       uses: sonarsource/sonarcloud-github-action@master
       env:
