@@ -8,8 +8,8 @@ import MapaSite from '~/pages/MapaSiteView.vue'
 import Observatorio from '~/pages/ObservatorioView.vue'
 import ObservatorioMapa from '~/pages/ObservatorioMapaView.vue'
 import ObservatorioEmBreve from '~/pages/ObservatorioEmBreveView.vue'
-import Estudo from '~/pages/EstudoView.vue'
-import Fontes from '~/pages/sobre/FontesView.vue'
+// import Estudo from '~/pages/EstudoView.vue'
+// import Fontes from '~/pages/sobre/FontesView.vue'
 import SaibaMais from '~/pages/sobre/SaibaMaisView.vue'
 
 const originalPush = Router.prototype.push
@@ -22,14 +22,31 @@ Router.prototype.push = function push (location) {
 }
 
 // The meta data for your routes
-const meta = require('~/router/meta.json')
+const metaJson = require('~/router/meta.json')
 
 // Function to create routes
 // // Is default lazy but can be changed
 function route (path, component) {
+  const keys = path.split('/')
+  let key = 'root'
+  let obs = ''
+  if (keys.length > 2 && keys[2] !== '') {
+    if (keys[1] === 'saibamais') {
+      key = keys[1]
+    } else {
+      key = keys[2]
+      if (keys[1] !== '') {
+        obs = ' - ' + metaJson[keys[1]].title
+      }
+    }
+  } else if (keys.length > 1 && keys[1] !== '') {
+    key = keys[1]
+  }
+  const meta = metaJson[key]
   return {
+    name: meta.title + obs,
     path,
-    meta: meta[path],
+    meta,
     component
   }
 }
@@ -43,11 +60,11 @@ export function createRouter () {
     scrollBehavior: () => ({ y: 0 }),
     routes: [
       route('/', Welcome),
-      route('/saibamais', SaibaMais),
+      // route('/saibamais', SaibaMais),
       route('/saibamais/:tab', SaibaMais),
-      route('/fontes', Fontes),
-      route('/fontes/:tab', Fontes),
-      route('/estudo/:idEstudo', Estudo),
+      // route('/fontes', Fontes),
+      // route('/fontes/:tab', Fontes),
+      // route('/estudo/:idEstudo', Estudo),
 
       route('/trabalhodecente', Observatorio),
       route('/diversidade', Observatorio),
