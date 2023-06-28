@@ -5,7 +5,7 @@ export default {
 
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    titleTemplate: '%s - Promoção do Trabalho Decente',
+    titleTemplate: 'Smartlab - %s',
     title: 'Smartlab',
     htmlAttrs: {
       lang: 'pt-br'
@@ -42,7 +42,8 @@ export default {
     { src: '~/plugins/services.plugin.js' },
     { src: '~/plugins/models.plugin.js' },
     { src: '~/plugins/vue-cookies.js' },
-    { src: '~/plugins/vuetify.js' }
+    { src: '~/plugins/vuetify.js' },
+    { src: '~/plugins/gtag.js' }
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -138,6 +139,7 @@ export default {
     gitViewConfUrl: process.env.GIT_VIEWCONF_TAG_URL,
     googleAnalytics: {
       id: process.env.GOOGLE_ANALYTICS_ID
-    }
+    },
+    ga_id: process.env.GA_ID
   }
 }
