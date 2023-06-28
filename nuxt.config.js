@@ -65,8 +65,8 @@ export default {
     // https://go.nuxtjs.dev/eslint
     '@nuxtjs/eslint-module',
     '@nuxtjs/fontawesome',
-    '@nuxtjs/router',
-    '@nuxtjs/google-analytics'
+    '@nuxtjs/router'
+    // '@nuxtjs/google-analytics'
   ],
 
   fontawesome: {
@@ -108,13 +108,13 @@ export default {
     }
   },
 
-  googleAnalytics: {
-    id: process.env.GOOGLE_ANALYTICS_ID
-    // debug: {
-    //   enabled: true,
-    //   sendHitTask: true
-    // }
-  },
+  // googleAnalytics: {
+  //   id: process.env.GOOGLE_ANALYTICS_ID
+  //   // debug: {
+  //   //   enabled: true,
+  //   //   sendHitTask: true
+  //   // }
+  // },
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
@@ -137,9 +137,9 @@ export default {
       browserBaseURL: process.env.BASE_URL || 'http://localhost:' + (process.env.PORT || '3000')
     },
     gitViewConfUrl: process.env.GIT_VIEWCONF_TAG_URL,
-    googleAnalytics: {
-      id: process.env.GOOGLE_ANALYTICS_ID
-    },
+    // googleAnalytics: {
+    //   id: process.env.GOOGLE_ANALYTICS_ID
+    // },
     ga_id: process.env.GA_ID
   }
 }
