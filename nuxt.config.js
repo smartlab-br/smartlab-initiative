@@ -66,7 +66,6 @@ export default {
     '@nuxtjs/eslint-module',
     '@nuxtjs/fontawesome',
     '@nuxtjs/router'
-    // '@nuxtjs/google-analytics'
   ],
 
   fontawesome: {
@@ -108,14 +107,6 @@ export default {
     }
   },
 
-  // googleAnalytics: {
-  //   id: process.env.GOOGLE_ANALYTICS_ID
-  //   // debug: {
-  //   //   enabled: true,
-  //   //   sendHitTask: true
-  //   // }
-  // },
-
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
     baseURL: 'http://localhost:3000', // Used as fallback if no runtime config is provided
@@ -137,9 +128,6 @@ export default {
       browserBaseURL: process.env.BASE_URL || 'http://localhost:' + (process.env.PORT || '3000')
     },
     gitViewConfUrl: process.env.GIT_VIEWCONF_TAG_URL,
-    // googleAnalytics: {
-    //   id: process.env.GOOGLE_ANALYTICS_ID
-    // },
     ga_id: process.env.GA_ID
   }
 }
