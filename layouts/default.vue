@@ -896,6 +896,7 @@ export default {
       graviteeUser: {}
     }
   },
+  head () { return { title: this.$route.name } },
   computed: {
     computedLoginLabel: function () {
       if (this.$store.state.user) {
