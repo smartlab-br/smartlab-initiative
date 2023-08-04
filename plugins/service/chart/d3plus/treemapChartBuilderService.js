@@ -116,7 +116,7 @@ class TreemapChartBuilderService extends D3PlusChartBuilderService {
       })
       .detectResize(true)
       .sum(options.size) // key to use for x-axis
-      .colorScalePosition('right')
+      .colorScalePosition(options.show_scale ? 'right' : false)
 
     return viz
   }
@@ -167,6 +167,10 @@ class TreemapChartBuilderService extends D3PlusChartBuilderService {
           } else {
             return tooltip_function.apply(tooltip_context, [d, additionalOptions.route, additionalOptions.headers, removed_text_list, options])
           }
+        },
+        tbody: function (d) {
+          const table = []
+          return table
         },
         title: function (d) { return '' }
       })
