@@ -109,6 +109,7 @@ class TopoJsonChartBuilderService extends D3PlusChartBuilderService {
 
       if (distValues.length > 1) {
         viz = viz.colorScaleConfig({
+          scale: 'linear',
           color: aColorScale,
           axisConfig: objAxisConfig,
           rectConfig: { stroke: additionalOptions.colorHandlers.assessZebraTitleColor(additionalOptions.sectionIndex, null, additionalOptions.theme) }
