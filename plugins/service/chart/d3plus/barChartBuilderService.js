@@ -92,7 +92,8 @@ class BarChartBuilderService extends D3PlusChartBuilderService {
     }
 
     if (options.label_height !== undefined) { barConfig.labelConfig.fontSize = options.label_height }
-    if (options.orientation !== 'vertical') { barConfig.labelConfig.fontColor = '#fff' }
+    // if (options.orientation !== 'vertical') {  }
+    barConfig.labelConfig.fontColor = '#fff'
 
     let viz = new this.d3plus.BarChart()
       .noDataHTML(this.noDataMessage)
@@ -112,6 +113,7 @@ class BarChartBuilderService extends D3PlusChartBuilderService {
         }
       })
       .legendPosition('top')
+      .labelPosition('inside')
       .tooltipConfig({
         body: function (d) {
           if (tooltip_function instanceof String) {
@@ -123,9 +125,9 @@ class BarChartBuilderService extends D3PlusChartBuilderService {
         title: function (d) { return '' }
       })
 
-    if (options.orientation !== 'vertical') {
-      viz.labelPosition('inside')
-    }
+    // if (options.orientation !== 'vertical') {
+    //   viz.labelPosition('inside')
+    // }
 
     if (options.color !== null && options.color !== undefined) {
       if (options.color == 'accent') {
