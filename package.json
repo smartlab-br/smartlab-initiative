@@ -64,7 +64,7 @@
     "jest-junit": "8.0.0",
     "jest-serializer-vue": "^2.0.2",
     "jest-sonar-reporter": "^2.0.0",
-    "postcss": "^8.4.21",
+    "postcss": "^8.4.28",
     "stylus": "^0.59.0",
     "stylus-loader": "^3.0.1"
   }
