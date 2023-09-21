@@ -1,4 +1,3 @@
-
 export const state = () => ({
   accessToken: null,
   user: null
