@@ -18,6 +18,7 @@ class GeneralChartBuilderService {
   // Helper functions ( TODO move to services)
   static getDefaultXYConfig (axesStrokeClass = '') {
     return {
+      title: '',
       gridConfig: { stroke: 'transparent' },
       barConfig: { stroke: axesStrokeClass },
       shapeConfig: {
@@ -29,6 +30,7 @@ class GeneralChartBuilderService {
 
   static getTransparentXYConfig () {
     return {
+      title: '',
       labels: [],
       gridConfig: { stroke: 'transparent' },
       ticks: [],

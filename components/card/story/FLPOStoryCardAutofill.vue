@@ -252,7 +252,7 @@ export default {
                 id_field: place_field,
                 topo_key: 'codarea',
                 value_field: 'calc_deviation_cat', // TODO (generalize)
-                colorScale: { name: 'Reds' } // TODO (generalize)
+                colorScale: { scale: 'linear', name: 'Reds' } // TODO (generalize)
               }
               break
           }

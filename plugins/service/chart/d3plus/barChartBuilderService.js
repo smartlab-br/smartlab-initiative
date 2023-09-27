@@ -19,7 +19,7 @@ class BarChartBuilderService extends D3PlusChartBuilderService {
     if (options.colorScale) {
       if (options.colorScale.name) {
         colorArray = additionalOptions.colorHandlers.getColorScale(options.colorScale.name, options.colorScale.type, options.colorScale.order, options.colorScale.levels)
-      } else if (options.colorScale.type == 'fixed' && options.colorScale.color_array) {
+      } else if (options.colorScale.type === 'fixed' && options.colorScale.color_array) {
         colorArray = options.colorScale.color_array
         colorCat = colorArray
       }
@@ -41,7 +41,7 @@ class BarChartBuilderService extends D3PlusChartBuilderService {
     }
 
     if (options.accum) {
-      if (options.orientation == 'vertical') {
+      if (options.orientation === 'vertical') {
         slicedDS = this.sortDataset(slicedDS, options.x)
       } else {
         slicedDS = this.sortDataset(slicedDS, options.y)
@@ -66,7 +66,7 @@ class BarChartBuilderService extends D3PlusChartBuilderService {
       const sortFuction = function (a, b) {
         return a[options.sort_field] - b[options.sort_field]
       }
-      if (options.orientation == 'vertical') {
+      if (options.orientation === 'vertical') {
         grafico = grafico.xSort(sortFuction)
       } else {
         grafico = grafico.ySort(sortFuction)
@@ -92,7 +92,8 @@ class BarChartBuilderService extends D3PlusChartBuilderService {
     }
 
     if (options.label_height !== undefined) { barConfig.labelConfig.fontSize = options.label_height }
-    if (options.orientation != 'vertical') { barConfig.labelConfig.fontColor = '#fff' }
+    // if (options.orientation !== 'vertical') {  }
+    barConfig.labelConfig.fontColor = '#fff'
 
     let viz = new this.d3plus.BarChart()
       .noDataHTML(this.noDataMessage)
@@ -112,6 +113,7 @@ class BarChartBuilderService extends D3PlusChartBuilderService {
         }
       })
       .legendPosition('top')
+      .labelPosition('inside')
       .tooltipConfig({
         body: function (d) {
           if (tooltip_function instanceof String) {
@@ -122,6 +124,10 @@ class BarChartBuilderService extends D3PlusChartBuilderService {
         },
         title: function (d) { return '' }
       })
+
+    // if (options.orientation !== 'vertical') {
+    //   viz.labelPosition('inside')
+    // }
 
     if (options.color !== null && options.color !== undefined) {
       if (options.color == 'accent') {
@@ -134,6 +140,7 @@ class BarChartBuilderService extends D3PlusChartBuilderService {
       viz = viz.color(function (d) { return (d.color !== null && d.color !== undefined) ? d.color : '#2196F3' })
     } else {
       viz = viz.colorScaleConfig({
+        scale: 'linear',
         color: additionalOptions.colorHandlers.getColorScale(options.colorScale.name)
       })
       viz = viz.color('color')

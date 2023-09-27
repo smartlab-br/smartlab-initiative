@@ -1,4 +1,3 @@
-
 // import YamlFetcherService from '../../service/singleton/yamlFetcherService'
 // import ColorsService from '../../service/singleton/colorsService';
 
