@@ -493,7 +493,7 @@
           </a>
           <a
             class="white--text mr-2"
-            @click="$navigationManager.pushRoute($router, 'https://hub.docker.com/u/smartlab/', true)"
+            @click="$navigationManager.pushRoute($router, 'https://hub.docker.com/u/mptrabalho', true)"
           >
             <font-awesome-icon icon="fa-brands fa-docker" class="fa-lg" title="Docker" />
           </a>

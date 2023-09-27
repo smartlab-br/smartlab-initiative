@@ -673,13 +673,13 @@ export default {
           if (except_ind && d.cd_indicador == except_ind) {
             return d[campo]
           }
-          return Math.log(((d[campo] - d[media]) / d[media]) + 1.01)
+          return Math.log(((d[campo] - d[media]) / d[media]) + 1.01) + 10
         },
         get_log: function (d, campo = 'vl_indicador', except_ind = null) {
           if (except_ind && d.cd_indicador == except_ind) {
             return d[campo]
           }
-          return Math.log(d[campo] + 0.01)
+          return Math.log(d[campo] + 0.01) + 10
         },
         get_round: function (d, campo = 'vl_indicador') {
           return Math.round(d[campo])
@@ -711,12 +711,12 @@ export default {
           if (d[prop] == null) { return null }
           const val = d[prop] - origin
           if (val > 0) {
-            return Math.log(val / d.maxVal + 1.0001)
+            return Math.log(val / d.maxVal + 1.0001) + 100
           }
           if (val < 0) {
-            return d.minVal == 0 ? -Math.log(Math.abs(val) + 1.0001) : -Math.log(Math.abs(val) / Math.abs(d.minVal) + 1.0001)
+            return d.minVal == 0 ? -Math.log(Math.abs(val) + 1.0001) + 100 : -Math.log(Math.abs(val) / Math.abs(d.minVal) + 1.0001) + 100
           }
-          return 0
+          return 100
         },
         inv_deviation: function (v, bs) {
           const valor = (Math.exp(v) - 1.01) * bs + bs
