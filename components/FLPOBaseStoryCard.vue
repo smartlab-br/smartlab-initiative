@@ -364,7 +364,7 @@ export default {
               }
             }
           } else if (filter.type == 'check' || filter.type == 'radio') {
-            if (this.customFilters[filter.id]) {
+            if (filter.selection && filter.selection.rules && filter.selection.rules.filter && this.customFilters[filter.id]) {
               filterUrl = filterUrl + filter.selection.rules.filter
               filterText += '<br/>' + filter.selection.rules.filter_text
             }
