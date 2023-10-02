@@ -24,7 +24,7 @@
     "@nuxtjs/fontawesome": "^1.1.2",
     "body-parser": "^1.20.1",
     "core-js": "^3.25.3",
-    "d3": "5.7.0",
+    "d3": "7.8.5",
     "d3-sankey": "0.12.1",
     "d3-transition": "^3.0.1",
     "d3plus": "2.1.1",
