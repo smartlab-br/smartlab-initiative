@@ -15,7 +15,7 @@
     "viewconf": "run='static/smartlab-initiative-viewconf/run.py'; if [ -f $run ]; then $run; else echo $run not found!; fi"
   },
   "dependencies": {
-    "@fortawesome/fontawesome-svg-core": "^6.2.1",
+    "@fortawesome/fontawesome-svg-core": "^6.4.2",
     "@fortawesome/free-brands-svg-icons": "^6.2.1",
     "@fortawesome/free-regular-svg-icons": "^6.2.1",
     "@fortawesome/free-solid-svg-icons": "^6.2.1",
