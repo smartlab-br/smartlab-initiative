@@ -57,6 +57,14 @@ app.post('/mail', (req, res) => {
     }
 
     const apiUrl = mercurio.url + req.url
+    const contentArgs = req.body.args.split('|')
+    const content = 'Smartlab - Relate um problema' +
+      '\n E-mail contato: ' + contentArgs[0] +
+      '\n Observatório: ' + contentArgs[1] +
+      '\n Dimensão: ' + contentArgs[2] +
+      '\n Localidade: ' + contentArgs[3] +
+      '\n Card: ' + contentArgs[4] +
+      '\n Descrição do problema: ' + contentArgs[5]
 
     const header = {
       'Content-Type': 'application/json',
@@ -65,7 +73,14 @@ app.post('/mail', (req, res) => {
     axios({
       method: 'POST',
       url: apiUrl,
-      data: req.body,
+      data: {
+        mail: {
+          sistema: 'smartlab',
+          recipients: process.env.MAILER_RECIPIENTS.split(','),
+          subject: 'Smartlab - Relate um problema',
+          content
+        }
+      },
       headers: header
     }).then(function (response) {
       res.json(response.data)

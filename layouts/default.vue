@@ -1339,28 +1339,20 @@ export default {
       if (this.$refs.bugForm.validate()) {
         this.sendingMail = true
 
-        const content = 'Smartlab - Relate um problema' +
-                        '\nObservatório: ' + this.computedTitle +
-                        '\nDimensão: ' + this.computedSubtitle +
-                        '\nLocalidade: ' + this.computedPlaceTitle +
-                        '\nCard: ' + this.bugCard +
-                        '\nDescrição do problema: ' + this.$refs.bugText.value +
-                        '\nE-mail contato: ' + this.$refs.bugEmail.value
+        const contentArgs = {
+          args: this.$refs.bugEmail.value +
+            '|' + this.computedTitle +
+            '|' + this.computedSubtitle +
+            '|' + this.computedPlaceTitle +
+            '|' + this.bugCard +
+            '|' + this.$refs.bugText.value
+        }
 
         const snackAlert = this.snackAlert
         const finishMailSend = () => { this.sendingMail = false }
         const closeBugDialog = () => { this.bugDialog = false }
 
-        this.$axios(this.$axiosCallSetupService.getAxiosOptions(
-          '/mail', true,
-          {
-            mail: {
-              sistema: 'smartlab',
-              recipients: ['atena@mpt.mp.br'],
-              subject: 'Smartlab - Relate um problema',
-              content
-            }
-          })
+        this.$axios(this.$axiosCallSetupService.getAxiosOptions('/mail', true, contentArgs)
         ).then(function (response) {
           finishMailSend()
           snackAlert({ color: 'success', text: 'Formulário enviado com sucesso.' })
