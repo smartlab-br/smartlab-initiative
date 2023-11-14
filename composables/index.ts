@@ -1,0 +1,1 @@
+export { ColorsService } from "./service/singleton/colorsService"
