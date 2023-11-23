@@ -12,6 +12,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
+      with:
+        fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
     - name: Set up Node.js
       uses: actions/setup-node@v3.5.1
       with:
@@ -29,7 +31,14 @@ jobs:
     - name: Transform paths in reports
       run: sed -i 's/\/home\/runner\/work\/smartlab-initiative\/smartlab-initiative/./' ./lint/report.json
     - name: SonarCloud Scan
-      uses: sonarsource/sonarcloud-github-action@master
+      uses: SonarSource/sonarcloud-github-action@master
+      with:
+        args: >
+          -Dsonar.organization=smartlab-br
+          -Dsonar.projectKey=smartlab-br_smartlab-initiative
+          -Dsonar.pullrequest.key=${{ github.event.pull_request.number }}
+          -Dsonar.pullrequest.branch=${{ github.event.pull_request.head.ref }}
+          -Dsonar.scm.revision=${{ github.event.pull_request.head.sha }}
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
