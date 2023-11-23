@@ -1216,21 +1216,27 @@ export default {
       this.cardLinks = []
       this.fetchVizLinks(this.sections)
 
-      this.fillDataStructure(
-        this.dimStruct.master, this.customParams,
-        this.customFunctions, this.setMasterIndicator // Defaults to masterIndicator
-      )
+      this.masterIndicator = ''
+      this.masterIndicator_compare = ''
+      for (const masterItem of this.dimStruct.master) {
+        this.fillDataStructure(
+          masterItem, this.customParams,
+          this.customFunctions, this.setMasterIndicator // Defaults to masterIndicator
+        )
+      }
 
       if (this.$route.query.compare) { // In comparison view
         this.sections_compare = this.changeToCompareStructure(this.sections)
         this.ind_principais_compare = this.ind_principais ? this.changeToCompareStructure(this.ind_principais) : null
         this.presentation_compare = JSON.parse(JSON.stringify(this.dimStruct.presentation).replace(/centralindicadores/g, 'centralindicadores_compare').replace(/idLocalidade/g, 'idLocalidade_compare'))
 
-        const dimStructMasterCompare = JSON.parse(JSON.stringify(this.dimStruct.master).replace(/centralindicadores/g, 'centralindicadores_compare').replace(/idLocalidade/g, 'idLocalidade_compare'))
-        this.fillDataStructure(
-          dimStructMasterCompare, this.customParams,
-          this.customFunctions, this.setMasterIndicator, { indicator_var: 'masterIndicator_compare' }
-        )
+        for (const masterItem of this.dimStruct.master) {
+          const dimStructMasterCompare = JSON.parse(JSON.stringify(masterItem).replace(/centralindicadores/g, 'centralindicadores_compare').replace(/idLocalidade/g, 'idLocalidade_compare'))
+          this.fillDataStructure(
+            dimStructMasterCompare, this.customParams,
+            this.customFunctions, this.setMasterIndicator, { indicator_var: 'masterIndicator_compare' }
+          )
+        }
       }
     },
 
@@ -1398,7 +1404,7 @@ export default {
           ),
           this.sendInvalidInterpol
         )
-        this[masterVar] = finalText
+        this[masterVar] += finalText + '<br/>'
       }
       this.unlockLoading = true
     },
