@@ -34,7 +34,7 @@ jobs:
     - name: Unit tests
       run: npm run test
     - name: Transform paths in reports
-      run: sed -i 's/\/home\/runner\/work\/smartlab-initiative\/smartlab-initiative/./' ./lint/report.json
+      run: sed -i 's/\/home\/runner\/work\/smartlab-initiative\/smartlab-initiative/\./' ./lint/report.json coverage/lcov.info
     - name: SonarCloud Scan
       uses: SonarSource/sonarcloud-github-action@master
       with:
