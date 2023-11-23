@@ -32,6 +32,13 @@ jobs:
       run: sed -i 's/\/home\/runner\/work\/smartlab-initiative\/smartlab-initiative/./' ./lint/report.json
     - name: SonarCloud Scan
       uses: SonarSource/sonarcloud-github-action@master
+      with:
+        args: >
+          -Dsonar.organization=smartlab-br
+          -Dsonar.projectKey=smartlab-br_smartlab-initiative
+          -Dsonar.pullrequest.key=${{ github.event.pull_request.number }}
+          -Dsonar.pullrequest.branch=${{ github.event.pull_request.head.ref }}
+          -Dsonar.scm.revision=${{ github.event.pull_request.head.sha }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
