@@ -2,10 +2,15 @@ name: Node CI
 
 on: 
   workflow_dispatch:
+  push:
+    branches:
+      - release-*
   pull_request:
     branches:
       - release-*
       - staging
+      - main
+      - master
 
 jobs:
   test:
