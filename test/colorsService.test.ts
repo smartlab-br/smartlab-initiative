@@ -1,10 +1,19 @@
-import { ColorsService } from "./../utils/service/singleton/colorsService"
+import { ColorsService } from "../utils/service/singleton/colorsService"
 import { describe, test, expect } from "vitest"
 import { setup} from "@nuxt/test-utils"
+// import { useTheme } from "vuetify"
 
 describe("ColorsService", async () => {
   await setup({
     
+  })
+
+  test("Pega corretamente um valor de uma escala divergente", () => {
+    expect(ColorsService.getColorFromScale("RdYlBu", 1, 10)).toEqual("rgb(212, 50, 44)")
+  })
+
+  test("Pega corretamente um valor de uma escala categórica", () => {
+    expect(ColorsService.getColorFromCategoricalScale("Set3", 1)).toEqual("#ffffb3")
   })
 
   test("Pega corretamente a escala categórica ascendente padrão", () => {
@@ -54,5 +63,16 @@ describe("ColorsService", async () => {
   test("Pega corretamente a escala de única cor ascendente definida com níveis determinados", () => {
     expect(ColorsService.getColorScale("RdYlGn", "divergent", "asc", 10)).toEqual(["#a50026", "#d73027", "#f46d43", "#fdae61", "#fee08b", "#d9ef8b", "#a6d96a", "#66bd63", "#1a9850", "#006837"])
   })
+
+  // test("Verifica se pega corretamente o valor da classe primária de BG zebrado", () => {
+  //   useTheme().global.name.value = "default"
+  //   expect(ColorsService.assessZebraBG(0, useTheme().current.value)).toEqual("#EFEFEF")
+  // })
+
+  // test("Verifica se pega corretamente o valor da classe secundária de BG zebrado", () => {
+  //   useTheme().global.name.value = "default"
+  //   expect(ColorsService.assessZebraBG(1, useTheme().current.value)).toEqual("#e0e0e0")
+  // })
+
 
 })

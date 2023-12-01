@@ -17,29 +17,29 @@ export class ColorsService {
     }
 
     if (type !== "categorical") size = levels ? levels : 8
-    
-    let scl: string[]
-    scl = d3chrom[`scheme${scale}` as keyof typeof d3chrom] as string[]
+
+    let scl: string[] | string[][] = d3chrom[`scheme${scale}` as keyof typeof d3chrom] as string[] | string[][]
     if (!scl) {
       if (type == "categorical") scale = "Set3"
       if (type == "singleHue") scale = "Blues"
       if (type == "divergent") scale = "RdYlBu"
-      scl = d3chrom[`scheme${scale}` as keyof typeof d3chrom] as string[]
+      scl = d3chrom[`scheme${scale}` as keyof typeof d3chrom] as string[] | string[][]
     }
 
-    if (size) scl = [scl[size]]
-    return order == "desc" ? scl.reverse() : scl
+    if (size) scl = scl[size] as string[]
+
+    return order == "desc" ? scl.slice().reverse() : scl
   }
 
-  // static getColorFromScale(scale: string, position: number, levels: number, order: string = "asc") {
-  //   let scaleFunction: any = d3chrom[`interpolate${scale}` as keyof typeof d3chrom]
-  //   return scaleFunction(position / levels)
-  // }
+  static getColorFromScale(scale: string, position: number, levels: number) {
+    const scaleFunction: (t: number) => string = d3chrom[`interpolate${scale}` as keyof typeof d3chrom] as (t: number) => string
+    return scaleFunction(position / levels)
+  }
 
-  // static getColorFromCategoricalScale(scale: string, position: number) {
-  //   let schemeArray: any = d3chrom[`scheme${scale}` as keyof typeof d3chrom]
-  //   return schemeArray[position % schemeArray.length]
-  // }
+  static getColorFromCategoricalScale(scale: string, position: number) {
+    const schemeArray: string[] = d3chrom[`scheme${scale}` as keyof typeof d3chrom] as string[]
+    return schemeArray[position % schemeArray.length]
+  }
   
   // static rgb2hex(rgb: string){
   //   const rgbMatch = rgb.match(/^rgba?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?/i)

@@ -4,6 +4,12 @@ import vuetify, { transformAssetUrls } from "vite-plugin-vuetify"
 export default defineNuxtConfig({
   // builder: "webpack",
   devtools: { enabled: true },
+
+  sourcemap: {
+    "server": true,
+    "client": true
+  },
+
   // Global page headers: https://go.nuxtjs.dev/config-head
   app: {
     head: {
