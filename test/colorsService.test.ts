@@ -1,7 +1,9 @@
 import { ColorsService } from "../utils/service/singleton/colorsService"
 import { describe, test, expect } from "vitest"
 import { setup} from "@nuxt/test-utils"
+// import Default from "../layouts/default.vue"
 // import { useTheme } from "vuetify"
+// import vuetify from "../plugins/vuetify"
 
 describe("ColorsService", async () => {
   await setup({
@@ -65,13 +67,136 @@ describe("ColorsService", async () => {
   })
 
   // test("Verifica se pega corretamente o valor da classe primária de BG zebrado", () => {
-  //   useTheme().global.name.value = "default"
-  //   expect(ColorsService.assessZebraBG(0, useTheme().current.value)).toEqual("#EFEFEF")
+  //   const wrapper = mount(Default)
+  //   wrapper.vm.useTheme().global.name.value = "default"
+  //   expect(ColorsService.assessZebraBG(0, wrapper.vm.useTheme().current.value)).toEqual("#EFEFEF")
   // })
 
   // test("Verifica se pega corretamente o valor da classe secundária de BG zebrado", () => {
   //   useTheme().global.name.value = "default"
   //   expect(ColorsService.assessZebraBG(1, useTheme().current.value)).toEqual("#e0e0e0")
+  // })
+
+  // test('Quando o tema for escuro, o título do zebrado deve vir branco', () => {
+  //   const wrapper = mount(FLPOSobreLayout, { sync: false })
+  //   wrapper.vm.$vuetify.theme.background = '#000000'
+  //   const result = wrapper.vm.$colorsService.assessZebraTitle(0, wrapper.vm.$vuetify.theme)
+  //   expect(result).toEqual('white--text')
+  // })
+
+  // test('Quando o tema for escuro, deve retornar a classe correspondente', () => {
+  //   const wrapper = mount(FLPOSobreLayout, { sync: false })
+  //   const result = wrapper.vm.$colorsService.getClassIfIsDark(null, 0, wrapper.vm.$vuetify.theme)
+  //   expect(result).toEqual('theme--dark')
+  // })
+
+  // test('Quando não houver o dado da cor do bg e nenhum índice for informado, volta classe em branco.', () => {
+  //   const wrapper = mount(FLPOSobreLayout, { sync: false })
+  //   const result = wrapper.vm.$colorsService.getClassIfIsDark(null, null, wrapper.vm.$vuetify.theme)
+  //   expect(result).toEqual('')
+  // })
+
+  // test('Quando o tema for escuro, a propriedade de cor do zebrado deve vir branca', () => {
+  //   const wrapper = mount(FLPOSobreLayout, { sync: false })
+  //   wrapper.vm.$vuetify.theme.background1 = colors.grey.darken4
+  //   wrapper.vm.$vuetify.theme.background2 = colors.grey.lighten2
+  //   const result = wrapper.vm.$colorsService.assessZebraTitleColor(0, null, wrapper.vm.$vuetify.theme)
+  //   expect(result).toEqual('white')
+  // })
+
+  // test('Quando o tema for claro, a propriedade de cor do zebrado deve vir preta', () => {
+  //   const wrapper = mount(FLPOSobreLayout, { sync: false })
+  //   const result = wrapper.vm.$colorsService.assessZebraTitleColor(1, null, wrapper.vm.$vuetify.theme)
+  //   expect(result).toEqual('black')
+  // })
+
+  // test('Quando o tema for escuro, a propriedade de cor translúcida do zebrado deve vir branca com opacidade 0.7', () => {
+  //   const wrapper = mount(FLPOSobreLayout, { sync: false })
+  //   const result = wrapper.vm.$colorsService.assessZebraTitleColor(0, 0.7, wrapper.vm.$vuetify.theme)
+  //   expect(result).toEqual('rgba(255, 255, 255, 0.7)')
+  // })
+
+  // test('Quando o tema for claro, a propriedade de cor translúcida do zebrado deve vir preta com opacidade 0.7', () => {
+  //   const wrapper = mount(FLPOSobreLayout, { sync: false })
+  //   const result = wrapper.vm.$colorsService.assessZebraTitleColor(1, 0.7, wrapper.vm.$vuetify.theme)
+  //   expect(result).toEqual('rgba(0, 0, 0, 0.7)')
+  // })
+
+  // test('Quando o tema for escuro, a propriedade de cor do eixo deve vir branca', () => {
+  //   const wrapper = mount(FLPOSobreLayout, { sync: false })
+  //   const result = wrapper.vm.$colorsService.assessZebraAxesColor(0, wrapper.vm.$vuetify.theme)
+  //   expect(result).toEqual('white')
+  // })
+
+  // test('Quando o tema for claro, a propriedade de cor do eixo deve vir cinza', () => {
+  //   const wrapper = mount(FLPOSobreLayout, { sync: false })
+  //   const result = wrapper.vm.$colorsService.assessZebraAxesColor(1, wrapper.vm.$vuetify.theme)
+  //   expect(result).toEqual(colors.grey.base)
+  // })
+
+  // // Testes que mexem com o tema - toda mudança de tema afeta a instância inteira.
+  // test('Verifica se a mudança para um tema válido funciona corretamente', () => {
+  //   const wrapper = mount(FLPOSobreLayout, { sync: false })
+  //   wrapper.vm.$observatories.context = wrapper.vm
+  //   wrapper.vm.$vuetify.theme = wrapper.vm.$observatories.getTheme('te') // Sets initial theme
+
+  //   expect(wrapper.vm.$vuetify.theme.primary).toEqual(colors.brown.darken4)
+  //   expect(wrapper.vm.$vuetify.theme.secondary).toEqual(colors.brown.lighten4)
+  //   expect(wrapper.vm.$vuetify.theme.accent).toEqual(colors.cyan.accent4)
+  //   expect(wrapper.vm.$vuetify.theme.error).toEqual(colors.red.base)
+  //   expect(wrapper.vm.$vuetify.theme.warning).toEqual(colors.amber.base)
+  //   expect(wrapper.vm.$vuetify.theme.info).toEqual(colors.blue.base)
+  //   expect(wrapper.vm.$vuetify.theme.success).toEqual(colors.green.base)
+  //   expect(wrapper.vm.$vuetify.theme.toolbar).toEqual(colors.brown.darken4)
+  //   expect(wrapper.vm.$vuetify.theme.background).toEqual('#EFEFEF')
+  //   expect(wrapper.vm.$vuetify.theme.background2).toEqual(colors.grey.lighten2)
+  // })
+
+  // test('Verifica se o tema permanece o mesmo se o observatório não existir na coleção de temas', () => {
+  //   const wrapper = mount(FLPOSobreLayout, { sync: false })
+  //   wrapper.vm.$observatories.context = wrapper.vm
+  //   wrapper.vm.$vuetify.theme = wrapper.vm.$observatories.getTheme('default')
+
+  //   const theme = wrapper.vm.$observatories.getTheme('xpto')
+  //   if (theme) { wrapper.vm.$vuetify.theme = theme } // Sets initial theme
+
+  //   expect(wrapper.vm.$vuetify.theme.primary).toEqual(colors.grey.darken4)
+  //   expect(wrapper.vm.$vuetify.theme.secondary).toEqual(colors.grey.darken3)
+  //   expect(wrapper.vm.$vuetify.theme.accent).toEqual(colors.cyan.accent1)
+  //   expect(wrapper.vm.$vuetify.theme.error).toEqual(colors.red.base)
+  //   expect(wrapper.vm.$vuetify.theme.warning).toEqual(colors.amber.base)
+  //   expect(wrapper.vm.$vuetify.theme.info).toEqual(colors.blue.base)
+  //   expect(wrapper.vm.$vuetify.theme.success).toEqual(colors.green.base)
+  //   expect(wrapper.vm.$vuetify.theme.toolbar).toEqual(colors.grey.darken4)
+  //   expect(wrapper.vm.$vuetify.theme.background).toEqual('#EFEFEF')
+  //   expect(wrapper.vm.$vuetify.theme.background2).toEqual(colors.grey.lighten2)
+  // })
+
+  // test('Quando o tema for claro, o título do zebrado fica sem classe de cor definida', () => {
+  //   const wrapper = mount(FLPOSobreLayout, { sync: false })
+  //   wrapper.vm.$observatories.context = wrapper.vm
+  //   wrapper.vm.$vuetify.theme = wrapper.vm.$observatories.getTheme('default') // Sets initial theme
+  //   wrapper.vm.$vuetify.theme.primary = '#FFF'
+  //   const result = wrapper.vm.$colorsService.assessZebraTitle(1, wrapper.vm.$vuetify.theme)
+  //   expect(result).toEqual('')
+  // })
+
+  // test('Quando o tema for claro, a propriedade de cor do zebrado deve vir preta', () => {
+  //   const wrapper = mount(FLPOSobreLayout, { sync: false })
+  //   wrapper.vm.$observatories.context = wrapper.vm
+  //   wrapper.vm.$vuetify.theme = wrapper.vm.$observatories.getTheme('default') // Sets initial theme
+  //   wrapper.vm.$vuetify.theme.primary = '#FFF'
+  //   const result = wrapper.vm.$colorsService.assessZebraTitleColor(1, null, wrapper.vm.$vuetify.theme)
+  //   expect(result).toEqual('black')
+  // })
+
+  // test('Quando o tema for claro, deve retornar a classe vazia', () => {
+  //   const wrapper = mount(FLPOSobreLayout, { sync: false })
+  //   wrapper.vm.$observatories.context = wrapper.vm
+  //   wrapper.vm.$vuetify.theme = wrapper.vm.$observatories.getTheme('default') // Sets initial theme
+  //   wrapper.vm.$vuetify.theme.background = '#FFF'
+  //   const result = wrapper.vm.$colorsService.getClassIfIsDark(null, 0, wrapper.vm.$vuetify.theme)
+  //   expect(result).toEqual('')
   // })
 
 
