@@ -1,4 +1,4 @@
-import { ColorsService } from "../utils/service/singleton/colorsService"
+import { ColorsService } from "../utils/service/singleton/colors"
 import { describe, test, expect } from "vitest"
 import { setup} from "@nuxt/test-utils"
 // import Default from "../layouts/default.vue"

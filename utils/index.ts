@@ -1,1 +1,1 @@
-export { ColorsService } from "./service/singleton/colorsService"
+export { ColorsService } from "./service/singleton/colors"
