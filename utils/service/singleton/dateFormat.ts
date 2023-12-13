@@ -12,8 +12,11 @@ const WEEKDAYS: IDictDayOfWeekBR = {
   dom: "DOMINGO"
 }
 
-export class DateFormatService {
-  static formatDate(base_object: any, prop: string, stringAppend: string = "") {
+export class DateFormatService{
+  // Adicionando uma assinatura de índice para permitir acesso dinâmico
+  [index: string]: (...args: any[]) => void
+
+  formatDate(base_object: any, prop: string, stringAppend: string = ""): string {
     const stringOriginal = base_object[prop].toString()
     const year = stringOriginal.substring(0,4)
     const month = stringOriginal.substring(4,6)
@@ -24,5 +27,7 @@ export class DateFormatService {
     return utfString
   }
 
-  static getWeekDay(abbrev: string) { return WEEKDAYS[abbrev] }
+  getWeekDay(abbrev: string): string {
+    return WEEKDAYS[abbrev]
+  }
 }

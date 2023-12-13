@@ -1,7 +1,8 @@
 export class NumberTransformService {
-  //constructor() {}
+  // Adicionando uma assinatura de índice para permitir acesso dinâmico
+  [index: string]: (...args: any[]) => void
 
-  static formatNumber(valor: number | string | null,
+  formatNumber(valor: number | string | null,
     formato: string | null = null,
     casasDecimais: number | null = null,
     multiplier: number | null = 1,
@@ -123,7 +124,7 @@ export class NumberTransformService {
     return `${unitPrefix}${strVal}${collapseSuffix}`
   }
 
-  static getPaceString(interval: number, inverse: boolean = false) {
+  getPaceString(interval: number, inverse: boolean = false) {
     // console.log(interval);
     if (inverse){
       interval = 1 / interval
@@ -178,7 +179,7 @@ export class NumberTransformService {
     return strInterval
   }
 
-  static calcIndexPercentage(part: number, total: number) {
+  calcIndexPercentage(part: number, total: number) {
     let fieldText = ""
     let perc = 0
     if (part > total) {
@@ -191,7 +192,7 @@ export class NumberTransformService {
     return `${perc.toLocaleString("pt-br", {maximumFractionDigits: 1}) + "%"}${fieldText}`
   }
 
-  static minicardDeltaPercentage(val1: number, val2: number) {
+  minicardDeltaPercentage(val1: number, val2: number) {
     let fieldText = ""
     const result = Math.abs(val1 - val2)
     if (val1 > val2) {
@@ -202,7 +203,15 @@ export class NumberTransformService {
       return ""  //igual
     }
     
-    return `${NumberTransformService.formatNumber(result,"real", 1)}${fieldText}`
+    return `${this.formatNumber(result,"real", 1)}${fieldText}`
+  }
+
+  calcProportionSalary(value: number, salary: number) {
+    const fieldText: string = " salários mínimos, à época"
+    const proportion = value/salary
+    
+    const proportionText = proportion.toLocaleString("pt-br", {maximumFractionDigits: 2})
+    return proportionText + fieldText
   }
 
   // static getAbsoluteValue(value: number) { return Math.abs(value); }

@@ -1,11 +1,13 @@
 import { NumberTransformService } from "./numberTransform"
 import { DateFormatService } from "./dateFormat"
 import { TextTransformService } from "./textTransform"
-import { IndicatorsModel } from "../../model/indicators"
+import { IDH } from "../../model/idh"
 
 export class ObjectTransformService {
+  // Adicionando uma assinatura de índice para permitir acesso dinâmico
+  [index: string]: (...args: any[]) => void
 
-  static runNamedFunction(struct: any, base_object: any, localFunctions: any = null, initialArgs: any[] = [], customParams: any = {}) {
+  runNamedFunction(struct: any, base_object: any, localFunctions: any = null, initialArgs: any[] = [], customParams: any = {}) {
     // Runs function with args defines in yaml structure
     const args = initialArgs
 
@@ -36,33 +38,38 @@ export class ObjectTransformService {
       }
     }
 
-    if (localFunctions && localFunctions[struct.function]) {
+    const funcName: string = struct.function
+    if (localFunctions && localFunctions[funcName]) {
       // Checks if the function exist in the localFunctions argument
-      return localFunctions[struct.function].apply(null, args)
+      return localFunctions[funcName].apply(null, args)
     }
-    if (["formatDate", "getWeekDay"].includes(struct.function)) {
-      return DateFormatService[struct.function](...args)
+    if (["formatDate", "getWeekDay"].includes(funcName)) {
+      const dateFormatService = new DateFormatService()
+      return dateFormatService[funcName](...args)
     }
-    if (["calcClassIdh", "getClassIdh", "calcProportionSalary"].includes(struct.function)) {
-      return IndicatorsModel[struct.function](...args)
+    if (["calcClassIdh", "getClassIdh"].includes(struct.function)) {
+      const idh = new IDH()
+      return idh[funcName](...args)
     }
-    if (["calcIndexPercentage", "calcDeltaPercentage", "getAbsoluteValue", "getPaceString"].includes(struct.function)) {
-      return NumberTransformService[struct.function](...args)
+    if (["calcIndexPercentage", "calcDeltaPercentage", "getAbsoluteValue", "getPaceString", "calcProportionSalary"].includes(struct.function)) {
+      const numberTransformService = new NumberTransformService()
+      return numberTransformService[funcName](...args)
     }
     if (["applyInterpolReplaceDatasetParam"].includes(struct.function)) {
       args.push(localFunctions)
       args.push(customParams)
-      return TextTransformService[struct.function](...args)
+      const textTransformService = new TextTransformService()
+      return textTransformService[struct.function](...args)
     }
     if (this[struct.function]) {
-      return this[struct.function].apply(null, args)
+      return this[struct.function](...args)
     }
 
     // Returns null otherwise
     return null
   }
 
-  valueCheck (value, baseValue = 0, returnTextInCaseOfHigherThanBaseValue = "", returnTextInCaseOfLowerThanBaseValue = "") {
+  valueCheck (value: number, baseValue: number = 0, returnTextInCaseOfHigherThanBaseValue: string = "", returnTextInCaseOfLowerThanBaseValue: string = "") {
     return value > baseValue ? returnTextInCaseOfHigherThanBaseValue : returnTextInCaseOfLowerThanBaseValue
   }
 }

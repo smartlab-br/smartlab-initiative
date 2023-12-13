@@ -79,7 +79,10 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     // The private keys which are only available server-side
-    // apiSecret: "123",
+    datahubUrl: process.env.DATAHUB_API_BASE_URL,
+    datahubKey: process.env.DATAHUB_APP_KEY,
+    mailerUrl: process.env.MAILER_API_BASE_URL,
+    mailerKey: process.env.MAILER_APP_KEY,
     // Keys within public are also exposed client-side
     public: {
       gitViewConfUrl: process.env.GIT_VIEWCONF_TAG_URL,

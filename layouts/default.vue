@@ -13,6 +13,11 @@
           <p>{{ ColorsService.getColorScale() }}</p>
         </v-col>
       </v-row>
+      <v-row class="d-flex align-center justify-center">
+        <v-col cols="auto"> 
+          <p>{{ useCookie("currentAnalysisUnit") }}</p>
+        </v-col>
+      </v-row>
     </v-responsive>
   </v-container>
 </template>
