@@ -49,9 +49,9 @@ export class ColorsService {
   //     ("0" + parseInt(rgb[3],10).toString(16)).slice(-2) : ""
   // }
 
-  // static getThemeFromId(id: string) {
-  //   return (id && THEME_LIBRARY[id]) ? THEME_LIBRARY[id] : THEME_LIBRARY["default"]
-  // }
+  static changeTheme(obsId: string | null = null) {
+    return (obsId) ? useTheme().global.name.value = obsId : useTheme().global.name.value = "default"
+  }
 
   static assessZebraBG(index: number, theme: ThemeDefinition) {
     if (theme === null || theme === undefined) { theme = useTheme().current.value }

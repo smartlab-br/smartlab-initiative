@@ -67,7 +67,10 @@ export default defineNuxtConfig({
     },
     server: {
       proxy: {
-        "/viewconf/": { target: process.env.GIT_VIEWCONF_TAG_URL, rewrite: (path) => path.replace(/^\/viewconf\//, "")},    
+        "/viewconf/": { 
+          target: process.env.GIT_VIEWCONF_TAG_URL, 
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/viewconf\//, "")},    
       }
     }
   },

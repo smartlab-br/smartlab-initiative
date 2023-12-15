@@ -1,5 +1,5 @@
 import { NavigationService } from "../service/singleton/navigation"
-import { ObservatoryService } from "../service/singleton/observatory"
+import { Smartlab } from "./smartlab"
 
 export class AnalysisUnit {
   currentAnalysisUnit: string | null = null
@@ -339,11 +339,11 @@ export class AnalysisUnit {
       throw "Nenhum item selecionado"
     }
 
-    const obsAtual = ObservatoryService.identifyObservatory(route.path.split("/")[1])
+    const obsAtual = Smartlab.identifyObservatory(route.path.split("/")[1])
     
     let url = ""
     if (idObservatorio != null) {
-      url = "/" + ObservatoryService.identifyObservatoryById(idObservatorio) + searchItem.to
+      url = "/" + Smartlab.identifyObservatoryById(idObservatorio) + searchItem.to
       if(obsAtual && idObservatorio == obsAtual){
         if (route.query && route.query.dimensao) {
           url = url + "&dimensao=" + route.query.dimensao
@@ -354,7 +354,7 @@ export class AnalysisUnit {
         throw "A análise da localidade escolhida ("+ searchItem.detail +") não está disponível para esse observatório."
       }
 
-      url = "/" + ObservatoryService.identifyObservatoryById(obsAtual) + searchItem.to 
+      url = "/" + Smartlab.identifyObservatoryById(obsAtual) + searchItem.to 
 
       if (route.query && route.query.dimensao) {
         url = url + "&dimensao=" + route.query.dimensao

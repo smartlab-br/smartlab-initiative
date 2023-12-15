@@ -1,7 +1,7 @@
-import { NumberTransformService } from "./numberTransform"
-import { DateFormatService } from "./dateFormat"
-import { TextTransformService } from "./textTransform"
-import { IDH } from "../../model/idh"
+// import { NumberTransformService } from "./numberTransform"
+// import { DateFormatService } from "./dateFormat"
+// import { TextTransformService } from "./textTransform"
+// import { IDH } from "../../model/idh"
 
 export class ObjectTransformService {
   // Adicionando uma assinatura de índice para permitir acesso dinâmico
