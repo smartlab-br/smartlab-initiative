@@ -1,3 +1,5 @@
+import { YamlFetcherService } from "../service/singleton/yamlFetcher"
+
 export class Dimensions {
   dimensions: any
 

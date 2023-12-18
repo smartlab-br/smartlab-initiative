@@ -13,7 +13,9 @@
           <p>{{ ColorsService.changeTheme("des") }}</p>
         </v-col>
         <v-col cols="auto">
-          <div v-if="smartlab">{{ smartlab }}</div>
+          <div>
+            
+          </div>
         </v-col>
       </v-row>
       <v-row class="d-flex align-center justify-center">
@@ -26,23 +28,16 @@
 </template>
 
 <script lang="ts">
-import { ref, onMounted } from "vue"
-import { Smartlab } from "#imports"
-import { useState } from "#imports"
+import { onMounted } from "vue"
 
 export default {
   setup() {
 
-    const smartlab =  ref(null)
     onMounted(() => {
-      Smartlab.getData().then((resp) => {
-        smartlab.value = resp
-        useState("smartlab", () => resp)
-      })
+      
     })
 
     return {
-      smartlab,
     }
   },
 }

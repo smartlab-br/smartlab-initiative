@@ -49,7 +49,8 @@ export default defineNuxtConfig({
     },
     "nuxt3-leaflet",
     "nuxt-gtag",
-    ["@nuxtjs/eslint-module", {}]
+    ["@nuxtjs/eslint-module", {}],
+    "@pinia/nuxt"
   ],
 
   components: [

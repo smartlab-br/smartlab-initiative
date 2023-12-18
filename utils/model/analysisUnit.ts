@@ -1,4 +1,5 @@
 import { NavigationService } from "../service/singleton/navigation"
+import { UrlTransformService } from "../service/singleton/urlTransform"
 import { Smartlab } from "./smartlab"
 
 export class AnalysisUnit {

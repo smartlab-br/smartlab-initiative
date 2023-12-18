@@ -1,3 +1,5 @@
+import { YamlFetcherService } from "../service/singleton/yamlFetcher"
+
 export class Smartlab {
   content: any
   observatories: any
