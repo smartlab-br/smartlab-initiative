@@ -8,7 +8,7 @@ export class YamlFetcherService {
     return "/smartlab-initiative-viewconf/"
   }
 
-  static async loadYaml(location: string) {
+  static async loadYaml(location: string): Promise<any> {
     const response: any = await $fetch(this.getBasePath() + location + ".yaml")
     return yaml.load(response, { json: true })
   }

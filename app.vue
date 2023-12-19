@@ -4,17 +4,17 @@
   </NuxtLayout>
 </template>
 <script lang="ts">
-const { $store } = useNuxtApp()
-
 import { onMounted } from "vue"
+import { useMainStore } from "~/store"
 
 export default {
   setup() {
-    
+    const store = useMainStore()
+    const { loadSmartlabData } = store
     onMounted(() => {
-      $store.loadSmartlabData()
+      loadSmartlabData()
     })
-
+    
     return {
     }
   }
