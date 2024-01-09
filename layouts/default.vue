@@ -10,11 +10,7 @@
           <v-btn color="accent"> Accent </v-btn>
         </v-col>
         <v-col cols="auto">
-          <p>{{ ColorsService.changeTheme("des") }}</p>
-        </v-col>
-        <v-col cols="auto">
           <div>
-            
           </div>
         </v-col>
       </v-row>
@@ -29,10 +25,13 @@
 
 <script lang="ts">
 import { onMounted } from "vue"
+import { useMainStore } from "~/store"
 
 export default {
   setup() {
+    const store = useMainStore()
     onMounted(() => {
+      ColorsService.changeTheme(store.currentObsId)
     })
 
     return {

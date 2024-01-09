@@ -1,5 +1,7 @@
 import { NumberTransformService } from "./numberTransform"
-import { Smartlab } from "../../model/smartlab"
+// import { Smartlab } from "../../model/smartlab"
+import { useMainStore } from "~/store"
+const store = useMainStore()
 
 export class TooltipBuildingService {
 
@@ -89,10 +91,9 @@ export class TooltipBuildingService {
   }
 
   static getUrlByPlace(idLocalidade: string, route: any){
-    const obsAtual: string = Smartlab.identifyObservatory(route.path.split("/")[1])
-    
+  
     let url = ""
-    url = "/" + Smartlab.identifyObservatoryById(obsAtual) + "/localidade/" + idLocalidade + "?"
+    url = store.currentObs.to + "/localidade/" + idLocalidade + "?"
 
     if (route.query && route.query.dimensao) {
       url = url + "&dimensao=" + route.query.dimensao

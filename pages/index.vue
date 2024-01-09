@@ -2,6 +2,9 @@
   <div>
     Page: Teste
   </div>
+  <div v-if="smartlab">ObsId: {{ currentObsId }}</div>
+  <div v-if="smartlab">Dimensão: {{ currentDimension }}</div>
+  <div v-if="smartlab">Obs: {{ currentObs }}</div>
   <div v-if="smartlab">Smartlab: {{ smartlab }}</div>
   <div v-if="observatories">Observatorios: {{ observatories }}</div>
 </template>
@@ -15,14 +18,17 @@ export default {
   setup() {
     const store = useMainStore()
 
-    const { smartlab, observatories } = storeToRefs(store)
+    const { smartlab, observatories, currentObs, currentObsId, currentDimension } = storeToRefs(store)
 
     onMounted(() => {
     })
 
     return {
       smartlab,
-      observatories
+      observatories,
+      currentObs,
+      currentObsId,
+      currentDimension
     }
   }
 }
