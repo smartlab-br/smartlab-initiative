@@ -1,16 +1,18 @@
 import { LeafletChartBuilderService } from "./leafletChartBuilderService"
 
 class PolygonsChartBuilderService extends LeafletChartBuilderService {
+  topojson: any
+  range: number[]
   constructor () {
     super()
     this.topojson = require('topojson-client/dist/topojson-client.min.js')
-    this.range = [null, null]
+    this.range = []
   }
 
-  fillLayers (dataset, options) {
+  fillLayers (dataset: any, options: any) {
     // https://blog.webkid.io/maps-with-leaflet-and-topojson/
     // Gera o range
-    const range = [null, null]
+    let range: number[] = []
     if (options.colorScale && options.colorScale.range && options.colorScale.range.min_value) {
       range[0] = options.colorScale.range.min_value
     }
@@ -24,17 +26,19 @@ class PolygonsChartBuilderService extends LeafletChartBuilderService {
     }
 
     if (options.colorScale && options.colorScale.range && options.colorScale.range.mid_value !== undefined) {
-      if ((range[1] - options.colorScale.range.mid_value) > (options.colorScale.range.mid_value - range[0])) {
-        range[0] = options.colorScale.range.mid_value - (range[1] - options.colorScale.range.mid_value)
-      } else if ((range[1] - options.colorScale.range.mid_value) < (options.colorScale.range.mid_value - range[0])) {
-        range[1] = options.colorScale.range.mid_value + (options.colorScale.range.mid_value - range[0])
+      if (range[0] && range[1]) {
+        if ((range[1] - options.colorScale.range.mid_value) > (options.colorScale.range.mid_value - range[0])) {
+          range[0] = options.colorScale.range.mid_value - (range[1] - options.colorScale.range.mid_value)
+        } else if ((range[1] - options.colorScale.range.mid_value) < (options.colorScale.range.mid_value - range[0])) {
+          range[1] = options.colorScale.range.mid_value + (options.colorScale.range.mid_value - range[0])
+        }    
       }
     }
 
     this.range = range
 
     const this_ = this
-    this.L.TopoJSON = this.L.GeoJSON.extend({
+    const TopoJSON = this.L.GeoJSON.extend({
       addData: function (jsonData) {
         if (jsonData.type === 'Topology') {
           for (const key in jsonData.objects) {
@@ -48,7 +52,7 @@ class PolygonsChartBuilderService extends LeafletChartBuilderService {
     })
 
     try {
-      const layer = new this.L.TopoJSON()
+      const layer = new TopoJSON()
       layer.addData(options.topology)
       layer.addTo(this.chart)
       layer.eachLayer(this.handlePolygon, this)
@@ -66,7 +70,7 @@ class PolygonsChartBuilderService extends LeafletChartBuilderService {
           scaleName = 'RdYlBu'
         }
 
-        const legend = this.L.control({ position: 'topright' })
+        const legend = new this.L.Control({ position: 'topright' })
         const d3chrom = this.d3chrom
 
         legend.onAdd = function (map) {
@@ -92,8 +96,10 @@ class PolygonsChartBuilderService extends LeafletChartBuilderService {
 
           return div
         }
-
-        legend.addTo(this.chart)
+        if (this.chart){
+          legend.addTo(this.chart)
+        }
+        
       }
     } catch (err) {
       options.fnSendError(err)
@@ -104,7 +110,7 @@ class PolygonsChartBuilderService extends LeafletChartBuilderService {
     const dataset = this.dataset
     const range = this.range
     const options = this.options
-    let value = null
+    let value: number
     let row = dataset.filter(function (obj) { if (obj[options.id_field] == layer.feature.properties[options.topo_key]) { return obj } else { return null } })
     if (row.length !== 0) {
       row = row[0]
@@ -148,8 +154,7 @@ class PolygonsChartBuilderService extends LeafletChartBuilderService {
         mouseout: function (event) { this.setStyle({ weight: 0.2, opacity: 1, fillOpacity: 0.8 }) },
         click: this.circleClick
       })
-    }
-    if (value == null) {
+    } else {
       layer.setStyle({
         fillColor: 'transparent',
         fillOpacity: 0,

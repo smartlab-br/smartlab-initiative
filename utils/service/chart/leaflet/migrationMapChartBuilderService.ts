@@ -7,13 +7,6 @@ class ExtendedMarker extends L.Marker {
   }
 }
 
-class CustomCurve extends L.Curve {
-  constructor(options?: L.PathOptions & { rowData?: any, customOptions?: any }) {
-    super(options)
-  }
-}
-
-
 export class MigrationMapChartBuilderService extends LeafletChartBuilderService {
   radius: { multiplier: number; base: number }
   constructor () {
@@ -205,6 +198,7 @@ export class MigrationMapChartBuilderService extends LeafletChartBuilderService 
 
     // Iterates over the dataset, to build connections to the circles
     const thetaOffset: number = (3.14 / 10)
+    const curveClick = this.circleClick
     // const durationBase = (options && options.path && options.path.animation && options.path.animation.base_duration) ? options.path.animation.base_duration : 2000
 
     for (const each_row of dataset) {
@@ -245,14 +239,13 @@ export class MigrationMapChartBuilderService extends LeafletChartBuilderService 
 
             const midpointLatLng = [midpointY, midpointX]
 
-            const eachCurve = this.L.curve(
+            let eachCurve = this.L.curve(
               [
                 "M", latlng1,
                 "Q", midpointLatLng,
                 latlng2
               ],
               {
-                rowData: each_row,
                 color: options.color != null
                   ? options.color
                   : (options.colorArray != null
@@ -261,13 +254,16 @@ export class MigrationMapChartBuilderService extends LeafletChartBuilderService 
                   ),
                 opacity: 0.3,
                 weight: value,
-                customOptions: options,
                 className: "migration-path"
 
               }
-            ).on("click", this.circleClick)
-
-            eachCurve.addTo(this.layers[ident])
+            ).on("click", function (event: any) {
+              event.traget.options.rowData = each_row
+              event.target.options.customOptions = options
+              curveClick(event)
+            });
+            
+        eachCurve.addTo(this.layers[ident])
 
             const eachPulseCurve = this.L.curve(
               [
@@ -276,7 +272,6 @@ export class MigrationMapChartBuilderService extends LeafletChartBuilderService 
                 latlng2
               ],
               {
-                rowData: each_row,
                 color: options.color != null
                   ? options.color
                   : (options.colorArray != null
@@ -285,13 +280,16 @@ export class MigrationMapChartBuilderService extends LeafletChartBuilderService 
                   ),
                 opacity: 0.7,
                 weight: value,
-                customOptions: options,
                 className: "migration-animate-path",
                 dashArray: "10, 20",
                 dashOffset: "100%"
               }
-            ).on("click", this.circleClick)
-
+              ).on("click", function (event: any) {
+                event.traget.options.rowData = each_row
+                event.target.options.customOptions = options
+                curveClick(event)
+              });
+  
             // eachPulseCurve.on("mouseover", function (e) {
             //     e.target.setStyle({
             //         opacity: 1
