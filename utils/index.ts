@@ -7,7 +7,11 @@ export { UrlTransformService } from "./service/singleton/urlTransform"
 // export { Smartlab } from "./model/smartlab"
 export { TooltipBuildingService } from "./service/singleton/tooltipBuilding"
 export { YamlFetcherService } from "./service/singleton/yamlFetcher"
+export { ChartBuilderService } from "./service/singleton/chartBuilder"
+export { GeneralChartBuilderService } from "./service/chart/generalChartBuilder"
+
 export { IDH } from ".//model/idh"
 export { Indicators } from "./model/indicators"
 export { AnalysisUnit } from "./model/analysisUnit"
 // export { Dimensions } from "./model/dimensions"
+
