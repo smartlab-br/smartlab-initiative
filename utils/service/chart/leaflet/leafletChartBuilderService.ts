@@ -53,11 +53,11 @@ export abstract class LeafletChartBuilderService extends GeneralChartBuilderServ
     if (options.clickable && options.clickable === false) { this.clickable = false }
 
     // delete this.L.Icon.Default.prototype._getIconUrl
-
+    
     this.L.Icon.Default.mergeOptions({
-      iconRetinaUrl: require("leaflet/dist/images/marker-icon-2x.png"),
-      iconUrl: require("leaflet/dist/images/marker-icon.png"),
-      shadowUrl: require("leaflet/dist/images/marker-shadow.png")
+      iconRetinaUrl: "leaflet/dist/images/marker-icon-2x.png",
+      iconUrl: "leaflet/dist/images/marker-icon.png",
+      shadowUrl: "leaflet/dist/images/marker-shadow.png"
     })
 
     if (chartContainer && this.heightProportion){

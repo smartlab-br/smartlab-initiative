@@ -39,7 +39,7 @@ class PolygonsChartBuilderService extends LeafletChartBuilderService {
 
     const this_ = this
     const TopoJSON = this.L.GeoJSON.extend({
-      addData: function (jsonData) {
+      addData: function (jsonData: any) {
         if (jsonData.type === 'Topology') {
           for (const key in jsonData.objects) {
             const geojson = this_.topojson.feature(jsonData, jsonData.objects[key])
@@ -56,7 +56,6 @@ class PolygonsChartBuilderService extends LeafletChartBuilderService {
       layer.addData(options.topology)
       layer.addTo(this.chart)
       layer.eachLayer(this.handlePolygon, this)
-
       if (options.show_legend && range[0] !== range[1]) {
         let scaleName = 'RdYlBu'
         if (options.colorScale && options.colorScale.name) {
@@ -72,9 +71,10 @@ class PolygonsChartBuilderService extends LeafletChartBuilderService {
 
         const legend = new this.L.Control({ position: 'topright' })
         const d3chrom = this.d3chrom
+        const _L = this.L
 
         legend.onAdd = function (map) {
-          const div = this.L.DomUtil.create('div', 'legend')
+          const div = _L.DomUtil.create('div', 'legend')
           let value = 0
           for (let i = range[0]; i <= range[1]; i = i + (range[1] - range[0]) / 20) {
             if (options.scale_order === undefined || options.scale_order === 'ASC') {
@@ -106,12 +106,12 @@ class PolygonsChartBuilderService extends LeafletChartBuilderService {
     }
   }
 
-  handlePolygon (layer) {
+  handlePolygon (layer: any) {
     const dataset = this.dataset
     const range = this.range
     const options = this.options
     let value: number
-    let row = dataset.filter(function (obj) { if (obj[options.id_field] == layer.feature.properties[options.topo_key]) { return obj } else { return null } })
+    let row = dataset.filter((obj: any) => { if (obj[options.id_field] == layer.feature.properties[options.topo_key]) { return obj } else { return null } })
     if (row.length !== 0) {
       row = row[0]
       if (range && (range[0] !== range[1])) {
@@ -150,8 +150,8 @@ class PolygonsChartBuilderService extends LeafletChartBuilderService {
         opacity: 1
       })
       layer.on({
-        mouseover: function (event) { this.setStyle({ weight: 4, opacity: 1, fillOpacity: 1 }) },
-        mouseout: function (event) { this.setStyle({ weight: 0.2, opacity: 1, fillOpacity: 0.8 }) },
+        mouseover: (event: any) => { event.target.setStyle({ weight: 4, opacity: 1, fillOpacity: 1 }) },
+        mouseout: (event: any)=> { event.target.setStyle({ weight: 0.2, opacity: 1, fillOpacity: 0.8 }) },
         click: this.circleClick
       })
     } else {

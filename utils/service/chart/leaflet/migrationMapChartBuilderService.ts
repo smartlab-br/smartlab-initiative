@@ -257,8 +257,8 @@ export class MigrationMapChartBuilderService extends LeafletChartBuilderService 
                 className: "migration-path"
 
               }
-            ).on("click", function (event: any) {
-              event.traget.options.rowData = each_row
+            ).on("click", (event: any) => {
+              event.target.options.rowData = each_row
               event.target.options.customOptions = options
               curveClick(event)
             });
@@ -284,8 +284,8 @@ export class MigrationMapChartBuilderService extends LeafletChartBuilderService 
                 dashArray: "10, 20",
                 dashOffset: "100%"
               }
-              ).on("click", function (event: any) {
-                event.traget.options.rowData = each_row
+              ).on("click", (event: any) => {
+                event.target.options.rowData = each_row
                 event.target.options.customOptions = options
                 curveClick(event)
               });
