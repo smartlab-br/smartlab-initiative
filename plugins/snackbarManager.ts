@@ -1,37 +1,40 @@
 // import TooltipBuildingService from "../../assets/service/singleton/tooltipBuildingService"
 // import ColorsService from "../../assets/service/singleton/colorsService"
 // import ChartBuilderService from "@smartlabbr/smartlab-charts"
+import { useMainStore } from "~/store"
+const store = useMainStore()
 
-export default defineNuxtPlugin(() => {
+export default defineNuxtPlugin((context: any) => {
+  const { app } = context;
   return {
     provide: {
       validCharts: ["MAP_TOPOJSON", "LINE", "STACKED", "BAR", "TREEMAP", "SCATTERPLOT", "BOXPLOT", "CALENDAR", "SANKEYD3", "MAP_BUBBLES", "MAP_HEAT", "MAP_CLUSTER", "MAP_MIGRATION", "MAP_POLYGON", "MIXED_MAP"],
       leafletBasedCharts: ["MAP_BUBBLES", "MAP_HEAT", "MAP_CLUSTER", "MAP_MIGRATION", "MAP_POLYGON", "MIXED_MAP"],
       sendError (err: any) {
         if (typeof err === "string") {
-          this.$nuxt.$emit("showSnackbar", { color: "error", text: err })
+          app._context.emitter.emit("showSnackbar", { color: "error", text: err })
         } else {
-          this.$nuxt.$emit("showSnackbar", { color: "error", text: "Houve uma falha. - " + err.message })
+          app._context.emitter.emit("showSnackbar", { color: "error", text: "Houve uma falha. - " + err.message })
         }
       },
 
       snackAlert (params: any) {
-        this.$nuxt.$emit("showSnackbar", params)
+        app._context.emitter.emit("showSnackbar", params)
       },
 
       openBugDialog (cardTitle: any) {
-        this.$nuxt.$emit("showBugDialog", cardTitle)
+        app._context.emitter.emit("showBugDialog", cardTitle)
       },
 
       openAuthenticatioDialog () {
-        this.$nuxt.$emit("showAuthenticatioDialog")
+        app._context.emitter.emit("showAuthenticatioDialog")
       },
 
       chartGen (id:string, chartType: string, structure: any, chartOptions: any, dataset: any, metadata: any, sectionIndex:number = 0) {
         if (structure && chartOptions && this.validCharts.includes(chartType)) {
           if (chartOptions.from_api) {
-            const idObservatorio = this.$parent.idObservatorio
-            const dimension = this.$parent.dimensao_ativa_id
+            const idObservatorio = store.currentObsId
+            const dimension = store.currentDimensionId
             const idLocalidade = this.$parent.idLocalidade
             const scope = this.getEscopo(idLocalidade)
             const url = "/chart?from_viewconf=S&au=" + idLocalidade +

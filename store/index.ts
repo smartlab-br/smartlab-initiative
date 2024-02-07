@@ -9,6 +9,7 @@ export const useMainStore = defineStore("main", {
     currentObsData: null as any,
     currentObsIdStr: null as unknown as string,
     currentDimData: null as any,
+    currentDimIdStr: null as unknown as string,
     aboutSmartlabData: null as any
   }),
   actions: {
@@ -40,6 +41,7 @@ export const useMainStore = defineStore("main", {
       } else {
         this.currentDimData = this.currentObsData.dimensions.find((dim: any) => dim.default)
       }
+      this.currentDimIdStr = this.currentDimData.id
     }
   },
   getters: {
@@ -48,6 +50,7 @@ export const useMainStore = defineStore("main", {
     currentObs: state => state.currentObsData,
     currentObsId: state => state.currentObsIdStr,
     currentDimension: state => state.currentDimData,
+    currentDimensionId: state => state.currentDimIdStr,
     aboutSmartlab: state => state.aboutSmartlabData
   },
 
