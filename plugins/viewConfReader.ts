@@ -540,72 +540,72 @@ export default defineNuxtPlugin((context: any) => {
         }
       },
 
-      getApiUrl (scope: string, thematic: boolean = false, added_filters: any = null, agregacao: string | null = null) {
-        let url = "/"
-        const obsAtual = this.$observatories.identifyObservatory(this.$route.path.split("/")[1])
-        if (thematic && obsAtual && obsAtual != "td") {
-          url += obsAtual + "/"
-        }
+      // getApiUrl (scope: string, thematic: boolean = false, added_filters: any = null, agregacao: string | null = null) {
+      //   let url = "/"
+      //   const obsAtual = this.$observatories.identifyObservatory(this.$route.path.split("/")[1])
+      //   if (thematic && obsAtual && obsAtual != "td") {
+      //     url += obsAtual + "/"
+      //   }
 
-        const resource = this.getResourceParamsFromScope(scope)
-        url += (resource ? resource.res : "indicadoresmunicipais")
+      //   const resource = this.getResourceParamsFromScope(scope)
+      //   url += (resource ? resource.res : "indicadoresmunicipais")
 
-        url += "?categorias=" + (resource ? resource.cats : "cd_mun_ibge,nm_municipio,ds_indicador,cd_indicador,nu_competencia,ds_fonte,media_uf,rank_uf,rank_br")
+      //   url += "?categorias=" + (resource ? resource.cats : "cd_mun_ibge,nm_municipio,ds_indicador,cd_indicador,nu_competencia,ds_fonte,media_uf,rank_uf,rank_br")
 
-        if (agregacao) {
-          url += "&valor=vl_indicador&agregacao=" + agregacao
-        } else {
-          url += ",vl_indicador"
-        }
+      //   if (agregacao) {
+      //     url += "&valor=vl_indicador&agregacao=" + agregacao
+      //   } else {
+      //     url += ",vl_indicador"
+      //   }
 
-        const filters = this.getFiltersfFromRoute()
-        url += "&filtros=" + (filters || "eq-cd_mun_ibge-") + this.getIdLocalidadeFromRoute(this.$route.params.idLocalidade)
+      //   const filters = this.getFiltersfFromRoute()
+      //   url += "&filtros=" + (filters || "eq-cd_mun_ibge-") + this.getIdLocalidadeFromRoute(this.$route.params.idLocalidade)
 
-        if (added_filters && added_filters != "") {
-          if (filters) {
-            url += ",and,"
-          }
-          url += added_filters
-        }
-        return url
-      },
+      //   if (added_filters && added_filters != "") {
+      //     if (filters) {
+      //       url += ",and,"
+      //     }
+      //     url += added_filters
+      //   }
+      //   return url
+      // },
 
-      getResourceParamsFromScope (scope: string | null = null) {
-        if (scope == null || scope == "") { scope = this.getEscopo(this.$route.params.idLocalidade) }
-        switch (scope) {
-          case "municipio":
-            return {
-              res: "indicadoresmunicipais",
-              cats: "cd_mun_ibge,nm_municipio,ds_indicador,cd_indicador,nu_competencia,ds_fonte,media_uf,rank_uf,rank_br"
-            }
-          case "uf":
-            return {
-              res: "indicadoresestaduais",
-              cats: "cd_mun_ibge,ds_indicador,cd_indicador,nu_competencia,ds_fonte,rank_br"
-            }
-          case "br":
-            return {
-              res: "indicadoresnacionais",
-              cats: "cd_mun_ibge,ds_indicador,cd_indicador,nu_competencia,ds_fonte"
-            }
-        }
-        return null
-      },
+      // getResourceParamsFromScope (scope: string | null = null) {
+      //   if (scope == null || scope == "") { scope = this.getEscopo(this.$route.params.idLocalidade) }
+      //   switch (scope) {
+      //     case "municipio":
+      //       return {
+      //         res: "indicadoresmunicipais",
+      //         cats: "cd_mun_ibge,nm_municipio,ds_indicador,cd_indicador,nu_competencia,ds_fonte,media_uf,rank_uf,rank_br"
+      //       }
+      //     case "uf":
+      //       return {
+      //         res: "indicadoresestaduais",
+      //         cats: "cd_mun_ibge,ds_indicador,cd_indicador,nu_competencia,ds_fonte,rank_br"
+      //       }
+      //     case "br":
+      //       return {
+      //         res: "indicadoresnacionais",
+      //         cats: "cd_mun_ibge,ds_indicador,cd_indicador,nu_competencia,ds_fonte"
+      //       }
+      //   }
+      //   return null
+      // },
 
-      getFiltersfFromRoute () {
-        const reach = this.getEscopo(this.$route.params.idLocalidade)
+      // getFiltersfFromRoute () {
+      //   const reach = this.getEscopo(this.$route.params.idLocalidade)
 
-        switch (reach) {
-          case "brasil":
-            return null
-          case "prtptm":
-            return "eq-cd_unidade-"
-          case "estado":
-            return "eq-cd_uf-"
-          default:
-            return "eq-cd_mun_ibge-"
-        }
-      },
+      //   switch (reach) {
+      //     case "brasil":
+      //       return null
+      //     case "prtptm":
+      //       return "eq-cd_unidade-"
+      //     case "estado":
+      //       return "eq-cd_uf-"
+      //     default:
+      //       return "eq-cd_mun_ibge-"
+      //   }
+      // },
 
       getEscopo (idLocalidade: string) {
         if (idLocalidade == "0") { return "brasil" }
@@ -666,24 +666,25 @@ export default defineNuxtPlugin((context: any) => {
           dataset = indicators.sortObject(dataset, order_field, order)
         }
 
+        const _this = (this as any)
         if (addedParams && addedParams.id) {
           // Mixed_map
-          if ((this as any).dataset == null) {
-            (this as any).dataset = []
-            (this as any).metadata = []
+          if (_this.dataset == null) {
+            _this.dataset = []
+            _this.metadata = []
           }
           // Múltiplos gráficos ou mixed_map
-          (this as any).dataset[addedParams.id] = dataset
-          (this as any).metadata[addedParams.id] = metadata
-          (this as any).triggerChartUpdates(addedParams.id, dataset, metadata)
-          (this as any).datasetsComplete++
+          _this.dataset[addedParams.id] = dataset
+          _this.metadata[addedParams.id] = metadata
+          _this.triggerChartUpdates(addedParams.id, dataset, metadata)
+          _this.datasetsComplete++
         } else if (addedParams && addedParams.props) {
-          if (addedParams.props.dataset) { (this as any)[addedParams.props.dataset] = dataset }
-          if (addedParams.props.metadata) { (this as any)[addedParams.props.metadata] = metadata }
+          if (addedParams.props.dataset) { _this[addedParams.props.dataset] = dataset }
+          if (addedParams.props.metadata) { _this[addedParams.props.metadata] = metadata }
         } else {
           // Dataset único
-          (this as any).dataset = dataset
-          (this as any).metadata = metadata
+          _this.dataset = dataset
+          _this.metadata = metadata
         }
 
         if (addedParams && addedParams.fnCallback) {
