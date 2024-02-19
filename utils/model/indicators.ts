@@ -384,7 +384,7 @@ export class Indicators {
     return meltedDS
   }
 
-  cast (dataset: any[], col_fields: string[], value_field: string, layer_field: string, fmt_value_field: string, det_value_field: string) {
+  cast (dataset: any[], col_fields: string[], value_field: string, layer_field: string, fmt_value_field: string| null = null, det_value_field: string | null = null) {
     const resultDataset: any[] = []
     const newCols: any[] = []
     let key_field = ""
