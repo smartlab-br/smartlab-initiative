@@ -5,7 +5,7 @@ import { useMainStore } from "~/store"
 const store = useMainStore()
 
 export default defineNuxtPlugin((context: any) => {
-  const { app } = context;
+  const { app } = context
   return {
     provide: {
       validCharts: ["MAP_TOPOJSON", "LINE", "STACKED", "BAR", "TREEMAP", "SCATTERPLOT", "BOXPLOT", "CALENDAR", "SANKEYD3", "MAP_BUBBLES", "MAP_HEAT", "MAP_CLUSTER", "MAP_MIGRATION", "MAP_POLYGON", "MIXED_MAP"],
