@@ -12,7 +12,7 @@ const objectTransformService = new ObjectTransformService()
 const indicators = new Indicators()
 
 export default defineNuxtPlugin((context: any) => {
-  const { app } = context
+  // const { app } = context
   return {
     provide: {
       errorMessage: "",
@@ -606,24 +606,6 @@ export default defineNuxtPlugin((context: any) => {
       //       return "eq-cd_mun_ibge-"
       //   }
       // },
-
-      getEscopo (idLocalidade: string) {
-        if (idLocalidade == "0") { return "brasil" }
-        if (idLocalidade.includes("mptreg") || idLocalidade.includes("MPTREG")) { return "mptreg" }
-        if (idLocalidade.includes("prt") || idLocalidade.includes("PRT") ||
-          idLocalidade.includes("ptm") || idLocalidade.includes("PTM")) { return "prtptm" }
-        switch (idLocalidade.length) {
-        case 1:
-          return "regiao"
-        case 2:
-          return "estado"
-        case 4:
-          return "mesorregiao"
-        case 5:
-          return "microrregiao"
-        }
-        return "municipio"
-      },
 
       getIdLocalidadeFromRoute (idLocalidade: string) {
         if (idLocalidade == "0") { return "0" } // Brasil
