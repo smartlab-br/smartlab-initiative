@@ -1,8 +1,8 @@
 import { NavigationService } from "../service/singleton/navigation"
 import { UrlTransformService } from "../service/singleton/urlTransform"
 // import { Smartlab } from "./smartlab"
-import { useMainStore } from "~/store"
-const store = useMainStore()
+// import { useMainStore } from "~/store"
+// const store = useMainStore()
 
 export class AnalysisUnit {
   currentAnalysisUnit: string | null = null
@@ -335,7 +335,7 @@ export class AnalysisUnit {
     return localidade
   }
 
-  static searchAnalysisUnit(router: any, searchItem: any, idObservatorio: any = null, observatorios: any = null) {
+  static searchAnalysisUnit(router: any, store: any, searchItem: any, idObservatorio: any = null, observatorios: any = null) {
     const route: any = router.currentRoute
 
     if (searchItem === null || searchItem === undefined) {

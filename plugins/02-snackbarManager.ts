@@ -5,17 +5,15 @@ import { AnalysisUnit } from "~/utils/model/AnalysisUnit"
 import { ChartBuilderService } from "~/utils/service/singleton/chartBuilder"
 import { ColorsService } from "~/utils/service/singleton/colors"
 import { TooltipBuildingService } from "~/utils/service/singleton/tooltipBuilding"
-import { useMainStore } from "~/store"
 import { useTheme } from "vuetify"
 import { useRoute } from "vue-router"
 import { NumberTransformService } from "~/utils/service/singleton/numberTransform"
 
 const numberTransformService = new NumberTransformService()
 
-const store = useMainStore()
-
 export default defineNuxtPlugin((context: any) => {
   const { app } = context
+
   return {
     provide: {
       validCharts: ["MAP_TOPOJSON", "LINE", "STACKED", "BAR", "TREEMAP", "SCATTERPLOT", "BOXPLOT", "CALENDAR", "SANKEYD3", "MAP_BUBBLES", "MAP_HEAT", "MAP_CLUSTER", "MAP_MIGRATION", "MAP_POLYGON", "MIXED_MAP"],
@@ -40,7 +38,7 @@ export default defineNuxtPlugin((context: any) => {
         app._context.emitter.emit("showAuthenticatioDialog")
       },
 
-      chartGen (id:string, chartType: string, structure: any, chartOptions: any, dataset: any, metadata: any, sectionIndex:number = 0) {
+      chartGen (store: any, id:string, chartType: string, structure: any, chartOptions: any, dataset: any, metadata: any, sectionIndex:number = 0) {
         if (structure && chartOptions && this.validCharts.includes(chartType)) {
           if (chartOptions.from_api) {
             const idObservatorio = store.currentObsId
@@ -61,7 +59,7 @@ export default defineNuxtPlugin((context: any) => {
                 (this as any).sendDataStructureError("Falha ao buscar dados do card " + id)
               })
           } else {
-            const additionalOptions = this.buildChartAdditionalOptions(id, chartType, structure, chartOptions, dataset, metadata, sectionIndex)
+            const additionalOptions = this.buildChartAdditionalOptions(store, id, chartType, structure, chartOptions, dataset, metadata, sectionIndex)
 
             return (new ChartBuilderService()).generateChart(
               chartType,
@@ -73,9 +71,9 @@ export default defineNuxtPlugin((context: any) => {
           }
         }
       },
-      chartRegen (chartHandler: any, id: string, chartType: string, structure: any, chartOptions: any, dataset: any, metadata: any, sectionIndex: number = 0) {
+      chartRegen (store: any, chartHandler: any, id: string, chartType: string, structure: any, chartOptions: any, dataset: any, metadata: any, sectionIndex: number = 0) {
         if (structure && chartOptions && this.validCharts.includes(chartType)) {
-          const additionalOptions = this.buildChartAdditionalOptions(id, chartType, structure, chartOptions, dataset, metadata, sectionIndex)
+          const additionalOptions = this.buildChartAdditionalOptions(store, id, chartType, structure, chartOptions, dataset, metadata, sectionIndex)
 
           return (new ChartBuilderService()).regenerateChart(
             chartHandler,
@@ -88,7 +86,7 @@ export default defineNuxtPlugin((context: any) => {
         }
       },
 
-      buildChartAdditionalOptions (id:string, chartType: string, structure: any, chartOptions: any, dataset: any, metadata: any, sectionIndex: number = 0) {
+      buildChartAdditionalOptions (store: any, id:string, chartType: string, structure: any, chartOptions: any, dataset: any, metadata: any, sectionIndex: number = 0) {
         const fnNavigation = AnalysisUnit.searchAnalysisUnit
         let idAnalysisUnit = (this as any).selectedPlace ? (this as any).selectedPlace : ((this as any).customParams ? (this as any).customParams.idLocalidade : null)
         if (chartOptions.selected_place) {
@@ -111,7 +109,7 @@ export default defineNuxtPlugin((context: any) => {
           navigate: {
             fnNav: (router: any, placeId: string) => {
               try {
-                fnNavigation(router, { id: placeId, to: "/localidade/" + placeId + "?" })
+                fnNavigation(router, store, { id: placeId, to: "/localidade/" + placeId + "?" })
               } catch (err) {
                 fnSendError(err)
               }
@@ -169,7 +167,7 @@ export default defineNuxtPlugin((context: any) => {
         document.getElementById(containerId)!.style.cursor = image
       },
 
-      async obsTETooltip (target: any, route: any, tooltip_list: string[] = [], removed_text_list: string[] = [], options: any = null) {
+      async obsTETooltip (target: any, route: any, store: any, tooltip_list: string[] = [], removed_text_list: string[] = [], options: any = null) {
         let text = ""
         if (target.options.rowData.cd_mun_ibge) { // Brasileiros ou Sobreviventes Atendidos pelo SUAS
           let url = "/te/indicadoresmunicipais/rerank?categorias=cd_mun_ibge,cd_uf,cd_indicador,nm_municipio_uf,nu_competencia_max,nu_competencia_min&valor=vl_indicador&agregacao=sum&filtros=nn-vl_indicador,and,in-cd_indicador-'te_ope'-'te_sit_trab_resgatados'-'te_nat'-'te_res'-'te_inspecoes'-'te_insp_rgt',and,post-eq-cd_mun_ibge-" + target.options.rowData.cd_mun_ibge
@@ -177,7 +175,7 @@ export default defineNuxtPlugin((context: any) => {
           // let url = "/te/indicadoresmunicipais?categorias=cd_mun_ibge,nm_municipio_uf,nu_competencia_max,nu_competencia_min&valor=vl_indicador&agregacao=sum&pivot=cd_indicador&filtros=nn-vl_indicador,and,in-cd_indicador-"te_ope"-"te_rgt"-"te_nat"-"te_res"-"te_inspecoes",and,eq-cd_mun_ibge-"+ target.options.rowData.cd_mun_ibge;
           const urlIndicadores = "/indicadoresmunicipais?categorias=cd_indicador,ds_indicador_radical,nu_competencia,nu_competencia_max,nu_competencia_min,vl_indicador&filtros=nn-vl_indicador,and,in-cd_indicador-'06_01_09_01'-'01_16_02_00'-'01_15_01_00'-'01_14_13_00',and,eq-cd_mun_ibge-" + target.options.rowData.cd_mun_ibge + ",and,eq-nu_competencia-nu_competencia_max&ordenacao=ds_indicador_radical"
           if (options && options.clickable) {
-            text += "<p class='text-xs-right ma-0'><a href='" + TooltipBuildingService.getUrlByPlace(target.options.rowData.cd_mun_ibge, route) + "' class='primary--text font-weight-black'>IR PARA</a></p>"
+            text += "<p class='text-xs-right ma-0'><a href='" + TooltipBuildingService.getUrlByPlace(target.options.rowData.cd_mun_ibge, route, store) + "' class='primary--text font-weight-black'>IR PARA</a></p>"
           }
           if ((this as any).customParams.filterUrl && (this as any).customParams.filterUrl != "") {
             url = url + (this as any).customParams.filterUrl
@@ -379,7 +377,7 @@ export default defineNuxtPlugin((context: any) => {
         // }))
       },
 
-      async obsTITooltip (target: any, route: any, tooltip_list: string[] = [], removed_text_list: string[] = [], options: any = null) {
+      async obsTITooltip (target: any, route: any, store: any, tooltip_list: string[] = [], removed_text_list: string[] = [], options: any = null) {
         let urlSinan = "/indicadoresmunicipais?categorias=nm_municipio_uf,ds_agreg_primaria,ds_fonte,nu_competencia_min,nu_competencia_max&valor=vl_indicador&agregacao=sum&filtros=eq-cd_indicador-'06_05_02_99',and,eq-cd_mun_ibge-" + target.options.rowData.cd_mun_ibge
         let urlCatMenores = "/sst/cats?categorias=1&valor=nm_municipio_uf,cd_municipio_ibge&agregacao=COUNT&filtros=lt-idade_cat-18,and,ne-idade_cat-0,and,eq-cd_municipio_ibge_dv-" + target.options.rowData.cd_mun_ibge
         let urlProvaBrasil = "/ti/provabrasil?categorias=nm_municipio_uf,nu_ano_prova_brasil-nu_competencia&valor=vl_indicador&agregacao=sum&filtros=nn-vl_indicador,and,ne-vl_indicador-0,and,eq-nu_ano_prova_brasil-2017,and,eq-cd_tr_fora-1,and,eq-cd_municipio_ibge_dv-" + target.options.rowData.cd_mun_ibge
@@ -393,7 +391,7 @@ export default defineNuxtPlugin((context: any) => {
         let urlFamiliasTI = "/indicadoresmunicipais?categorias=nm_municipio_uf,ds_agreg_primaria,ds_fonte&valor=vl_indicador&agregacao=sum&filtros=eq-cd_indicador-'TICAD_23_001',and,eq-cd_mun_ibge-" + target.options.rowData.cd_mun_ibge
         let text = ""
         if (options && options.clickable) {
-          text += "<p class='text-xs-right ma-0'><a href='" + TooltipBuildingService.getUrlByPlace(target.options.rowData.cd_mun_ibge, route) + "' class='primary--text font-weight-black'>IR PARA</a></p>"
+          text += "<p class='text-xs-right ma-0'><a href='" + TooltipBuildingService.getUrlByPlace(target.options.rowData.cd_mun_ibge, route, store) + "' class='primary--text font-weight-black'>IR PARA</a></p>"
         }
         if ((this as any).customParams.filterUrl && (this as any).customParams.filterUrl != "") {
           urlSinan = urlSinan + (this as any).customParams.filterUrl
@@ -476,10 +474,10 @@ export default defineNuxtPlugin((context: any) => {
         // }))
       },
 
-      async obsSSTTooltip (target: any, route: any, tooltip_list: string[] = [], removed_text_list: string[] = [], options: any = null) {
+      async obsSSTTooltip (target: any, route: any, store: any, tooltip_list: string[] = [], removed_text_list: string[] = [], options: any = null) {
         let text: string = ""
         if (options && options.clickable) {
-          text += "<p class='text-xs-right ma-0'><a href='" + TooltipBuildingService.getUrlByPlace(target.options.rowData.cd_municipio_ibge_dv, route) + "' class='primary--text font-weight-black'>IR PARA</a></p>"
+          text += "<p class='text-xs-right ma-0'><a href='" + TooltipBuildingService.getUrlByPlace(target.options.rowData.cd_municipio_ibge_dv, route, store) + "' class='primary--text font-weight-black'>IR PARA</a></p>"
         }
         if (target.options.rowData.codigo == "sinan") {
           const urlIndicadores: string = "/indicadoresmunicipais?categorias=nm_municipio_uf,ds_agreg_primaria,ds_fonte&valor=vl_indicador,nu_competencia,nu_competencia&agregacao=sum,min,max&ordenacao=ds_agreg_primaria&filtros=nn-vl_indicador,and,ne-vl_indicador-0,and,in-cd_indicador-'06_05_01_00'-'06_05_02_00'-'06_05_03_00'-'06_05_04_00'-'06_05_05_00'-'06_05_06_00'-'06_05_07_00'-'06_05_08_00'-'06_05_09_00'-'06_05_20_00',and,ge-nu_competencia-'2012',and,eq-cd_mun_ibge-" + target.options.rowData.cd_mun_ibge
@@ -615,10 +613,10 @@ export default defineNuxtPlugin((context: any) => {
         }
       },
 
-      async obsTDTooltip (target: any, route: any, tooltip_list: string[] = [], removed_text_list: string[] = [], options: any = null) {
+      async obsTDTooltip (target: any, route: any, store: any, tooltip_list: string[] = [], removed_text_list: string[] = [], options: any = null) {
         let text = ""
         if (options && options.clickable) {
-          text += "<p class='text-xs-right ma-0'><a href='" + TooltipBuildingService.getUrlByPlace(target.options.rowData.cd_municipio_ibge_dv, route) + "' class='primary--text font-weight-black'>IR PARA</a></p>"
+          text += "<p class='text-xs-right ma-0'><a href='" + TooltipBuildingService.getUrlByPlace(target.options.rowData.cd_municipio_ibge_dv, route, store) + "' class='primary--text font-weight-black'>IR PARA</a></p>"
         }
         const urlSaldoMunicipio = "/thematic/cagedtermometro?categorias=competencia_mov,nm_municipio_uf,saldo_municipio&valor=admitidos,desligados&agregacao=sum,sum&filtros=eq-termometro_grupo-'cbo',and,eq-competencia_mov-" + target.options.rowData.competencia_mov + ",and,eq-cd_municipio_ibge_dv-" + target.options.rowData.cd_municipio_ibge_dv
         const urlCBOAumento = "/thematic/cagedtermometro?categorias=termometro_codigo,termometro_descricao,saldo,admitidos,desligados&ordenacao=-saldo&limit=5&filtros=eq-termometro_grupo-'cbo',and,gt-saldo-0,and,eq-competencia_mov-" + target.options.rowData.competencia_mov + ",and,eq-cd_municipio_ibge_dv-" + target.options.rowData.cd_municipio_ibge_dv
@@ -722,7 +720,7 @@ export default defineNuxtPlugin((context: any) => {
         target.bindPopup(text).openPopup()
       },
 
-      async obsCovidMunicipioTooltip (target: any, route: any, tooltip_list: string[] = [], removed_text_list: string[] = [], options: any = null) {
+      async obsCovidMunicipioTooltip (target: any, route: any, store: any, tooltip_list: string[] = [], removed_text_list: string[] = [], options: any = null) {
         const urlCovidMunicipio = "/thematic/covidcasos?categorias=cd_municipio_ibge_dv,nm_municipio_uf,last_available_date,last_available_deaths,last_available_confirmed,last_available_death_rate&filtros=eq-place_type-'city',and,eq-is_last-TRUE,and,ne-latitude-0,and,ne-longitude-0,and,eq-cd_municipio_ibge_dv-" + target.options.rowData.cd_mun_ibge
         const urlDenunciaMPT = "/thematic/coviddenunciampt?categorias=cd_municipio_ibge_dv,nm_municipio_uf&agregacao=COUNT&filtros=eq-cd_municipio_ibge_dv-" + target.options.rowData.cd_mun_ibge
         // const urlAcoesMPT = "/thematic/coviddocumentompt?categorias=descricao_tipodocumento&agregacao=COUNT&filtros=in-tipodocumento-"ACPs"-"TAC"-"RECOMENDAÇÃO",and,eq-cd_municipio_ibge_dv-" + target.options.rowData.cd_mun_ibge
@@ -751,7 +749,7 @@ export default defineNuxtPlugin((context: any) => {
 
         let text = ""
         if (options && options.clickable) {
-          text += "<p class='text-xs-right ma-0'><a href='" + TooltipBuildingService.getUrlByPlace(target.options.rowData.cd_mun_ibge, route) + "' class='primary--text font-weight-black'>IR PARA</a></p>"
+          text += "<p class='text-xs-right ma-0'><a href='" + TooltipBuildingService.getUrlByPlace(target.options.rowData.cd_mun_ibge, route, store) + "' class='primary--text font-weight-black'>IR PARA</a></p>"
         }
         text += "<p class='headline-obs'>Município: <b>" + dtCovidMun.nm_municipio_uf + "</b></p>"
         text += "<table width='100%'>"

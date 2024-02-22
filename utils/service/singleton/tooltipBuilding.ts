@@ -1,7 +1,7 @@
 import { NumberTransformService } from "./numberTransform"
 // import { Smartlab } from "../../model/smartlab"
-import { useMainStore } from "~/store"
-const store = useMainStore()
+// import { useMainStore } from "~/store"
+// const store = useMainStore()
 
 export class TooltipBuildingService {
 
@@ -18,7 +18,7 @@ export class TooltipBuildingService {
     return label
   }
   
-  static defaultTooltip(d: any, route: any, tooltip_list: any[] | null = [], removed_text_list: string[] = [], options: any = null) { 
+  static defaultTooltip(d: any, route: any, store: any, tooltip_list: any[] | null = [], removed_text_list: string[] = [], options: any = null) { 
     let text = ""
     // let table = ""
     let value = ""
@@ -55,7 +55,7 @@ export class TooltipBuildingService {
 
         if(isFirst){ //Título
           if (options && options.clickable && options.visibleLayers){ // leaflet
-            text += "<p class='text-xs-right ma-0'><a href='" + TooltipBuildingService.getUrlByPlace(d.cd_mun_ibge?d.cd_mun_ibge:d.cd_municipio_ibge_dv, route) + "' class='primary--text font-weight-black'>IR PARA</a></p>"
+            text += "<p class='text-xs-right ma-0'><a href='" + TooltipBuildingService.getUrlByPlace(d.cd_mun_ibge?d.cd_mun_ibge:d.cd_municipio_ibge_dv, route, store) + "' class='primary--text font-weight-black'>IR PARA</a></p>"
           }
           text += "<p class='headline-obs'><b>" + value + "</b></p>"
           text += "<hr class='tooltip_divider'>"
@@ -90,7 +90,7 @@ export class TooltipBuildingService {
     target.bindPopup(TooltipBuildingService.defaultTooltip(d, route, tooltip_list, removed_text_list, options)).openPopup()
   }
 
-  static getUrlByPlace(idLocalidade: string, route: any){
+  static getUrlByPlace(idLocalidade: string, route: any, store: any){
   
     let url = ""
     url = store.currentObs.to + "/localidade/" + idLocalidade + "?"

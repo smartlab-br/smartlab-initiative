@@ -676,3 +676,4 @@ export default defineNuxtPlugin((context: any) => {
     }
   }
 })
+
