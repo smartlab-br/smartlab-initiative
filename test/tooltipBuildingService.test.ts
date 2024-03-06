@@ -26,7 +26,7 @@ describe("TooltipBuildingService", () => {
   test("Monta um default quando não há indicação dos campos", () => {
     const indicador = { cd_indicador: 1, nu_competencia: 2099, vl_indicador: 123.45 }
 
-    const result = TooltipBuildingService.defaultTooltip(indicador, null, null, remove_list)
+    const result = TooltipBuildingService.defaultTooltip(indicador, null, null, null, remove_list)
     expect(result).toEqual("Tooltip!")
   })
 
@@ -36,7 +36,7 @@ describe("TooltipBuildingService", () => {
       { text: "Ano", value: "nu_competencia" },
       { text: "Valor", value: "vl_indicador" }]
 
-    const result = TooltipBuildingService.defaultTooltip(indicador, null, vals, remove_list)
+    const result = TooltipBuildingService.defaultTooltip(indicador, null, null, vals, remove_list)
     expect(result).toEqual(
       "<p class='headline-obs'><b>1</b></p><hr class='tooltip_divider'>" +
       "<table width='100%' style='max-width:350px'>" +
@@ -57,7 +57,7 @@ describe("TooltipBuildingService", () => {
       { text: "Lista", value: "lista" }
     ]
 
-    const result: any = TooltipBuildingService.defaultTooltip(indicador, null, vals, remove_list)
+    const result: any = TooltipBuildingService.defaultTooltip(indicador, null, null, vals, remove_list)
     expect(result).toEqual(
       "<p class='headline-obs'><b>1</b></p><hr class='tooltip_divider'><table width='100%' style='max-width:350px'>" +
       "<tr style='vertical-align:top'><td class='font-weight-bold'>Ano:</td><td class='text-xs-right'>2099</td></tr>" +

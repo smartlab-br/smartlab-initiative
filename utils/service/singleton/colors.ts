@@ -53,6 +53,15 @@ export class ColorsService {
     return (obsId) ? useTheme().global.name.value = obsId : useTheme().global.name.value = "default"
   }
 
+  static getThemeFromId (id: string) {
+    const themes = useTheme().computedThemes.value
+    if (id) {
+      return Object.assign({}, themes[id].colors ? themes[id].colors : themes["default"].colors)
+    } else {
+      return Object.assign({}, themes["default"].colors)
+    }
+  }
+
   static assessZebraBG(index: number, theme: ThemeDefinition) {
     if (theme === null || theme === undefined) { theme = useTheme().current.value }
     if (index % 2 == 0) {
