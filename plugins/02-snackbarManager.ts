@@ -175,7 +175,7 @@ export default defineNuxtPlugin((context: any) => {
           // let url = "/te/indicadoresmunicipais?categorias=cd_mun_ibge,nm_municipio_uf,nu_competencia_max,nu_competencia_min&valor=vl_indicador&agregacao=sum&pivot=cd_indicador&filtros=nn-vl_indicador,and,in-cd_indicador-"te_ope"-"te_rgt"-"te_nat"-"te_res"-"te_inspecoes",and,eq-cd_mun_ibge-"+ target.options.rowData.cd_mun_ibge;
           const urlIndicadores = "/indicadoresmunicipais?categorias=cd_indicador,ds_indicador_radical,nu_competencia,nu_competencia_max,nu_competencia_min,vl_indicador&filtros=nn-vl_indicador,and,in-cd_indicador-'06_01_09_01'-'01_16_02_00'-'01_15_01_00'-'01_14_13_00',and,eq-cd_mun_ibge-" + target.options.rowData.cd_mun_ibge + ",and,eq-nu_competencia-nu_competencia_max&ordenacao=ds_indicador_radical"
           if (options && options.clickable) {
-            text += "<p class='text-xs-right ma-0'><a href='" + TooltipBuildingService.getUrlByPlace(target.options.rowData.cd_mun_ibge, route, store) + "' class='primary--text font-weight-black'>IR PARA</a></p>"
+            text += "<p class='text-xs-right ma-0'><a href='" + TooltipBuildingService.getUrlByPlace(target.options.rowData.cd_mun_ibge, route, store) + "' class='text-primary font-weight-black'>IR PARA</a></p>"
           }
           if ((this as any).customParams.filterUrl && (this as any).customParams.filterUrl != "") {
             url = url + (this as any).customParams.filterUrl
@@ -277,7 +277,7 @@ export default defineNuxtPlugin((context: any) => {
             }
           }
 
-          text += "<tr><td class='font-weight-bold green--text accent-4'>RESGATES</td></tr>"
+          text += "<tr><td class='font-weight-bold text-green-accent-4'>RESGATES</td></tr>"
           text += "<tr><td>" + numberTransformService.formatNumber(vl_rgt, "inteiro") + " resgates</td></tr>"
           if (vl_rgt != 0) {
             text += "<tr><td>" + vl_rgt_rank_uf + "ª posição no Estado com " + vl_rgt_pct_uf + " do total</td></tr>"
@@ -287,7 +287,7 @@ export default defineNuxtPlugin((context: any) => {
             text += "<tr><td>Fonte: Radar SIT - Painel de Informações e Estatísticas da Inspeção do Trabalho no Brasil</td></tr>"
             text += "<tr><td>Período: " + ano_min + (ano_min != ano_max ? " a " + ano_max : "") + "</td></tr>"
           }
-          text += "<tr><td class='font-weight-bold accent-4'><br/>OPERAÇÕES</td></tr>"
+          text += "<tr><td class='font-weight-bold text-accent-4'><br/>OPERAÇÕES</td></tr>"
           text += "<tr><td>" + numberTransformService.formatNumber(vl_ope, "inteiro") + " operações</td></tr>"
           if (vl_ope != 0) {
             text += "<tr><td>" + numberTransformService.formatNumber(vl_rgt / vl_ope, "real", 2) + " resgates por operação (envolvendo " + vl_inspecoes + " inspeções/fiscalizações)</td></tr>"
@@ -301,7 +301,7 @@ export default defineNuxtPlugin((context: any) => {
             text += "<tr><td>Fonte: COETE</td></tr>"
             text += "<tr><td>Período: " + ano_min + (ano_min != ano_max ? " a " + ano_max : "") + "</td></tr>"
           }
-          text += "<tr><td class='font-weight-bold red--text'><br/>RESGATADOS NATURAIS</td></tr>"
+          text += "<tr><td class='font-weight-bold text-red'><br/>RESGATADOS NATURAIS</td></tr>"
           text += "<tr><td>" + numberTransformService.formatNumber(vl_nat, "inteiro") + " trabalhadores regatados nascidos no município em destaque</td></tr>"
           if (vl_nat != 0) {
             text += "<tr><td>" + vl_nat_rank_uf + "ª posição no Estado com " + vl_nat_pct_uf + " do total</td></tr>"
@@ -311,7 +311,7 @@ export default defineNuxtPlugin((context: any) => {
             text += "<tr><td>Fonte: Seguro Desemprego do Trabalhador Resgatado (MTb)</td></tr>"
             text += "<tr><td>Período: " + ano_min + (ano_min != ano_max ? " a " + ano_max : "") + "</td></tr>"
           }
-          text += "<tr><td class='font-weight-bold light-blue--text'><br/>RESGATADOS RESIDENTES</td></tr>"
+          text += "<tr><td class='font-weight-bold text-light-blue'><br/>RESGATADOS RESIDENTES</td></tr>"
           text += "<tr><td>" + numberTransformService.formatNumber(vl_res, "inteiro") + " trabalhadores resgatados que declararam residir, no momento do resgate, no município em destaque</td></tr>"
           if (vl_res != 0) {
             text += "<tr><td>" + vl_res_rank_uf + "ª posição no Estado com " + vl_res_pct_uf + " do total</td></tr>"
@@ -321,7 +321,7 @@ export default defineNuxtPlugin((context: any) => {
             text += "<tr><td>Fonte: Seguro Desemprego do Trabalhador Resgatado (MTb)</td></tr>"
             text += "<tr><td>Período: " + ano_min + (ano_min != ano_max ? " a " + ano_max : "") + "</td></tr>"
           }
-          text += "<tr><td class='font-weight-bold purple--text'><br/>SOBREVIVENTES ATENDIDOS PELA ASSISTÊNCIA</td></tr>"
+          text += "<tr><td class='font-weight-bold text-purple'><br/>SOBREVIVENTES ATENDIDOS PELA ASSISTÊNCIA</td></tr>"
           text += "<tr><td>" + (dtSUAS && dtSUAS[0] ? "Possui sobreviventes de tráfico de pessoas com acompanhamento pelo Serviço de Proteção e Atendimento Especializado a Famílias e Indivíduos (PAEFI) no Centro de Referência Especializado de Assistência Social (CREAS)" : "Nenhum registro de sobreviventes de tráfico de pessoas com acompanhamento pelo Serviço de Proteção e Atendimento Especializado a Famílias e Indivíduos (PAEFI) no Centro de Referência Especializado de Assistência Social (CREAS)") + "</td></tr>"
           text += "<tr><td>Fonte: Ministério do Desenvolvimento e Assistência Social, Família e Combate à Fome</td></tr>"
           text += "<tr><td>Período: 2017 a 2022</td></tr>"
@@ -355,13 +355,13 @@ export default defineNuxtPlugin((context: any) => {
           const dtMunResgate = resultResgate.data.dataset
           text += "<p class='headline-obs'>Local: <b>" + target.options.rowData.fluxos_local_origem + "</b></p>" +
                   "<table width='100%' style='border-collapse: collapse;'>" +
-                  "<tr><td colspan='4' class='title-obs font-weight-bold brown--text pt-3 pb-1'>Municípios Brasileiros de Entrada</td></tr>" +
+                  "<tr><td colspan='4' class='title-obs font-weight-bold text-brown pt-3 pb-1'>Municípios Brasileiros de Entrada</td></tr>" +
                   "<tr style='border-bottom: 1px solid rgba(0,0,0,0.15);'><td width='55%' class='font-weight-bold'>Município</td></tr>"
           for (const item of dtMunEntrada) {
             text += "<tr style='border-bottom: 1px solid rgba(0,0,0,0.15);'><td>" + item.fluxos_local_entrada + "</td></tr>"
           }
           text += "</table><table width='100%' style='border-collapse: collapse;'>" +
-                  "<tr><td colspan='4' class='title-obs font-weight-bold brown--text pt-3 pb-1'>Municípios Brasileiros de Resgate</td></tr>" +
+                  "<tr><td colspan='4' class='title-obs font-weight-bold text-brown pt-3 pb-1'>Municípios Brasileiros de Resgate</td></tr>" +
                   "<tr style='border-bottom: 1px solid rgba(0,0,0,0.15);'><td width='55%' class='font-weight-bold'>Município</td></tr>"
           for (const item of dtMunResgate) {
             text += "<tr style='border-bottom: 1px solid rgba(0,0,0,0.15);'><td>" + item.fluxos_local_resid_brasil_resgate + "</td></tr>"
@@ -391,7 +391,7 @@ export default defineNuxtPlugin((context: any) => {
         let urlFamiliasTI = "/indicadoresmunicipais?categorias=nm_municipio_uf,ds_agreg_primaria,ds_fonte&valor=vl_indicador&agregacao=sum&filtros=eq-cd_indicador-'TICAD_23_001',and,eq-cd_mun_ibge-" + target.options.rowData.cd_mun_ibge
         let text = ""
         if (options && options.clickable) {
-          text += "<p class='text-xs-right ma-0'><a href='" + TooltipBuildingService.getUrlByPlace(target.options.rowData.cd_mun_ibge, route, store) + "' class='primary--text font-weight-black'>IR PARA</a></p>"
+          text += "<p class='text-xs-right ma-0'><a href='" + TooltipBuildingService.getUrlByPlace(target.options.rowData.cd_mun_ibge, route, store) + "' class='text-primary font-weight-black'>IR PARA</a></p>"
         }
         if ((this as any).customParams.filterUrl && (this as any).customParams.filterUrl != "") {
           urlSinan = urlSinan + (this as any).customParams.filterUrl
@@ -435,38 +435,38 @@ export default defineNuxtPlugin((context: any) => {
         text += "<p class='headline-obs ma-0'>Município: <b>" + municipio + "</b></p>"
         text += "<table width='100%'>"
         text += "<tr><td class='font-weight-bold'>SOFRENDO ACIDENTES</td></tr>"
-        text += "<tr><td class='font-weight-bold brown--text'>COM VÍNCULOS DE EMPREGO</td></tr>"
+        text += "<tr><td class='font-weight-bold text-brown'>COM VÍNCULOS DE EMPREGO</td></tr>"
         text += "<tr><td>" + (dtCatMenores && dtCatMenores.agr_count_cd_municipio_ibge ? numberTransformService.formatNumber(dtCatMenores.agr_count_cd_municipio_ibge, "inteiro") + " notificações de acidentes de menores de 18 anos" : "Não houve notificações de acidentes de menores de 18 anos") + "</td></tr>"
         text += "<tr><td>Fonte: CATWEB 2012 a 2022</td></tr>"
-        text += "<tr><td class='font-weight-bold red--text'>SEGUNDO AS NOTIFICAÇÕES SINAN</td></tr>"
+        text += "<tr><td class='font-weight-bold text-red'>SEGUNDO AS NOTIFICAÇÕES SINAN</td></tr>"
         text += "<tr><td>" + (dtSinan && dtSinan.agr_sum_vl_indicador ? numberTransformService.formatNumber(dtSinan.agr_sum_vl_indicador, "inteiro") + " notificações de " + dtSinan.ds_agreg_primaria : "Não houve notificações de acidente de trabalho grave de Crianças e Adolescentes ( 0 a 17 anos)") + "</td></tr>"
         text += "<tr><td>Fonte: MS - SINAN 2007 a 2022</td></tr>"
-        text += "<tr><td class='font-weight-bold cyan--text darken-2'>CRIANÇAS E ADOLESCENTES OCUPADOS EM ESTABELECIMENOS AGROPECUÁRIOS</td></tr>"
+        text += "<tr><td class='font-weight-bold text-cyan-darken-2'>CRIANÇAS E ADOLESCENTES OCUPADOS EM ESTABELECIMENOS AGROPECUÁRIOS</td></tr>"
         text += "<tr><td>" + (dtCensoAgro && dtCensoAgro.agr_sum_vl_indicador ? numberTransformService.formatNumber(dtCensoAgro.agr_sum_vl_indicador, "inteiro") + " menores de 14 anos ocupados em estabelecimentos agropecuários" : "Nenhum registro de menores de 14 anos ocupados em estabelecimentos agropecuários") + "</td></tr>"
         text += "<tr><td>Fonte: IBGE - Censo Agropecuário 2017</td></tr>"
         text += "<tr><td class='font-weight-bold'>EXPLORADOS PELO TRABALHO ESCRAVO</td></tr>"
-        text += "<tr><td class='font-weight-bold orange--text'>LOCAL DE NASCIMENTO</td></tr>"
+        text += "<tr><td class='font-weight-bold text-orange'>LOCAL DE NASCIMENTO</td></tr>"
         text += "<tr><td>" + (dtTENascimento && dtTENascimento.agr_sum_vl_indicador ? numberTransformService.formatNumber(dtTENascimento.agr_sum_vl_indicador, "inteiro") + " menores resgatados do trabalho escravo são naturais do município" : "Não houve menores resgatados do trabalho escravo naturais desse município") + "</td></tr>"
         text += "<tr><td>Fonte: Seguro Desemprego, 2002-2022</td></tr>"
-        // text += "<tr><td class="font-weight-bold light-blue--text">LOCAL DE RESIDÊNCIA</td></tr>";
+        // text += "<tr><td class="font-weight-bold text-light-blue">LOCAL DE RESIDÊNCIA</td></tr>";
         // text += "<tr><td>" + (dtTEResidencia && dtTEResidencia.agr_sum_vl_indicador ? numberTransformService.formatNumber(dtTEResidencia.agr_sum_vl_indicador,"inteiro") + " menores resgatados do trabalho escravo são residentes do município" : "Não houve menores resgatados do trabalho escravo residentes nesse município")+ "</td></tr>";
         // text += "<tr><td>Fonte: Seguro Desemprego, 2003-2018</td></tr>";
-        text += "<tr><td class='font-weight-bold purple--text'>TRABALHANDO FORA DE CASA</td></tr>"
+        text += "<tr><td class='font-weight-bold text-purple'>TRABALHANDO FORA DE CASA</td></tr>"
         text += "<tr><td>" + (dtProvaBrasil && dtProvaBrasil.agr_sum_vl_indicador ? numberTransformService.formatNumber(dtProvaBrasil.agr_sum_vl_indicador, "inteiro") + " declararam trabalhar fora de casa" : "Nenhum estudante declarou trabalhar fora de casa") + "</td></tr>"
         text += "<tr><td>Fonte: Prova Brasil 2017 (5º e 9º ano)</td></tr>"
         text += "<tr><td class='font-weight-bold'>RISCOS DE EXPLORAÇÃO SEXUAL COMERCIAL</td></tr>"
         text += "<tr><td>" + (dtMapear && dtMapear.agr_count ? numberTransformService.formatNumber(dtMapear.agr_count, "inteiro") + " pontos de riscos de exploração sexual de menores em rodovias federais do município" : "Não foram registrados locais de riscos de exploração sexual de menores em rodovias federais do município") + "</td></tr>"
         text += "<tr><td>Fonte: Mapear/PRF</td></tr>"
-        text += "<tr><td class='font-weight-bold green--text accent-4'>POTENCIAL DE COTAS DE APRENDIZAGEM</td></tr>"
+        text += "<tr><td class='font-weight-bold text-green-accent-4'>POTENCIAL DE COTAS DE APRENDIZAGEM</td></tr>"
         text += "<tr><td>" + (dtPotAprendizes && dtPotAprendizes.agr_sum_vl_indicador ? numberTransformService.formatNumber(dtPotAprendizes.agr_sum_vl_indicador, "inteiro") + " vagas de cotas de aprendizagem" : "Nenhuma vaga de cotas de aprendizagem") + "</td></tr>"
         text += "<tr><td>Fonte: ME – IDEB/SIT, março de 2023</td></tr>"
-        text += "<tr><td class='font-weight-bold indigo--text darken-2'>CRIANÇAS E ADOLESCENTES OCUPADOS</td></tr>"
+        text += "<tr><td class='font-weight-bold text-indigo-darken-2'>CRIANÇAS E ADOLESCENTES OCUPADOS</td></tr>"
         text += "<tr><td>" + (dtCenso && dtCenso.agr_sum_vl_indicador ? numberTransformService.formatNumber(dtCenso.agr_sum_vl_indicador, "inteiro") + " crianças e adolescentes ocupados entre 10 e 17 anos" : "Nenhum registro de crianças e adolescentes ocupados entre 10 e 17 anos") + "</td></tr>"
         text += "<tr><td>Fonte: IBGE - Censo Demográfico 2010</td></tr>"
-        text += "<tr><td class='font-weight-bold teal--text darken-1'>CRIANÇAS E ADOLESCENTES SOBREVIVENTES ATENDIDOS PELA ASSISTÊNCIA SOCIAL</td></tr>"
+        text += "<tr><td class='font-weight-bold text-teal-darken-1'>CRIANÇAS E ADOLESCENTES SOBREVIVENTES ATENDIDOS PELA ASSISTÊNCIA SOCIAL</td></tr>"
         text += "<tr><td>" + (dtAssistTI && dtAssistTI.agr_sum_vl_indicador ? "Possui crianças e adolescentes sobreviventes de tráfico de pessoas com acompanhamento pelo Serviço de Proteção e Atendimento Especializado a Famílias e Indivíduos (PAEFI) no Centro de Referência Especializado de Assistência Social (CREAS)" : "Nenhum registro de crianças e adolescentes sobreviventes de tráfico de pessoas com acompanhamento pelo Serviço de Proteção e Atendimento Especializado a Famílias e Indivíduos (PAEFI) no Centro de Referência Especializado de Assistência Social (CREAS)") + "</td></tr>"
         text += "<tr><td>Fonte: Ministério do Desenvolvimento e Assistência Social, Família e Combate à Fome, 2017-2022</td></tr>"
-        text += "<tr><td class='font-weight-bold pink--text darken-2'>FAMÍLIAS COM SITUAÇÃO DE TRABALHO INFANTIL</td></tr>"
+        text += "<tr><td class='font-weight-bold text-pink-darken-2'>FAMÍLIAS COM SITUAÇÃO DE TRABALHO INFANTIL</td></tr>"
         text += "<tr><td>" + (dtFamiliasTI && dtFamiliasTI.agr_sum_vl_indicador ? numberTransformService.formatNumber(dtFamiliasTI.agr_sum_vl_indicador, "inteiro") + " famílias com algum membro em situação de trabalho infantil" : "Nenhum registro de famílias com algum membro em situação de trabalho infantil.") + "</td></tr>"
         text += "<tr><td>Fonte: Ministério do Desenvolvimento e Assistência Social, Família e Combate à Fome, março 2023</td></tr>"
         text += "</table>"
@@ -477,7 +477,7 @@ export default defineNuxtPlugin((context: any) => {
       async obsSSTTooltip (target: any, route: any, store: any, tooltip_list: string[] = [], removed_text_list: string[] = [], options: any = null) {
         let text: string = ""
         if (options && options.clickable) {
-          text += "<p class='text-xs-right ma-0'><a href='" + TooltipBuildingService.getUrlByPlace(target.options.rowData.cd_municipio_ibge_dv, route, store) + "' class='primary--text font-weight-black'>IR PARA</a></p>"
+          text += "<p class='text-xs-right ma-0'><a href='" + TooltipBuildingService.getUrlByPlace(target.options.rowData.cd_municipio_ibge_dv, route, store) + "' class='text-primary font-weight-black'>IR PARA</a></p>"
         }
         if (target.options.rowData.codigo == "sinan") {
           const urlIndicadores: string = "/indicadoresmunicipais?categorias=nm_municipio_uf,ds_agreg_primaria,ds_fonte&valor=vl_indicador,nu_competencia,nu_competencia&agregacao=sum,min,max&ordenacao=ds_agreg_primaria&filtros=nn-vl_indicador,and,ne-vl_indicador-0,and,in-cd_indicador-'06_05_01_00'-'06_05_02_00'-'06_05_03_00'-'06_05_04_00'-'06_05_05_00'-'06_05_06_00'-'06_05_07_00'-'06_05_08_00'-'06_05_09_00'-'06_05_20_00',and,ge-nu_competencia-'2012',and,eq-cd_mun_ibge-" + target.options.rowData.cd_mun_ibge
@@ -493,7 +493,7 @@ export default defineNuxtPlugin((context: any) => {
               text += "<table width='100%'>"
               text += "<tr><td colspan='2' class='font-weight-bold'>As Notificações no Sistema de Informação de Agravos de Notificação (Sinan) para a localidade apresentaram os seguintes números:</td></tr>"
               for (const item of dtIndicadores) {
-                text += "<tr><td class='font-weight-bold purple--text accent-4'>" + item.ds_agreg_primaria + ":</td><td class='text-xs-right'>" + numberTransformService.formatNumber(item.agr_sum_vl_indicador, "inteiro") + "</td></tr>"
+                text += "<tr><td class='font-weight-bold text-purple-accent-4'>" + item.ds_agreg_primaria + ":</td><td class='text-xs-right'>" + numberTransformService.formatNumber(item.agr_sum_vl_indicador, "inteiro") + "</td></tr>"
               }
               text += "<tr><td>Fonte: " + dtIndicadores[0].ds_fonte + "</td></tr>"
               text += "<tr><td>Período: " + dtIndicadores[0].agr_min_nu_competencia + " a " + dtIndicadores[0].agr_max_nu_competencia + "</td></tr>"
@@ -523,7 +523,7 @@ export default defineNuxtPlugin((context: any) => {
             urlTipo = "/sst/cats?categorias=ds_natureza_lesao-nm_tipo&agregacao=COUNT&filtros=ne-ds_natureza_lesao-'',and,eq-cd_municipio_ibge-" + target.options.rowData.cd_mun_ibge + filtro + "&ordenacao=-agr_count&limit=5"
             txtTipoTitulo = "ACIDENTES DE TRABALHO"
             txtTipoQtde = numberTransformService.formatNumber(target.options.rowData.agr_count_cd_municipio_ibge, "inteiro") + " registros de acidentes de trabalho"
-            txtColor = "red--text darken-4"
+            txtColor = "text-red-darken-4"
             urlAtividade = "/sst/cats?categorias=ds_cnae_classe_cat-nm_atividade&agregacao=COUNT&filtros=ne-ds_cnae_classe_cat-'',and,ne-ds_cnae_classe_cat-'Indefinido',and,eq-cd_municipio_ibge-" + target.options.rowData.cd_mun_ibge + filtro + "&ordenacao=-agr_count&limit=5"
             urlObs1 = "/sst/cats?categorias=cd_municipio_ibge&agregacao=COUNT&filtros=lt-idade_cat-18,and,ne-idade_cat-0,and,eq-cd_municipio_ibge-" + target.options.rowData.cd_mun_ibge + filtro
             urlObs2 = "/sst/cats?categorias=cd_municipio_ibge&agregacao=COUNT&filtros=eq-cd_indica_obito-'S',and,eq-cd_municipio_ibge-" + target.options.rowData.cd_mun_ibge + filtro
@@ -532,7 +532,7 @@ export default defineNuxtPlugin((context: any) => {
             urlTipo = "/sst/cats?categorias=ds_natureza_lesao-nm_tipo&agregacao=COUNT&filtros=ne-ds_natureza_lesao-'',and,eq-cd_indica_obito-'S',and,eq-cd_municipio_ibge-" + target.options.rowData.cd_mun_ibge + filtro + "&ordenacao=-agr_count&limit=5"
             txtTipoTitulo = "ACIDENTES DE TRABALHO COM MORTES"
             txtTipoQtde = numberTransformService.formatNumber(target.options.rowData.agr_count_cd_municipio_ibge, "inteiro") + " registros de acidentes de trabalho com mortes."
-            txtColor = "black--text"
+            txtColor = "text-black"
             urlAtividade = "/sst/cats?categorias=ds_cnae_classe_cat-nm_atividade&agregacao=COUNT&filtros=eq-cd_indica_obito-'S',and,ne-ds_cnae_classe_cat-'',and,ne-ds_cnae_classe_cat-'Indefinido',and,eq-cd_municipio_ibge-" + target.options.rowData.cd_mun_ibge + filtro + "&ordenacao=-agr_count&limit=5"
             urlObs1 = "/sst/cats?categorias=cd_municipio_ibge&agregacao=COUNT&filtros=eq-cd_indica_obito-'S',and,lt-idade_cat-18,and,ne-idade_cat-0,and,eq-cd_municipio_ibge-" + target.options.rowData.cd_mun_ibge + filtro
             urlObs2 = "/sst/cats?categorias=cd_municipio_ibge&agregacao=COUNT&filtros=eq-cd_indica_obito-'S',and,eq-cd_municipio_ibge-" + target.options.rowData.cd_mun_ibge + filtro
@@ -541,7 +541,7 @@ export default defineNuxtPlugin((context: any) => {
             urlTipo = "/sst/beneficios?categorias=cd_agrupamento_categoria_cid-nm_tipo&agregacao=COUNT&filtros=eq-cd_municipio_ibge-" + target.options.rowData.cd_mun_ibge + ",and,eq-cd_especie_beneficio-91" + filtro + "&ordenacao=-agr_count&limit=5"
             txtTipoTitulo = "AFASTAMENTOS INSS (B91)"
             txtTipoQtde = numberTransformService.formatNumber(target.options.rowData.agr_count_cd_municipio_ibge, "inteiro") + " afastamentos acidentários superiores a 15 dias(auxílio-doença por acidente de trabalho)."
-            txtColor = "light-blue--text"
+            txtColor = "text-light-blue"
             urlAtividade = "/sst/beneficios?categorias=ds_cnae_classe-nm_atividade&agregacao=COUNT&filtros=ne-ds_cnae_classe-'',and,eq-cd_especie_beneficio-91,and,eq-cd_municipio_ibge-" + target.options.rowData.cd_mun_ibge + filtro + "&ordenacao=-agr_count&limit=5"
             // urlObs1 = "/sst/beneficios?categorias=cd_municipio_ibge&valor=qt_despesa_total&agregacao=SUM&filtros=eq-cd_municipio_ibge-" + target.options.rowData.cd_mun_ibge + ",and,eq-cd_especie_beneficio-91"+ filtro ;
             urlObs1 = "/indicadoresmunicipais?categorias=cd_municipio_ibge&valor=vl_indicador&agregacao=SUM&filtros=eq-cd_municipio_ibge-" + target.options.rowData.cd_mun_ibge + ",and,ge-nu_competencia-'2012',and,eq-cd_indicador-'10_11_01_03'"
@@ -616,7 +616,7 @@ export default defineNuxtPlugin((context: any) => {
       async obsTDTooltip (target: any, route: any, store: any, tooltip_list: string[] = [], removed_text_list: string[] = [], options: any = null) {
         let text = ""
         if (options && options.clickable) {
-          text += "<p class='text-xs-right ma-0'><a href='" + TooltipBuildingService.getUrlByPlace(target.options.rowData.cd_municipio_ibge_dv, route, store) + "' class='primary--text font-weight-black'>IR PARA</a></p>"
+          text += "<p class='text-xs-right ma-0'><a href='" + TooltipBuildingService.getUrlByPlace(target.options.rowData.cd_municipio_ibge_dv, route, store) + "' class='text-primary font-weight-black'>IR PARA</a></p>"
         }
         const urlSaldoMunicipio = "/thematic/cagedtermometro?categorias=competencia_mov,nm_municipio_uf,saldo_municipio&valor=admitidos,desligados&agregacao=sum,sum&filtros=eq-termometro_grupo-'cbo',and,eq-competencia_mov-" + target.options.rowData.competencia_mov + ",and,eq-cd_municipio_ibge_dv-" + target.options.rowData.cd_municipio_ibge_dv
         const urlCBOAumento = "/thematic/cagedtermometro?categorias=termometro_codigo,termometro_descricao,saldo,admitidos,desligados&ordenacao=-saldo&limit=5&filtros=eq-termometro_grupo-'cbo',and,gt-saldo-0,and,eq-competencia_mov-" + target.options.rowData.competencia_mov + ",and,eq-cd_municipio_ibge_dv-" + target.options.rowData.cd_municipio_ibge_dv
@@ -658,7 +658,7 @@ export default defineNuxtPlugin((context: any) => {
                 "</td><td class='text-lg-center'>" + numberTransformService.formatNumber(dtSaldoMunicipio.saldo_municipio, "inteiro") + "</td></tr>" +
                 "</table>" +
                 "<table width='100%' style='border-collapse: collapse;'>" +
-                "<tr><td colspan='4' class='title-obs font-weight-bold light-blue--text pt-3 pb-1'>Ocupações com Maior Ganho de Postos Formais</td></tr>" +
+                "<tr><td colspan='4' class='title-obs font-weight-bold text-light-blue pt-3 pb-1'>Ocupações com Maior Ganho de Postos Formais</td></tr>" +
                 "<tr style='border-bottom: 1px solid rgba(0,0,0,0.15);'><td width='55%' class='font-weight-bold'>Ocupação</td>" +
                 "<td width='15%' class='font-weight-bold text-lg-center'>Admitidos</td>" +
                 "<td width='15%' class='font-weight-bold text-lg-center'>Desligados</td>" +
@@ -669,7 +669,7 @@ export default defineNuxtPlugin((context: any) => {
           "</td><td class='text-lg-center'>" + numberTransformService.formatNumber(item.desligados, "inteiro") +
           "</td><td class='text-lg-center'>" + numberTransformService.formatNumber(item.saldo, "inteiro") + "</td></tr>"
         }
-        text += "<tr><td colspan='4' class='title-obs font-weight-bold red--text pt-3 pb-1'>Ocupações com Maior Perda de Postos Formais</td></tr>" +
+        text += "<tr><td colspan='4' class='title-obs font-weight-bold text-red pt-3 pb-1'>Ocupações com Maior Perda de Postos Formais</td></tr>" +
                 "<tr style='border-bottom: 1px solid rgba(0,0,0,0.15);'><td class='font-weight-bold'>Ocupação</td>" +
                 "<td class='font-weight-bold text-lg-center'>Admitidos</td>" +
                 "<td class='font-weight-bold text-lg-center'>Desligados</td>" +
@@ -680,7 +680,7 @@ export default defineNuxtPlugin((context: any) => {
           "</td><td class='text-lg-center'>" + numberTransformService.formatNumber(item.desligados, "inteiro") +
           "</td><td class='text-lg-center'>" + numberTransformService.formatNumber(item.saldo, "inteiro") + "</td></tr>"
         }
-        text += "<tr><td colspan='4' class='title-obs font-weight-bold light-blue--text pt-3 pb-1'>Atividades Econômicas com Maior Ganho de Postos Formais</td></tr>" +
+        text += "<tr><td colspan='4' class='title-obs font-weight-bold text-light-blue pt-3 pb-1'>Atividades Econômicas com Maior Ganho de Postos Formais</td></tr>" +
                 "<tr style='border-bottom: 1px solid rgba(0,0,0,0.15);'><td class='font-weight-bold'>Atividade</td>" +
                 "<td class='font-weight-bold text-lg-center'>Admitidos</td>" +
                 "<td class='font-weight-bold text-lg-center'>Desligados</td>" +
@@ -691,7 +691,7 @@ export default defineNuxtPlugin((context: any) => {
           "</td><td class='text-lg-center'>" + numberTransformService.formatNumber(item.desligados, "inteiro") +
           "</td><td class='text-lg-center'>" + numberTransformService.formatNumber(item.saldo, "inteiro") + "</td></tr>"
         }
-        text += "<tr><td colspan='4' class='title-obs font-weight-bold red--text pt-3 pb-1'>Atividades Econômicas com Maior Perda de Postos Formais</td></tr>" +
+        text += "<tr><td colspan='4' class='title-obs font-weight-bold text-red pt-3 pb-1'>Atividades Econômicas com Maior Perda de Postos Formais</td></tr>" +
                 "<tr style='border-bottom: 1px solid rgba(0,0,0,0.15);'><td class='font-weight-bold'>Atividade</td>" +
                 "<td class='font-weight-bold text-lg-center'>Admitidos</td>" +
                 "<td class='font-weight-bold text-lg-center'>Desligados</td>" +
@@ -715,7 +715,7 @@ export default defineNuxtPlugin((context: any) => {
         let text: string = ""
         const d: any = target.options.rowData
         text = TooltipBuildingService.defaultTooltip(d, route, tooltip_list, removed_text_list, options)
-        text += "<p class='text-xs-right ma-0'><a href='https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=" + d[options.lat] + "," + d[options.long] + "' target='_blank' class='primary--text font-weight-black'>Google Street View</a></p>"
+        text += "<p class='text-xs-right ma-0'><a href='https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=" + d[options.lat] + "," + d[options.long] + "' target='_blank' class='text-primary font-weight-black'>Google Street View</a></p>"
         target.unbindPopup()
         target.bindPopup(text).openPopup()
       },
@@ -749,28 +749,28 @@ export default defineNuxtPlugin((context: any) => {
 
         let text = ""
         if (options && options.clickable) {
-          text += "<p class='text-xs-right ma-0'><a href='" + TooltipBuildingService.getUrlByPlace(target.options.rowData.cd_mun_ibge, route, store) + "' class='primary--text font-weight-black'>IR PARA</a></p>"
+          text += "<p class='text-xs-right ma-0'><a href='" + TooltipBuildingService.getUrlByPlace(target.options.rowData.cd_mun_ibge, route, store) + "' class='text-primary font-weight-black'>IR PARA</a></p>"
         }
         text += "<p class='headline-obs'>Município: <b>" + dtCovidMun.nm_municipio_uf + "</b></p>"
         text += "<table width='100%'>"
         if (dtDenunciaMPT) {
-          text += "<tr><td class='text-xs-center font-weight-bold red--text accent-4' colspan='2'>DENÚNCIAS AO MPT</td></tr>"
+          text += "<tr><td class='text-xs-center font-weight-bold text-red-accent-4' colspan='2'>DENÚNCIAS AO MPT</td></tr>"
           text += "<tr><td nowrap class='font-weight-bold'>Total de Denúncias:</td>"
           text += "<td class='text-xs-right'>" + numberTransformService.formatNumber(dtDenunciaMPT.agr_count, "inteiro") + "</td></tr>"
         }
         // if(dtAcoesMPT.length > 0){
-        //   text += "<tr><td class="text-xs-center font-weight-bold green--text" colspan="2">ATUAÇÃO MPT</td></tr>";
+        //   text += "<tr><td class="text-xs-center font-weight-bold text-green" colspan="2">ATUAÇÃO MPT</td></tr>";
         //   for (let item of dtAcoesMPT){
         //     text += "<tr><td><b>" + item.descricao_tipodocumento + "</b> :</td><td class="text-xs-right">" + numberTransformService.formatNumber(item.agr_count,"inteiro") + "</td></tr>";
         //   }
         //   text += "<tr><td><b>TOTAL</b>:</td><td class="text-xs-right"><b>" + numberTransformService.formatNumber(total_acoes,"inteiro") + "</b></td></tr>";
         // }
         // if(dtDestinacaoMPT){
-        //   text += "<tr><td class="text-xs-center font-weight-bold light-blue--text accent-4" colspan="2">RECURSOS DESTINADOS PELO MPT PARA AÇÕES DE COMBATE À COVID-19</td></tr>";
+        //   text += "<tr><td class="text-xs-center font-weight-bold text-light-blue-accent-4" colspan="2">RECURSOS DESTINADOS PELO MPT PARA AÇÕES DE COMBATE À COVID-19</td></tr>";
         //   text += "<tr><td nowrap class='font-weight-bold'>Total de recursos:</td>";
         //   text += "<td class="text-xs-right">"+ numberTransformService.formatNumber(dtDestinacaoMPT.agr_sum_destinacaovalor,"monetario",2) +"</td></tr>";
         // }
-        text += "<tr><td class='text-xs-center font-weight-bold brown--text' colspan='2'>COVID-19</td></tr>"
+        text += "<tr><td class='text-xs-center font-weight-bold text-brown' colspan='2'>COVID-19</td></tr>"
         text += "<tr><td nowrap class='font-weight-bold'>Data coleta:</td>"
         text += "<td>" + numberTransformService.formatNumber(dtCovidMun.last_available_date, "dataDMY") + "</td></tr>"
         text += "<tr><td nowrap class='font-weight-bold'>Casos confirmados:</td>"

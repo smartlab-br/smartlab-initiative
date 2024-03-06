@@ -94,7 +94,7 @@ export class ColorsService {
   }
 
   static assessZebraTitle(index: number = 0, theme: ThemeDefinition) {
-    if (ColorsService.getClassIfIsDark(ColorsService.assessZebraBG(index, theme), index, theme) == "theme--dark") return "white--text"
+    if (ColorsService.getClassIfIsDark(ColorsService.assessZebraBG(index, theme), index, theme) == "theme--dark") return "text-white"
     return ""
   }
 

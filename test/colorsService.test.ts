@@ -81,7 +81,7 @@ describe("ColorsService", async () => {
   //   const wrapper = mount(FLPOSobreLayout, { sync: false })
   //   wrapper.vm.$vuetify.theme.background = '#000000'
   //   const result = wrapper.vm.$colorsService.assessZebraTitle(0, wrapper.vm.$vuetify.theme)
-  //   expect(result).toEqual('white--text')
+  //   expect(result).toEqual('text-white')
   // })
 
   // test('Quando o tema for escuro, deve retornar a classe correspondente', () => {
