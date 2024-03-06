@@ -113,6 +113,7 @@
   }
   .v-navigation-drawer, .toolbar {
     z-index: 101 !important;
+    font-size: 14px;
   }
   .footer {
     z-index: 98 !important;
@@ -216,7 +217,7 @@
   .ubuntu-condensed {
     font-family: 'Ubuntu Condensed', Calibri, sans-serif !important;
   }
-  .application, .subheading, .body-2, .body-1, .body, .caption, .title-obs-desc, .link-obs, .micro-caption, .display-2, .title, .display-1, .headline {
+  .v-application, .application, .subheading, .body-2, .body-1, .body, .caption, .title-obs-desc, .link-obs, .micro-caption, .display-2, .title, .display-1, .headline {
     font-family: Palanquin, Calibri, sans-serif !important;
   }
 
