@@ -401,6 +401,15 @@
     background-color:  var(--v-accent-base) !important;
     border-color:  var(--v-accent-base) !important;
   }
+
+  .v-list-item-title {
+    font-size: 14px !important;
+  }
+
+  .v-tooltip > .v-overlay__content {
+    font-size: 10px !important;
+  }
+
   .footer-colab-text {
     font-size: x-small;
   }

@@ -23,7 +23,6 @@ export default defineNuxtPlugin((app) => {
             info: colors.blue.base,
             success: colors.green.base,
             // Custom
-            toolbar: colors.grey.darken4,
             background: "#EFEFEF",
             background2: colors.grey.lighten2
           }
@@ -38,7 +37,6 @@ export default defineNuxtPlugin((app) => {
             info: colors.blue.base,
             success: colors.green.base,
             // Custom
-            toolbar: colors.blueGrey.darken4,
             background: "#EFEFEF",
             background2: colors.grey.lighten2
           }
@@ -53,7 +51,6 @@ export default defineNuxtPlugin((app) => {
             info: colors.blue.base,
             success: colors.green.base,
             // Custom
-            toolbar: colors.brown.darken4,
             background: "#EFEFEF",
             background2: colors.grey.lighten2
           }
@@ -68,7 +65,6 @@ export default defineNuxtPlugin((app) => {
             info: colors.blue.base,
             success: colors.green.base,
             // Custom
-            toolbar: colors.teal.darken4,
             background: "#EFEFEF",
             background2: colors.grey.lighten2
           }
@@ -83,7 +79,6 @@ export default defineNuxtPlugin((app) => {
             info: colors.blue.base,
             success: colors.green.base,
             // Custom
-            toolbar: colors.lightBlue.darken4,
             background: "#EFEFEF",
             background2: colors.grey.lighten2
           }
@@ -98,7 +93,6 @@ export default defineNuxtPlugin((app) => {
             info: colors.blue.base,
             success: colors.green.base,
             // Custom
-            toolbar: colors.deepPurple.darken4,
             background: "#EFEFEF",
             background2: colors.grey.lighten2
           }
@@ -113,7 +107,6 @@ export default defineNuxtPlugin((app) => {
             info: colors.blue.base,
             success: colors.green.base,
             // Custom
-            toolbar: colors.deepOrange.darken4,
             background: "#EFEFEF",
             background2: colors.grey.lighten2
           }
@@ -128,7 +121,6 @@ export default defineNuxtPlugin((app) => {
             info: colors.blue.base,
             success: colors.green.base,
             // Custom
-            toolbar: colors.blueGrey.darken4,
             background: "#EFEFEF",
             background2: colors.grey.lighten2
           }

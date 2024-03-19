@@ -62,6 +62,10 @@ export class ColorsService {
     }
   }
 
+  static getCurrentTheme () {
+    return useTheme().current.value.colors
+  }
+
   static assessZebraBG(index: number, theme: ThemeDefinition) {
     if (theme === null || theme === undefined) { theme = useTheme().current.value }
     if (index % 2 == 0) {

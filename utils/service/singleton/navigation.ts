@@ -1,12 +1,10 @@
+import type { Router } from "vue-router"
+
 export class NavigationService {
 
-  static pushRoute(router: any, link: string, external: boolean = false, isGo: boolean = false) {
+  static pushRoute(router: Router, link: string, external: boolean = false) {
     if (!external && link !== null && link !== undefined) {
-      if (!isGo) {
-        router.push(link)
-      } else {
-        router.go(link)
-      }
+      router.push(link)
     } else if (external && link !== null && link !== undefined) {
       window.open(link, "_blank")
     }

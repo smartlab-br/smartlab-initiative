@@ -31,9 +31,29 @@ export const useMainStore = defineStore("main", {
       if (this.currentObsData !== undefined) {
         this.currentObsIdStr = this.currentObsData.id
       }
-      else { //"trabalhodecente" default
-        this.currentObsIdStr = "td"
-        this.currentObsData = this.observatoriesData.find((obs: any) => obs.id == this.currentObsId)
+      else { //default
+        this.currentObsIdStr = "default"
+        if (route.fullPath.includes("perfil")) { // Perfil
+          this.currentObsData = {
+            short_title: "Perfil",
+            title: "Perfil"
+          }
+        } else if (route.fullPath.includes("mapasite")) { // Mapa do Site
+          this.currentObsData = {
+            short_title: "Mapa do Site",
+            title: "Mapa do Site"
+          }
+        } else if (route.fullPath.includes("saibamais")) { // Sobre
+          this.currentObsData = {
+            short_title: "Sobre",
+            title: "Sobre"
+          }
+        } else {
+          this.currentObsData = {
+            short_title: "",
+            title: ""
+          }
+        }
       }
       this.setCurrentDimension(route.query.dimensao ? route.query.dimensao.toString() : "")
     },
