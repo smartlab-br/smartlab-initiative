@@ -259,7 +259,7 @@
           </v-card-text>
           <v-card-actions class="px-3 pb-3">
             <v-spacer />
-            <v-btn
+            <!-- <v-btn
               small
               class="theme--light"
               color="accent"
@@ -267,9 +267,9 @@
             >
               <v-icon left>
                 file_download
-              </v-icon> <!-- list -->
+              </v-icon>
               Baixar
-            </v-btn>
+            </v-btn> -->
             <v-btn
               small
               class="theme--light"
