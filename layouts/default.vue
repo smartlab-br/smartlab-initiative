@@ -91,12 +91,18 @@
 
         <v-spacer />
 
-        <!-- <div width="20rem">
+        <div width="20rem">
+          <!-- 
+            v-model="gsItemBusca"
+            :filter="customFilter"
+            :loading="gsLoadingStatusSearchOptions == 'LOADING' ? true : false"
+            :color="gsLoadingStatusSearchOptions == 'ERROR' ? 'error' : (gsLoadingStatusSearchOptions == 'LOADING' ? 'warning' : 'accent')"
+            @blur="gsItemBusca = null" 
+          -->
           <v-autocomplete
             v-if="auOptions.length > 0"
             v-show="seen"
             ref="autocompleteChangePlace"
-            v-model="gsItemBusca"
             tabindex="21"
             class="input-group--focused global-search"
             persistent-hint
@@ -106,15 +112,8 @@
             return-object
             :items="auOptions"
             :menu-props="{minWidth:'380px'}"
-            :filter="customFilter"
-            :loading="gsLoadingStatusSearchOptions == 'LOADING' ? true : false"
-            :color="gsLoadingStatusSearchOptions == 'ERROR' ? 'error' : (gsLoadingStatusSearchOptions == 'LOADING' ? 'warning' : 'accent')"
-            @blur="gsItemBusca = null"
           >
-            <template
-              slot="item"
-              slot-scope="data"
-            >
+            <!-- <template #item="{ item }" >
               <template v-if="auOptions.length < 2">
                 <v-list-tile-content>
                   <v-progress-circular
@@ -127,9 +126,10 @@
               <template v-else>
                 <v-list-tile-content>
                   <v-list-tile-title
-                    @click="changeAnalysisUnit(router, data.item)"
-                    v-html="data.item.label + (data.item.scope == 'uf'? ' (UF)': '')"
-                  />
+                    @click="changeAnalysisUnit(router, item)"
+                  >
+                  {{ item.label + (item.scope == 'uf'? ' (UF)': '') }}
+                  </v-list-tile-title>
                 </v-list-tile-content>
                 <v-list-tile-action style="min-width: 120px">
                   <div row>
@@ -166,9 +166,9 @@
                   </div>
                 </v-list-tile-action>
               </template>
-            </template>
+            </template> -->
           </v-autocomplete>
-        </div> -->
+        </div>
 
         <v-btn
           tabindex="22"
@@ -292,13 +292,15 @@ import { useRoute, useRouter } from "vue-router"
 export default {
   setup() {
     const store = useMainStore()
-    const { observatories, currentObs, localidade } = storeToRefs(store)
+    const { getPlaces } = store
+    const { observatories, currentObs, localidade, places } = storeToRefs(store)
     const router = useRouter()
     const route = useRoute()
     const menuItems = ref<any[]>([])
     let drawer = ref(true)
     let rail = ref(false)
     let seen = ref(false)
+    let auOptions = ref<any[]>([])
 
     watch(
       () => observatories.value, // Função getter que retorna observatories.value
@@ -323,6 +325,9 @@ export default {
     onMounted(() => {
       ColorsService.changeTheme(store.currentObsId)
       ColorsService.getThemeFromId("des")
+      getPlaces().then(() => {
+        auOptions.value = places.value.slice()
+      })
       
     })
 
@@ -335,7 +340,8 @@ export default {
       router,
       route,
       currentObs,
-      localidade
+      localidade,
+      auOptions
     }
   }
 }
