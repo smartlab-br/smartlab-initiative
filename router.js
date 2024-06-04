@@ -94,12 +94,12 @@ export function createRouter () {
       route('/trabalhoinfantil/smartmap', ObservatorioMapa),
       // route('/covid/smartmap', ObservatorioMapa),
 
-      route('/trabalhodecente/embreve', ObservatorioEmBreve),
-      route('/diversidade/embreve', ObservatorioEmBreve),
-      route('/sst/embreve', ObservatorioEmBreve),
-      route('/trabalhoescravo/embreve', ObservatorioEmBreve),
-      route('/trabalhoinfantil/embreve', ObservatorioEmBreve),
-      route('/covid/embreve', ObservatorioEmBreve),
+      // route('/trabalhodecente/embreve', ObservatorioEmBreve),
+      // route('/diversidade/embreve', ObservatorioEmBreve),
+      // route('/sst/embreve', ObservatorioEmBreve),
+      // route('/trabalhoescravo/embreve', ObservatorioEmBreve),
+      // route('/trabalhoinfantil/embreve', ObservatorioEmBreve),
+      // route('/covid/embreve', ObservatorioEmBreve),
 
       // route('/perfil', 'Perfil'),
       // route('/cadastro', 'Cadastro'),
