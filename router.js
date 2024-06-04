@@ -7,7 +7,7 @@ import Localidade from '~/pages/LocalidadeView.vue'
 import MapaSite from '~/pages/MapaSiteView.vue'
 import Observatorio from '~/pages/ObservatorioView.vue'
 import ObservatorioMapa from '~/pages/ObservatorioMapaView.vue'
-import ObservatorioEmBreve from '~/pages/ObservatorioEmBreveView.vue'
+// import ObservatorioEmBreve from '~/pages/ObservatorioEmBreveView.vue'
 // import Estudo from '~/pages/EstudoView.vue'
 // import Fontes from '~/pages/sobre/FontesView.vue'
 import SaibaMais from '~/pages/sobre/SaibaMaisView.vue'
@@ -94,12 +94,12 @@ export function createRouter () {
       route('/trabalhoinfantil/smartmap', ObservatorioMapa),
       // route('/covid/smartmap', ObservatorioMapa),
 
-      route('/trabalhodecente/embreve', ObservatorioEmBreve),
-      route('/diversidade/embreve', ObservatorioEmBreve),
-      route('/sst/embreve', ObservatorioEmBreve),
-      route('/trabalhoescravo/embreve', ObservatorioEmBreve),
-      route('/trabalhoinfantil/embreve', ObservatorioEmBreve),
-      route('/covid/embreve', ObservatorioEmBreve),
+      // route('/trabalhodecente/embreve', ObservatorioEmBreve),
+      // route('/diversidade/embreve', ObservatorioEmBreve),
+      // route('/sst/embreve', ObservatorioEmBreve),
+      // route('/trabalhoescravo/embreve', ObservatorioEmBreve),
+      // route('/trabalhoinfantil/embreve', ObservatorioEmBreve),
+      // route('/covid/embreve', ObservatorioEmBreve),
 
       // route('/perfil', 'Perfil'),
       // route('/cadastro', 'Cadastro'),
