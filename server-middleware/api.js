@@ -83,10 +83,10 @@ app.post('/mail', (req, res) => {
       text: content
     }
 
-    transporter.sendMail(options).then(function (info) {
-      res.status(200).send(info.response)
-    }).catch(function (error) {
-      res.status(400).send(error)
+    transporter.sendMail(options).then(function (_info) {
+      res.status(200).send("Mensagem enviada")
+    }).catch(function (_error) {
+      res.status(400).send("Erro no envio da mensagem")
     })
   } else {
     res.status(401).send('Unauthorized')
