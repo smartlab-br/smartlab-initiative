@@ -75,14 +75,14 @@ app.post('/mail', (req, res) => {
       host: smtp.host,
       port: 25
     })
-  
+
     const options = {
       from: smtp.from,
       to: smtp.to,
       subject: 'Smartlab - Relate um problema',
       text: content
     }
-  
+
     transporter.sendMail(options).then(function (info) {
       res.status(200).send(info.response)
     }).catch(function (error) {
