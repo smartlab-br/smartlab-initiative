@@ -1,6 +1,7 @@
 const axios = require('axios')
 const bodyParser = require('body-parser')
 const app = require('express')()
+const nodemailer = require('nodemailer')
 const compression = require('compression')
 
 app.use(bodyParser.json())
@@ -51,12 +52,12 @@ app.get('/datahub/*', (req, res) => {
 
 app.post('/mail', (req, res) => {
   if (req.headers['request-source'] === 'application' && req.headers['user-agent'] && !req.headers['user-agent'].toLowerCase().includes('postman')) {
-    const mercurio = {
-      url: process.env.MAILER_API_BASE_URL,
-      key: process.env.MAILER_APP_KEY
+    const smtp = {
+      host: process.env.SMTP_HOST,
+      from: process.env.SMTP_FROM,
+      to: process.env.SMTP_TO
     }
 
-    const apiUrl = mercurio.url + req.url
     const contentArgs = req.body.args.split('|')
     const content = 'Smartlab - Relate um problema' +
       '\n E-mail contato: ' + contentArgs[0] +
@@ -66,33 +67,26 @@ app.post('/mail', (req, res) => {
       '\n Card: ' + contentArgs[4] +
       '\n Descrição do problema: ' + contentArgs[5]
 
-    const header = {
-      'Content-Type': 'application/json',
-      'X-Mpt-Api-Key': mercurio.key
+    // const header = {
+    //   'Content-Type': 'application/json',
+    // }
+
+    const transporter = nodemailer.createTransport({
+      host: smtp.host,
+      port: 25
+    })
+
+    const options = {
+      from: smtp.from,
+      to: smtp.to,
+      subject: 'Smartlab - Relate um problema',
+      text: content
     }
-    axios({
-      method: 'POST',
-      url: apiUrl,
-      data: {
-        mail: {
-          sistema: 'smartlab',
-          recipients: process.env.MAILER_RECIPIENTS.split(','),
-          subject: 'Smartlab - Relate um problema',
-          content
-        }
-      },
-      headers: header
-    }).then(function (response) {
-      res.json(response.data)
+
+    transporter.sendMail(options).then(function (info) {
+      res.status(200).send(info.response)
     }).catch(function (error) {
-      // handle error
-      // console.log(error)
-      if (error.response) {
-        res.status(error.response.status).send(error.response.data)
-      } else {
-        // Something happened in setting up the request that triggered an Error
-        res.status(400).send(error)
-      }
+      res.status(400).send(error)
     })
   } else {
     res.status(401).send('Unauthorized')
