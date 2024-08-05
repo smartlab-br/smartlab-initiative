@@ -297,15 +297,14 @@ export default {
     const router = useRouter()
     const route = useRoute()
     const menuItems = ref<any[]>([])
-    let drawer = ref(true)
-    let rail = ref(false)
+    const drawer = ref(false)
+    let rail = ref(true)
     let seen = ref(false)
     let auOptions = ref<any[]>([])
 
     watch(
       () => observatories.value, // Função getter que retorna observatories.value
       async (newValue) => {
-        console.log("Novo valor:", newValue)
         menuItems.value = newValue.slice() // Atualiza o valor de menuItems
         if (menuItems.value) {
           menuItems.value.unshift({ icon: "mdi-apps", short_title: "Início", to: "/"})

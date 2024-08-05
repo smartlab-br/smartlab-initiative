@@ -35,11 +35,11 @@ export default defineNuxtConfig({
       ]  
     }
   },
-  
+
   build: {
     transpile: ["vuetify"],
   },
-  
+
   modules: [
     (_options, nuxt) => {
       nuxt.hooks.hook("vite:extendConfig", (config) => {
@@ -81,19 +81,6 @@ export default defineNuxtConfig({
     "~/assets/smartlab.css"
   ],
 
-  runtimeConfig: {
-    // The private keys which are only available server-side
-    datahubUrl: process.env.DATAHUB_API_BASE_URL,
-    datahubKey: process.env.DATAHUB_APP_KEY,
-    mailerUrl: process.env.MAILER_API_BASE_URL,
-    mailerKey: process.env.MAILER_APP_KEY,
-    // Keys within public are also exposed client-side
-    public: {
-      gitViewConfUrl: process.env.GIT_VIEWCONF_TAG_URL,
-      ga_id: process.env.GA_ID
-    }
-  }
-
   // Global CSS: https://go.nuxtjs.dev/config-css
   // css: [
   //   "~/assets/app.styl",
@@ -101,7 +88,6 @@ export default defineNuxtConfig({
   //   "leaflet.markercluster/dist/MarkerCluster.css",
   //   "leaflet.markercluster/dist/MarkerCluster.Default.css"
   // ],
-
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   // plugins: [
   //   { src: "~/plugins/mixins/service/snackbarManager.js" },
@@ -112,7 +98,6 @@ export default defineNuxtConfig({
   //   { src: "~/plugins/vuetify.js" },
   //   { src: "~/plugins/gtag.js" }
   // ],
-
   // Auto import components: https://go.nuxtjs.dev/config-components
   // components: {
   //   dirs: [
@@ -126,7 +111,6 @@ export default defineNuxtConfig({
   //     "~/components/viz"
   //   ]
   // },
-
   // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
   // buildModules: [
   //   // https://go.nuxtjs.dev/eslint
@@ -134,7 +118,6 @@ export default defineNuxtConfig({
   //   "@nuxtjs/fontawesome",
   //   "@nuxtjs/router"
   // ],
-
   // fontawesome: {
   //   icons: {
   //     brands: ["faInstagram", "faGithub", "faDocker", "faCreativeCommons", "faOsi"]
@@ -145,23 +128,19 @@ export default defineNuxtConfig({
   //   // https://go.nuxtjs.dev/axios
   //   "@nuxtjs/axios"
   // ],
-
   // serverMiddleware: [
   //   "~/server-middleware/api.js"
   // ],
-
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   // axios: {
   //   baseURL: "http://localhost:3000", // Used as fallback if no runtime config is provided
   //   proxy: true
   // },
-
   // privateRuntimeConfig: {
   //   axios: {
   //     baseURL: process.env.BASE_URL || "http://localhost:" + (process.env.PORT || "3000")
   //   }
   // },
-
   // publicRuntimeConfig: {
   //   axios: {
   //     browserBaseURL: process.env.BASE_URL || "http://localhost:" + (process.env.PORT || "3000")
@@ -169,5 +148,18 @@ export default defineNuxtConfig({
   //   gitViewConfUrl: process.env.GIT_VIEWCONF_TAG_URL,
   //   ga_id: process.env.GA_ID
   // }
+  runtimeConfig: {
+    // The private keys which are only available server-side
+    datahubUrl: process.env.DATAHUB_API_BASE_URL,
+    datahubKey: process.env.DATAHUB_APP_KEY,
+    mailerUrl: process.env.MAILER_API_BASE_URL,
+    mailerKey: process.env.MAILER_APP_KEY,
+    // Keys within public are also exposed client-side
+    public: {
+      gitViewConfUrl: process.env.GIT_VIEWCONF_TAG_URL,
+      ga_id: process.env.GA_ID
+    }
+  },
 
+  compatibilityDate: "2024-08-02"
 })

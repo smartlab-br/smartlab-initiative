@@ -32,8 +32,10 @@ export const useMainStore = defineStore("main", {
       if (this.currentObsData !== undefined) {
         this.currentObsIdStr = this.currentObsData.id
       }
-      else { //default
-        this.currentObsIdStr = "default"
+      else { 
+        this.currentObsData = this.observatoriesData.find((obs: any) => obs.id == this.smartlabData.obs_default)
+        //default
+        this.currentObsIdStr = this.smartlabData.obs_default
         if (route.fullPath.includes("perfil")) { // Perfil
           this.currentObsData = {
             short_title: "Perfil",
@@ -48,11 +50,6 @@ export const useMainStore = defineStore("main", {
           this.currentObsData = {
             short_title: "Sobre",
             title: "Sobre"
-          }
-        } else {
-          this.currentObsData = {
-            short_title: "",
-            title: ""
           }
         }
       }
@@ -124,7 +121,7 @@ export const useMainStore = defineStore("main", {
       const result: any = await $fetch(UrlTransformService.getApiUrl(url)).catch((error) => {
         Promise.reject(error)
       })
-      const municipios = result.data.dataset
+      const municipios = result.dataset
       // let cd_regiao = 0;
       // let added_meso = [];
       // let added_micro = [];
