@@ -31,11 +31,10 @@ export const useMainStore = defineStore("main", {
       this.currentObsData = this.observatoriesData.find((obs: any) => route.fullPath.includes(obs.to))
       if (this.currentObsData !== undefined) {
         this.currentObsIdStr = this.currentObsData.id
+        this.setCurrentDimension(route.query.dimensao ? route.query.dimensao.toString() : "")
       }
       else { 
-        this.currentObsData = this.observatoriesData.find((obs: any) => obs.id == this.smartlabData.obs_default)
-        //default
-        this.currentObsIdStr = this.smartlabData.obs_default
+        this.currentObsIdStr = "default"
         if (route.fullPath.includes("perfil")) { // Perfil
           this.currentObsData = {
             short_title: "Perfil",
@@ -51,9 +50,13 @@ export const useMainStore = defineStore("main", {
             short_title: "Sobre",
             title: "Sobre"
           }
+        } else {  //Home
+          this.currentObsData = {
+            short_title: "",
+            title: ""
+          }
         }
       }
-      this.setCurrentDimension(route.query.dimensao ? route.query.dimensao.toString() : "")
     },
     setCurrentDimension(id: string = "") {
       if (id != "") {
