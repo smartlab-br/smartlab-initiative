@@ -91,7 +91,6 @@
 
         <v-spacer />
 
-        <div width="20rem">
           <!-- 
             v-model="gsItemBusca"
             :filter="customFilter"
@@ -103,73 +102,91 @@
             v-if="auOptions.length > 0"
             v-show="seen"
             ref="autocompleteChangePlace"
+            v-model="gsItemBusca"
             tabindex="21"
             class="input-group--focused global-search"
             persistent-hint
             item-text="label"
-            placeholder="Mudar localidade"
             item-value="id"
+            persistent-placeholder
+            placeholder="Mudar localidade"
             return-object
             :items="auOptions"
-            :menu-props="{minWidth:'380px'}"
+            :menu-props="{ minWidth: '380px' }"
+            :loading="gsLoadingStatusSearchOptions === 'LOADING'"
+            :color="gsLoadingStatusSearchOptions === 'ERROR' ? 'error' : gsLoadingStatusSearchOptions === 'LOADING' ? 'warning' : 'accent'"
+            @blur="gsItemBusca = ''"
           >
-            <!-- <template #item="{ item }" >
+          <template v-slot:item="{ item }">
               <template v-if="auOptions.length < 2">
-                <v-list-tile-content>
-                  <v-progress-circular
-                    :size="20"
-                    indeterminate
-                    color="primary"
-                  />
-                </v-list-tile-content>
+                <v-list-item>
+                  <v-list-item-title>
+                    <v-progress-circular
+                      :size="20"
+                      indeterminate
+                      color="primary"
+                    />
+                  </v-list-item-title>
+                </v-list-item>
               </template>
               <template v-else>
-                <v-list-tile-content>
-                  <v-list-tile-title
-                    @click="changeAnalysisUnit(router, item)"
-                  >
-                  {{ item.label + (item.scope == 'uf'? ' (UF)': '') }}
-                  </v-list-tile-title>
-                </v-list-tile-content>
-                <v-list-tile-action style="min-width: 120px">
-                  <div row>
-                    <div
-                      v-for="(search_item, indxSearch) in observatorios"
-                      :key="'search_item_obs_' + indxSearch"
-                      @click="changeAnalysisUnit(router, data.item, search_item.id)"
-                    >
-                      <div
-                        v-if="!search_item.blocked && (data.item.exclude_from == null || data.item.exclude_from == undefined || !data.item.exclude_from.includes(search_item.id))"
-                        column
-                        wrap
-                        align-center
+                <v-list-item>
+                  <v-row no-gutters>
+                    <v-col>
+                      <v-list-item-title
+                        @click="changeAnalysisUnit(router, item)"
                       >
-                        <v-tooltip bottom>
-                          <v-icon
-                            v-if="search_item.icon"
-                            slot="activator"
-                            small
-                            :color="$observatories.getTheme(search_item.id).primary"
-                            v-html="search_item.icon"
-                          />
-                          <AppIcon
-                            v-else-if="search_item.app_icon"
-                            slot="activator"
-                            size="16"
-                            :fill="$observatories.getTheme(search_item.id).primary"
-                            :icon="search_item.app_icon"
-                          />
-                          <v-row v-html="search_item.tooltip" />
-                        </v-tooltip>
-                      </div>
-                    </div>
-                  </div>
-                </v-list-tile-action>
+                      {{ item.raw.label + (item.raw.scope === 'uf' ? ' (UF)' : '') }}
+                      </v-list-item-title>
+                    </v-col>
+                    <v-col class="d-flex justify-end">
+                      <v-list-item-action style="min-width: 120px">
+                        <v-row no-gutters>
+                          <v-col
+                            v-for="(search_item, indxSearch) in observatories"
+                            :key="'search_item_obs_' + indxSearch"
+                            @click="changeAnalysisUnit(router, item, search_item.id)"
+                          >
+                            <v-col
+                              v-if="!search_item.blocked && (!item.raw.exclude_from || !item.raw.exclude_from.includes(search_item.id))"
+                              class="d-flex flex-column align-center"
+                            >
+                              <v-tooltip 
+                                location="bottom"
+                                :text="search_item.tooltip">
+                                <template v-slot:activator="{ props }">
+                                  <v-icon
+                                    v-if="search_item.icon"
+                                    v-bind="props"
+                                    small
+                                    :color="ColorsService.getThemeFromId(search_item.id).primary"
+                                    :innerHTML="search_item.icon"
+                                  />
+                                 <svg 
+                                    v-if="search_item.app_icon"
+                                    v-bind="props"
+                                    viewBox="0 0 16 16" 
+                                    width="16" 
+                                    height="16" 
+                                    role="presentation" 
+                                    :fill="ColorsService.getThemeFromId(search_item.id).primary" 
+                                    class="icon--inline" 
+                                    :title="search_item.shor_title">
+                                    <use xmlns:xlink="http://www.w3.org/1999/xlink" :xlink:href="'/icons/sprite/coord-sprites.svg#' + search_item.app_icon" />
+                                  </svg>                
+                                </template>
+                              </v-tooltip>                        
+                            </v-col>
+                          </v-col>
+                        </v-row>
+                      </v-list-item-action>
+                    </v-col>
+                  </v-row>
+                </v-list-item>
               </template>
-            </template> -->
+            </template>
           </v-autocomplete>
-        </div>
-
+        
         <v-btn
           tabindex="22"
           icon
@@ -285,6 +302,7 @@
 import { onMounted, watch, ref } from "vue"
 import { useMainStore } from "~/store"
 import { ColorsService } from "~/utils/service/singleton/colors"
+import { AnalysisUnit } from "~/utils/model/AnalysisUnit.js"
 import { NavigationService } from "~/utils/service/singleton/navigation"
 import { storeToRefs } from "pinia"
 import { useRoute, useRouter } from "vue-router"
@@ -301,7 +319,8 @@ export default {
     let rail = ref(true)
     let seen = ref(false)
     let auOptions = ref<any[]>([])
-
+    const gsItemBusca = ref<string|null>(null)
+    const gsLoadingStatusSearchOptions = ref("") // ("LOADING")
     watch(
       () => observatories.value, // Função getter que retorna observatories.value
       async (newValue) => {
@@ -330,6 +349,15 @@ export default {
       
     })
 
+    const changeAnalysisUnit = (router: any, searchItem: any, idObservatorio:string|null = null) => {
+      try {
+        AnalysisUnit.searchAnalysisUnit(router, store, searchItem, idObservatorio, observatories)
+      } catch (err) {
+        console.log(err)
+        // this.snackAlert({ color: 'error', text: err })
+      }
+    }
+
     return {
       observatories,
       menuItems,
@@ -340,7 +368,10 @@ export default {
       route,
       currentObs,
       localidade,
-      auOptions
+      auOptions,
+      changeAnalysisUnit,
+      gsItemBusca,
+      gsLoadingStatusSearchOptions
     }
   }
 }
