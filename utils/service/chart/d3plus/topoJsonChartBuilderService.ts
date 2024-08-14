@@ -154,8 +154,8 @@ export class TopoJsonChartBuilderService extends D3PlusChartBuilderService {
 
   hasTouch () { // identify touchable devices (mobile and tablet)
     return (("ontouchstart" in window) || // html5 browsers
-            (navigator.maxTouchPoints > 0)) // future IE
-            //||  (navigator.msMaxTouchPoints > 0)) // current IE10
+    (navigator.maxTouchPoints > 0)) // future IE
+    //||  (navigator.msMaxTouchPoints > 0)) // current IE10
   }
 
   generateViz (options, additionalOptions) {

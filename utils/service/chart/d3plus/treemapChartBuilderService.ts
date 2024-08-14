@@ -11,7 +11,7 @@ export class TreemapChartBuilderService extends D3PlusChartBuilderService {
     if (options.colorScale && (options.colorScale.type == null || options.colorScale.type == undefined)) { options.colorScale.type = "divergent" }
 
     if (options.colorArray) {
-      let colorCat: string[] = []
+      const colorCat: string[] = []
       let colorIndx: number = 0
       const field_id: string = options.parent ? options.parent : options.id
       for (const row of slicedDS) {

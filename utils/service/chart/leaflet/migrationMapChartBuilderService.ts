@@ -239,7 +239,7 @@ export class MigrationMapChartBuilderService extends LeafletChartBuilderService 
 
             const midpointLatLng = [midpointY, midpointX]
 
-            let eachCurve = this.L.curve(
+            const eachCurve = this.L.curve(
               [
                 "M", latlng1,
                 "Q", midpointLatLng,
@@ -261,9 +261,9 @@ export class MigrationMapChartBuilderService extends LeafletChartBuilderService 
               event.target.options.rowData = each_row
               event.target.options.customOptions = options
               curveClick(event)
-            });
+            })
             
-        eachCurve.addTo(this.layers[ident])
+            eachCurve.addTo(this.layers[ident])
 
             const eachPulseCurve = this.L.curve(
               [
@@ -284,11 +284,11 @@ export class MigrationMapChartBuilderService extends LeafletChartBuilderService 
                 dashArray: "10, 20",
                 dashOffset: "100%"
               }
-              ).on("click", (event: any) => {
-                event.target.options.rowData = each_row
-                event.target.options.customOptions = options
-                curveClick(event)
-              });
+            ).on("click", (event: any) => {
+              event.target.options.rowData = each_row
+              event.target.options.customOptions = options
+              curveClick(event)
+            })
   
             // eachPulseCurve.on("mouseover", function (e) {
             //     e.target.setStyle({

@@ -20,12 +20,12 @@ class ScatterChartBuilderService extends D3PlusChartBuilderService {
     const tooltip_context = additionalOptions.context ? additionalOptions.context : null
     const removed_text_list = options.removed_text_list
 
-    let label = ''
+    let label = ""
     const viz = this.d3plus.viz()
       .noDataHTML(this.noDataMessage)
       .loadingHTML(this.loadingMessage)
       .data({ opacity: 0.7 }) // data to use with the visualization
-      .type('scatter') // visualization type
+      .type("scatter") // visualization type
       .font({ fontFamily: additionalOptions.fontFamily ? additionalOptions.fontFamily : this._fontFamily }) // visualization type
       .format({
         text: (text, params) => {
@@ -34,7 +34,7 @@ class ScatterChartBuilderService extends D3PlusChartBuilderService {
           }
           label = text
           for (const eachRemoval of options.removeFromLabel) {
-            label = label.replace(eachRemoval, '')
+            label = label.replace(eachRemoval, "")
           }
           return label
         }

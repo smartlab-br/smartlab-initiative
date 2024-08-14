@@ -313,18 +313,18 @@ export class BarChartBuilderService extends D3PlusChartBuilderService {
       value = value / Math.pow(10, magnitude * 3)
       // Define o termo usado no final da string
       switch (magnitude) {
-        case 1:
-          collapseSuffix = openUiTags + "mil" + closeUiTags
-          break
-        case 2:
-          collapseSuffix = openUiTags + "mi" + closeUiTags
-          break
-        case 3:
-          collapseSuffix = openUiTags + "bi" + closeUiTags
-          break
-        case 4:
-          collapseSuffix = openUiTags + "tri" + closeUiTags
-          break
+      case 1:
+        collapseSuffix = openUiTags + "mil" + closeUiTags
+        break
+      case 2:
+        collapseSuffix = openUiTags + "mi" + closeUiTags
+        break
+      case 3:
+        collapseSuffix = openUiTags + "bi" + closeUiTags
+        break
+      case 4:
+        collapseSuffix = openUiTags + "tri" + closeUiTags
+        break
       }
 
       // Se contrair o dado, ver o format resultante

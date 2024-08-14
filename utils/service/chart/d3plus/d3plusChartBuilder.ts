@@ -18,7 +18,7 @@ export abstract class D3PlusChartBuilderService extends GeneralChartBuilderServi
       const chart = this.prepareChart(
         viz,
         GeneralChartBuilderService.getSlicedDataset(dataset, options),
-        '#' + containerId,
+        "#" + containerId,
         options,
         additionalOptions
       )
@@ -27,7 +27,7 @@ export abstract class D3PlusChartBuilderService extends GeneralChartBuilderServi
         function (chart: any) {
           const container = document.getElementById(containerId)
           if (container) { 
-              container.innerHTML = '' 
+            container.innerHTML = "" 
           }
           chart.render()
           return chart

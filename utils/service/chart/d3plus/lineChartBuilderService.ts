@@ -21,7 +21,7 @@ export class LineChartBuilderService extends D3PlusChartBuilderService {
       }
     }
 
-    const lineConfig: any = { strokeWidth: options.stroke ? options.stroke : 3, curve: 'catmullRom' }
+    const lineConfig: any = { strokeWidth: options.stroke ? options.stroke : 3, curve: "catmullRom" }
     if (options.colorScale || options.colorArray) {
       lineConfig.stroke = (d: any) => { return colorCat[d[options.id]] }
     } else if (options.color !== null && options.color !== undefined) {
@@ -111,7 +111,7 @@ export class LineChartBuilderService extends D3PlusChartBuilderService {
           }
         }
       })
-      .legendPosition('top')
+      .legendPosition("top")
       .xConfig(xConfig)
       .yConfig(yConfig)
       .tooltipConfig({

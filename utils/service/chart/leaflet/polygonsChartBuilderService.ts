@@ -5,14 +5,14 @@ class PolygonsChartBuilderService extends LeafletChartBuilderService {
   range: number[]
   constructor () {
     super()
-    this.topojson = require('topojson-client/dist/topojson-client.min.js')
+    this.topojson = require("topojson-client/dist/topojson-client.min.js")
     this.range = []
   }
 
   fillLayers (dataset: any, options: any) {
     // https://blog.webkid.io/maps-with-leaflet-and-topojson/
     // Gera o range
-    let range: number[] = []
+    const range: number[] = []
     if (options.colorScale && options.colorScale.range && options.colorScale.range.min_value) {
       range[0] = options.colorScale.range.min_value
     }
@@ -40,7 +40,7 @@ class PolygonsChartBuilderService extends LeafletChartBuilderService {
     const this_ = this
     const TopoJSON = this.L.GeoJSON.extend({
       addData: function (jsonData: any) {
-        if (jsonData.type === 'Topology') {
+        if (jsonData.type === "Topology") {
           for (const key in jsonData.objects) {
             const geojson = this_.topojson.feature(jsonData, jsonData.objects[key])
             this_.L.GeoJSON.prototype.addData.call(this, geojson)
@@ -57,7 +57,7 @@ class PolygonsChartBuilderService extends LeafletChartBuilderService {
       layer.addTo(this.chart)
       layer.eachLayer(this.handlePolygon, this)
       if (options.show_legend && range[0] !== range[1]) {
-        let scaleName = 'RdYlBu'
+        let scaleName = "RdYlBu"
         if (options.colorScale && options.colorScale.name) {
           scaleName = options.colorScale.name
         }
@@ -65,34 +65,34 @@ class PolygonsChartBuilderService extends LeafletChartBuilderService {
           scaleName = options.colorScaleSelectedName
         }
 
-        if (this.d3chrom['interpolate' + scaleName] == null || this.d3chrom['interpolate' + scaleName] == undefined) {
-          scaleName = 'RdYlBu'
+        if (this.d3chrom["interpolate" + scaleName] == null || this.d3chrom["interpolate" + scaleName] == undefined) {
+          scaleName = "RdYlBu"
         }
 
-        const legend = new this.L.Control({ position: 'topright' })
+        const legend = new this.L.Control({ position: "topright" })
         const d3chrom = this.d3chrom
         const _L = this.L
 
         legend.onAdd = function (map) {
-          const div = _L.DomUtil.create('div', 'legend')
+          const div = _L.DomUtil.create("div", "legend")
           let value = 0
           for (let i = range[0]; i <= range[1]; i = i + (range[1] - range[0]) / 20) {
-            if (options.scale_order === undefined || options.scale_order === 'ASC') {
+            if (options.scale_order === undefined || options.scale_order === "ASC") {
               value = (i - range[0]) / (range[1] - range[0])
             } else {
               value = 1 - (i - range[0]) / (range[1] - range[0])
             }
 
             div.innerHTML +=
-              '<span style="display:inline-flex">' +
-              '<div style="width:9px;height:18px;display:inline-block;background:' +
-              d3chrom['interpolate' + scaleName](value) + '"></div></span>'
+              "<span style='display:inline-flex'>" +
+              "<div style='width:9px;height:18px;display:inline-block;background:" +
+              d3chrom["interpolate" + scaleName](value) + "'></div></span>"
           }
 
-          div.style.padding = '6px 8px'
-          div.style.background = 'rgba(255,255,255,0.8)'
-          div.style.boxShadow = '0 0 15px rgba(0,0,0,0.2)'
-          div.style.borderRadius = '5px'
+          div.style.padding = "6px 8px"
+          div.style.background = "rgba(255,255,255,0.8)"
+          div.style.boxShadow = "0 0 15px rgba(0,0,0,0.2)"
+          div.style.borderRadius = "5px"
 
           return div
         }
@@ -115,7 +115,7 @@ class PolygonsChartBuilderService extends LeafletChartBuilderService {
     if (row.length !== 0) {
       row = row[0]
       if (range && (range[0] !== range[1])) {
-        if (options.scale_order === undefined || options.scale_order === 'ASC') {
+        if (options.scale_order === undefined || options.scale_order === "ASC") {
           value = (row[options.value_field] - range[0]) / (range[1] - range[0])
         } else {
           value = 1 - (row[options.value_field] - range[0]) / (range[1] - range[0])
@@ -124,7 +124,7 @@ class PolygonsChartBuilderService extends LeafletChartBuilderService {
         value = row[options.value_field]
       }
 
-      let scaleName = 'RdYlBu'
+      let scaleName = "RdYlBu"
       if (options.colorScale && options.colorScale.name) {
         scaleName = options.colorScale.name
       }
@@ -132,11 +132,11 @@ class PolygonsChartBuilderService extends LeafletChartBuilderService {
         scaleName = options.colorScaleSelectedName
       }
 
-      let fillColor = ''
-      if (this.d3chrom['interpolate' + scaleName]) {
-        fillColor = (value != null ? this.d3chrom['interpolate' + scaleName](value) : 'transparent')
+      let fillColor = ""
+      if (this.d3chrom["interpolate" + scaleName]) {
+        fillColor = (value != null ? this.d3chrom["interpolate" + scaleName](value) : "transparent")
       } else {
-        fillColor = (value != null ? this.d3chrom.interpolateRdYlBu(value) : 'transparent')
+        fillColor = (value != null ? this.d3chrom.interpolateRdYlBu(value) : "transparent")
       }
 
       layer.options.rowData = row
@@ -145,7 +145,7 @@ class PolygonsChartBuilderService extends LeafletChartBuilderService {
       layer.setStyle({
         fillColor,
         fillOpacity: 0.8,
-        color: 'black',
+        color: "black",
         weight: 0.2,
         opacity: 1
       })
@@ -156,9 +156,9 @@ class PolygonsChartBuilderService extends LeafletChartBuilderService {
       })
     } else {
       layer.setStyle({
-        fillColor: 'transparent',
+        fillColor: "transparent",
         fillOpacity: 0,
-        color: 'black',
+        color: "black",
         weight: 0.2,
         opacity: 1
       })

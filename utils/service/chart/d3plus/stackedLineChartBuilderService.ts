@@ -5,7 +5,7 @@ class StackedLineChartBuilderService extends D3PlusChartBuilderService {
   prepareChart (viz: any, slicedDS: any, containerId: string, options: any, additionalOptions: any = {}) {
     if (options.id === null || options.id === undefined) {
       for (const row of slicedDS) {
-        if (options.id === null || options.id === undefined) { row.series_id = '1' }
+        if (options.id === null || options.id === undefined) { row.series_id = "1" }
       }
     }
 
