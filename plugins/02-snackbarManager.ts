@@ -1,7 +1,7 @@
 // import TooltipBuildingService from "../../assets/service/singleton/tooltipBuildingService"
 // import ColorsService from "../../assets/service/singleton/colorsService"
 // import ChartBuilderService from "@smartlabbr/smartlab-charts"
-import { AnalysisUnit } from "~/utils/model/AnalysisUnit"
+import { AnalysisUnit } from "~/utils/model/analysisUnit"
 import { ChartBuilderService } from "~/utils/service/singleton/chartBuilder"
 import { ColorsService } from "~/utils/service/singleton/colors"
 import { TooltipBuildingService } from "~/utils/service/singleton/tooltipBuilding"

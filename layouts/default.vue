@@ -1,6 +1,7 @@
 <template>
   <v-app>
-      <v-app-bar
+      <v-app-bar 
+        app
         v-if="currentObs"
         dark
         clipped-left
@@ -24,8 +25,8 @@
                 src="/icons/smartlab_labeled-30.png"
                 class="cursor-pointer"
                 alt="Smartlab"
-                @click="NavigationService.pushRoute(router, '/', false)"
-                @keyup.enter="NavigationService.pushRoute(router, '/', false)"
+                @click="pushRoute('/', false)"
+                @keyup.enter="pushRoute('/', false)"
               >
             </v-col>
             <v-col
@@ -36,7 +37,7 @@
                 src="/icons/smartlab-icon-30x30.png"
                 class="cursor-pointer"
                 alt="Smartlab"
-                @click="NavigationService.pushRoute(router, '/', false)"
+                @click="pushRoute('/', false)"
               >
             </v-col>
             <v-divider
@@ -50,7 +51,7 @@
             >
               <v-col
                 class="cursor-pointer pa-0 text-right"
-                @click="NavigationService.pushRoute(router, (route && (route.path.indexOf('localidade') != -1)) ? '../' : (route && (route.path.indexOf('estudo') != -1 || route.path.indexOf('smartmap') != -1)) ? './' : '', false);"
+                @click="pushRoute((route && (route.path.indexOf('localidade') != -1)) ? '../' : (route && (route.path.indexOf('estudo') != -1 || route.path.indexOf('smartmap') != -1)) ? './' : '', false);"
               >
                 {{ currentObs.title }}
               </v-col>
@@ -59,7 +60,7 @@
               >
                 <a
                   class="text-white"
-                  @click="NavigationService.pushRoute(router, 'https://www.instagram.com/smartlab_br/', true)"
+                  @click="pushRoute('https://www.instagram.com/smartlab_br/', true)"
                 >
                   {{ currentObs.hash_tag? "#"+currentObs.hash_tag: "" }}
                 </a>
@@ -206,7 +207,7 @@
         </v-btn>
           <a
             class="text-white mx-2"
-            @click="NavigationService.pushRoute(router, 'https://www.instagram.com/smartlab_br/', true)"
+            @click="pushRoute('https://www.instagram.com/smartlab_br/', true)"
           >
             <font-awesome-icon icon="fa-brands fa-instagram" class="fa-lg"/>
             <v-tooltip
@@ -272,37 +273,175 @@
           </v-list-item>
         </v-list>
       </v-navigation-drawer>
-    </v-app>
+      <v-main>
+        <v-container>
+        <v-responsive class="d-flex align-center text-center fill-height">
+          <v-row class="d-flex align-center justify-center">
+            <v-col cols="auto"> <v-btn color="primary"> Primary </v-btn> </v-col>
+            <v-col cols="auto">
+              <v-btn color="secondary"> Secondary </v-btn>
+            </v-col>
+            <v-col cols="auto">
+              <v-btn color="accent"> Accent </v-btn>
+            </v-col>
+            <v-col cols="auto">
+              <div>
+              </div>
+            </v-col>
+          </v-row>
+          <v-row class="d-flex align-center justify-center">
+            <v-col cols="auto">
+              <slot />
+            </v-col>
+          </v-row>
+        </v-responsive>
+      </v-container>
+    </v-main>
+    <v-footer 
+      :color="ColorsService.getCurrentTheme().primary"
+      class="white--text"
+      padless
+    >
+      <v-container
+        :class="{
+          'px-2 py-4': $vuetify.display.xs,
+          'px-3 py-4': $vuetify.display.smAndDown,
+          'px-5 py-5': $vuetify.display.mdAndUp,
+        }"
+      >      
+      <v-row wrap>
+        <v-col
+          class="text-xs-left"
+          :class="{
+            'pt-5 pb-3': $vuetify.display.smAndDown,
+          }"
+          cols="12"
+          xs="2"
+          sm="1"
+        >
+          <a
+            class="white--text"
+            @click="pushRoute('/saibamais/smartlab', false)"
+          >
+            <img
+              src="/smartlab/smartlab-small.svg"
+              alt="Smartlab"
+              height="25px"
+              style="margin-bottom: -5px;"
+            >
+            <span class="ml-3">Sobre</span>
+          </a>
+        </v-col>
 
-    <v-container>
-      <v-responsive class="d-flex align-center text-center fill-height">
-        <v-row class="d-flex align-center justify-center">
-          <v-col cols="auto"> <v-btn color="primary"> Primary </v-btn> </v-col>
-          <v-col cols="auto">
-            <v-btn color="secondary"> Secondary </v-btn>
-          </v-col>
-          <v-col cols="auto">
-            <v-btn color="accent"> Accent </v-btn>
-          </v-col>
-          <v-col cols="auto">
-            <div>
-            </div>
-          </v-col>
-        </v-row>
-        <v-row class="d-flex align-center justify-center">
-          <v-col cols="auto"> 
-            <slot />
-          </v-col>
-        </v-row>
-      </v-responsive>
-    </v-container>
+        <v-col
+          v-if="smartlab"
+          class="text-xs-right text-md-center"
+          :class="{
+            'pt-5 pb-3': $vuetify.display.smAndDown,
+          }"
+          cols="9"
+          xs="10"
+          sm="11"
+          lg="9"
+        >
+          <v-row justify="center" wrap>
+            <v-col
+              class="footer-colab-text"
+              xs="12"
+            >
+              {{ smartlab.rodape.titulo }}
+            </v-col>
+            <v-col>
+              <img
+                v-for="(footerImg, footerImgIndex) in smartlab.rodape.imagens"
+                :key="footerImgIndex"
+                :src="footerImg.src"
+                :class="footerImg.class"
+                :alt="footerImg.title"
+                :height="footerImg.height ? footerImg.height : ''"
+                :max-height="footerImg.maxHeight ? footerImg.maxHeight : ''"
+                :min-height="footerImg.minHeight ? footerImg.minHeight : ''"
+                @click="pushRoute(footerImg.url, true)"
+              >
+            </v-col>
+          </v-row>
+        </v-col>
+
+        <v-col>
+          <v-row
+            v-if="smartlab"
+            justify="center"
+            class="footer-colab-text"
+          >
+            {{ smartlab.rodape.apoio }}
+          </v-row>
+        </v-col>
+
+        <v-col
+          class="text-md-left text-lg-center subheading"
+          :class="{
+            'pt-5 pb-3': $vuetify.display.smAndDown,
+          }"
+          cols="6"
+          sm="2"
+        >
+          <a
+            class="white--text mr-2"
+            @click="pushRoute('https://www.instagram.com/smartlab_br/', true)"
+          >
+            <font-awesome-icon icon="fa-brands fa-instagram" class="fa-lg" title="Instagram" />
+          </a>
+          <a
+            class="white--text mr-2"
+            @click="pushRoute('https://github.com/smartlab-br', true)"
+          >
+            <font-awesome-icon icon="fa-brands fa-github" class="fa-lg" title="GitHub" />
+          </a>
+          <a
+            class="white--text mr-2"
+            @click="pushRoute('https://hub.docker.com/u/mptrabalho', true)"
+          >
+            <font-awesome-icon icon="fa-brands fa-docker" class="fa-lg" title="Docker" />
+          </a>
+        </v-col>
+
+        <v-col
+          class="text-xs-right subheading"
+          :class="{
+            'pt-5 pb-3': $vuetify.display.smAndDown,
+          }"
+          cols="6"
+          sm="2"
+        >
+          <div class="caption mr-1 mb-1">
+            Licenças
+          </div>
+          <a
+            class="white--text mx-2"
+            @click="pushRoute('https://creativecommons.org/licences/by-nc-sa/4.0/', true)"
+          >
+            <font-awesome-icon icon="fa-brands fa-creative-commons" class="fa-lg" title="CC BY 4.0" />
+          </a>
+          <a
+            class="white--text"
+            @click="pushRoute('https://opensource.org/licenses/MIT', true)"
+          >
+            <font-awesome-icon icon="fa-brands fa-osi" class="fa-lg" title="MIT - Open Source Initiative" />
+          </a>
+        </v-col>
+      </v-row>
+      </v-container>
+    </v-footer>
+
+  </v-app>
+
 </template>
 
 <script lang="ts">
 import { onMounted, watch, ref } from "vue"
 import { useMainStore } from "~/store"
 import { ColorsService } from "~/utils/service/singleton/colors"
-import { AnalysisUnit } from "~/utils/model/AnalysisUnit.js"
+import { AnalysisUnit } from "~/utils/model/analysisUnit"
 import { NavigationService } from "~/utils/service/singleton/navigation"
 import { storeToRefs } from "pinia"
 import { useRoute, useRouter } from "vue-router"
@@ -311,7 +450,7 @@ export default {
   setup() {
     const store = useMainStore()
     const { getPlaces } = store
-    const { observatories, currentObs, localidade, places } = storeToRefs(store)
+    const { observatories, currentObs, localidade, places, smartlab } = storeToRefs(store)
     const router = useRouter()
     const route = useRoute()
     const menuItems = ref<any[]>([])
@@ -321,6 +460,7 @@ export default {
     let auOptions = ref<any[]>([])
     const gsItemBusca = ref<string|null>(null)
     const gsLoadingStatusSearchOptions = ref("") // ("LOADING")
+
     watch(
       () => observatories.value, // Função getter que retorna observatories.value
       async (newValue) => {
@@ -345,8 +485,7 @@ export default {
       ColorsService.getThemeFromId("des")
       getPlaces().then(() => {
         auOptions.value = places.value.slice()
-      })
-      
+      })   
     })
 
     const changeAnalysisUnit = (router: any, searchItem: any, idObservatorio:string|null = null) => {
@@ -356,6 +495,10 @@ export default {
         console.log(err)
         // this.snackAlert({ color: 'error', text: err })
       }
+    }
+
+    const pushRoute = (link: string, external?: boolean) => {
+      NavigationService.pushRoute(router, link, external)
     }
 
     return {
@@ -371,7 +514,9 @@ export default {
       auOptions,
       changeAnalysisUnit,
       gsItemBusca,
-      gsLoadingStatusSearchOptions
+      gsLoadingStatusSearchOptions,
+      pushRoute,
+      smartlab
     }
   }
 }
