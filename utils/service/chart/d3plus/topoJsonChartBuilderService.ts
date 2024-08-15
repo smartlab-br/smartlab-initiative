@@ -105,7 +105,7 @@ export class TopoJsonChartBuilderService extends D3PlusChartBuilderService {
         objAxisConfig.tickFormat = (t) => {
           const t_args = inv_args.slice()
           t_args.unshift(t)
-          return inv_tickFn.apply(null, t_args)
+          return inv_tickFn(...t_args)
         }
       }
 

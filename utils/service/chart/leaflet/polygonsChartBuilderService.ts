@@ -37,16 +37,15 @@ class PolygonsChartBuilderService extends LeafletChartBuilderService {
 
     this.range = range
 
-    const this_ = this
     const TopoJSON = this.L.GeoJSON.extend({
       addData: function (jsonData: any) {
         if (jsonData.type === "Topology") {
           for (const key in jsonData.objects) {
-            const geojson = this_.topojson.feature(jsonData, jsonData.objects[key])
-            this_.L.GeoJSON.prototype.addData.call(this, geojson)
+            const geojson = this.topojson.feature(jsonData, jsonData.objects[key])
+            this.constructor.L.GeoJSON.prototype.addData.call(this, geojson)
           }
         } else {
-          this_.L.GeoJSON.prototype.addData.call(this, jsonData)
+          this.constructor.L.GeoJSON.prototype.addData.call(this, jsonData)
         }
       }
     })
