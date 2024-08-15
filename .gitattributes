@@ -1,5 +1,10 @@
 # Set the default behavior for text files
 * text=auto
+*.txt text
+*.vue text eol=lf
+*.ts text eol=lf
+*.js text eol=lf
+*.sh text eol=lf
 
 # Explicitly mark binary files to be treated as binary and not be modified
 *.png binary
