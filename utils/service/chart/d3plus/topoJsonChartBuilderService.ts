@@ -136,7 +136,7 @@ export class TopoJsonChartBuilderService extends D3PlusChartBuilderService {
     let currentPlace = ""
     const hasTouch = this.hasTouch
     if (options.clickable) {
-      viz = viz.on("click", function (d) {
+      viz = viz.on("click", function (d: any) {
         const clickedKey = d[options.id_field] !== undefined ? d[options.id_field] : d.properties[options.topo_key]
         if (currentPlace == clickedKey || !hasTouch()) {
           if (this._tooltip) { this._tooltipClass.data([]).render() }
@@ -158,7 +158,7 @@ export class TopoJsonChartBuilderService extends D3PlusChartBuilderService {
     //||  (navigator.msMaxTouchPoints > 0)) // current IE10
   }
 
-  generateViz (options, additionalOptions) {
+  generateViz (options: any, additionalOptions: any) {
     const tooltip_function = additionalOptions.tooltipFunction
     const tooltip_context = additionalOptions.context ? additionalOptions.context : null
     options.clickable = !!(options.clickable == true || options.clickable == undefined)
@@ -170,7 +170,7 @@ export class TopoJsonChartBuilderService extends D3PlusChartBuilderService {
         labelConfig: { fontFamily: additionalOptions.fontFamily ? additionalOptions.fontFamily : this._fontFamily },
         Path: {
           fillOpacity: 0.9,
-          strokeWidth: function (d) {
+          strokeWidth: function (d: any) {
             if (additionalOptions.idAU !== null && additionalOptions.idAU !== undefined &&
                 (
                   (d[options.id_field] && d[options.id_field].toString() == additionalOptions.idAU.substring(0, d[options.id_field].toString().length)) ||
@@ -189,7 +189,7 @@ export class TopoJsonChartBuilderService extends D3PlusChartBuilderService {
       .topojson(additionalOptions.topology)
       .tooltipConfig({
         body: (d: any) => {
-          if (tooltip_function instanceof String) {
+          if (typeof tooltip_function === "string") {
             return tooltip_context[tooltip_function as keyof typeof tooltip_context].apply(tooltip_context, [d, additionalOptions.route, additionalOptions.headers, removed_text_list, options])
           } else {
             return tooltip_function.apply(tooltip_context, [d, additionalOptions.route, additionalOptions.headers, removed_text_list, options])
