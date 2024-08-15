@@ -274,7 +274,7 @@
         </v-list>
       </v-navigation-drawer>
       <v-main>
-        <v-container>
+        <v-container fluid >
         <v-responsive class="d-flex align-center text-center fill-height">
           <v-row class="d-flex align-center justify-center">
             <v-col cols="auto"> <v-btn color="primary"> Primary </v-btn> </v-col>
@@ -297,141 +297,154 @@
         </v-responsive>
       </v-container>
     </v-main>
-    <v-footer 
-      :color="ColorsService.getCurrentTheme().primary"
-      class="white--text"
-      padless
-    >
-      <v-container
-        :class="{
-          'px-2 py-4': $vuetify.display.xs,
-          'px-3 py-4': $vuetify.display.smAndDown,
-          'px-5 py-5': $vuetify.display.mdAndUp,
-        }"
-      >      
-      <v-row wrap>
-        <v-col
-          class="text-xs-left"
+    <client-only>
+      <v-footer 
+        :color="ColorsService.getCurrentTheme().primary"
+        class="white--text"
+        padless
+      >
+        <v-container
+          fluid 
           :class="{
-            'pt-5 pb-3': $vuetify.display.smAndDown,
+            'px-2 py-4': $vuetify.display.xs,
+            'px-3 py-4': $vuetify.display.smAndDown,
+            'px-5 py-5': $vuetify.display.mdAndUp,
           }"
-          cols="12"
-          xs="2"
-          sm="1"
-        >
-          <a
-            class="white--text"
-            @click="pushRoute('/saibamais/smartlab', false)"
+        >      
+        <v-row wrap align="center">
+          <v-col
+            class="text-xs-left text-lg-center"
+            :class="{
+              'pt-5 pb-3': $vuetify.display.smAndDown,
+            }"
+            cols="12"
+            xs="2"
+            sm="1"
           >
-            <img
-              src="/smartlab/smartlab-small.svg"
-              alt="Smartlab"
-              height="25px"
-              style="margin-bottom: -5px;"
+            <a
+              class="white--text"
+              @click="pushRoute('/saibamais/smartlab', false)"
             >
-            <span class="ml-3">Sobre</span>
-          </a>
-        </v-col>
-
-        <v-col
-          v-if="smartlab"
-          class="text-xs-right text-md-center"
-          :class="{
-            'pt-5 pb-3': $vuetify.display.smAndDown,
-          }"
-          cols="9"
-          xs="10"
-          sm="11"
-          lg="9"
-        >
-          <v-row justify="center" wrap>
-            <v-col
-              class="footer-colab-text"
-              xs="12"
-            >
-              {{ smartlab.rodape.titulo }}
-            </v-col>
-            <v-col>
               <img
-                v-for="(footerImg, footerImgIndex) in smartlab.rodape.imagens"
-                :key="footerImgIndex"
-                :src="footerImg.src"
-                :class="footerImg.class"
-                :alt="footerImg.title"
-                :height="footerImg.height ? footerImg.height : ''"
-                :max-height="footerImg.maxHeight ? footerImg.maxHeight : ''"
-                :min-height="footerImg.minHeight ? footerImg.minHeight : ''"
-                @click="pushRoute(footerImg.url, true)"
+                src="/smartlab/smartlab-small.svg"
+                alt="Smartlab"
+                height="25px"
+                style="margin-bottom: -5px;"
               >
-            </v-col>
-          </v-row>
-        </v-col>
+              <span class="ml-3">Sobre</span>
+            </a>
+          </v-col>
 
-        <v-col>
-          <v-row
+          <v-col
             v-if="smartlab"
-            justify="center"
-            class="footer-colab-text"
+            class="text-xs-right text-md-center"
+            :class="{
+              'pt-5 pb-3': $vuetify.display.smAndDown,
+            }"
+            cols="12"
+            xs="10"
+            sm="11"
+            lg="9"
           >
-            {{ smartlab.rodape.apoio }}
-          </v-row>
-        </v-col>
+            <v-row justify="center" wrap>
+              <v-col
+                class="footer-colab-text"
+                cols="12"
+                xs="12"
+                xl="11"
+                offset-xl="1"
+              >
+                {{ smartlab.rodape.titulo }}
+              </v-col>
+              <v-col
+                cols="12"
+              >
+                <img
+                  v-for="(footerImg, footerImgIndex) in smartlab.rodape.imagens"
+                  :key="footerImgIndex"
+                  :src="footerImg.src"
+                  :class="footerImg.class"
+                  :alt="footerImg.title"
+                  :height="footerImg.height ? footerImg.height : ''"
+                  :max-height="footerImg.maxHeight ? footerImg.maxHeight : ''"
+                  :min-height="footerImg.minHeight ? footerImg.minHeight : ''"
+                  @click="pushRoute(footerImg.url, true)"
+                >
+              </v-col>
+            </v-row>
+          </v-col>
 
-        <v-col
-          class="text-md-left text-lg-center subheading"
-          :class="{
-            'pt-5 pb-3': $vuetify.display.smAndDown,
-          }"
-          cols="6"
-          sm="2"
-        >
-          <a
-            class="white--text mr-2"
-            @click="pushRoute('https://www.instagram.com/smartlab_br/', true)"
-          >
-            <font-awesome-icon icon="fa-brands fa-instagram" class="fa-lg" title="Instagram" />
-          </a>
-          <a
-            class="white--text mr-2"
-            @click="pushRoute('https://github.com/smartlab-br', true)"
-          >
-            <font-awesome-icon icon="fa-brands fa-github" class="fa-lg" title="GitHub" />
-          </a>
-          <a
-            class="white--text mr-2"
-            @click="pushRoute('https://hub.docker.com/u/mptrabalho', true)"
-          >
-            <font-awesome-icon icon="fa-brands fa-docker" class="fa-lg" title="Docker" />
-          </a>
-        </v-col>
+          <!-- <v-col>
+            <v-row
+              v-if="smartlab"
+              justify="center"
+              class="footer-colab-text"
+            >
+              {{ smartlab.rodape.apoio }}
+            </v-row>
+          </v-col> -->
 
-        <v-col
-          class="text-xs-right subheading"
-          :class="{
-            'pt-5 pb-3': $vuetify.display.smAndDown,
-          }"
-          cols="6"
-          sm="2"
-        >
-          <div class="caption mr-1 mb-1">
-            Licenças
-          </div>
-          <a
-            class="white--text mx-2"
-            @click="pushRoute('https://creativecommons.org/licences/by-nc-sa/4.0/', true)"
+          <v-col
+            class="text-md-left text-lg-center subheading"
+            :class="{
+              'pt-5 pb-3': $vuetify.display.smAndDown,
+            }"
+            xs6 sm6 md6 lg1 
+            cols="12"
+            md="6"
+            lg="1"
+            sm="6"
           >
-            <font-awesome-icon icon="fa-brands fa-creative-commons" class="fa-lg" title="CC BY 4.0" />
-          </a>
-          <a
-            class="white--text"
-            @click="pushRoute('https://opensource.org/licenses/MIT', true)"
+            <a
+              class="white--text mr-2"
+              @click="pushRoute('https://www.instagram.com/smartlab_br/', true)"
+            >
+              <font-awesome-icon icon="fa-brands fa-instagram" class="fa-lg" title="Instagram" />
+            </a>
+            <a
+              class="white--text mr-2"
+              @click="pushRoute('https://github.com/smartlab-br', true)"
+            >
+              <font-awesome-icon icon="fa-brands fa-github" class="fa-lg" title="GitHub" />
+            </a>
+            <a
+              class="white--text mr-2"
+              @click="pushRoute('https://hub.docker.com/u/mptrabalho', true)"
+            >
+              <font-awesome-icon icon="fa-brands fa-docker" class="fa-lg" title="Docker" />
+            </a>
+          </v-col>
+
+          <v-col
+            class="text-xs-right subheading text-lg-center"
+            :class="{
+              'pt-5 pb-3': $vuetify.display.smAndDown,
+            }"
+            cols="12"
+            md="6"
+            lg="1"
+            sm="6"
           >
-            <font-awesome-icon icon="fa-brands fa-osi" class="fa-lg" title="MIT - Open Source Initiative" />
-          </a>
-        </v-col>
-      </v-row>
-      </v-container>
-    </v-footer>
+            <div class="caption mr-1 mb-1">
+              Licenças
+            </div>
+            <a
+              class="white--text mx-2"
+              @click="pushRoute('https://creativecommons.org/licences/by-nc-sa/4.0/', true)"
+            >
+              <font-awesome-icon icon="fa-brands fa-creative-commons" class="fa-lg" title="CC BY 4.0" />
+            </a>
+            <a
+              class="white--text"
+              @click="pushRoute('https://opensource.org/licenses/MIT', true)"
+            >
+              <font-awesome-icon icon="fa-brands fa-osi" class="fa-lg" title="MIT - Open Source Initiative" />
+            </a>
+          </v-col>
+        </v-row>
+        </v-container>
+      </v-footer>
+    </client-only>
 
   </v-app>
 
