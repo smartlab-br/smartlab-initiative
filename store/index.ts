@@ -4,67 +4,109 @@ import { YamlFetcherService } from "~/utils/service/singleton/yamlFetcher"
 
 export const useMainStore = defineStore("main", {
   state: () => ({
-    smartlabData: null as any,
-    observatoriesData: null as any,
-    currentObsData: null as any,
-    currentObsIdStr: null as unknown as string,
-    currentDimData: null as any,
-    currentDimIdStr: null as unknown as string,
-    aboutSmartlabData: null as any,
-    localidadeData: null as any,
-    localidadeIdStr: null as unknown as string,
-    placesData: null as any
+    smartlabData: null as Smartlab | null,
+    observatoriesData: null as Observatory[] | null,
+    currentObsData: null as Observatory | null,
+    currentObsIdStr: null as string | null,
+    currentDimData: null as Dimension | null,
+    currentDimIdStr: null as string | null,
+    aboutSmartlabData: null as About | null,
+    localidadeData: null as any | null,
+    localidadeIdStr: null as string | null,
+    placesData: null as Place[] | null
   }),
   actions: {
     async loadSmartlabData() {
       const data = await YamlFetcherService.loadYaml("br/observatorios")
       this.smartlabData = data
       this.observatoriesData = data.observatorios.filter((obs: any) => !obs.external)
-      for (const obs of this.observatoriesData) {
-        const dims = await YamlFetcherService.loadYaml("br/dimensao/"+obs.id)
-        obs.dimensions = dims.dimensoes
+      if (this.observatoriesData){
+        for (const obs of this.observatoriesData) {
+          const dims = await YamlFetcherService.loadYaml("br/dimensao/"+obs.id)
+          obs.dimensions = dims.dimensoes
+        }
       }
       const aboutData = await YamlFetcherService.loadYaml("br/about")
       this.aboutSmartlabData = aboutData
     },
     setCurrentObs (route: RouteLocationNormalizedLoaded) {
-      this.currentObsData = this.observatoriesData.find((obs: any) => route.fullPath.includes(obs.to))
-      if (this.currentObsData !== undefined) {
-        this.currentObsIdStr = this.currentObsData.id
+      this.currentObsData = this.observatoriesData?.find((obs: Observatory) => route.fullPath.includes(obs.to)) ?? null
+      if (this.currentObsData !== null) {
+        this.currentObsIdStr = this.currentObsData?.id ?? ""
         this.setCurrentDimension(route.query.dimensao ? route.query.dimensao.toString() : "")
       }
       else { 
         this.currentObsIdStr = "default"
         if (route.fullPath.includes("perfil")) { // Perfil
           this.currentObsData = {
+            id: "perfil",
+            blocked: false,
+            title: "Perfil",
             short_title: "Perfil",
-            title: "Perfil"
+            short_desc: "Perfil",
+            tooltip: "Perfil",
+            hash_tag: "",
+            to: "",
+            external: false,
+            app_icon: "",
+            rippleColor: "",
+            dimensions: []
           }
         } else if (route.fullPath.includes("mapasite")) { // Mapa do Site
           this.currentObsData = {
+            id: "mapasite",
+            blocked: false,
             short_title: "Mapa do Site",
-            title: "Mapa do Site"
+            title: "Mapa do Site",
+            short_desc: "Mapa do Site",
+            tooltip: "Mapa do Site",
+            hash_tag: "",
+            to: "",
+            external: false,
+            app_icon: "",
+            rippleColor: "",
+            dimensions: []
           }
         } else if (route.fullPath.includes("saibamais")) { // Sobre
           this.currentObsData = {
+            id: "saibamais",
+            blocked: false,
             short_title: "Sobre",
-            title: "Sobre"
+            title: "Sobre",
+            short_desc: "Sobre",
+            tooltip: "Sobre",
+            hash_tag: "",
+            to: "",
+            external: false,
+            app_icon: "",
+            rippleColor: "",
+            dimensions: []
           }
         } else {  //Home
           this.currentObsData = {
+            id: "home",
+            blocked: false,
             short_title: "",
-            title: ""
+            title: "",
+            short_desc: "",
+            tooltip: "",
+            hash_tag: "",
+            to: "",
+            external: false,
+            app_icon: "",
+            rippleColor: "",
+            dimensions: []
           }
         }
       }
     },
     setCurrentDimension(id: string = "") {
       if (id != "") {
-        this.currentDimData = this.currentObsData.dimensions.find((dim: any) => dim.id == id)
+        this.currentDimData = this.currentObsData?.dimensions.find((dim: any) => dim.id == id) ?? null
       } else {
-        this.currentDimData = this.currentObsData.dimensions.find((dim: any) => dim.default)
+        this.currentDimData = this.currentObsData?.dimensions.find((dim: any) => dim.default) ?? null
       }
-      this.currentDimIdStr = this.currentDimData.id
+      this.currentDimIdStr = this.currentDimData?.id ?? ""
     },
     async setLocalidade(idLocalidade: string) {
       let url = null
@@ -108,7 +150,7 @@ export const useMainStore = defineStore("main", {
       // this.$analysisUnitModel.setPlace(nm_var, localidade)
     },
     async getPlaces() {
-      const options: any[] = []
+      const options: Place[] = []
       options.push({
         id: 0,
         label: "Brasil",
@@ -197,7 +239,8 @@ export const useMainStore = defineStore("main", {
           to: "/localidade/" + municipios[indxMunicipio].cd_municipio_ibge_dv + "?",
           detail: "Município",
           icon: "location_on",
-          type: "place"
+          type: "place",
+          exclude_from: []
         })
       }
       this.placesData = options

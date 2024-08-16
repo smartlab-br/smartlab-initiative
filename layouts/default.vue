@@ -15,22 +15,23 @@
 
         <v-app-bar-title class="ml-2">
           <v-row
-            class="pa-0 align-center"
+            class="pa-0"
+            align="center"
           >
             <v-col
-              class="pr-2 pt-2 hidden-xs-only"
+              class="flex-grow-0 flex-shrink-1 pr-2 pt-2 hidden-xs-only"
             >
               <img
                 tabindex="20"
                 src="/icons/smartlab_labeled-30.png"
-                class="cursor-pointer"
+                class="cursor-pointer pa-3"
                 alt="Smartlab"
                 @click="pushRoute('/', false)"
                 @keyup.enter="pushRoute('/', false)"
               >
             </v-col>
             <v-col
-              class="pr-2 pt-2 hidden-sm-and-up"
+              class="flex-grow-0 flex-shrink-1 pr-2 pt-2 hidden-sm-and-up"
             >
               <img
                 tabindex="20"
@@ -47,24 +48,27 @@
               style="background-color:rgba(255,255,255,0.7)"
             />
             <v-col
-              class="line-height-1"
+              v-show="currentObs.title"
+              class="flex-grow-0 flex-shrink-1 line-height-1"
             >
-              <v-col
-                class="cursor-pointer pa-0 text-right"
-                @click="pushRoute((route && (route.path.indexOf('localidade') != -1)) ? '../' : (route && (route.path.indexOf('estudo') != -1 || route.path.indexOf('smartmap') != -1)) ? './' : '', false);"
-              >
-                {{ currentObs.title }}
-              </v-col>
-              <v-col
-                class="pa-0 text-caption text-right"
-              >
-                <a
-                  class="text-white"
-                  @click="pushRoute('https://www.instagram.com/smartlab_br/', true)"
+              <v-row>
+                <v-col
+                  class="cursor-pointer pa-0 text-right"
+                  @click="pushRoute((route && (route.path.indexOf('localidade') != -1)) ? '../' : (route && (route.path.indexOf('estudo') != -1 || route.path.indexOf('smartmap') != -1)) ? './' : '', false);"
                 >
-                  {{ currentObs.hash_tag? "#"+currentObs.hash_tag: "" }}
-                </a>
-              </v-col>
+                  {{ currentObs.title }}
+                </v-col>
+                <v-col
+                  class="pa-0 text-caption text-right"
+                >
+                  <a
+                    class="text-white"
+                    @click="pushRoute('https://www.instagram.com/smartlab_br/', true)"
+                  >
+                    {{ currentObs.hash_tag? "#"+currentObs.hash_tag: "" }}
+                  </a>
+                </v-col>
+              </v-row>
             </v-col>
             <v-divider
               v-show="localidade"
@@ -78,14 +82,18 @@
             -->
             <v-col
               v-if="localidade"
-              class="cursor-pointer line-height-1 pl-2"
+              class="line-height-1 pl-2 flex-grow-1 flex-shrink-0 "
             >
-              <v-col>{{ localidade.nm_localidade }}</v-col>
-              <v-col
-                class="pa-0 text-caption"
-              >
-                {{ localidade.nm_tipo }}
-              </v-col>
+              <v-row 
+                @click="focusChangePlace()"
+              > 
+                <v-col><span class="cursor-pointer">{{ localidade.nm_localidade }}</span></v-col>
+                <v-col
+                  class="pa-0 text-caption"
+                >
+                  {{ localidade.nm_tipo }}
+                </v-col>
+              </v-row>
             </v-col>
           </v-row>
         </v-app-bar-title>
@@ -156,13 +164,13 @@
                                 location="bottom"
                                 :text="search_item.tooltip">
                                 <template v-slot:activator="{ props }">
-                                  <v-icon
+                                  <!-- <v-icon
                                     v-if="search_item.icon"
                                     v-bind="props"
                                     small
                                     :color="ColorsService.getThemeFromId(search_item.id).primary"
                                     :innerHTML="search_item.icon"
-                                  />
+                                  /> -->
                                  <svg 
                                     v-if="search_item.app_icon"
                                     v-bind="props"
@@ -172,7 +180,7 @@
                                     role="presentation" 
                                     :fill="ColorsService.getThemeFromId(search_item.id).primary" 
                                     class="icon--inline" 
-                                    :title="search_item.shor_title">
+                                    :title="search_item.short_title">
                                     <use xmlns:xlink="http://www.w3.org/1999/xlink" :xlink:href="'/icons/sprite/coord-sprites.svg#' + search_item.app_icon" />
                                   </svg>                
                                 </template>
@@ -354,13 +362,13 @@
                 xl="11"
                 offset-xl="1"
               >
-                {{ smartlab.rodape.titulo }}
+                {{ smartlab.rodape.title }}
               </v-col>
               <v-col
                 cols="12"
               >
                 <img
-                  v-for="(footerImg, footerImgIndex) in smartlab.rodape.imagens"
+                  v-for="(footerImg, footerImgIndex) in smartlab.rodape.images"
                   :key="footerImgIndex"
                   :src="footerImg.src"
                   :class="footerImg.class"
@@ -458,6 +466,7 @@ import { AnalysisUnit } from "~/utils/model/analysisUnit"
 import { NavigationService } from "~/utils/service/singleton/navigation"
 import { storeToRefs } from "pinia"
 import { useRoute, useRouter } from "vue-router"
+import type { VAutocomplete } from "vuetify/components"
 
 export default {
   setup() {
@@ -473,13 +482,16 @@ export default {
     let auOptions = ref<any[]>([])
     const gsItemBusca = ref<string|null>(null)
     const gsLoadingStatusSearchOptions = ref("") // ("LOADING")
+    const autocompleteChangePlace = ref<VAutocomplete | null>(null)
 
     watch(
       () => observatories.value, // Função getter que retorna observatories.value
       async (newValue) => {
-        menuItems.value = newValue.slice() // Atualiza o valor de menuItems
-        if (menuItems.value) {
-          menuItems.value.unshift({ icon: "mdi-apps", short_title: "Início", to: "/"})
+        if (newValue){
+          menuItems.value = newValue.slice() // Atualiza o valor de menuItems
+          if (menuItems.value) {
+            menuItems.value.unshift({ icon: "mdi-apps", short_title: "Início", to: "/"})
+          }
         }
       }
     )
@@ -497,7 +509,9 @@ export default {
       ColorsService.changeTheme(store.currentObsId)
       ColorsService.getThemeFromId("des")
       getPlaces().then(() => {
-        auOptions.value = places.value.slice()
+        if (places.value) {
+          auOptions.value = places.value.slice()  
+        }
       })   
     })
 
@@ -512,6 +526,14 @@ export default {
 
     const pushRoute = (link: string, external?: boolean) => {
       NavigationService.pushRoute(router, link, external)
+    }
+
+    const focusChangePlace = () => {
+      if (autocompleteChangePlace.value) {
+        seen.value = true
+        autocompleteChangePlace.value .menu = true
+        autocompleteChangePlace.value.focus()
+      }
     }
 
     return {
@@ -529,7 +551,9 @@ export default {
       gsItemBusca,
       gsLoadingStatusSearchOptions,
       pushRoute,
-      smartlab
+      smartlab,
+      focusChangePlace,
+      autocompleteChangePlace
     }
   }
 }
