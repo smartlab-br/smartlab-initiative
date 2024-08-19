@@ -10,7 +10,7 @@ export { YamlFetcherService } from "./service/singleton/yamlFetcher"
 export { ChartBuilderService } from "./service/singleton/chartBuilder"
 export { GeneralChartBuilderService } from "./service/chart/generalChartBuilder"
 
-export { IDH } from ".//model/idh"
+export { IDH } from "./model/idh"
 export { Indicators } from "./model/indicators"
 export { AnalysisUnit } from "./model/analysisUnit"
 // export { Dimensions } from "./model/dimensions"

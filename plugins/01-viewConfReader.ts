@@ -11,12 +11,12 @@ const numberTransformService = new NumberTransformService()
 const objectTransformService = new ObjectTransformService()
 const indicators = new Indicators()
 
-export default defineNuxtPlugin((context: any) => {
+export default defineNuxtPlugin((_context: any) => {
   // const { app } = context
   return {
     provide: {
       errorMessage: "",
-      async loadYamlArray (currentStruct: any, yamlArray: any[], finalCbFunction: Function) {
+      async loadYamlArray (currentStruct: any, yamlArray: any[], finalCbFunction: (context: any) => void) {
 
         const result = await YamlFetcherService.loadYamlArray(currentStruct, yamlArray)
         finalCbFunction(result)
@@ -86,7 +86,7 @@ export default defineNuxtPlugin((context: any) => {
         // )
       },
 
-      fillDataStructure (structure: any, customParams: any, customFunctions: any, cbFunction: Function, addedParams: any) {
+      fillDataStructure (structure: any, customParams: any, customFunctions: any, cbFunction: (dataset: Record<string, any> | string, rules: Record<string, any>, structure:Record<string, any>, addedParams?: Record<string, any>, metadata?: Record<string, any>) => void, addedParams?: any) {
         const fnSendDataStructureError = this.sendDataStructureError
         const fnReformDataset = this.reformDataset
         if (structure !== null && structure !== undefined) {
@@ -190,8 +190,7 @@ export default defineNuxtPlugin((context: any) => {
                     fullDS,
                     structure.args,
                     structure,
-                    addedParams,
-                    null // Sem metadata nesses casos
+                    addedParams
                   )
                 }
               ).catch((error) => {
@@ -241,7 +240,7 @@ export default defineNuxtPlugin((context: any) => {
             )
           } else if (structure.preloaded) {
             // If the structure defines the usage of preloaded indicators.
-            if (this.hasOwnProperty(structure.preloaded.function) && structure.preloaded.function == "slice") {
+            if (Object.prototype.hasOwnProperty.call(this, structure.preloaded.function) && structure.preloaded.function === "slice") {
               cbFunction(
                 fnReformDataset(
                   indicators.slice(
@@ -346,8 +345,7 @@ export default defineNuxtPlugin((context: any) => {
                     fullDS,
                     structure.args,
                     structure,
-                    addedParams,
-                    null // Sem metadata nesses casos
+                    addedParams
                   )
                 }
               ).catch((error) => {
@@ -503,7 +501,7 @@ export default defineNuxtPlugin((context: any) => {
         return dataset
       },
 
-      autoFillLayout (base_object_list: any, rules: any, preloaded: any, addedParams: any = null, metadata: any = null) {
+      autoFillLayout (base_object_list: any, rules: any, _preloaded: any, addedParams: any = null, _metadata: any = null) {
         const localFunctions = (this as any).customFunctions
         if (base_object_list && base_object_list.length > 0) {
           const base_object = base_object_list[0]

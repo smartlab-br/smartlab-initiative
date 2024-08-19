@@ -19,7 +19,7 @@ export const useMainStore = defineStore("main", {
     async loadSmartlabData() {
       const data = await YamlFetcherService.loadYaml("br/observatorios")
       this.smartlabData = data
-      this.observatoriesData = data.observatorios.filter((obs: any) => !obs.external)
+      this.observatoriesData = data.observatories.filter((obs: any) => !obs.external)
       if (this.observatoriesData){
         for (const obs of this.observatoriesData) {
           const dims = await YamlFetcherService.loadYaml("br/dimensao/"+obs.id)

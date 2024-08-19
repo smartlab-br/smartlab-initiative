@@ -1,5 +1,5 @@
 
-import { IDH } from "~/utils/model/idh"
+import { IDH } from "./../../model/idh"
 import { DateFormatService } from "./dateFormat"
 import { NumberTransformService } from "./numberTransform"
 import { TextTransformService } from "./textTransform"

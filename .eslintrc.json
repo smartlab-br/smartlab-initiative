@@ -34,10 +34,13 @@
             "error",
             "never"
         ],
+        "@typescript-eslint/no-unused-vars": ["warn", { 
+            "argsIgnorePattern": "^_", // Ignora parâmetros que começam com _
+            "varsIgnorePattern": "^_" // Ignora variáveis que começam com _
+          }],
         "vue/multi-word-component-names": "off",
         "@typescript-eslint/no-explicit-any": "off",
         "@typescript-eslint/ban-types": "warn",
-        "@typescript-eslint/no-unused-vars": "warn",
         "no-prototype-builtins": "warn"
     }
 }

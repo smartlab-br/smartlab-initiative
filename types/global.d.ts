@@ -2,9 +2,9 @@ declare global {
 
   interface Smartlab {
     background_images: string[];
-    observatorios: Observatory[];
-    rodape: Footer;
-    secoes: Section[];
+    observatories: Observatory[];
+    footer: Footer;
+    sections: Section[];
   }
 
   interface Observatory {

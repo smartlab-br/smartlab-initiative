@@ -167,7 +167,7 @@ export default defineNuxtPlugin((context: any) => {
         document.getElementById(containerId)!.style.cursor = image
       },
 
-      async obsTETooltip (target: any, route: any, store: any, tooltip_list: string[] = [], removed_text_list: string[] = [], options: any = null) {
+      async obsTETooltip (target: any, route: any, store: any, _tooltip_list: string[] = [], _removed_text_list: string[] = [], options: any = null) {
         let text = ""
         if (target.options.rowData.cd_mun_ibge) { // Brasileiros ou Sobreviventes Atendidos pelo SUAS
           let url = "/te/indicadoresmunicipais/rerank?categorias=cd_mun_ibge,cd_uf,cd_indicador,nm_municipio_uf,nu_competencia_max,nu_competencia_min&valor=vl_indicador&agregacao=sum&filtros=nn-vl_indicador,and,in-cd_indicador-'te_ope'-'te_sit_trab_resgatados'-'te_nat'-'te_res'-'te_inspecoes'-'te_insp_rgt',and,post-eq-cd_mun_ibge-" + target.options.rowData.cd_mun_ibge
@@ -377,7 +377,7 @@ export default defineNuxtPlugin((context: any) => {
         // }))
       },
 
-      async obsTITooltip (target: any, route: any, store: any, tooltip_list: string[] = [], removed_text_list: string[] = [], options: any = null) {
+      async obsTITooltip (target: any, route: any, store: any, _tooltip_list: string[] = [], _removed_text_list: string[] = [], options: any = null) {
         let urlSinan = "/indicadoresmunicipais?categorias=nm_municipio_uf,ds_agreg_primaria,ds_fonte,nu_competencia_min,nu_competencia_max&valor=vl_indicador&agregacao=sum&filtros=eq-cd_indicador-'06_05_02_99',and,eq-cd_mun_ibge-" + target.options.rowData.cd_mun_ibge
         let urlCatMenores = "/sst/cats?categorias=1&valor=nm_municipio_uf,cd_municipio_ibge&agregacao=COUNT&filtros=lt-idade_cat-18,and,ne-idade_cat-0,and,eq-cd_municipio_ibge_dv-" + target.options.rowData.cd_mun_ibge
         let urlProvaBrasil = "/ti/provabrasil?categorias=nm_municipio_uf,nu_ano_prova_brasil-nu_competencia&valor=vl_indicador&agregacao=sum&filtros=nn-vl_indicador,and,ne-vl_indicador-0,and,eq-nu_ano_prova_brasil-2017,and,eq-cd_tr_fora-1,and,eq-cd_municipio_ibge_dv-" + target.options.rowData.cd_mun_ibge
@@ -474,7 +474,7 @@ export default defineNuxtPlugin((context: any) => {
         // }))
       },
 
-      async obsSSTTooltip (target: any, route: any, store: any, tooltip_list: string[] = [], removed_text_list: string[] = [], options: any = null) {
+      async obsSSTTooltip (target: any, route: any, store: any, _tooltip_list: string[] = [], _removed_text_list: string[] = [], options: any = null) {
         let text: string = ""
         if (options && options.clickable) {
           text += "<p class='text-xs-right ma-0'><a href='" + TooltipBuildingService.getUrlByPlace(target.options.rowData.cd_municipio_ibge_dv, route, store) + "' class='text-primary font-weight-black'>IR PARA</a></p>"
@@ -613,7 +613,7 @@ export default defineNuxtPlugin((context: any) => {
         }
       },
 
-      async obsTDTooltip (target: any, route: any, store: any, tooltip_list: string[] = [], removed_text_list: string[] = [], options: any = null) {
+      async obsTDTooltip (target: any, route: any, store: any, _tooltip_list: string[] = [], _removed_text_list: string[] = [], options: any = null) {
         let text = ""
         if (options && options.clickable) {
           text += "<p class='text-xs-right ma-0'><a href='" + TooltipBuildingService.getUrlByPlace(target.options.rowData.cd_municipio_ibge_dv, route, store) + "' class='text-primary font-weight-black'>IR PARA</a></p>"
@@ -720,7 +720,7 @@ export default defineNuxtPlugin((context: any) => {
         target.bindPopup(text).openPopup()
       },
 
-      async obsCovidMunicipioTooltip (target: any, route: any, store: any, tooltip_list: string[] = [], removed_text_list: string[] = [], options: any = null) {
+      async obsCovidMunicipioTooltip (target: any, route: any, store: any, _tooltip_list: string[] = [], _removed_text_list: string[] = [], options: any = null) {
         const urlCovidMunicipio = "/thematic/covidcasos?categorias=cd_municipio_ibge_dv,nm_municipio_uf,last_available_date,last_available_deaths,last_available_confirmed,last_available_death_rate&filtros=eq-place_type-'city',and,eq-is_last-TRUE,and,ne-latitude-0,and,ne-longitude-0,and,eq-cd_municipio_ibge_dv-" + target.options.rowData.cd_mun_ibge
         const urlDenunciaMPT = "/thematic/coviddenunciampt?categorias=cd_municipio_ibge_dv,nm_municipio_uf&agregacao=COUNT&filtros=eq-cd_municipio_ibge_dv-" + target.options.rowData.cd_mun_ibge
         // const urlAcoesMPT = "/thematic/coviddocumentompt?categorias=descricao_tipodocumento&agregacao=COUNT&filtros=in-tipodocumento-"ACPs"-"TAC"-"RECOMENDAÇÃO",and,eq-cd_municipio_ibge_dv-" + target.options.rowData.cd_mun_ibge

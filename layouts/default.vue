@@ -362,13 +362,13 @@
                 xl="11"
                 offset-xl="1"
               >
-                {{ smartlab.rodape.title }}
+                {{ smartlab.footer.title }}
               </v-col>
               <v-col
                 cols="12"
               >
                 <img
-                  v-for="(footerImg, footerImgIndex) in smartlab.rodape.images"
+                  v-for="(footerImg, footerImgIndex) in smartlab.footer.images"
                   :key="footerImgIndex"
                   :src="footerImg.src"
                   :class="footerImg.class"
@@ -388,7 +388,7 @@
               justify="center"
               class="footer-colab-text"
             >
-              {{ smartlab.rodape.apoio }}
+              {{ smartlab.footer.description }}
             </v-row>
           </v-col> -->
 
