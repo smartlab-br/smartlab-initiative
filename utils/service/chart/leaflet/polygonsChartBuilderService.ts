@@ -72,7 +72,7 @@ class PolygonsChartBuilderService extends LeafletChartBuilderService {
         const d3chrom = this.d3chrom
         const _L = this.L
 
-        legend.onAdd = function (map) {
+        legend.onAdd = function (_map: any) {
           const div = _L.DomUtil.create("div", "legend")
           let value = 0
           for (let i = range[0]; i <= range[1]; i = i + (range[1] - range[0]) / 20) {

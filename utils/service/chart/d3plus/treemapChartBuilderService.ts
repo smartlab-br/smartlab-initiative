@@ -167,11 +167,11 @@ export class TreemapChartBuilderService extends D3PlusChartBuilderService {
             return tooltip_function.apply(tooltip_context, [d, additionalOptions.route, additionalOptions.headers, removed_text_list, options])
           }
         },
-        tbody: (d: any) => {
+        tbody: (_d: any) => {
           const table: string[] = []
           return table
         },
-        title: (d: any) => ""
+        title: (_d: any) => ""
       })
 
     return viz

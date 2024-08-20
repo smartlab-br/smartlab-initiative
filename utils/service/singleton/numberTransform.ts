@@ -6,7 +6,7 @@ export class NumberTransformService {
     formato: string | null = null,
     casasDecimais: number | null = null,
     multiplier: number | null = 1,
-    collapse: {formato: string | undefined, casasDecimais: number | undefined, uiTags: boolean | undefined} | null = null,
+    collapse: {formato?: string, casasDecimais?: number, uiTags?: boolean} | null = null,
     signed: boolean = false,
     uiTags: boolean = true,
     null_value: number | string | null = null) {

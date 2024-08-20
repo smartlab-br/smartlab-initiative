@@ -1,7 +1,7 @@
 import { D3PlusChartBuilderService } from "./d3plusChartBuilder"
 
 export class BoxplotChartBuilderService extends D3PlusChartBuilderService {
-  prepareChart (viz: any, slicedDS: any, containerId: string, options: any, additionalOptions: any = {}) {
+  prepareChart (viz: any, slicedDS: any, containerId: string, options: any, _additionalOptions: any = {}) {
     const grafico = viz
       .container(containerId) // container DIV to hold the visualization
       .data(slicedDS) // data to use with the visualization
