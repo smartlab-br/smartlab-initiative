@@ -2,6 +2,9 @@ import { TextTransformService } from "../service/singleton/textTransform"
 import { UrlTransformService } from "../service/singleton/urlTransform"
 import { NumberTransformService } from "../service/singleton/numberTransform"
 import { ObjectTransformService } from "../service/singleton/objectTransform"
+import { useNuxtApp } from "#app"
+
+const { $basicFunctions } = useNuxtApp()
 
 interface DictDatasetEndpoints {
   [key: string]: {
@@ -247,10 +250,11 @@ export class Indicators {
     return tmpResult == current[prop]
   }
 
-  combineIndicators (sliced: any[], struct: any, functions = {}, place_id_field:string | null = null) {
+  combineIndicators (sliced: any[], struct: any, _functions = {}, place_id_field:string | null = null) {
     const result = []
     for (const indxCmb in struct) {
-      const fnCmb = functions[struct[indxCmb].function as keyof typeof functions] as Function
+      // const fnCmb = functions[struct[indxCmb].function as keyof typeof functions] as Function
+      const fnCmb = $basicFunctions[struct[indxCmb].function as keyof typeof $basicFunctions]
       let iLoop = 1
       let uniquePlaces: any[] = []
       if (place_id_field) {
