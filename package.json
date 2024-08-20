@@ -10,6 +10,7 @@
     "postinstall": "nuxt prepare",
     "test": "vitest",
     "lint": "eslint \"**/*.{ts,vue}\"",
+    "lint:fix": "eslint --fix \"**/*.{ts,vue}\"",
     "lint:quiet": "eslint --quiet \"**/*.{ts,vue}\""
   },
   "dependencies": {
