@@ -6,7 +6,7 @@ export class TextTransformService {
   // Adicionando uma assinatura de índice para permitir acesso dinâmico
   [index: string]: (...args: any[]) => void
 
-  applyInterpol(structure: any, customParams: any = {}, customFunctions: any | null = {}, base_object: any = null, cbInvalidate: any = null) {
+  applyInterpol(structure: any, customParams: any = {}, base_object: any = null, cbInvalidate: any = null) {
     const objectTransformService = new ObjectTransformService()
     const numberTransformService = new NumberTransformService()
 
@@ -30,9 +30,9 @@ export class TextTransformService {
           let iterArg = null
           if (struct.args[indx].function) {
             if (struct.args[indx].base_object && customParams[struct.args[indx].base_object]) {
-              iterArg = objectTransformService.runNamedFunction(struct.args[indx], customParams, customFunctions)
+              iterArg = objectTransformService.runNamedFunction(struct.args[indx], customParams)
             } else {
-              iterArg = objectTransformService.runNamedFunction(struct.args[indx], base_object, customFunctions)
+              iterArg = objectTransformService.runNamedFunction(struct.args[indx], base_object)
             }
           } else if (struct.args[indx].value) {
             iterArg = struct.args[indx].value
@@ -143,10 +143,9 @@ export class TextTransformService {
   applyInterpolReplaceDatasetParam(
     dataset_object: any,
     struct: any,
-    customFunctions: any[] = [],
     customParams: any = {},
     cbInvalidate: any = null) {
-    return this.applyInterpol(struct, customParams, customFunctions, dataset_object, cbInvalidate)
+    return this.applyInterpol(struct, customParams, dataset_object, cbInvalidate)
   }
 
   replaceArgs(strInput: string | null, args: any[] | null) {

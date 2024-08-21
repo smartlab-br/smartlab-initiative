@@ -3,12 +3,13 @@ import { IDH } from "./../../model/idh"
 import { DateFormatService } from "./dateFormat"
 import { NumberTransformService } from "./numberTransform"
 import { TextTransformService } from "./textTransform"
+import { basicFunctions } from "../../basicFunctions"
 
 export class ObjectTransformService {
   // Adicionando uma assinatura de índice para permitir acesso dinâmico
   [index: string]: (...args: any[]) => void
 
-  runNamedFunction(struct: any, base_object: any, localFunctions: any = null, initialArgs: any[] = [], customParams: any = {}) {
+  runNamedFunction(struct: any, base_object: any, initialArgs: any[] = [], customParams: any = {}) {
     // Runs function with args defines in yaml structure
     const args = initialArgs
 
@@ -35,14 +36,15 @@ export class ObjectTransformService {
         }
       } else if (struct.fn_args[indx].function) {
         // If arg has an internal function defined with args, apply it
-        args.push(this.runNamedFunction(struct.fn_args[indx], base_object, localFunctions))
+        args.push(this.runNamedFunction(struct.fn_args[indx], base_object))
       }
     }
 
     const funcName: string = struct.function
-    if (localFunctions && localFunctions[funcName]) {
+    const func = basicFunctions[funcName as keyof typeof basicFunctions]
+    if (typeof func === "function") {
       // Checks if the function exist in the localFunctions argument
-      return localFunctions[funcName].apply(null, args)
+      return func(...args)
     }
     if (["formatDate", "getWeekDay"].includes(funcName)) {
       const dateFormatService = new DateFormatService()
@@ -57,7 +59,6 @@ export class ObjectTransformService {
       return numberTransformService[funcName](...args)
     }
     if (["applyInterpolReplaceDatasetParam"].includes(struct.function)) {
-      args.push(localFunctions)
       args.push(customParams)
       const textTransformService = new TextTransformService()
       return textTransformService[struct.function](...args)

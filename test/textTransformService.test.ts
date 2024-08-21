@@ -33,38 +33,41 @@ describe("TextTransformService", async () => {
   })
 
   test("Testa avaliação de interpolação com função de interpolação sem parâmetros", () => {
-    const interpolFunctions = {
-      customize: () => { return "xpto" }
-    }
     const struct = {
       template: "Teste {0}",
       args: [
-        { function: "customize" }
+        { function: "concat_values",
+          fn_args: [
+            { fixed: "a" },
+            { fixed: "x" },
+            { fixed: "p" },
+            { fixed: "t" },
+            { fixed: "o" }
+          ]
+        }
       ]
     }
-    const result = textTransformService.applyInterpol(struct, {}, interpolFunctions)
-    expect(result).toEqual("Teste xpto")
+    const result = textTransformService.applyInterpol(struct)
+    expect(result).toEqual("Teste x p t o ")
   })
 
   test("Testa avaliação de interpolação com função de interpolação com parâmetros", () => {
-    const interpolFunctions = {
-      customize: (a: any, b: any) => { return a.toString() + b.toString() }
-    }
-    const base_object = { vl_indicador: "234" }
+    const base_object = { vl_indicador: "2 3 4" }
     const struct = {
       template: "Teste {0}",
       args: [
         {
-          function: "customize",
+          function: "concat_values",
           fn_args: [
+            { fixed: "a" },
             { fixed: "1" },
             { named_prop: "vl_indicador" }
           ]
         }
       ]
     }
-    const result = textTransformService.applyInterpol(struct, {}, interpolFunctions, base_object)
-    expect(result).toEqual("Teste 1234")
+    const result = textTransformService.applyInterpol(struct, {}, base_object)
+    expect(result).toEqual("Teste 1 2 3 4   ")
   })
 
   // test("Testa avaliação de interpolação com função geral com parâmetros", () => {
@@ -89,14 +92,14 @@ describe("TextTransformService", async () => {
   // })
 
   test("Testa falha na passagem de named_prop sem envio de base_object", () => {
-    const interpolFunctions = { customize: (a: any, b: any) => { return (a ? a.toString() : a) + (b ? b.toString() : b) } }
     // const base_object = { vl_indicador: "234" }
     const struct = {
       template: "Teste {0}",
       args: [
         {
-          function: "customize",
+          function: "concat_values",
           fn_args: [
+            { fixed: "a" },
             { fixed: "1" },
             { named_prop: "vl_indicador" }
           ]
@@ -104,8 +107,8 @@ describe("TextTransformService", async () => {
       ]
     }
 
-    const result = textTransformService.applyInterpol(struct, {}, interpolFunctions )
-    expect(result).toEqual("Teste 1undefined")
+    const result = textTransformService.applyInterpol(struct, {})
+    expect(result).toEqual("Teste 1 undefined   ")
   })
 
   test("Testa avaliação de interpolação com parâmetros diretos", () => {
@@ -118,7 +121,7 @@ describe("TextTransformService", async () => {
       ]
     }
 
-    const result = textTransformService.applyInterpol(struct, {}, null, base_object)
+    const result = textTransformService.applyInterpol(struct, {}, base_object)
     expect(result).toEqual("Teste 1: 234")
   })
 
@@ -131,7 +134,7 @@ describe("TextTransformService", async () => {
       ]
     }
 
-    const result = textTransformService.applyInterpol(struct, {}, null, base_object)
+    const result = textTransformService.applyInterpol(struct, {}, base_object)
     expect(result).toEqual("Teste link: <a href='teste.mpt.mp.br'>test site</a>")
   })
 
@@ -144,7 +147,7 @@ describe("TextTransformService", async () => {
       ]
     }
 
-    const result = textTransformService.applyInterpol(struct, {}, null, base_object)
+    const result = textTransformService.applyInterpol(struct, {}, base_object)
     expect(result).toEqual("Teste Sem Registros")
   })
 
@@ -157,7 +160,7 @@ describe("TextTransformService", async () => {
       ]
     }
 
-    const result = textTransformService.applyInterpol(struct, {}, null, base_object)
+    const result = textTransformService.applyInterpol(struct, {}, base_object)
     expect(result).toEqual("Teste 23,40<span>%</span>")
   })
 

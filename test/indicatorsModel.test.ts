@@ -9,45 +9,44 @@ describe("IndicatorsModel", async () => {
   const indicators = new Indicators()
 
   test("Retorna vazio quando nenhuma estrutura é passada para pegar um atributo de um indicador", () => {
-    const result = indicators.getAttributeFromIndicatorInstance(null, {}, {})
+    const result = indicators.getAttributeFromIndicatorInstance(null, {})
     expect(result).toEqual(null)
   })
 
   test("Retorna vazio quando nenhum indicador é passado para pegar um atributo", () => {
-    const result = indicators.getAttributeFromIndicatorInstance({}, {}, null)
+    const result = indicators.getAttributeFromIndicatorInstance({}, null)
     expect(result).toEqual(null)
   })
 
   test("Retorna o valor padrão de um atributo", () => {
-    const result = indicators.getAttributeFromIndicatorInstance({ default: "default" }, {}, null)
+    const result = indicators.getAttributeFromIndicatorInstance({ default: "default" }, null)
     expect(result).toEqual("default")
   })
 
   test("Verifica correta obtenção de atributo nomeado", () => {
     const indicador = { vl_indicador: 123.45 }
     const structure = { named_prop: "vl_indicador" }
-    const result = indicators.getAttributeFromIndicatorInstance(structure, {}, indicador)
+    const result = indicators.getAttributeFromIndicatorInstance(structure, indicador)
     expect(result).toEqual(123.45)
   })
 
   test("Verifica correta aplicação de função na obtenção de atributo", () => {
-    const customFunctions = { customize: (a: any, b: any) => { return a * b } }
     const indicador = { vl_indicador: 123.45 }
     const structure = {
-      function: "customize",
+      function: "calc_addition",
       fn_args: [
         { fixed: 2 },
         { named_prop: "vl_indicador" }
       ]
     }
-    const result = indicators.getAttributeFromIndicatorInstance(structure, customFunctions, indicador)
-    expect(result).toEqual(246.9)
+    const result = indicators.getAttributeFromIndicatorInstance(structure, indicador)
+    expect(result).toEqual(125.45)
   })
 
   test("Formata adequadamente um atributo de um indicador", () => {
     const indicador = { vl_indicador: 123.45 }
     const structure = { named_prop: "vl_indicador", format: "inteiro" }
-    const result = indicators.getAttributeFromIndicatorInstance(structure, {}, indicador)
+    const result = indicators.getAttributeFromIndicatorInstance(structure, indicador)
     expect(result).toEqual("123")
   })
 
@@ -56,7 +55,7 @@ describe("IndicatorsModel", async () => {
     const cbInvalid = vi.fn()
     const structure = { default: "default", required: true }
 
-    const result = indicators.getAttributeFromIndicatorInstance(structure, {}, null, cbInvalid)
+    const result = indicators.getAttributeFromIndicatorInstance(structure, null, cbInvalid)
     expect(result).toEqual("default")
     expect(cbInvalid).toHaveBeenCalled()
   })
@@ -66,16 +65,13 @@ describe("IndicatorsModel", async () => {
     const cbInvalid = vi.fn()
     const structure = { required: true }
 
-    const result = indicators.getAttributeFromIndicatorInstance(structure, {}, null, cbInvalid)
+    const result = indicators.getAttributeFromIndicatorInstance(structure, null, cbInvalid)
     expect(result).toEqual("Sem Registros")
     expect(cbInvalid).toHaveBeenCalled()
   })
 
   test("Combina indicadores de acordo com a estrutura", () => {
 
-    const funcs = {
-      incr: (a: number, b: number, c: number) => { return b / a * c }
-    }
     const ds = [
       { cd_indicador: "1", nu_competencia: 2099, vl_indicador: 1.8 },
       { cd_indicador: "1", nu_competencia: 2047, vl_indicador: 1 }
@@ -85,16 +81,15 @@ describe("IndicatorsModel", async () => {
         id: "cmb",
         desc: "combined",
         year: 2099,
-        function: "incr",
+        function: "calc_percentage",
         fn_args: [
           { id: "1", year: 2099 },
-          { id: "1", year: 2047 },
-          { fixed: 100 }
+          { id: "1", year: 2047 }
         ]
       }
     ]
 
-    const result = indicators.combineIndicators(ds, structure, funcs)
+    const result = indicators.combineIndicators(ds, structure)
     expect(result).toEqual([
       {
         cd_indicador: "cmb",
@@ -191,7 +186,7 @@ describe("IndicatorsModel", async () => {
     ]
     const invalidate = vi.fn()
 
-    const result = indicators.indicatorsToValueArray(args, {}, ds, invalidate)
+    const result = indicators.indicatorsToValueArray(args, ds, invalidate)
     expect(result).toEqual([
       1.8,
       1.8,

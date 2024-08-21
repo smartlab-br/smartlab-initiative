@@ -86,7 +86,7 @@ export default defineNuxtPlugin((_context: any) => {
         // )
       },
 
-      fillDataStructure (structure: any, customParams: any, customFunctions: any, cbFunction: (dataset: Record<string, any> | string, rules: Record<string, any>, structure:Record<string, any>, addedParams?: Record<string, any>, metadata?: Record<string, any>) => void, addedParams?: any) {
+      fillDataStructure (structure: any, customParams: any, cbFunction: (dataset: Record<string, any> | string, rules: Record<string, any>, structure:Record<string, any>, addedParams?: Record<string, any>, metadata?: Record<string, any>) => void, addedParams?: any) {
         const fnSendDataStructureError = this.sendDataStructureError
         const fnReformDataset = this.reformDataset
         if (structure !== null && structure !== undefined) {
@@ -107,14 +107,12 @@ export default defineNuxtPlugin((_context: any) => {
                   let dataset = fnReformDataset(
                     result.data.dataset,
                     structure.api.options,
-                    customFunctions,
                     customParams
                   )
                   if (structure.api_options) {
                     dataset = fnReformDataset(
                       dataset,
                       structure.api_options,
-                      customFunctions,
                       customParams
                     )
                   }
@@ -141,7 +139,6 @@ export default defineNuxtPlugin((_context: any) => {
                     fnReformDataset(
                       result.data.dataset,
                       structure.api[indexApi].options,
-                      customFunctions,
                       customParams
                     )
                   }).catch((error) => {
@@ -182,7 +179,6 @@ export default defineNuxtPlugin((_context: any) => {
                     fullDS = fnReformDataset(
                       fullDS,
                       structure.api_options,
-                      customFunctions,
                       customParams
                     )
                   }
@@ -203,7 +199,7 @@ export default defineNuxtPlugin((_context: any) => {
             // If the structure defines an API call, execute the
             // callback after the axios call.
             const fusionParams = Object.assign(customParams, addedParams.react)
-            const url = textTransformService.applyInterpol(structure.api_reactive, {}, customFunctions, fusionParams)
+            const url = textTransformService.applyInterpol(structure.api_reactive, {}, fusionParams)
             // replace comma (,) with \\, inside quotes
             // url = url.replace(/"([^"]*)+"/g, s => s.replace(/,/g, "\,"))
             $fetch(UrlTransformService.getApiUrl(url))
@@ -212,7 +208,6 @@ export default defineNuxtPlugin((_context: any) => {
                   fnReformDataset(
                     result.data.dataset,
                     structure.api_reactive.options,
-                    customFunctions,
                     customParams
                   ),
                   structure.args,
@@ -231,8 +226,7 @@ export default defineNuxtPlugin((_context: any) => {
             // Runs function with args defines in yaml structure
             cbFunction(
               objectTransformService.runNamedFunction(
-                structure, null,
-                Object.assign({}, customFunctions)
+                structure, null
               ),
               structure.args,
               structure,
@@ -245,11 +239,9 @@ export default defineNuxtPlugin((_context: any) => {
                 fnReformDataset(
                   indicators.slice(
                     structure.preloaded,
-                    customParams && customParams[structure.preloaded.prop] ? customParams[structure.preloaded.prop] : indicators.getGlobalDatasets()[structure.preloaded.prop].ds,
-                    Object.assign({}, customFunctions, customParams)
+                    customParams && customParams[structure.preloaded.prop] ? customParams[structure.preloaded.prop] : indicators.getGlobalDatasets()[structure.preloaded.prop].ds
                   ),
-                  structure.preloaded.options,
-                  customFunctions
+                  structure.preloaded.options
                 ),
                 structure.args,
                 structure,
@@ -261,10 +253,9 @@ export default defineNuxtPlugin((_context: any) => {
                   (this as any)[structure.preloaded.function](
                     structure.preloaded,
                     customParams && customParams[structure.preloaded.prop] ? customParams[structure.preloaded.prop] : indicators.getGlobalDatasets()[structure.preloaded.prop].ds,
-                    Object.assign({}, customFunctions, customParams)
+                    Object.assign({}, customParams)
                   ),
-                  structure.preloaded.options,
-                  customFunctions
+                  structure.preloaded.options
                 ),
                 structure.args,
                 structure,
@@ -275,20 +266,18 @@ export default defineNuxtPlugin((_context: any) => {
             if (!Array.isArray(structure.api)) {
               // If the structure defines a single API call, execute the
               // callback after the axios call.
-              const url = textTransformService.applyInterpol(structure.api, {}, customFunctions, customParams)
+              const url = textTransformService.applyInterpol(structure.api, {}, customParams)
               $fetch(UrlTransformService.getApiUrl(url))
                 .then((result: any) => {
                   let dataset = fnReformDataset(
                     result.data.dataset,
                     structure.api.options,
-                    customFunctions,
                     customParams
                   )
                   if (structure.api_options) {
                     dataset = fnReformDataset(
                       dataset,
                       structure.api_options,
-                      customFunctions,
                       customParams
                     )
                   }
@@ -310,12 +299,11 @@ export default defineNuxtPlugin((_context: any) => {
               for (const eachApi of structure.api) {
                 // const apiCall = this.$axiosCallSetupService.getAxiosOptions(textTransformService.applyInterpol(eachApi, {}, customFunctions, customParams))
                 // Cria um promise
-                const promise = $fetch(UrlTransformService.getApiUrl(textTransformService.applyInterpol(eachApi, {}, customFunctions, customParams)))
+                const promise = $fetch(UrlTransformService.getApiUrl(textTransformService.applyInterpol(eachApi, {}, customParams)))
                   .then((result:any) => {
                     fnReformDataset(
                       result.data.dataset,
                       eachApi.options,
-                      customFunctions,
                       customParams
                     )
                   }).catch((error) => {
@@ -337,7 +325,6 @@ export default defineNuxtPlugin((_context: any) => {
                     fullDS = fnReformDataset(
                       fullDS,
                       structure.api_options,
-                      customFunctions,
                       customParams
                     )
                   }
@@ -358,7 +345,6 @@ export default defineNuxtPlugin((_context: any) => {
               fnReformDataset(
                 structure.chart_data.dataset,
                 structure.reform_options,
-                customFunctions,
                 customParams
               ),
               structure.args,
@@ -378,7 +364,7 @@ export default defineNuxtPlugin((_context: any) => {
         this.errorMessage = error
       },
 
-      reformDataset (dataset: any, reformOptions: any, customFunctions: any, customParams: any = {}) {
+      reformDataset (dataset: any, reformOptions: any, customParams: any = {}) {
         if (reformOptions) {
           // Adiciona o mínimo e o máximo ao dataset
           if (reformOptions.recalc_min_max) {
@@ -400,11 +386,11 @@ export default defineNuxtPlugin((_context: any) => {
           }
 
           if (reformOptions.combine) {
-            dataset = dataset.concat(indicators.combineIndicators(dataset, reformOptions.combine, customFunctions, reformOptions.place_id_field))
+            dataset = dataset.concat(indicators.combineIndicators(dataset, reformOptions.combine, reformOptions.place_id_field))
 
             // Faz um slice, se declarado
             if (reformOptions.slice) {
-              dataset = indicators.slice(reformOptions.slice, dataset, {})
+              dataset = indicators.slice(reformOptions.slice, dataset)
             }
           }
 
@@ -436,7 +422,7 @@ export default defineNuxtPlugin((_context: any) => {
               if (reformOptions.calcs[indx].function) {
                 dataset[eachRow][nuField] = objectTransformService.runNamedFunction(
                   reformOptions.calcs[indx], dataset[eachRow],
-                  customFunctions, [dataset[eachRow]], customParams)
+                  [dataset[eachRow]], customParams)
               }
 
               if (reformOptions.calcs[indx].format) {
@@ -502,7 +488,6 @@ export default defineNuxtPlugin((_context: any) => {
       },
 
       autoFillLayout (base_object_list: any, rules: any, _preloaded: any, addedParams: any = null, _metadata: any = null) {
-        const localFunctions = (this as any).customFunctions
         if (base_object_list && base_object_list.length > 0) {
           const base_object = base_object_list[0]
           for (const ruleIndx in rules) {
@@ -512,7 +497,7 @@ export default defineNuxtPlugin((_context: any) => {
             } else if (rules[ruleIndx].named_prop) {
               prop = base_object[rules[ruleIndx].named_prop]
             } else if (rules[ruleIndx].function) {
-              prop = objectTransformService.runNamedFunction(rules[ruleIndx], base_object, localFunctions)
+              prop = objectTransformService.runNamedFunction(rules[ruleIndx], base_object)
             }
 
             if ((prop === null || prop === undefined) && rules[ruleIndx].default) {

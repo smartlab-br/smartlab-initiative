@@ -2,9 +2,7 @@ import { TextTransformService } from "../service/singleton/textTransform"
 import { UrlTransformService } from "../service/singleton/urlTransform"
 import { NumberTransformService } from "../service/singleton/numberTransform"
 import { ObjectTransformService } from "../service/singleton/objectTransform"
-import { useNuxtApp } from "#app"
-
-const { $basicFunctions } = useNuxtApp()
+import { basicFunctions } from "../basicFunctions"
 
 interface DictDatasetEndpoints {
   [key: string]: {
@@ -115,21 +113,21 @@ export class Indicators {
   //     })
   // }
 
-  indicatorsToValueArray (args: any, functions: any, indicators: any, cbInvalidate:any | null = null) {
+  indicatorsToValueArray (args: any, indicators: any, cbInvalidate:any | null = null) {
     let values: any[] = []
     for (const indx in args) {
       if (args[indx].id) {
-        values = values.concat(this.getIndicatorValueFromStructure(args[indx], functions, indicators, cbInvalidate))
+        values = values.concat(this.getIndicatorValueFromStructure(args[indx], indicators, cbInvalidate))
       } else if (args[indx].link) {
         values.push("<a href='" + args[indx].link + "'>" + args[indx].text + "</a>")
       } else {
-        values.push(this.getAttributeFromIndicatorInstance(args[indx], functions, indicators[0], cbInvalidate))
+        values.push(this.getAttributeFromIndicatorInstance(args[indx], indicators[0], cbInvalidate))
       }
     }
     return values
   }
 
-  getIndicatorValueFromStructure (structure: any, functions: any, indicators: any, cbInvalidate:any | null = null) {
+  getIndicatorValueFromStructure (structure: any, indicators: any, cbInvalidate:any | null = null) {
     for (const indxInd in indicators) {
       if (structure.id && structure.id !== indicators[indxInd].cd_indicador) {
         continue
@@ -137,7 +135,7 @@ export class Indicators {
       if (structure.year && structure.year !== indicators[indxInd].nu_competencia) {
         continue
       }
-      return this.getAttributeFromIndicatorInstance(structure, functions, indicators[indxInd], cbInvalidate)
+      return this.getAttributeFromIndicatorInstance(structure, indicators[indxInd], cbInvalidate)
     }
     if (structure.required && cbInvalidate !== null) {
       cbInvalidate.apply(null)
@@ -146,7 +144,7 @@ export class Indicators {
     }
   }
 
-  slice (struct: any, indicators: any, functions = {}): any {
+  slice (struct: any, indicators: any): any {
     let result = []
     for (const indxInd in indicators) {
       if (struct.id) {
@@ -175,7 +173,7 @@ export class Indicators {
     }
 
     if (struct.combine) {
-      result = result.concat(this.combineIndicators(result, struct.combine, functions))
+      result = result.concat(this.combineIndicators(result, struct.combine))
       if (struct.slice) {
         result = this.slice(struct.slice, result)
       }
@@ -250,11 +248,11 @@ export class Indicators {
     return tmpResult == current[prop]
   }
 
-  combineIndicators (sliced: any[], struct: any, _functions = {}, place_id_field:string | null = null) {
+  combineIndicators (sliced: any[], struct: any, place_id_field:string | null = null) {
     const result = []
     for (const indxCmb in struct) {
       // const fnCmb = functions[struct[indxCmb].function as keyof typeof functions] as Function
-      const fnCmb = $basicFunctions[struct[indxCmb].function as keyof typeof $basicFunctions]
+      const fnCmb = basicFunctions[struct[indxCmb].function as keyof typeof basicFunctions]
       let iLoop = 1
       let uniquePlaces: any[] = []
       if (place_id_field) {
@@ -320,7 +318,7 @@ export class Indicators {
     return result
   }
 
-  getAttributeFromIndicatorInstance (structure: any, functions: any, indicator: any, cbInvalidate: any | null = null) {
+  getAttributeFromIndicatorInstance (structure: any, indicator: any, cbInvalidate: any | null = null) {
     const objectTransformService = new ObjectTransformService()
     const textTransformService = new TextTransformService()
     const numberTransformService = new NumberTransformService()
@@ -328,7 +326,7 @@ export class Indicators {
     let value = null
     // Pega ou calcula o valor
     if (structure && structure.function) {
-      value = objectTransformService.runNamedFunction(structure, indicator, functions)
+      value = objectTransformService.runNamedFunction(structure, indicator)
     } else if (indicator && structure && structure.named_prop) {
       value = indicator[structure.named_prop]
     }
@@ -360,7 +358,7 @@ export class Indicators {
     return value
   }
 
-  melt (dataset: any[], value_field: string, layer_fields: string[], layer_field: string, label_fields: string[], label_field:string, value_function: Function | null) {
+  melt (dataset: any[], value_field: string, layer_fields: string[], layer_field: string, label_fields: string[], label_field:string, value_function: string | null) {
     const meltedDS = []
     for (const indxDS in dataset) {
       // Instantiates the base object for all layers in each dataset row
@@ -375,7 +373,8 @@ export class Indicators {
         nuRow[label_field] = label_fields[indxLayer]
 
         if (value_function) {
-          nuRow[value_field] = value_function(dataset[indxDS][layer_fields[indxLayer]])
+          const func = basicFunctions[value_function as keyof typeof basicFunctions]
+          nuRow[value_field] = func(dataset[indxDS][layer_fields[indxLayer]])
         } else {
           nuRow[value_field] = dataset[indxDS][layer_fields[indxLayer]]
         }
