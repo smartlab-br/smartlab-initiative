@@ -48,7 +48,7 @@ describe("TextTransformService", async () => {
       ]
     }
     const result = textTransformService.applyInterpol(struct)
-    expect(result).toEqual("Teste x p t o ")
+    expect(result).toEqual("Teste x p t o")
   })
 
   test("Testa avaliação de interpolação com função de interpolação com parâmetros", () => {
@@ -67,7 +67,7 @@ describe("TextTransformService", async () => {
       ]
     }
     const result = textTransformService.applyInterpol(struct, {}, base_object)
-    expect(result).toEqual("Teste 1 2 3 4   ")
+    expect(result).toEqual("Teste 1 2 3 4")
   })
 
   // test("Testa avaliação de interpolação com função geral com parâmetros", () => {
@@ -106,9 +106,9 @@ describe("TextTransformService", async () => {
         }
       ]
     }
-
+    
     const result = textTransformService.applyInterpol(struct, {})
-    expect(result).toEqual("Teste 1 undefined   ")
+    expect(result).toEqual("Teste 1 undefined")
   })
 
   test("Testa avaliação de interpolação com parâmetros diretos", () => {

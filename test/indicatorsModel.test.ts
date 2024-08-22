@@ -95,7 +95,7 @@ describe("IndicatorsModel", async () => {
         cd_indicador: "cmb",
         ds_indicador: "combined",
         nu_competencia: 2099,
-        vl_indicador: 55.55555555555556,
+        vl_indicador: 180,
         ds_agreg_primaria: undefined,
         ds_agreg_secundaria: undefined,
         ds_indicador_radical: "combined"

@@ -70,16 +70,14 @@ export const basicFunctions: { [key: string]: (...args: any[]) => any } = {
   calc_date_diff
 }
 
-
-function concat_values(
-  _indicator: any, 
-  value1: string,
-  value2: string,
-  value3: string = "",
-  value4: string = "",
-  value5: string = ""
-): string {
-  return `${value1} ${value2} ${value3} ${value4} ${value5}`
+function concat_values(_indicator: any, ...args: (string | number | undefined | null)[]): string {
+  return args
+    .map(item => {
+      if (item === undefined) return 'undefined';
+      if (item === null) return 'null';
+      return String(item); // Converte o item para string, se necessário
+    })
+    .join(' ');
 }
 
 function calc_subtraction(
