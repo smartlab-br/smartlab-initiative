@@ -120,7 +120,7 @@ function get_bin(
   value: number,
   bins: number[] = [10, 50, 100, 500],
   decimal: number = 0
-): string | number {
+): string {
   if (value === 0) {
     return "Nenhum"
   }
@@ -133,7 +133,7 @@ function get_bin(
       }
     }
   }
-  return value
+  return String(value)
 }
 
 function get_bin_faixa_etaria(
@@ -204,7 +204,10 @@ function get_faixa_etaria(
   return "> 60"
 }
 
-function get_frequencia_fluxo(_d: any, quantidade: number): string {
+function get_frequencia_fluxo(
+  _d: any, 
+  quantidade: number
+): string {
   if (quantidade <= 10) { 
     return "Baixa Frequência" 
   } // <= 10
@@ -266,7 +269,7 @@ function get_formatted_value(
   ds_indicador: string, 
   value: number | null, 
   type: string
-): string | number {
+): string {
   switch (type) {
   case "(Pessoas)":
   case "(Admitidos - Desligados)":

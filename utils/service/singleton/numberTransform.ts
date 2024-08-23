@@ -9,16 +9,17 @@ export class NumberTransformService {
     collapse: {formato?: string, casasDecimais?: number, uiTags?: boolean} | null = null,
     signed: boolean = false,
     uiTags: boolean = true,
-    null_value: number | string | null = null) {
+    null_value: number | string | null = null
+  ): string {
 
     if (Number.isNaN(valor) || valor === null || valor === undefined || valor === "NaN" || valor === "null" || valor === "undefined") {
       if (null_value) {
-        return null_value
+        return String(null_value)
       }
       return "-"
     // Se valor não númérico retorna valor
     } else if (isNaN(valor as number)) {
-      return valor
+      return String(valor)
     }
     valor = valor as number
 
