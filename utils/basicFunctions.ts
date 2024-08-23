@@ -73,11 +73,11 @@ export const basicFunctions: { [key: string]: (...args: any[]) => any } = {
 function concat_values(_indicator: any, ...args: (string | number | undefined | null)[]): string {
   return args
     .map(item => {
-      if (item === undefined) return 'undefined';
-      if (item === null) return 'null';
-      return String(item); // Converte o item para string, se necessário
+      if (item === undefined) return "undefined"
+      if (item === null) return "null"
+      return String(item) // Converte o item para string, se necessário
     })
-    .join(' ');
+    .join(" ")
 }
 
 function calc_subtraction(
