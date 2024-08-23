@@ -231,6 +231,8 @@
         :scrim="false"
         width="300px"
         temporary
+        @click="itemClick(item)"
+        @keyup.enter="itemClick(item)"
       >
         <v-list>
         <!-- Usando v-for para iterar sobre uma lista de itens -->
@@ -467,9 +469,11 @@ import { NavigationService } from "~/utils/service/singleton/navigation"
 import { storeToRefs } from "pinia"
 import { useRoute, useRouter } from "vue-router"
 import type { VAutocomplete } from "vuetify/components"
+import { useNuxtApp } from "#app"
 
 export default {
   setup() {
+    const { $snackManager } = useNuxtApp()
     const store = useMainStore()
     const { getPlaces } = store
     const { observatories, currentObs, localidade, places, smartlab } = storeToRefs(store)
@@ -520,7 +524,7 @@ export default {
         AnalysisUnit.searchAnalysisUnit(router, store, searchItem, idObservatorio, observatories)
       } catch (err) {
         console.log(err)
-        // this.snackAlert({ color: 'error', text: err })
+        // $snackManager.snackAlert({ color: 'error', text: err })
       }
     }
 
@@ -533,6 +537,14 @@ export default {
         seen.value = true
         autocompleteChangePlace.value .menu = true
         autocompleteChangePlace.value.focus()
+      }
+    }
+
+    const itemClick = (item: any) => {
+      if (!item.blocked) {
+        NavigationService.pushRoute(router, item.to, item.external)
+      } else {
+        // $snackManager.snackAlert({ color: "orange darken-4", text: "Esse observatório estará disponível em breve." })
       }
     }
 
@@ -553,7 +565,8 @@ export default {
       pushRoute,
       smartlab,
       focusChangePlace,
-      autocompleteChangePlace
+      autocompleteChangePlace,
+      itemClick
     }
   }
 }
