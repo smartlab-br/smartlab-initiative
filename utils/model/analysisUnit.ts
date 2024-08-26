@@ -1,3 +1,4 @@
+import type { Router } from "vue-router"
 import { NavigationService } from "../service/singleton/navigation"
 import { UrlTransformService } from "../service/singleton/urlTransform"
 // import { Smartlab } from "./smartlab"
@@ -335,7 +336,7 @@ export class AnalysisUnit {
     return localidade
   }
 
-  static searchAnalysisUnit(router: any, store: any, searchItem: any, idObservatorio: any = null, observatorios: any = null) {
+  static searchAnalysisUnit(router: Router, store: any, searchItem: Place, idObservatorio: string | null = null, observatorios: Observatory[] | null = null) {
     const route: any = router.currentRoute
 
     if (searchItem === null || searchItem === undefined) {
@@ -362,7 +363,7 @@ export class AnalysisUnit {
       if (route.query && route.query.dimensao) {
         url = url + "&dimensao=" + route.query.dimensao
       }
-    } else {
+    } else if (observatorios) {
       for (const obs of observatorios){
         if(searchItem.exclude_from && searchItem.exclude_from.includes(obs.id)){
           continue

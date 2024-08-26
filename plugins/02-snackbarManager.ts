@@ -6,7 +6,7 @@ import { ChartBuilderService } from "~/utils/service/singleton/chartBuilder"
 import { ColorsService } from "~/utils/service/singleton/colors"
 import { TooltipBuildingService } from "~/utils/service/singleton/tooltipBuilding"
 import { useTheme } from "vuetify"
-import { useRoute } from "vue-router"
+import { useRoute, type Router } from "vue-router"
 import { NumberTransformService } from "~/utils/service/singleton/numberTransform"
 
 const numberTransformService = new NumberTransformService()
@@ -109,9 +109,19 @@ export default defineNuxtPlugin((context: any) => {
             context: this,
             fnSendError: this.sendError,
             navigate: {
-              fnNav: (router: any, placeId: string) => {
+              fnNav: (router: Router, placeId: string) => {
                 try {
-                  fnNavigation(router, store, { id: placeId, to: "/localidade/" + placeId + "?" })
+                  const place: Place = {
+                    id: Number(placeId),
+                    to: "/localidade/" + placeId + "?",
+                    label: "",
+                    scope: "",
+                    detail: "",
+                    icon: "",
+                    type: "",
+                    exclude_from: []
+                  }
+                  fnNavigation(router, store, place)
                 } catch (err) {
                   fnSendError(err)
                 }

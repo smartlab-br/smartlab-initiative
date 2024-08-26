@@ -143,7 +143,7 @@
                   <v-row no-gutters>
                     <v-col>
                       <v-list-item-title
-                        @click="changeAnalysisUnit(router, item)"
+                        @click="changeAnalysisUnit(router, item.raw)"
                       >
                       {{ item.raw.label + (item.raw.scope === 'uf' ? ' (UF)' : '') }}
                       </v-list-item-title>
@@ -154,7 +154,7 @@
                           <v-col
                             v-for="(search_item, indxSearch) in observatories"
                             :key="'search_item_obs_' + indxSearch"
-                            @click="changeAnalysisUnit(router, item, search_item.id)"
+                            @click="changeAnalysisUnit(router, item.raw, search_item.id)"
                           >
                             <v-col
                               v-if="!search_item.blocked && (!item.raw.exclude_from || !item.raw.exclude_from.includes(search_item.id))"
@@ -231,8 +231,6 @@
         :scrim="false"
         width="300px"
         temporary
-        @click="itemClick(item)"
-        @keyup.enter="itemClick(item)"
       >
         <v-list>
         <!-- Usando v-for para iterar sobre uma lista de itens -->
@@ -242,6 +240,8 @@
             link
             :ripple="{ class: item.rippleColor }"
             :tabindex="drawer ? 10 + index : ''"
+            @click="itemClick(item)"
+            @keyup.enter="itemClick(item)"
           >
             <template v-slot:prepend>
               <v-icon
@@ -259,7 +259,7 @@
                 role="presentation" 
                 :fill="ColorsService.getThemeFromId(item.id).primary" 
                 class="icon--inline" 
-                :title="item.shor_title">
+                :title="item.short_title">
                 <use xmlns:xlink="http://www.w3.org/1999/xlink" :xlink:href="'/icons/sprite/coord-sprites.svg#' + item.app_icon" />
               </svg>                
               <v-tooltip
@@ -467,7 +467,7 @@ import { ColorsService } from "~/utils/service/singleton/colors"
 import { AnalysisUnit } from "~/utils/model/analysisUnit"
 import { NavigationService } from "~/utils/service/singleton/navigation"
 import { storeToRefs } from "pinia"
-import { useRoute, useRouter } from "vue-router"
+import { useRoute, useRouter, type Router } from "vue-router"
 import type { VAutocomplete } from "vuetify/components"
 import { useNuxtApp } from "#app"
 
@@ -479,7 +479,7 @@ export default {
     const { observatories, currentObs, localidade, places, smartlab } = storeToRefs(store)
     const router = useRouter()
     const route = useRoute()
-    const menuItems = ref<any[]>([])
+    const menuItems = ref<Observatory[]>([])
     const drawer = ref(false)
     let rail = ref(true)
     let seen = ref(false)
@@ -494,7 +494,19 @@ export default {
         if (newValue){
           menuItems.value = newValue.slice() // Atualiza o valor de menuItems
           if (menuItems.value) {
-            menuItems.value.unshift({ icon: "mdi-apps", short_title: "Início", to: "/"})
+            menuItems.value.unshift({
+              id: "default",
+              blocked: false,
+              title: "Início",
+              short_title: "Início", 
+              short_desc: "Início",
+              tooltip: "Início",
+              hash_tag: "",
+              external: false,
+              rippleColor: "",
+              dimensions: [],
+              icon: "mdi-apps", 
+              to: "/"})
           }
         }
       }
@@ -519,12 +531,12 @@ export default {
       })   
     })
 
-    const changeAnalysisUnit = (router: any, searchItem: any, idObservatorio:string|null = null) => {
+    const changeAnalysisUnit = (router: Router, searchItem: Place, idObservatorio:string|null = null) => {
       try {
-        AnalysisUnit.searchAnalysisUnit(router, store, searchItem, idObservatorio, observatories)
+        AnalysisUnit.searchAnalysisUnit(router, store, searchItem, idObservatorio, observatories.value)
       } catch (err) {
         console.log(err)
-        // $snackManager.snackAlert({ color: 'error', text: err })
+        $snackManager.snackAlert({ color: "error", text: err })
       }
     }
 

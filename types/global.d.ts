@@ -17,9 +17,10 @@ declare global {
     hash_tag: string;
     to: string;
     external: boolean;
-    app_icon: string;
     rippleColor: string;
     dimensions: Dimension[];
+    app_icon?: string;
+    icon?: string;
     section_title?: string;
     section_description?: string;
     section_image?: string;
