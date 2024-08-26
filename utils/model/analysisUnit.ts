@@ -1,6 +1,7 @@
 import type { Router } from "vue-router"
 import { NavigationService } from "../service/singleton/navigation"
 import { UrlTransformService } from "../service/singleton/urlTransform"
+import type { MainStore } from "~/store"
 // import { Smartlab } from "./smartlab"
 // import { useMainStore } from "~/store"
 // const store = useMainStore()
@@ -336,7 +337,7 @@ export class AnalysisUnit {
     return localidade
   }
 
-  static searchAnalysisUnit(router: Router, store: any, searchItem: Place, idObservatorio: string | null = null, observatorios: Observatory[] | null = null) {
+  static searchAnalysisUnit(router: Router, store: MainStore, searchItem: Place, idObservatorio: string | null = null, observatorios: Observatory[] | null = null) {
     const route: any = router.currentRoute
 
     if (searchItem === null || searchItem === undefined) {
@@ -347,7 +348,7 @@ export class AnalysisUnit {
     
     let url = ""
     if (idObservatorio != null) {
-      url = store.currentObs.to + searchItem.to
+      url = store.currentObs?.to + searchItem.to
       if(obsAtual && idObservatorio == obsAtual){
         if (route.query && route.query.dimensao) {
           url = url + "&dimensao=" + route.query.dimensao
@@ -358,7 +359,7 @@ export class AnalysisUnit {
         throw "A análise da localidade escolhida ("+ searchItem.detail +") não está disponível para esse observatório."
       }
 
-      url = store.currentObs.to + searchItem.to 
+      url = store.currentObs?.to + searchItem.to 
 
       if (route.query && route.query.dimensao) {
         url = url + "&dimensao=" + route.query.dimensao

@@ -1,4 +1,6 @@
+import type { MainStore } from "~/store"
 import { NumberTransformService } from "./numberTransform"
+import type { RouteLocationNormalizedLoaded } from "vue-router"
 // import { Smartlab } from "../../model/smartlab"
 // import { useMainStore } from "~/store"
 // const store = useMainStore()
@@ -18,7 +20,7 @@ export class TooltipBuildingService {
     return label
   }
   
-  static defaultTooltip(d: any, route: any, store: any, tooltip_list: any[] | null = [], removed_text_list: string[] = [], options: any = null) { 
+  static defaultTooltip(d: any, route: RouteLocationNormalizedLoaded, store: MainStore, tooltip_list: any[] | null = [], removed_text_list: string[] = [], options: any = null) { 
     let text = ""
     // let table = ""
     let value = ""
@@ -84,16 +86,16 @@ export class TooltipBuildingService {
     return text
   }
 
-  static defaultLeafletTooltip(target: any, route: any, tooltip_list: any[] = [], removed_text_list: string[] = [], options: any = null) { 
+  static defaultLeafletTooltip(target: any, route: RouteLocationNormalizedLoaded, store: MainStore, tooltip_list: any[] = [], removed_text_list: string[] = [], options: any = null) { 
     const d = target.options.rowData
     target.unbindPopup()
-    target.bindPopup(TooltipBuildingService.defaultTooltip(d, route, tooltip_list, removed_text_list, options)).openPopup()
+    target.bindPopup(TooltipBuildingService.defaultTooltip(d, route, store, tooltip_list, removed_text_list, options)).openPopup()
   }
 
-  static getUrlByPlace(idLocalidade: string, route: any, store: any){
+  static getUrlByPlace(idLocalidade: string, route: RouteLocationNormalizedLoaded, store: MainStore){
   
     let url = ""
-    url = store.currentObs.to + "/localidade/" + idLocalidade + "?"
+    url = store.currentObs?.to + "/localidade/" + idLocalidade + "?"
 
     if (route.query && route.query.dimensao) {
       url = url + "&dimensao=" + route.query.dimensao

@@ -260,3 +260,5 @@ export const useMainStore = defineStore("main", {
   },
 
 })
+
+export type MainStore = ReturnType<typeof useMainStore>

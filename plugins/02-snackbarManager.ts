@@ -6,8 +6,9 @@ import { ChartBuilderService } from "~/utils/service/singleton/chartBuilder"
 import { ColorsService } from "~/utils/service/singleton/colors"
 import { TooltipBuildingService } from "~/utils/service/singleton/tooltipBuilding"
 import { useTheme } from "vuetify"
-import { useRoute, type Router } from "vue-router"
+import { useRoute, type RouteLocationNormalizedLoaded, type Router } from "vue-router"
 import { NumberTransformService } from "~/utils/service/singleton/numberTransform"
+import type { MainStore } from "~/store"
 
 const numberTransformService = new NumberTransformService()
 
@@ -40,7 +41,7 @@ export default defineNuxtPlugin((context: any) => {
           app._context.emitter.emit("showAuthenticatioDialog")
         },
 
-        chartGen (store: any, id:string, chartType: string, structure: any, chartOptions: any, dataset: any, metadata: any, sectionIndex:number = 0) {
+        chartGen (store: MainStore, id:string, chartType: string, structure: any, chartOptions: any, dataset: any, metadata: any, sectionIndex:number = 0) {
           if (structure && chartOptions && validCharts.includes(chartType)) {
             if (chartOptions.from_api) {
               const idObservatorio = store.currentObsId
@@ -61,7 +62,7 @@ export default defineNuxtPlugin((context: any) => {
                   (this as any).sendDataStructureError("Falha ao buscar dados do card " + id)
                 })
             } else {
-              const additionalOptions = this.buildChartAdditionalOptions(store, id, chartType, structure, chartOptions, dataset, metadata, sectionIndex)
+              const additionalOptions = this.buildChartAdditionalOptions(store, chartType, structure, chartOptions, dataset, metadata, sectionIndex)
 
               return (new ChartBuilderService()).generateChart(
                 chartType,
@@ -73,9 +74,9 @@ export default defineNuxtPlugin((context: any) => {
             }
           }
         },
-        chartRegen (store: any, chartHandler: any, id: string, chartType: string, structure: any, chartOptions: any, dataset: any, metadata: any, sectionIndex: number = 0) {
+        chartRegen (store: MainStore, chartHandler: any, id: string, chartType: string, structure: any, chartOptions: any, dataset: any, metadata: any, sectionIndex: number = 0) {
           if (structure && chartOptions && validCharts.includes(chartType)) {
-            const additionalOptions = this.buildChartAdditionalOptions(store, id, chartType, structure, chartOptions, dataset, metadata, sectionIndex)
+            const additionalOptions = this.buildChartAdditionalOptions(store, chartType, structure, chartOptions, dataset, metadata, sectionIndex)
 
             return (new ChartBuilderService()).regenerateChart(
               chartHandler,
@@ -88,7 +89,7 @@ export default defineNuxtPlugin((context: any) => {
           }
         },
 
-        buildChartAdditionalOptions (store: any, id:string, chartType: string, structure: any, chartOptions: any, dataset: any, metadata: any, sectionIndex: number = 0) {
+        buildChartAdditionalOptions (store: MainStore, chartType: string, structure: any, chartOptions: any, dataset: any, metadata: any, sectionIndex: number = 0) {
           const fnNavigation = AnalysisUnit.searchAnalysisUnit
           let idAnalysisUnit = (this as any).selectedPlace ? (this as any).selectedPlace : ((this as any).customParams ? (this as any).customParams.idLocalidade : null)
           if (chartOptions.selected_place) {
@@ -179,7 +180,7 @@ export default defineNuxtPlugin((context: any) => {
           document.getElementById(containerId)!.style.cursor = image
         },
 
-        async obsTETooltip (target: any, route: any, store: any, _tooltip_list: string[] = [], _removed_text_list: string[] = [], options: any = null) {
+        async obsTETooltip (target: any, route: RouteLocationNormalizedLoaded, store: MainStore, _tooltip_list: string[] = [], _removed_text_list: string[] = [], options: any = null) {
           let text = ""
           if (target.options.rowData.cd_mun_ibge) { // Brasileiros ou Sobreviventes Atendidos pelo SUAS
             let url = "/te/indicadoresmunicipais/rerank?categorias=cd_mun_ibge,cd_uf,cd_indicador,nm_municipio_uf,nu_competencia_max,nu_competencia_min&valor=vl_indicador&agregacao=sum&filtros=nn-vl_indicador,and,in-cd_indicador-'te_ope'-'te_sit_trab_resgatados'-'te_nat'-'te_res'-'te_inspecoes'-'te_insp_rgt',and,post-eq-cd_mun_ibge-" + target.options.rowData.cd_mun_ibge
@@ -389,7 +390,7 @@ export default defineNuxtPlugin((context: any) => {
           // }))
         },
 
-        async obsTITooltip (target: any, route: any, store: any, _tooltip_list: string[] = [], _removed_text_list: string[] = [], options: any = null) {
+        async obsTITooltip (target: any, route: RouteLocationNormalizedLoaded, store: MainStore, _tooltip_list: string[] = [], _removed_text_list: string[] = [], options: any = null) {
           let urlSinan = "/indicadoresmunicipais?categorias=nm_municipio_uf,ds_agreg_primaria,ds_fonte,nu_competencia_min,nu_competencia_max&valor=vl_indicador&agregacao=sum&filtros=eq-cd_indicador-'06_05_02_99',and,eq-cd_mun_ibge-" + target.options.rowData.cd_mun_ibge
           let urlCatMenores = "/sst/cats?categorias=1&valor=nm_municipio_uf,cd_municipio_ibge&agregacao=COUNT&filtros=lt-idade_cat-18,and,ne-idade_cat-0,and,eq-cd_municipio_ibge_dv-" + target.options.rowData.cd_mun_ibge
           let urlProvaBrasil = "/ti/provabrasil?categorias=nm_municipio_uf,nu_ano_prova_brasil-nu_competencia&valor=vl_indicador&agregacao=sum&filtros=nn-vl_indicador,and,ne-vl_indicador-0,and,eq-nu_ano_prova_brasil-2017,and,eq-cd_tr_fora-1,and,eq-cd_municipio_ibge_dv-" + target.options.rowData.cd_mun_ibge
@@ -486,7 +487,7 @@ export default defineNuxtPlugin((context: any) => {
           // }))
         },
 
-        async obsSSTTooltip (target: any, route: any, store: any, _tooltip_list: string[] = [], _removed_text_list: string[] = [], options: any = null) {
+        async obsSSTTooltip (target: any, route: RouteLocationNormalizedLoaded, store: MainStore, _tooltip_list: string[] = [], _removed_text_list: string[] = [], options: any = null) {
           let text: string = ""
           if (options && options.clickable) {
             text += "<p class='text-xs-right ma-0'><a href='" + TooltipBuildingService.getUrlByPlace(target.options.rowData.cd_municipio_ibge_dv, route, store) + "' class='text-primary font-weight-black'>IR PARA</a></p>"
@@ -625,7 +626,7 @@ export default defineNuxtPlugin((context: any) => {
           }
         },
 
-        async obsTDTooltip (target: any, route: any, store: any, _tooltip_list: string[] = [], _removed_text_list: string[] = [], options: any = null) {
+        async obsTDTooltip (target: any, route: RouteLocationNormalizedLoaded, store: MainStore, _tooltip_list: string[] = [], _removed_text_list: string[] = [], options: any = null) {
           let text = ""
           if (options && options.clickable) {
             text += "<p class='text-xs-right ma-0'><a href='" + TooltipBuildingService.getUrlByPlace(target.options.rowData.cd_municipio_ibge_dv, route, store) + "' class='text-primary font-weight-black'>IR PARA</a></p>"
@@ -723,16 +724,16 @@ export default defineNuxtPlugin((context: any) => {
         // }))
         },
 
-        tooltipLinkGoogleStreetView (target: any, route: any, tooltip_list: string[] = [], removed_text_list: string[] = [], options: any = null) {
+        tooltipLinkGoogleStreetView (target: any, route: RouteLocationNormalizedLoaded, store:MainStore, tooltip_list: string[] = [], removed_text_list: string[] = [], options: any = null) {
           let text: string = ""
           const d: any = target.options.rowData
-          text = TooltipBuildingService.defaultTooltip(d, route, tooltip_list, removed_text_list, options)
+          text = TooltipBuildingService.defaultTooltip(d, route, store, tooltip_list, removed_text_list, options)
           text += "<p class='text-xs-right ma-0'><a href='https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=" + d[options.lat] + "," + d[options.long] + "' target='_blank' class='text-primary font-weight-black'>Google Street View</a></p>"
           target.unbindPopup()
           target.bindPopup(text).openPopup()
         },
 
-        async obsCovidMunicipioTooltip (target: any, route: any, store: any, _tooltip_list: string[] = [], _removed_text_list: string[] = [], options: any = null) {
+        async obsCovidMunicipioTooltip (target: any, route: RouteLocationNormalizedLoaded, store: MainStore, _tooltip_list: string[] = [], _removed_text_list: string[] = [], options: any = null) {
           const urlCovidMunicipio = "/thematic/covidcasos?categorias=cd_municipio_ibge_dv,nm_municipio_uf,last_available_date,last_available_deaths,last_available_confirmed,last_available_death_rate&filtros=eq-place_type-'city',and,eq-is_last-TRUE,and,ne-latitude-0,and,ne-longitude-0,and,eq-cd_municipio_ibge_dv-" + target.options.rowData.cd_mun_ibge
           const urlDenunciaMPT = "/thematic/coviddenunciampt?categorias=cd_municipio_ibge_dv,nm_municipio_uf&agregacao=COUNT&filtros=eq-cd_municipio_ibge_dv-" + target.options.rowData.cd_mun_ibge
           // const urlAcoesMPT = "/thematic/coviddocumentompt?categorias=descricao_tipodocumento&agregacao=COUNT&filtros=in-tipodocumento-"ACPs"-"TAC"-"RECOMENDAÇÃO",and,eq-cd_municipio_ibge_dv-" + target.options.rowData.cd_mun_ibge
@@ -800,7 +801,7 @@ export default defineNuxtPlugin((context: any) => {
           // }))
         },
 
-        obsCustomTooltip (target: any, route: any, tooltip_list: string[] = [], removed_text_list: string[] = [], options: any = null) {
+        obsCustomTooltip (target: any, route: RouteLocationNormalizedLoaded, tooltip_list: string[] = [], removed_text_list: string[] = [], options: any = null) {
           const params = Object.assign({}, (this as any).customParams, { tooltipLocalidade: target.options.rowData.cd_municipio_ibge_dv })
           app.fillDataStructure(
             options.tooltip_data, params,
@@ -817,11 +818,11 @@ export default defineNuxtPlugin((context: any) => {
           addedParams.target.bindPopup(text).openPopup()
         },
 
-        obsCovidRegicTooltip (target: any, _route: any, _tooltip_list: string[] = [], _removed_text_list: string[] = [], _options: any = null) {
+        obsCovidRegicTooltip (target: any, _route: RouteLocationNormalizedLoaded, _tooltip_list: string[] = [], _removed_text_list: string[] = [], _options: any = null) {
           this.obsCovidRegicTextTooltip(target)
         },
 
-        obsCovidRegicUTITooltip (target: any, _route: any, _tooltip_list: string[] = [], _removed_text_list: string[] = [], _options: any = null) {
+        obsCovidRegicUTITooltip (target: any, _route: RouteLocationNormalizedLoaded, _tooltip_list: string[] = [], _removed_text_list: string[] = [], _options: any = null) {
           this.obsCovidRegicTextTooltip(target, true)
         },
 
