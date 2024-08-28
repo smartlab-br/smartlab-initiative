@@ -62,7 +62,6 @@
                   class="pa-0 text-caption text-right"
                 >
                   <a
-                    class="text-white"
                     @click="pushRoute('https://www.instagram.com/smartlab_br/', true)"
                   >
                     {{ currentObs.hash_tag? "#"+currentObs.hash_tag: "" }}
@@ -214,7 +213,7 @@
             >Alterar Localidade</v-tooltip>
         </v-btn>
           <a
-            class="text-white mx-2"
+            class="mx-2"
             @click="pushRoute('https://www.instagram.com/smartlab_br/', true)"
           >
             <font-awesome-icon icon="fa-brands fa-instagram" class="fa-lg"/>
@@ -284,21 +283,8 @@
         </v-list>
       </v-navigation-drawer>
       <v-main>
-        <v-container fluid >
+        <v-container class="pa-0" fluid >
         <v-responsive class="d-flex align-center text-center fill-height">
-          <v-row class="d-flex align-center justify-center">
-            <v-col cols="auto"> <v-btn color="primary"> Primary </v-btn> </v-col>
-            <v-col cols="auto">
-              <v-btn color="secondary"> Secondary </v-btn>
-            </v-col>
-            <v-col cols="auto">
-              <v-btn color="accent"> Accent </v-btn>
-            </v-col>
-            <v-col cols="auto">
-              <div>
-              </div>
-            </v-col>
-          </v-row>
           <v-row class="d-flex align-center justify-center">
             <v-col cols="auto">
               <slot />
@@ -310,7 +296,6 @@
     <client-only>
       <v-footer 
         :color="ColorsService.getCurrentTheme().primary"
-        class="white--text"
         padless
       >
         <v-container
@@ -332,7 +317,6 @@
             sm="1"
           >
             <a
-              class="white--text"
               @click="pushRoute('/saibamais/smartlab', false)"
             >
               <img
@@ -406,19 +390,19 @@
             sm="6"
           >
             <a
-              class="white--text mr-2"
+              class="mr-2"
               @click="pushRoute('https://www.instagram.com/smartlab_br/', true)"
             >
               <font-awesome-icon icon="fa-brands fa-instagram" class="fa-lg" title="Instagram" />
             </a>
             <a
-              class="white--text mr-2"
+              class="mr-2"
               @click="pushRoute('https://github.com/smartlab-br', true)"
             >
               <font-awesome-icon icon="fa-brands fa-github" class="fa-lg" title="GitHub" />
             </a>
             <a
-              class="white--text mr-2"
+              class="mr-2"
               @click="pushRoute('https://hub.docker.com/u/mptrabalho', true)"
             >
               <font-awesome-icon icon="fa-brands fa-docker" class="fa-lg" title="Docker" />
@@ -439,13 +423,12 @@
               Licenças
             </div>
             <a
-              class="white--text mx-2"
+              class="mx-2"
               @click="pushRoute('https://creativecommons.org/licences/by-nc-sa/4.0/', true)"
             >
               <font-awesome-icon icon="fa-brands fa-creative-commons" class="fa-lg" title="CC BY 4.0" />
             </a>
             <a
-              class="white--text"
               @click="pushRoute('https://opensource.org/licenses/MIT', true)"
             >
               <font-awesome-icon icon="fa-brands fa-osi" class="fa-lg" title="MIT - Open Source Initiative" />
