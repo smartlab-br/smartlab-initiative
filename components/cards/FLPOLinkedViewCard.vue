@@ -3,8 +3,8 @@
       v-ripple
       class="linked-view-card elevation-5"
       :ripple="{ class: rippleColor }"
-      @click="blocked ? snackBlocked() : pushRoute(router, to, external)"
-      @keyup.enter="blocked ? snackBlocked() : pushRoute(router, to, external)"
+      @click="blocked ? snackBlocked() : NavigationService.pushRoute(router, to, external)"
+      @keyup.enter="blocked ? snackBlocked() : NavigationService.pushRoute(router, to, external)"
     >
       <v-img
         :tabindex="indexTab"
@@ -27,7 +27,7 @@
               <v-col class="pa-0" cols="12">
                 <div
                   :class="detail ? 'linked-view-icon-container' : 'text-xs-center'"
-                  @click="blocked ? snackBlocked() : pushRoute($router, to, external)"
+                  @click="blocked ? snackBlocked() : NavigationService.pushRoute($router, to, external)"
                 >
                   <v-btn
                     v-if="icon || appIcon"
@@ -73,7 +73,7 @@
                 >
                   <div
                     class="caption px-3 pb-4 pt-2 mt-4 text-xs-center body-1"
-                    @click="blocked ? snackBlocked() : pushRoute($router, to, external)"
+                    @click="blocked ? snackBlocked() : NavigationService.pushRoute($router, to, external)"
                   >
                     {{ detail.fixed }}
                   </div>
@@ -138,7 +138,6 @@ const props = defineProps({
 })
 
 const router = useRouter()
-const pushRoute = NavigationService.pushRoute
 // Computed properties
 const tagTextColor = computed(() => {
   return props.tagColor === "warning" ? "#000" : "#FFF"

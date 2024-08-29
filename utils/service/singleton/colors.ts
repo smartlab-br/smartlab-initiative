@@ -55,7 +55,7 @@ export class ColorsService {
 
   static getThemeFromId (id: string) {
     const themes = useTheme().computedThemes.value
-    if (id) {
+    if (id && themes[id]) {
       return Object.assign({}, themes[id].colors ? themes[id].colors : themes["default"].colors)
     } else {
       return Object.assign({}, themes["default"].colors)

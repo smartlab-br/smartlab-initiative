@@ -59,7 +59,7 @@ import { TextTransformService } from "~/utils/service/singleton/textTransform"
 import { NavigationService } from "~/utils/service/singleton/navigation"
 import { useRouter } from "vue-router"
 import { AnalysisUnit } from "~/utils/model/analysisUnit"
-
+import { VTreeview } from "vuetify/labs/VTreeview"
 
 const menu = ref(false)
 const search_site = ref("")

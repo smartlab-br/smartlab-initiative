@@ -38,12 +38,12 @@
             </v-row>
           </v-col>
           <v-row
-            v-if="observatories"
+            v-if="smartlab"
             class="px-5"
             :class="{'justify-center': xlAndUp }"
           >
             <v-col
-              v-for="(observatorio, indxObs) in observatories"
+              v-for="(observatorio, indxObs) in smartlab.observatories"
               :key="'linked_card_obs_' + indxObs"
               class="pa-3"
               :cols="12"
