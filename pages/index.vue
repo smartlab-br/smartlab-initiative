@@ -150,7 +150,7 @@
 <script lang="ts">
 import { useDisplay } from "vuetify"
 import { useMainStore } from "~/store"
-import { onMounted, ref } from "vue"
+import { onMounted, ref, watchEffect } from "vue"
 import { storeToRefs } from "pinia"
 import { NavigationService } from "~/utils/service/singleton/navigation"
 import { useRoute, useRouter } from "vue-router"
@@ -189,6 +189,14 @@ export default {
         : ""
     })
 
+    const resizeFirstSection = () => {
+      if (mdAndUp.value) {
+        displayHeight.value = "min-height:" + (window.innerHeight - 64) + "px"
+      } else {
+        displayHeight.value = "height:auto"
+      }
+    }
+
     watch(
       () => smartlab.value, // Função getter que retorna observatories.value
       async (newValue) => {
@@ -201,24 +209,18 @@ export default {
       }
     )
 
+    watchEffect(() => {
+      resizeFirstSection()
+    })
+
     onMounted(() => {
       setInterval(setParallaxFile, 20000)
-      resizeFirstSection()
       // if (smAndDown.value) {
       //   obsMaxSlice.value = 11;
       //   obsSlice.value = 0;
       //   obsSliceSize.value = 1;
       // }
     })
-
-    const resizeFirstSection = () => {
-      console.log(useDisplay())
-      if (!mdAndUp.value) {
-        displayHeight.value = "height:auto"
-      } else {
-        displayHeight.value = "min-height:" + (window.innerHeight - 64) + "px"
-      }
-    }
 
     const setParallaxFile = () => {
       isFading.value = true

@@ -586,6 +586,7 @@ export default {
 
   .animated-background-row {
     min-height: 700px;
+    height: 100%;
     background-color: black;
     position: relative; 
     overflow: hidden;
