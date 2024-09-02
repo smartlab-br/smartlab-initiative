@@ -315,6 +315,7 @@ export default {
   .obs_container{
     background-size: cover;
     background-position: top;
+    color: white;
   }
   .section {
     min-height: 95vh;

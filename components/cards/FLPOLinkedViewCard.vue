@@ -156,6 +156,7 @@ const snackBlocked = () => {
   <style scoped>
     .linked-view-card {
       display: block;
+      color: white
     }
   
     .linked-view-card:hover {

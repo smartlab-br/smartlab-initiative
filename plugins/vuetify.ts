@@ -17,9 +17,9 @@ export default defineNuxtPlugin((app) => {
           colors: {
             primary: colors.grey.darken4,
             secondary: colors.grey.darken3,
-            surface: "#FFFFFF",
-            "on-surface": "#FFFFFF",
-            "on-background": "#FFFFFF",
+            // surface: "#FFFFFF",
+            // "on-surface": "#FFFFFF",
+            // "on-background": "#FFFFFF",
             accent: colors.cyan.accent1,
             error: colors.red.base,
             warning: colors.amber.base,
