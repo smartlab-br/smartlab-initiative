@@ -2,24 +2,41 @@
   <v-container>
     <v-row>
       <v-col>
-        <v-menu allow-overflow offset v-model="menu" activator="parent">
-          <v-text-field ref="searchText" v-model="search_site" label="Pesquisa por Tema" variant="outlined"
-            density="compact" class="search-text" prepend-inner-icon="mdi-magnify" @input="handleSearch"
-            @keyup.enter="menu = true" />
-
+        <v-text-field 
+          ref="searchText" 
+          v-model="search_site" 
+          label="Pesquisa por Tema" 
+          variant="outlined"
+          density="compact" 
+          class="search-text" 
+          prepend-inner-icon="mdi-magnify" 
+          @input="handleSearch"
+          @keyup.enter="menu = true" 
+        />
+        <v-menu 
+          v-if="items_site.length > 0"
+          allow-overflow 
+          offset 
+          v-model="menu" 
+          activator="parent"
+        >
           <v-card class="treeview-card">
             <v-card-text>
-              <v-treeview ref="tree" :items="items_site" :search="search_site" v-model:open="open"
-                :filter="searchFilter">
-                <template #label="{ item }">
+              <v-treeview 
+                ref="tree" 
+                v-model:open="open"
+                :items="items_site" 
+                :search="search_site" 
+                :filter="searchFilter"
+                class="treeview-card-item">
+                <template v-slot:prepend="{ item }">
                   <v-row>
                     <v-col class="d-flex" cols="1">
                       <svg 
                         v-if="item.type === 'observatorio'"
-                        v-bind="props"
-                        viewBox="0 0 16 16" 
-                        width="16" 
-                        height="16" 
+                        viewBox="0 0 24 24" 
+                        width="24" 
+                        height="24" 
                         role="presentation" 
                         :fill="'white'" 
                         class="icon--inline" 
@@ -83,11 +100,12 @@ function searchFilter(item, search) {
 }
 
 function handleSearch(input) {
-  if (input) {
-    treeRef.value.updateAll(true)
-  } else {
-    treeRef.value.updateAll(false)
-  }
+  // if (input) {
+  //   treeRef.value.updateAll(true)
+  // } else {
+  //   treeRef.value.updateAll(false)
+  // }
+  console.log("handleSearch", input)
 }
 
 function goToItem(url) {
@@ -129,5 +147,9 @@ function goToItem(url) {
   opacity: 0.9;
   max-height: 400px;
   overflow-y: auto;
+}
+
+.treeview-card-item {
+  background-color: #212121 !important;
 }
 </style>
