@@ -61,7 +61,6 @@
                 :ripple-color="ColorsService.getThemeFromId(observatorio.id).primary"
                 title-color="white"
                 :blocked="observatorio.blocked"
-                @showSnackbar="$snackManager.snackAlert"
               />
             </v-col>
           </v-row>
@@ -101,7 +100,6 @@
                 v-for="(miniCard, indexMinicard) in section.complement.minicards"
                 :key="'minicard_'+indexMinicard"
                 :structure="miniCard"
-                @showSnackbar="$snackManager.snackAlert"
               /> -->
               <!-- <v-row
                 v-for="(image, indexImage) in section.complement.images"
@@ -156,11 +154,10 @@ import { onMounted, ref } from "vue"
 import { storeToRefs } from "pinia"
 import { NavigationService } from "~/utils/service/singleton/navigation"
 import { useRoute, useRouter } from "vue-router"
-import { useNuxtApp } from "#app"
+// import { useNuxtApp } from "#app"
 
 export default {
   setup() {
-    const { $snackManager } = useNuxtApp()
     const store = useMainStore()
     const router = useRouter()
     const route = useRoute()
@@ -251,8 +248,7 @@ export default {
       backgroundVisible,
       currentParallax,
       smAndDown,
-      xlAndUp,
-      $snackManager
+      xlAndUp
     }
   }
 }

@@ -291,6 +291,7 @@
             </v-col>
           </v-row>
         </v-responsive>
+        <GlobalSnackbar />
       </v-container>
     </v-main>
     <client-only>
@@ -446,18 +447,19 @@
 <script lang="ts">
 import { onMounted, watch, ref } from "vue"
 import { useMainStore } from "~/store"
+import { useSnackbarStore } from "~/store/snackbar"
 import { ColorsService } from "~/utils/service/singleton/colors"
 import { AnalysisUnit } from "~/utils/model/analysisUnit"
 import { NavigationService } from "~/utils/service/singleton/navigation"
 import { storeToRefs } from "pinia"
 import { useRoute, useRouter, type Router } from "vue-router"
 import type { VAutocomplete } from "vuetify/components"
-// import { useNuxtApp } from "#app"
+
 
 export default {
   setup() {
-    // const { $snackManager } = useNuxtApp()
     const store = useMainStore()
+    const snackbar = useSnackbarStore()   
     const { getPlaces } = store
     const { observatories, currentObs, localidade, places, smartlab } = storeToRefs(store)
     const router = useRouter()
@@ -515,16 +517,17 @@ export default {
     })
 
     const changeAnalysisUnit = (router: Router, searchItem: Place, idObservatorio:string|null = null) => {
-      try {
-        AnalysisUnit.searchAnalysisUnit(router, store, searchItem, idObservatorio, observatories.value)
-      } catch (err) {
-        console.log(err)
-        snackAlert({ color: "error", text: err })
-      }
+      snackAlert({ color: "warning", text: `${idObservatorio} - ${searchItem.label}` })
+      // try {
+      //   AnalysisUnit.searchAnalysisUnit(router, store, searchItem, idObservatorio, observatories.value)
+      // } catch (err) {
+      //   console.log(err)
+      //   snackAlert({ color: "error", text: err })
+      // }
     }
 
     const snackAlert = (params:{color: string, text: any}) => {
-      console.log("SnackAlert", params)
+      snackbar.showSnackbar(params)
     }
 
     const pushRoute = (link: string, external?: boolean) => {
@@ -543,7 +546,7 @@ export default {
       if (!item.blocked) {
         NavigationService.pushRoute(router, item.to, item.external)
       } else {
-        snackAlert({ color: "orange darken-4", text: "Esse observatório estará disponível em breve." })
+        snackAlert({ color: "orange-darken-4", text: "Esse observatório estará disponível em breve." })
       }
     }
 

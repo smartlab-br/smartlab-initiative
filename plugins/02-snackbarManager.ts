@@ -21,17 +21,17 @@ export default defineNuxtPlugin((context: any) => {
   return {
     provide: {
       snackManager :{
-        sendError (err: any) {
-          if (typeof err === "string") {
-            app._context.emitter.emit("showSnackbar", { color: "error", text: err })
-          } else {
-            app._context.emitter.emit("showSnackbar", { color: "error", text: "Houve uma falha. - " + err.message })
-          }
-        },
+        // sendError (err: any) {
+        //   if (typeof err === "string") {
+        //     app._context.emitter.emit("showSnackbar", { color: "error", text: err })
+        //   } else {
+        //     app._context.emitter.emit("showSnackbar", { color: "error", text: "Houve uma falha. - " + err.message })
+        //   }
+        // },
 
-        snackAlert (params: any) {
-          app._context.emitter.emit("showSnackbar", params)
-        },
+        // snackAlert (params: any) {
+        //   app._context.emitter.emit("showSnackbar", params)
+        // },
 
         openBugDialog (cardTitle: any) {
           app._context.emitter.emit("showBugDialog", cardTitle)
