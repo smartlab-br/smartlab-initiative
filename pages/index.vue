@@ -6,21 +6,21 @@
         class="first-section pa-0"
         :style="displayHeight"
       >
-        <transition v-if="parallaxFile" name="fade">
-          <v-row
-            v-if="backgroundVisible"
-            class="bg-zoom"
-            height="auto"
-            :style="currentParallax"
-          />
-        </transition>
-        <v-row class="bg-home-shadow ma-0" />
+        <!-- <v-row class="bg-home-shadow ma-0" /> -->
         <v-row
           align="center"
           justify="center"
-          class="parallax-content-home pa-0"
+          class="animated-background-row pa-5"
         >
-          <v-col cols="12" class="text-center py-4 my-5">
+          <v-img
+            v-if="parallaxFile" 
+            :src="currentParallax"
+            class="animated-background"
+            :class="{ 'fade-in': isFading }" 
+            alt="Imagem de Fundo"
+            cover
+          ></v-img>
+          <v-col cols="12" class="text-center py-4 my-5 animated-background-content">
             <v-row justify="center">
               <v-col cols="12">
                 <div class="display-4-obs ubuntu">
@@ -163,9 +163,9 @@ export default {
     const route = useRoute()
     const displayHeight = ref("auto")
     const parallaxFile = ref<string|null>(null)
-    const backgroundVisible = ref(true)
-    const { smAndDown, xlAndUp } = useDisplay()
+    const { mdAndUp, xlAndUp } = useDisplay()
     const idParallaxfile = ref(0)
+    const isFading = ref(false)
 
     const { smartlab, observatories, currentObs, currentObsId, currentDimension } = storeToRefs(store)
 
@@ -185,7 +185,7 @@ export default {
 
     const currentParallax = computed(() => {
       return parallaxFile.value
-        ? `background-image:url('/parallax/${parallaxFile.value}');`
+        ? `/parallax/${parallaxFile.value}`
         : ""
     })
 
@@ -212,16 +212,17 @@ export default {
     })
 
     const resizeFirstSection = () => {
-      if (smAndDown.value) {
-        displayHeight.value = "auto"
+      console.log(useDisplay())
+      if (!mdAndUp.value) {
+        displayHeight.value = "height:auto"
       } else {
         displayHeight.value = "min-height:" + (window.innerHeight - 64) + "px"
       }
     }
 
     const setParallaxFile = () => {
+      isFading.value = true
       idParallaxfile.value++
-      backgroundVisible.value = false
       if (idParallaxfile.value == smartlab.value?.background_images.length) {
         idParallaxfile.value = 0
       }
@@ -229,7 +230,7 @@ export default {
         if (smartlab.value) {
           parallaxFile.value = smartlab.value?.background_images[idParallaxfile.value]
         }
-        backgroundVisible.value = true
+        isFading.value = false
       }, 2000)
     }
 
@@ -245,10 +246,9 @@ export default {
       NavigationService,
       displayHeight,
       parallaxFile,
-      backgroundVisible,
       currentParallax,
-      smAndDown,
-      xlAndUp
+      xlAndUp,
+      isFading
     }
   }
 }

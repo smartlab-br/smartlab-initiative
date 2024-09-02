@@ -584,6 +584,46 @@ export default {
     background-color: black;
   }
 
+  .animated-background-row {
+    min-height: 700px;
+    background-color: black;
+    position: relative; 
+    overflow: hidden;
+  }
+
+  .animated-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 1; 
+    transition: opacity 2s ease; 
+    animation: zoomBackground 40s ease-in-out infinite; 
+  }
+
+  .fade-in {
+    opacity: 0; /* Fade out */
+  }
+
+  @keyframes zoomBackground {
+    0% {
+      transform: scale(1); /* Tamanho inicial */
+    }
+    50% {
+      transform: scale(1.2); /* Zoom In */
+    }
+    100% {
+      transform: scale(1); /* Zoom Out */
+    }
+  }
+
+  .animated-background-content {
+    position: relative; /* Para garantir que o conteúdo esteja acima da imagem de fundo */
+    z-index: 1; /* Z-index para sobrepor o conteúdo */
+    color: white; /* Cor do texto para contrastar com o fundo */
+  }
+
   .bg-shadow {
     background-color:rgba(0,0,0,0.5) !important;
     position: absolute !important;
@@ -601,77 +641,12 @@ export default {
     min-height: 100% !important;
   }
 
-  .parallax-content-home {
-    min-height: 700px;
-    background-color: black;
+  a{
+    text-decoration: none;
   }
-
-  .parallax-content >.flex {
-    z-index: 1;
-  }
-
-  .parallax-content-home >.flex {
-    z-index: 1;
-  }
-
-  .parallax-content span {
-    align-self: center;
-    color: white;
-  }
-
   .bg-translucent {
     background-color: rgba(0,0,0,0.5);
     z-index: 1;
-  }
-
-  @keyframes bg-zoom {
-    1% {
-      -ms-transform: translateY(0%) scale(1);
-      -moz-transform: translateY(0%) scale(1);
-      -webkit-transform: translateY(0%) scale(1);
-      -o-transform: translateY(0%) scale(1);
-      transform: translateY(0%) scale(1);
-    }
-    50% {
-      -ms-transform: translateY(5%) scale(1.1);
-      -moz-transform: translateY(5%) scale(1.1);
-      -webkit-transform: translateY(5%) scale(1.1);
-      -o-transform: translateY(5%) scale(1.1);
-      transform: translateY(5%) scale(1.1);
-    }
-    95%, 100% {
-      -ms-transform: translateY(0%) scale(1);
-      -moz-transform: translateY(0%) scale(1);
-      -webkit-transform: translateY(0%) scale(1);
-      -o-transform: translateY(0%) scale(1);
-      transform: translateY(0%) scale(1);
-    }
-  }
-
-  .bg-zoom {
-    position: absolute !important;
-    top: 0;
-    margin: 0 !important;
-    width: 100%;
-    min-height: 100% !important;
-    background-position: center center;
-    background-size: cover;
-
-    -webkit-animation: bg-zoom 40s ease-out 0s infinite;
-    -moz-animation: bg-zoom 40s ease-out 0s infinite;
-    -o-animation: bg-zoom 40s ease-out 0s infinite;
-    animation: bg-zoom 40s ease-out 0s infinite;
-  }
-
-  .fade-enter-active, .fade-leave-active {
-    transition: opacity 2s;
-  }
-  .fade-enter, .fade-leave-to /* .fade-leave-active em versões anteriores a 2.1.8 */ {
-    opacity: 0;
-  }
-
-  a{
-    text-decoration: none;
   }
   .bg_blue {
     background-color:rgb(0,171,240,0.5);
