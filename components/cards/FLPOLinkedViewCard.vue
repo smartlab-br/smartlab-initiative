@@ -1,17 +1,16 @@
 <template>
     <v-sheet
-      v-ripple
       class="linked-view-card elevation-5"
-      :ripple="{ class: rippleColor }"
       @click="blocked ? snackBlocked() : NavigationService.pushRoute(router, to, external)"
       @keyup.enter="blocked ? snackBlocked() : NavigationService.pushRoute(router, to, external)"
     >
       <v-img
+        v-ripple
+        :ripple="{ class: rippleColor }"
+        class="bg-transparent-buttom align-center"
         :tabindex="indexTab"
         :src="cmpMedia"
-        :class="bgColor ? headerClass : headerClass + ' bg-transparent-buttom'"
         :height="height"
-        :style="bgColor ? `background-color: ${bgColor}` : ''"
         :aspect-ratio="16/9"
       >
         <v-container
@@ -113,6 +112,9 @@ import { computed } from "vue"
 import { useRouter } from "vue-router"
 import { NavigationService } from "~/utils/service/singleton/navigation"
 import colors from "vuetify/lib/util/colors.mjs"
+import { useSnackbarStore } from "~/store/snackbar"
+
+const snackbar = useSnackbarStore()   
 
 // Props
 const props = defineProps({
@@ -126,8 +128,6 @@ const props = defineProps({
   title: String,
   titleColor: String,
   rippleColor: String,
-  headerClass: String,
-  bgColor: String,
   btnColor: String,
   blocked: Boolean,
   indexTab: Number,
@@ -149,7 +149,7 @@ const cmpMedia = computed(() => {
 
 // Methods
 const snackBlocked = () => {
-  emit("showSnackbar", { color: colors.orange.darken4, text: "Disponível em breve!" })
+  snackbar.showSnackbar({ color: colors.orange.darken4, text: "Disponível em breve!" })
 }
 </script>
   
@@ -163,7 +163,7 @@ const snackBlocked = () => {
     }
   
     .bg-transparent-buttom {
-      background-color: rgba(255, 255, 255, 0.15);
+      background-color: rgba(255, 255, 255, 0.15) !important;
       border: 1px solid rgba(255,255,255,0.4) !important;
       border-radius: 5px;
     }
@@ -195,7 +195,7 @@ const snackBlocked = () => {
       display: block;
       position: absolute;
       width: 136px;
-      top: 24px;
+      top: 21px;
       right: -32px;
       z-index: +1;
       transform: rotate(45deg);

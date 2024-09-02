@@ -52,6 +52,7 @@
               :xl="2"
             >
               <FLPOLinkedViewCard
+                title-color="white"
                 :index-tab="30 + indxObs"
                 :tag-color="observatorio.tagColor"
                 :status="observatorio.status"
@@ -59,7 +60,6 @@
                 :external="observatorio.external"
                 :title="observatorio.short_desc"
                 :ripple-color="ColorsService.getThemeFromId(observatorio.id).primary"
-                title-color="white"
                 :blocked="observatorio.blocked"
               />
             </v-col>

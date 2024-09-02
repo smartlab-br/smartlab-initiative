@@ -25,7 +25,6 @@ declare global {
     section_description?: string;
     section_image?: string;
     section_background?: string;
-    headerClass?: string;
     tagColor?: string;
     status?: string;
     media?: string;
