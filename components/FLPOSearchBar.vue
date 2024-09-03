@@ -2,63 +2,69 @@
   <v-container>
     <v-row>
       <v-col>
-        <v-text-field 
-          ref="searchText" 
-          v-model="search_site" 
-          label="Pesquisa por Tema" 
-          variant="outlined"
-          density="compact" 
-          class="search-text" 
-          prepend-inner-icon="mdi-magnify" 
-          @input="handleSearch"
-          @keyup.enter="menu = true" 
-        />
+
         <v-menu 
           v-if="items_site.length > 0"
           allow-overflow 
-          offset 
           v-model="menu" 
-          activator="parent"
         >
+          <!-- Configurando o slot `activator` -->
+          <template v-slot:activator="{ props }">
+            <v-text-field 
+              ref="searchText" 
+              v-bind="props"
+              v-model="search_site" 
+              label="Pesquisa por Tema" 
+              variant="outlined"
+              density="compact" 
+              class="search-text" 
+              prepend-inner-icon="mdi-magnify" 
+              @keyup.enter="menu = true" 
+            />
+          </template>
+
           <v-card class="treeview-card">
             <v-card-text>
               <v-treeview 
+                v-if="items_site.length > 0"
                 ref="tree" 
-                v-model:open="open"
-                :items="items_site" 
+                :items="toRaw(items_site)" 
                 :search="search_site" 
-                :filter="searchFilter"
-                class="treeview-card-item">
+                custom-key-filter="search_text"
+                class="treeview-card-item"
+              >
                 <template v-slot:prepend="{ item }">
-                  <v-row>
-                    <v-col class="d-flex" cols="1">
-                      <svg 
-                        v-if="item.type === 'observatorio'"
-                        viewBox="0 0 24 24" 
-                        width="24" 
-                        height="24" 
-                        role="presentation" 
-                        :fill="'white'" 
-                        class="icon--inline" 
-                        :title="item.short_title">
-                        <use xmlns:xlink="http://www.w3.org/1999/xlink" :xlink:href="'/icons/sprite/coord-sprites.svg#' + item.app_icon" />
-                      </svg>                
-                      <v-icon v-else-if="item.type === 'dimensao'">
-                        mdi-view-list
-                      </v-icon>
-                      <v-icon v-else>
-                        mdi-article
-                      </v-icon>
-                    </v-col>
-                    <v-col v-if="item.type === 'observatorio'" class="d-flex align-center">
-                      <a class="text-white" @click="goToItem(item.url)">
-                        {{ $vuetify.display.smAndDown ? item.short_title : item.name }}
-                      </a>
-                    </v-col>
-                    <v-col v-else class="d-flex align-center">
-                      <a class="text-white" @click="goToItem(item.url)">{{ item.name }}</a>
-                    </v-col>
-                  </v-row>
+                  <svg 
+                    v-if="item.item_type === 'observatorio'"
+                    viewBox="0 0 24 24" 
+                    width="24" 
+                    height="24" 
+                    role="presentation" 
+                    :fill="'white'" 
+                    class="icon--inline" 
+                    :title="item.short_title">
+                    <use xmlns:xlink="http://www.w3.org/1999/xlink" :xlink:href="'/icons/sprite/coord-sprites.svg#' + item.app_icon" />
+                  </svg>                
+                  <v-icon 
+                    v-else-if="item.item_type === 'dimensao'"
+                    color="white"
+                  >
+                    mdi-view-list
+                  </v-icon>
+                  <v-icon 
+                    v-else
+                    color="white"
+                  >
+                    mdi-card-text-outline
+                  </v-icon>
+                </template>
+                <template 
+                  v-slot:content="{ item }"
+                >
+                    <a v-if="item.item_type === 'observatorio'" class="text-white pl-5" @click="goToItem(item.url)">
+                    {{ $vuetify.display.smAndDown ? item.short_title : item.title }}
+                  </a>
+                  <a v-else class="text-white pl-5" @click="goToItem(item.url)">{{ item.title }}</a>
                 </template>
               </v-treeview>
             </v-card-text>
@@ -81,7 +87,6 @@ import { VTreeview } from "vuetify/labs/VTreeview"
 const menu = ref(false)
 const search_site = ref("")
 const items_site = ref([])
-const open = ref([1, 2])
 const treeRef = ref(null)
 const textTransformService = new TextTransformService()
 const router = useRouter()
@@ -93,9 +98,10 @@ onMounted(() => {
   })
 })
 
-function searchFilter(item, search) {
+function searchFilter(_value, search, item) {
   const queryText = textTransformService.replaceSpecialCharacters(search).toLowerCase()
-  const itemText = textTransformService.replaceSpecialCharacters(item.search_text).toLowerCase()
+  const itemText = textTransformService.replaceSpecialCharacters(item.raw.search_text).toLowerCase()
+  console.log("result: ",itemText.includes(queryText))
   return itemText.includes(queryText)
 }
 
@@ -151,5 +157,6 @@ function goToItem(url) {
 
 .treeview-card-item {
   background-color: #212121 !important;
+  color: white;
 }
 </style>
