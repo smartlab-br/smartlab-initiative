@@ -63,7 +63,7 @@
                     :style="(appIcon || icon) ? 'min-height: 70px' : ''"
                     class="headline-obs"
                     v-html="title ? title.toUpperCase() : ''"
-                  />
+                  ></div>
                 </div>
                 <v-col
                   v-if="detail"
@@ -106,100 +106,108 @@
       </v-img>
     </v-sheet>
   </template>
-  
-<script setup>
-import { computed } from "vue"
-import { useRouter } from "vue-router"
+
+<script lang="ts">
+import { computed, defineComponent } from "vue"
 import { NavigationService } from "~/utils/service/singleton/navigation"
 import colors from "vuetify/lib/util/colors.mjs"
 import { useSnackbarStore } from "~/store/snackbar"
 
-const snackbar = useSnackbarStore()   
+export default defineComponent({
+  props: {
+    tagColor: String,
+    status: String,
+    icon: String,
+    appIcon: String,
+    media: String,
+    to: [String, Object] as PropType<string | Record<string, any>>, // Tipos especificados
+    external: Boolean,
+    title: String,
+    titleColor: String,
+    rippleColor: String,
+    btnColor: String,
+    blocked: Boolean,
+    indexTab: Number,
+    iconColor: String,
+    tags: Array as PropType<any[]>, // Tipo de array especificado
+    height: [String, Number] as PropType<string | number>,
+    detail: Object as PropType<Record<string, any>>, // Tipo de objeto especificado
+  },
+  setup(props) {
+    const snackbar = useSnackbarStore()
 
-// Props
-const props = defineProps({
-  tagColor: String,
-  status: String,
-  icon: String,
-  appIcon: String,
-  media: String,
-  to: [String, Object],
-  external: Boolean,
-  title: String,
-  titleColor: String,
-  rippleColor: String,
-  btnColor: String,
-  blocked: Boolean,
-  indexTab: Number,
-  iconColor: String,
-  tags: Array,
-  height: [String, Number],
-  detail: Object
+    // Computed properties
+    const tagTextColor = computed(() => {
+      return props.tagColor === "warning" ? "#000" : "#FFF"
+    })
+
+    const cmpMedia = computed(() => {
+      return props.media
+    })
+
+    // Methods
+    const snackBlocked = () => {
+      snackbar.showSnackbar({
+        color: colors.orange.darken4,
+        text: "Disponível em breve!",
+      })
+    }
+
+    return {
+      tagTextColor,
+      cmpMedia,
+      snackBlocked,
+    }
+  },
 })
-
-const router = useRouter()
-// Computed properties
-const tagTextColor = computed(() => {
-  return props.tagColor === "warning" ? "#000" : "#FFF"
-})
-
-const cmpMedia = computed(() => {
-  return props.media
-})
-
-// Methods
-const snackBlocked = () => {
-  snackbar.showSnackbar({ color: colors.orange.darken4, text: "Disponível em breve!" })
-}
 </script>
-  
-  <style scoped>
-    .linked-view-card {
-      display: block;
-      color: white
-    }
-  
-    .linked-view-card:hover {
-      cursor: pointer;
-    }
-  
-    .bg-transparent-buttom {
-      background-color: rgba(255, 255, 255, 0.15) !important;
-      border: 1px solid rgba(255,255,255,0.4) !important;
-      border-radius: 5px;
-    }
-  
-    .bg-transparent-buttom:hover {
-      border: 1px solid white !important;
-    }
-  
-    .linked-view-card .v-responsive {
-      flex: 1 1 auto;
-    }
-  
-    .linked-view-card .linked-view-icon-container {
-      justify-content: center;
-      display: flex;
-      align-items: center;
-    }
-  
-    .linked-view-card .linked-view-detail-container {
-      background-color: rgba(0,0,0,0.3);
-    }
-  
-    .linked-view-card .linked-view-title-container {
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-  
-    .linked-view-card .tag {
-      display: block;
-      position: absolute;
-      width: 136px;
-      top: 21px;
-      right: -32px;
-      z-index: +1;
-      transform: rotate(45deg);
-    }
-  </style>
-  
+
+<style scoped>
+.linked-view-card {
+  display: block;
+  color: white
+}
+
+.linked-view-card:hover {
+  cursor: pointer;
+}
+
+.bg-transparent-buttom {
+  background-color: rgba(255, 255, 255, 0.15) !important;
+  border: 1px solid rgba(255, 255, 255, 0.4) !important;
+  border-radius: 5px;
+}
+
+.bg-transparent-buttom:hover {
+  border: 1px solid white !important;
+}
+
+.linked-view-card .v-responsive {
+  flex: 1 1 auto;
+}
+
+.linked-view-card .linked-view-icon-container {
+  justify-content: center;
+  display: flex;
+  align-items: center;
+}
+
+.linked-view-card .linked-view-detail-container {
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.linked-view-card .linked-view-title-container {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.linked-view-card .tag {
+  display: block;
+  position: absolute;
+  width: 136px;
+  top: 21px;
+  right: -32px;
+  z-index: +1;
+  transform: rotate(45deg);
+}
+</style>
