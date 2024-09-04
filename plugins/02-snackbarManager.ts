@@ -46,7 +46,7 @@ export default defineNuxtPlugin((context: any) => {
             if (chartOptions.from_api) {
               const idObservatorio = store.currentObsId
               const dimension = store.currentDimensionId
-              const idLocalidade = store.localidadeId
+              const idLocalidade = store.currentPlaceId
               const scope = this.getEscopo(idLocalidade)
               const url = "/chart?from_viewconf=S&au=" + idLocalidade +
                         "&card_id=" + structure.id + "&observatory=" + idObservatorio +

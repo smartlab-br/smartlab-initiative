@@ -348,13 +348,13 @@ export class AnalysisUnit {
     
     let url = ""
     if (idObservatorio != null) {
-      url = store.currentObs?.to + searchItem.to
+      url = observatorios?.find((obs: any) => obs.id == idObservatorio)?.to + searchItem.to
       if(obsAtual && idObservatorio == obsAtual){
         if (route.query && route.query.dimensao) {
           url = url + "&dimensao=" + route.query.dimensao
         }
       }
-    } else if(obsAtual){
+    } else if(obsAtual && obsAtual != "default") {
       if(searchItem.exclude_from && searchItem.exclude_from.includes(obsAtual)){
         throw "A análise da localidade escolhida ("+ searchItem.detail +") não está disponível para esse observatório."
       }
@@ -374,8 +374,11 @@ export class AnalysisUnit {
         }
       }
     }
-    
-    NavigationService.pushRoute(router, url)
+    console.log(url)
+    console.log(store)
+    console.log(obsAtual)
+    console.log(idObservatorio)
+    // NavigationService.pushRoute(router, url)
   }
 
 }

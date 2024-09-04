@@ -28,9 +28,9 @@
               <v-treeview 
                 v-if="items_site.length > 0"
                 ref="tree" 
-                :items="toRaw(items_site)" 
+                :items="items_site" 
                 :search="search_site" 
-                custom-key-filter="search_text"
+                :custom-filter="searchFilter"
                 class="treeview-card-item"
               >
                 <template v-slot:prepend="{ item }">
@@ -75,52 +75,68 @@
   </v-container>
 </template>
 
-<script setup>
-import { ref, onMounted } from "vue"
+<script lang="ts">
+import { ref, onMounted, defineComponent } from "vue"
 import { YamlFetcherService } from "~/utils/service/singleton/yamlFetcher"
 import { TextTransformService } from "~/utils/service/singleton/textTransform"
 import { NavigationService } from "~/utils/service/singleton/navigation"
 import { useRouter } from "vue-router"
-import { AnalysisUnit } from "~/utils/model/analysisUnit"
 import { VTreeview } from "vuetify/labs/VTreeview"
+import { useMainStore } from "~/store"
 
-const menu = ref(false)
-const search_site = ref("")
-const items_site = ref([])
-const treeRef = ref(null)
-const textTransformService = new TextTransformService()
-const router = useRouter()
+export default defineComponent({
+  components: {
+    VTreeview,
+  },
+  setup() {
+    const store = useMainStore()
+    const menu = ref(false)
+    const search_site = ref("")
+    const items_site = ref([])
+    const treeRef = ref(null)
+    const textTransformService = new TextTransformService()
+    const router = useRouter()
 
-onMounted(() => {
-  // Replace with your actual service calls
-  YamlFetcherService.loadYaml("br/mapa_site").then(result => {
-    items_site.value = result
-  })
+    onMounted(() => {
+      YamlFetcherService.loadYaml("br/mapa_site").then((result) => {
+        items_site.value = result
+      })
+    })
+
+    function searchFilter(_value: any, search: string, item: any) {
+      const queryText = textTransformService.replaceSpecialCharacters(search).toLowerCase()
+      const itemText = textTransformService.replaceSpecialCharacters(item.raw.search_text).toLowerCase()
+      console.log("result: ", itemText.includes(queryText))
+      return itemText.includes(queryText)
+    }
+
+    function handleSearch(input: string) {
+      console.log("handleSearch", input)
+      // if (input) {
+      //   treeRef.value.updateAll(true)
+      // } else {
+      //   treeRef.value.updateAll(false)
+      // }
+    }
+
+    function goToItem(url: string) {
+      if (url.includes("{0}")) {
+        url = textTransformService.replaceArgs(url, [store.currentPlace])
+      }
+      NavigationService.pushRoute(router, url)
+    }
+
+    return {
+      menu,
+      search_site,
+      items_site,
+      treeRef,
+      searchFilter,
+      handleSearch,
+      goToItem,
+    }
+  },
 })
-
-function searchFilter(_value, search, item) {
-  const queryText = textTransformService.replaceSpecialCharacters(search).toLowerCase()
-  const itemText = textTransformService.replaceSpecialCharacters(item.raw.search_text).toLowerCase()
-  console.log("result: ",itemText.includes(queryText))
-  return itemText.includes(queryText)
-}
-
-function handleSearch(input) {
-  // if (input) {
-  //   treeRef.value.updateAll(true)
-  // } else {
-  //   treeRef.value.updateAll(false)
-  // }
-  console.log("handleSearch", input)
-}
-
-function goToItem(url) {
-  if (url.includes("{0}")) {
-    url = textTransformService.replaceArgs(url, [AnalysisUnit.getCurrentAnalysisUnit()])
-  }
-  NavigationService.pushRoute(router, url)
-}
-
 </script>
 
 <style scoped>

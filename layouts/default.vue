@@ -70,7 +70,7 @@
               </v-row>
             </v-col>
             <v-divider
-              v-show="localidade"
+              v-show="currentPlace"
               vertical
               class="mx-2"
               style="background-color:rgba(255,255,255,0.7)"
@@ -80,17 +80,17 @@
               @click="focusChangePlace()"
             -->
             <v-col
-              v-if="localidade"
+              v-if="currentPlace"
               class="line-height-1 pl-2 flex-grow-1 flex-shrink-0 "
             >
               <v-row 
                 @click="focusChangePlace()"
               > 
-                <v-col><span class="cursor-pointer">{{ localidade.nm_localidade }}</span></v-col>
+                <v-col><span class="cursor-pointer">{{ currentPlace.nm_localidade }}</span></v-col>
                 <v-col
                   class="pa-0 text-caption"
                 >
-                  {{ localidade.nm_tipo }}
+                  {{ currentPlace.nm_tipo }}
                 </v-col>
               </v-row>
             </v-col>
@@ -461,7 +461,7 @@ export default {
     const store = useMainStore()
     const snackbar = useSnackbarStore()   
     const { getPlaces } = store
-    const { observatories, currentObs, localidade, places, smartlab } = storeToRefs(store)
+    const { observatories, currentObs, currentPlace, places, smartlab } = storeToRefs(store)
     const router = useRouter()
     const route = useRoute()
     const menuItems = ref<Observatory[]>([])
@@ -518,12 +518,12 @@ export default {
 
     const changeAnalysisUnit = (router: Router, searchItem: Place, idObservatorio:string|null = null) => {
       snackAlert({ color: "warning", text: `${idObservatorio} - ${searchItem.label}` })
-      // try {
-      //   AnalysisUnit.searchAnalysisUnit(router, store, searchItem, idObservatorio, observatories.value)
-      // } catch (err) {
-      //   console.log(err)
-      //   snackAlert({ color: "error", text: err })
-      // }
+      try {
+        AnalysisUnit.searchAnalysisUnit(router, store, searchItem, idObservatorio, observatories.value)
+      } catch (err) {
+        console.log(err)
+        snackAlert({ color: "error", text: err })
+      }
     }
 
     const snackAlert = (params:{color: string, text: any}) => {
@@ -559,7 +559,7 @@ export default {
       router,
       route,
       currentObs,
-      localidade,
+      currentPlace,
       auOptions,
       changeAnalysisUnit,
       gsItemBusca,

@@ -11,8 +11,8 @@ export const useMainStore = defineStore("main", {
     currentDimData: null as Dimension | null,
     currentDimIdStr: null as string | null,
     aboutSmartlabData: null as About | null,
-    localidadeData: null as any | null,
-    localidadeIdStr: null as string | null,
+    currentPlaceData: null as any | null,
+    currentPlaceIdStr: null as string | null,
     placesData: null as Place[] | null
   }),
   actions: {
@@ -108,38 +108,38 @@ export const useMainStore = defineStore("main", {
       }
       this.currentDimIdStr = this.currentDimData?.id ?? ""
     },
-    async setLocalidade(idLocalidade: string) {
+    async setCurrentPlace(idPlace: string) {
       let url = null
-      this.localidadeIdStr = idLocalidade
-      if (idLocalidade == "0") { // Brasil
-        this.localidadeData = {
+      this.currentPlaceIdStr = idPlace
+      if (idPlace == "0") { // Brasil
+        this.currentPlaceData = {
           id_localidade: 0,
           nm_localidade: "Brasil",
           tipo: "",
-          img: "/thumbs/municipios/" + idLocalidade + ".jpg"
+          img: "/thumbs/municipios/" + idPlace + ".jpg"
         }
-      } else if (idLocalidade.length == 2) { // Estado
-        url = "/municipios?categorias=cd_uf,nm_uf&agregacao=distinct&filtros=eq-cd_uf-" + idLocalidade
+      } else if (idPlace.length == 2) { // Estado
+        url = "/municipios?categorias=cd_uf,nm_uf&agregacao=distinct&filtros=eq-cd_uf-" + idPlace
         await $fetch(UrlTransformService.getApiUrl(url))
           .then((result: any) => {
-            this.localidadeData = result.data.dataset[0]
-            this.localidadeData.id_localidade = this.localidadeData.cd_uf
-            this.localidadeData.nm_localidade = this.localidadeData.nm_uf
-            this.localidadeData.tipo = "UF"
-            this.localidadeData.img = "/thumbs/municipios/" + idLocalidade + ".jpg"
+            this.currentPlaceData = result.data.dataset[0]
+            this.currentPlaceData.id_localidade = this.currentPlaceData.cd_uf
+            this.currentPlaceData.nm_localidade = this.currentPlaceData.nm_uf
+            this.currentPlaceData.tipo = "UF"
+            this.currentPlaceData.img = "/thumbs/municipios/" + idPlace + ".jpg"
           }, (error) => {
             console.error(error.toString())
             // this.sendError("Falha ao buscar dados do município")
           })
       } else {
-        url = "/municipio/" + idLocalidade
+        url = "/municipio/" + idPlace
         await $fetch(UrlTransformService.getApiUrl(url))
           .then((result: any) => {
-            this.localidadeData = result.data[0]
-            this.localidadeData.id_localidade = this.localidadeData.cd_municipio_ibge_dv
-            this.localidadeData.nm_localidade = this.localidadeData.nm_municipio_uf
-            this.localidadeData.tipo = "Município"
-            this.localidadeData.img = "/thumbs/municipios/" + idLocalidade + ".jpg"
+            this.currentPlaceData = result.data[0]
+            this.currentPlaceData.id_localidade = this.currentPlaceData.cd_municipio_ibge_dv
+            this.currentPlaceData.nm_localidade = this.currentPlaceData.nm_municipio_uf
+            this.currentPlaceData.tipo = "Município"
+            this.currentPlaceData.img = "/thumbs/municipios/" + idPlace + ".jpg"
           }, (error) => {
             console.error(error.toString())
             // this.sendError("Falha ao buscar dados do município")
@@ -254,8 +254,8 @@ export const useMainStore = defineStore("main", {
     currentDimension: state => state.currentDimData,
     currentDimensionId: state => state.currentDimIdStr,
     aboutSmartlab: state => state.aboutSmartlabData,
-    localidade: state => state.localidadeData,
-    localidadeId: state => state.localidadeIdStr,
+    currentPlace: state => state.currentPlaceData,
+    currentPlaceId: state => state.currentPlaceIdStr,
     places:  state => state.placesData
   },
 
