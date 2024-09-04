@@ -121,7 +121,7 @@ export default defineComponent({
 
     function goToItem(url: string) {
       if (url.includes("{0}")) {
-        url = textTransformService.replaceArgs(url, [store.currentPlace])
+        url = textTransformService.replaceArgs(url, [store.currentAnalysisUnit])
       }
       NavigationService.pushRoute(router, url)
     }

@@ -11,12 +11,12 @@ import { useRoute } from "vue-router"
 export default {
   setup() {
     const store = useMainStore()
-    const { loadSmartlabData, setCurrentObs, setCurrentPlace } = store
+    const { loadSmartlabData, setCurrentObs, setCurrentAnalysisUnit } = store
 
     const route = useRoute()
     
     onMounted(() => {
-      setCurrentPlace("0")
+      setCurrentAnalysisUnit("0")
       loadSmartlabData().then(() => {
         setCurrentObs(route)
       })

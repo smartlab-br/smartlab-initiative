@@ -70,7 +70,7 @@
               </v-row>
             </v-col>
             <v-divider
-              v-show="currentPlace"
+              v-show="currentAnalysisUnit"
               vertical
               class="mx-2"
               style="background-color:rgba(255,255,255,0.7)"
@@ -80,17 +80,17 @@
               @click="focusChangePlace()"
             -->
             <v-col
-              v-if="currentPlace"
+              v-if="currentAnalysisUnit"
               class="line-height-1 pl-2 flex-grow-1 flex-shrink-0 "
             >
               <v-row 
                 @click="focusChangePlace()"
               > 
-                <v-col><span class="cursor-pointer">{{ currentPlace.nm_localidade }}</span></v-col>
+                <v-col><span class="cursor-pointer">{{ currentAnalysisUnit.nm_localidade }}</span></v-col>
                 <v-col
                   class="pa-0 text-caption"
                 >
-                  {{ currentPlace.nm_tipo }}
+                  {{ currentAnalysisUnit.nm_tipo }}
                 </v-col>
               </v-row>
             </v-col>
@@ -461,7 +461,7 @@ export default {
     const store = useMainStore()
     const snackbar = useSnackbarStore()   
     const { getPlaces } = store
-    const { observatories, currentObs, currentPlace, places, smartlab } = storeToRefs(store)
+    const { observatories, currentObs, currentAnalysisUnit, places, smartlab } = storeToRefs(store)
     const router = useRouter()
     const route = useRoute()
     const menuItems = ref<Observatory[]>([])
@@ -559,7 +559,7 @@ export default {
       router,
       route,
       currentObs,
-      currentPlace,
+      currentAnalysisUnit,
       auOptions,
       changeAnalysisUnit,
       gsItemBusca,

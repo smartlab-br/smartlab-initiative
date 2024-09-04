@@ -11,8 +11,8 @@ export const useMainStore = defineStore("main", {
     currentDimData: null as Dimension | null,
     currentDimIdStr: null as string | null,
     aboutSmartlabData: null as About | null,
-    currentPlaceData: null as any | null,
-    currentPlaceIdStr: null as string | null,
+    currentAnalysisUnitData: null as any | null,
+    currentAnalysisUnitIdStr: null as string | null,
     placesData: null as Place[] | null
   }),
   actions: {
@@ -108,38 +108,38 @@ export const useMainStore = defineStore("main", {
       }
       this.currentDimIdStr = this.currentDimData?.id ?? ""
     },
-    async setCurrentPlace(idPlace: string) {
+    async setCurrentAnalysisUnit(idAnalysisUnit: string) {
       let url = null
-      this.currentPlaceIdStr = idPlace
-      if (idPlace == "0") { // Brasil
-        this.currentPlaceData = {
+      this.currentAnalysisUnitIdStr = idAnalysisUnit
+      if (idAnalysisUnit == "0") { // Brasil
+        this.currentAnalysisUnitData = {
           id_localidade: 0,
           nm_localidade: "Brasil",
           tipo: "",
-          img: "/thumbs/municipios/" + idPlace + ".jpg"
+          img: "/thumbs/municipios/" + idAnalysisUnit + ".jpg"
         }
-      } else if (idPlace.length == 2) { // Estado
-        url = "/municipios?categorias=cd_uf,nm_uf&agregacao=distinct&filtros=eq-cd_uf-" + idPlace
+      } else if (idAnalysisUnit.length == 2) { // Estado
+        url = "/municipios?categorias=cd_uf,nm_uf&agregacao=distinct&filtros=eq-cd_uf-" + idAnalysisUnit
         await $fetch(UrlTransformService.getApiUrl(url))
           .then((result: any) => {
-            this.currentPlaceData = result.data.dataset[0]
-            this.currentPlaceData.id_localidade = this.currentPlaceData.cd_uf
-            this.currentPlaceData.nm_localidade = this.currentPlaceData.nm_uf
-            this.currentPlaceData.tipo = "UF"
-            this.currentPlaceData.img = "/thumbs/municipios/" + idPlace + ".jpg"
+            this.currentAnalysisUnitData = result.data.dataset[0]
+            this.currentAnalysisUnitData.id_localidade = this.currentAnalysisUnitData.cd_uf
+            this.currentAnalysisUnitData.nm_localidade = this.currentAnalysisUnitData.nm_uf
+            this.currentAnalysisUnitData.tipo = "UF"
+            this.currentAnalysisUnitData.img = "/thumbs/municipios/" + idAnalysisUnit + ".jpg"
           }, (error) => {
             console.error(error.toString())
             // this.sendError("Falha ao buscar dados do município")
           })
       } else {
-        url = "/municipio/" + idPlace
+        url = "/municipio/" + idAnalysisUnit
         await $fetch(UrlTransformService.getApiUrl(url))
           .then((result: any) => {
-            this.currentPlaceData = result.data[0]
-            this.currentPlaceData.id_localidade = this.currentPlaceData.cd_municipio_ibge_dv
-            this.currentPlaceData.nm_localidade = this.currentPlaceData.nm_municipio_uf
-            this.currentPlaceData.tipo = "Município"
-            this.currentPlaceData.img = "/thumbs/municipios/" + idPlace + ".jpg"
+            this.currentAnalysisUnitData = result.data[0]
+            this.currentAnalysisUnitData.id_localidade = this.currentAnalysisUnitData.cd_municipio_ibge_dv
+            this.currentAnalysisUnitData.nm_localidade = this.currentAnalysisUnitData.nm_municipio_uf
+            this.currentAnalysisUnitData.tipo = "Município"
+            this.currentAnalysisUnitData.img = "/thumbs/municipios/" + idAnalysisUnit + ".jpg"
           }, (error) => {
             console.error(error.toString())
             // this.sendError("Falha ao buscar dados do município")
@@ -254,8 +254,8 @@ export const useMainStore = defineStore("main", {
     currentDimension: state => state.currentDimData,
     currentDimensionId: state => state.currentDimIdStr,
     aboutSmartlab: state => state.aboutSmartlabData,
-    currentPlace: state => state.currentPlaceData,
-    currentPlaceId: state => state.currentPlaceIdStr,
+    currentAnalysisUnit: state => state.currentAnalysisUnitData,
+    currentAnalysisUnitId: state => state.currentAnalysisUnitIdStr,
     places:  state => state.placesData
   },
 
