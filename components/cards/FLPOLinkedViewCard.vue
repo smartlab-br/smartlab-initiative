@@ -1,5 +1,5 @@
 <template>
-    <v-sheet
+    <v-container
       class="linked-view-card elevation-5"
       @click="blocked ? snackBlocked() : NavigationService.pushRoute(router, to, external)"
       @keyup.enter="blocked ? snackBlocked() : NavigationService.pushRoute(router, to, external)"
@@ -104,7 +104,7 @@
           {{ status }}
         </v-sheet>
       </v-img>
-    </v-sheet>
+    </v-container>
   </template>
 
 <script lang="ts">

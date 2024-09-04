@@ -375,9 +375,6 @@ export class AnalysisUnit {
       }
     }
     console.log(url)
-    console.log(store)
-    console.log(obsAtual)
-    console.log(idObservatorio)
     // NavigationService.pushRoute(router, url)
   }
 

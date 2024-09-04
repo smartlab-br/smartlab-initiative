@@ -10,28 +10,28 @@
         >
           <!-- Configurando o slot `activator` -->
           <template v-slot:activator="{ props }">
-            <v-text-field 
-              ref="searchText" 
-              v-bind="props"
-              v-model="search_site" 
-              label="Pesquisa por Tema" 
+            <v-text-field
+              label="Pesquisa por Tema"
               variant="outlined"
-              density="compact" 
-              class="search-text" 
-              prepend-inner-icon="mdi-magnify" 
-              @keyup.enter="menu = true" 
+              density="compact"
+              v-bind="props"
+              prepend-inner-icon="mdi-magnify"
+              v-model="search_site" 
+              @keyup.enter="menu = true"
             />
           </template>
-
+  
           <v-card class="treeview-card">
             <v-card-text>
               <v-treeview 
                 v-if="items_site.length > 0"
                 ref="tree" 
+                v-model:opened="open"
                 :items="items_site" 
                 :search="search_site" 
                 :custom-filter="searchFilter"
                 class="treeview-card-item"
+                item-value="id"
               >
                 <template v-slot:prepend="{ item }">
                   <svg 
@@ -91,11 +91,12 @@ export default defineComponent({
   setup() {
     const store = useMainStore()
     const menu = ref(false)
-    const search_site = ref("")
+    const search_site = ref(null)
     const items_site = ref([])
     const treeRef = ref(null)
     const textTransformService = new TextTransformService()
     const router = useRouter()
+    const open = ref([])
 
     onMounted(() => {
       YamlFetcherService.loadYaml("br/mapa_site").then((result) => {
@@ -103,27 +104,32 @@ export default defineComponent({
       })
     })
 
-    function searchFilter(_value: any, search: string, item: any) {
-      const queryText = textTransformService.replaceSpecialCharacters(search).toLowerCase()
-      const itemText = textTransformService.replaceSpecialCharacters(item.raw.search_text).toLowerCase()
-      console.log("result: ", itemText.includes(queryText))
-      return itemText.includes(queryText)
+    const searchFilter = (value: string, search: string, _item: InternalItem) => {
+      console.log("searchFilter", value, search)
+      console.log("result", value.toLowerCase().indexOf(search.toLowerCase()) > -1)
+      return value.toLowerCase().indexOf(search.toLowerCase()) > -1
+      // const queryText = textTransformService.replaceSpecialCharacters(search).toLowerCase()
+      // const itemText = textTransformService.replaceSpecialCharacters(item.raw.search_text).toLowerCase()
+      // console.log("queryText: ", queryText)
+      // console.log("itemText: ", itemText)
+      // console.log("result: ", itemText.includes(queryText))
+      // return itemText.includes(queryText)
     }
 
-    function handleSearch(input: string) {
+    const goToItem = (url: string) => {
+      if (url.includes("{0}")) {
+        url = textTransformService.replaceArgs(url, [store.currentAnalysisUnit])
+      }
+      NavigationService.pushRoute(router, url)
+    }
+
+    const handleSearch = (input: string) => {
       console.log("handleSearch", input)
       // if (input) {
       //   treeRef.value.updateAll(true)
       // } else {
       //   treeRef.value.updateAll(false)
       // }
-    }
-
-    function goToItem(url: string) {
-      if (url.includes("{0}")) {
-        url = textTransformService.replaceArgs(url, [store.currentAnalysisUnit])
-      }
-      NavigationService.pushRoute(router, url)
     }
 
     return {
@@ -134,34 +140,13 @@ export default defineComponent({
       searchFilter,
       handleSearch,
       goToItem,
+      open
     }
   },
 })
 </script>
 
 <style scoped>
-.search-text {
-  border-radius: 100px !important;
-  background-color: #212121 !important;
-  opacity: 0.7;
-  text-align: center;
-  caret-color: auto;
-  border: 1px solid rgba(255, 255, 255, 0.4) !important;
-}
-
-.search-text .v-icon {
-  color: rgba(255, 255, 255, 0.4) !important;
-}
-
-.search-text .v-field__label {
-  width: 100% !important;
-}
-
-.search-text input {
-  max-width: 90% !important;
-  text-align: center;
-  color: white;
-}
 
 .treeview-card {
   border-radius: 20px;
@@ -174,5 +159,14 @@ export default defineComponent({
 .treeview-card-item {
   background-color: #212121 !important;
   color: white;
+}
+
+.v-field--variant-outlined {
+  border-radius: 100px !important;
+  background-color: #212121 !important;
+  opacity: 0.7;
+  text-align: center;
+  caret-color: auto;
+  border: 1px solid rgba(255, 255, 255, 0.4) !important;
 }
 </style>
