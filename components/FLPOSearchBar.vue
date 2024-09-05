@@ -59,7 +59,7 @@
                   </v-icon>
                 </template>
                 <template 
-                  v-slot:content="{ item }"
+                  v-slot:title="{ item }"
                 >
                     <a v-if="item.item_type === 'observatorio'" class="text-white pl-5" @click="goToItem(item.url)">
                     {{ $vuetify.display.smAndDown ? item.short_title : item.title }}
@@ -76,6 +76,18 @@
 </template>
 
 <script lang="ts">
+
+interface SiteMapReg {
+  id: string;
+  item_type: string;
+  title: string;
+  url: string;
+  search_text: string;
+  children: SiteMapReg[];
+  short_title?: string;
+  app_icon?: string;
+}
+
 import { ref, onMounted, defineComponent } from "vue"
 import { YamlFetcherService } from "~/utils/service/singleton/yamlFetcher"
 import { TextTransformService } from "~/utils/service/singleton/textTransform"
@@ -91,8 +103,8 @@ export default defineComponent({
   setup() {
     const store = useMainStore()
     const menu = ref(false)
-    const search_site = ref(null)
-    const items_site = ref([])
+    const search_site = ("")
+    const items_site = ref<SiteMapReg[]>([])
     const treeRef = ref(null)
     const textTransformService = new TextTransformService()
     const router = useRouter()
@@ -104,16 +116,10 @@ export default defineComponent({
       })
     })
 
-    const searchFilter = (value: string, search: string, _item: InternalItem) => {
-      console.log("searchFilter", value, search)
-      console.log("result", value.toLowerCase().indexOf(search.toLowerCase()) > -1)
-      return value.toLowerCase().indexOf(search.toLowerCase()) > -1
-      // const queryText = textTransformService.replaceSpecialCharacters(search).toLowerCase()
-      // const itemText = textTransformService.replaceSpecialCharacters(item.raw.search_text).toLowerCase()
-      // console.log("queryText: ", queryText)
-      // console.log("itemText: ", itemText)
-      // console.log("result: ", itemText.includes(queryText))
-      // return itemText.includes(queryText)
+    const searchFilter = (_value: string, search: string, item: any) => {
+      const queryText = textTransformService.replaceSpecialCharacters(search).toLowerCase()
+      const itemText = textTransformService.replaceSpecialCharacters(item.raw.search_text).toLowerCase()
+      return itemText.includes(queryText)
     }
 
     const goToItem = (url: string) => {
