@@ -25,13 +25,14 @@
             <v-card-text>
               <v-treeview 
                 v-if="items_site.length > 0"
-                ref="tree" 
+                ref="treeRef" 
                 v-model:opened="open"
                 :items="items_site" 
                 :search="search_site" 
                 :custom-filter="searchFilter"
                 class="treeview-card-item"
                 item-value="id"
+                open-all
               >
                 <template v-slot:prepend="{ item }">
                   <svg 
@@ -88,7 +89,7 @@ interface SiteMapReg {
   app_icon?: string;
 }
 
-import { ref, onMounted, defineComponent } from "vue"
+import { ref, onMounted, defineComponent, watch } from "vue"
 import { YamlFetcherService } from "~/utils/service/singleton/yamlFetcher"
 import { TextTransformService } from "~/utils/service/singleton/textTransform"
 import { NavigationService } from "~/utils/service/singleton/navigation"
@@ -103,16 +104,26 @@ export default defineComponent({
   setup() {
     const store = useMainStore()
     const menu = ref(false)
-    const search_site = ("")
+    const search_site = ref("")
     const items_site = ref<SiteMapReg[]>([])
-    const treeRef = ref(null)
+    const treeRef = ref<VTreeview|null>(null)
     const textTransformService = new TextTransformService()
     const router = useRouter()
-    const open = ref([])
+    const open = ref<string[]>([])
 
+    watch(search_site, (newSearch: string) => {
+      if (treeRef.value) {
+        treeRef.value.$forceUpdate()
+      }  
+      if (newSearch === "") {
+        console.log("search is empty")
+        open.value = []
+      }
+    })
     onMounted(() => {
       YamlFetcherService.loadYaml("br/mapa_site").then((result) => {
         items_site.value = result
+        open.value = []
       })
     })
 
@@ -129,22 +140,12 @@ export default defineComponent({
       NavigationService.pushRoute(router, url)
     }
 
-    const handleSearch = (input: string) => {
-      console.log("handleSearch", input)
-      // if (input) {
-      //   treeRef.value.updateAll(true)
-      // } else {
-      //   treeRef.value.updateAll(false)
-      // }
-    }
-
     return {
       menu,
       search_site,
       items_site,
       treeRef,
       searchFilter,
-      handleSearch,
       goToItem,
       open
     }
