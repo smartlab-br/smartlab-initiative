@@ -86,7 +86,7 @@ export default defineNuxtPlugin((_context: any) => {
         // )
       },
 
-      fillDataStructure (structure: any, customParams: any, cbFunction: (dataset: Record<string, any> | string, rules: Record<string, any>, structure:Record<string, any>, addedParams?: Record<string, any>, metadata?: Record<string, any>) => void, addedParams?: any) {
+      fillDataStructure (structure: any, customParams: any, cbFunction: (dataset: Record<string, any> | string, rules: Record<string, any>, structure:Record<string, any>, addedParams?: Record<string, any> | string, metadata?: Record<string, any>) => void, addedParams?: any) {
         const fnSendDataStructureError = this.sendDataStructureError
         const fnReformDataset = this.reformDataset
         if (structure !== null && structure !== undefined) {
@@ -364,7 +364,7 @@ export default defineNuxtPlugin((_context: any) => {
         this.errorMessage = error
       },
 
-      reformDataset (dataset: any, reformOptions: any, customParams: any = {}) {
+      reformDataset (dataset: any, reformOptions: any, customParams: any = {}): Record<string, any> {
         if (reformOptions) {
           // Adiciona o mínimo e o máximo ao dataset
           if (reformOptions.recalc_min_max) {

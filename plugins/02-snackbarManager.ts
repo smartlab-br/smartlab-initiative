@@ -17,8 +17,6 @@ const snackbar = useSnackbarStore()
 export default defineNuxtPlugin((context: any) => {
   const { app } = context
 
-  const validCharts = ["MAP_TOPOJSON", "LINE", "STACKED", "BAR", "TREEMAP", "SCATTERPLOT", "BOXPLOT", "CALENDAR", "SANKEYD3", "MAP_BUBBLES", "MAP_HEAT", "MAP_CLUSTER", "MAP_MIGRATION", "MAP_POLYGON", "MIXED_MAP"]
-  const leafletBasedCharts = ["MAP_BUBBLES", "MAP_HEAT", "MAP_CLUSTER", "MAP_MIGRATION", "MAP_POLYGON", "MIXED_MAP"]
   const sendError = (err: any) => {
     if (typeof err === "string") {
       snackbar.showSnackbar({
@@ -35,7 +33,9 @@ export default defineNuxtPlugin((context: any) => {
 
   return {
     provide: {
-      openBugDialog(cardTitle: any) {
+      validCharts: ["MAP_TOPOJSON", "LINE", "STACKED", "BAR", "TREEMAP", "SCATTERPLOT", "BOXPLOT", "CALENDAR", "SANKEYD3", "MAP_BUBBLES", "MAP_HEAT", "MAP_CLUSTER", "MAP_MIGRATION", "MAP_POLYGON", "MIXED_MAP"],
+      leafletBasedCharts : ["MAP_BUBBLES", "MAP_HEAT", "MAP_CLUSTER", "MAP_MIGRATION", "MAP_POLYGON", "MIXED_MAP"],
+          openBugDialog(cardTitle: any) {
         app._context.emitter.emit("showBugDialog", cardTitle)
       },
 
@@ -44,7 +44,7 @@ export default defineNuxtPlugin((context: any) => {
       },
 
       chartGen(store: MainStore, id: string, chartType: string, structure: any, chartOptions: any, dataset: any, metadata: any, sectionIndex: number = 0) {
-        if (structure && chartOptions && validCharts.includes(chartType)) {
+        if (structure && chartOptions && this.validCharts.includes(chartType)) {
           if (chartOptions.from_api) {
             const idObservatorio = store.currentObsId
             const dimension = store.currentDimensionId
@@ -80,7 +80,7 @@ export default defineNuxtPlugin((context: any) => {
         }
       },
       chartRegen(store: MainStore, chartHandler: any, id: string, chartType: string, structure: any, chartOptions: any, dataset: any, metadata: any, sectionIndex: number = 0) {
-        if (structure && chartOptions && validCharts.includes(chartType)) {
+        if (structure && chartOptions && this.validCharts.includes(chartType)) {
           const additionalOptions = this.buildChartAdditionalOptions(store, chartType, structure, chartOptions, dataset, metadata, sectionIndex)
 
           return (new ChartBuilderService()).regenerateChart(
@@ -152,7 +152,7 @@ export default defineNuxtPlugin((context: any) => {
             additionalOptions.colorScaleSelectedName = chartOptions.colorScale.color_array[(this as any).customFilters[chartOptions.colorScale.scale_name_value]]
           }
         }
-        if (leafletBasedCharts.includes(chartType)) {
+        if (this.leafletBasedCharts.includes(chartType)) {
           if (chartOptions.tooltip_function == null) { additionalOptions.tooltipFunction = TooltipBuildingService.defaultLeafletTooltip }
 
           if (chartType == "MAP_MIGRATION") {

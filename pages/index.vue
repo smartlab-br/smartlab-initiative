@@ -153,6 +153,7 @@ import { useMainStore } from "~/store"
 import { onMounted, ref, watchEffect } from "vue"
 import { storeToRefs } from "pinia"
 import { NavigationService } from "~/utils/service/singleton/navigation"
+import { ColorsService } from "~/utils/service/singleton/colors.js"
 import { useRoute, useRouter } from "vue-router"
 // import { useNuxtApp } from "#app"
 
@@ -246,6 +247,7 @@ export default {
       router,
       route,
       NavigationService,
+      ColorsService,
       displayHeight,
       parallaxFile,
       currentParallax,
