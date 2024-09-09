@@ -1,8 +1,8 @@
 <template>
     <v-container
       class="linked-view-card elevation-5"
-      @click="blocked ? snackBlocked() : NavigationService.pushRoute(router, to, external)"
-      @keyup.enter="blocked ? snackBlocked() : NavigationService.pushRoute(router, to, external)"
+      @click="blocked ? snackBlocked() : NavigationService.pushRoute(router, to as string, external)"
+      @keyup.enter="blocked ? snackBlocked() : NavigationService.pushRoute(router, to as string, external)"
     >
       <v-img
         v-ripple
@@ -26,7 +26,7 @@
               <v-col class="pa-0" cols="12">
                 <div
                   :class="detail ? 'linked-view-icon-container' : 'text-xs-center'"
-                  @click="blocked ? snackBlocked() : NavigationService.pushRoute($router, to, external)"
+                  @click="blocked ? snackBlocked() : NavigationService.pushRoute(router, to as string, external)"
                 >
                   <v-btn
                     v-if="icon || appIcon"
@@ -43,14 +43,13 @@
                     </v-icon>
                     <svg 
                         v-else-if="appIcon"
-                        v-bind="props"
                         viewBox="0 0 16 16" 
                         width="16" 
                         height="16" 
                         role="presentation" 
                         :fill="iconColor || ''" 
                         class="icon--inline" 
-                        :title="item.short_title">
+                        :title="title">
                         <use xmlns:xlink="http://www.w3.org/1999/xlink" :xlink:href="'/icons/sprite/coord-sprites.svg#' + appIcon" />
                       </svg>                
                   </v-btn>
@@ -72,7 +71,7 @@
                 >
                   <div
                     class="caption px-3 pb-4 pt-2 mt-4 text-xs-center body-1"
-                    @click="blocked ? snackBlocked() : NavigationService.pushRoute($router, to, external)"
+                    @click="blocked ? snackBlocked() : NavigationService.pushRoute(router, to as string, external)"
                   >
                     {{ detail.fixed }}
                   </div>
@@ -112,6 +111,9 @@ import { computed, defineComponent } from "vue"
 import { NavigationService } from "~/utils/service/singleton/navigation"
 import colors from "vuetify/lib/util/colors.mjs"
 import { useSnackbarStore } from "~/store/snackbar"
+import { useRoute, useRouter } from "vue-router"
+
+
 
 export default defineComponent({
   props: {
@@ -120,7 +122,7 @@ export default defineComponent({
     icon: String,
     appIcon: String,
     media: String,
-    to: [String, Object] as PropType<string | Record<string, any>>, // Tipos especificados
+    to: String,
     external: Boolean,
     title: String,
     titleColor: String,
@@ -129,11 +131,12 @@ export default defineComponent({
     blocked: Boolean,
     indexTab: Number,
     iconColor: String,
-    tags: Array as PropType<any[]>, // Tipo de array especificado
+    tags: Array as PropType<any[]>,
     height: [String, Number] as PropType<string | number>,
     detail: Object as PropType<Record<string, any>>, // Tipo de objeto especificado
   },
   setup(props) {
+    const router = useRouter()
     const snackbar = useSnackbarStore()
 
     // Computed properties
@@ -157,6 +160,8 @@ export default defineComponent({
       tagTextColor,
       cmpMedia,
       snackBlocked,
+      NavigationService,
+      router
     }
   },
 })
