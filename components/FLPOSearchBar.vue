@@ -32,7 +32,7 @@
                 :custom-filter="searchFilter"
                 class="treeview-card-item"
                 item-value="id"
-                open-all
+                :open-all="openAll"
               >
                 <template v-slot:prepend="{ item }">
                   <svg 
@@ -110,20 +110,23 @@ export default defineComponent({
     const textTransformService = new TextTransformService()
     const router = useRouter()
     const open = ref<string[]>([])
+    const openAll = ref(false)
 
     watch(search_site, (newSearch: string) => {
       if (treeRef.value) {
-        treeRef.value.$forceUpdate()
+        if (!openAll.value){
+          openAll.value = true
+          treeRef.value.$forceUpdate()
+        }
       }  
-      if (newSearch === "") {
-        console.log("search is empty")
-        open.value = []
+      if ((treeRef.value) && (newSearch === "")) {
+        openAll.value = false
+        treeRef.value.$forceUpdate()
       }
     })
     onMounted(() => {
       YamlFetcherService.loadYaml("br/mapa_site").then((result) => {
         items_site.value = result
-        open.value = []
       })
     })
 
@@ -147,6 +150,7 @@ export default defineComponent({
       treeRef,
       searchFilter,
       goToItem,
+      openAll,
       open
     }
   },
