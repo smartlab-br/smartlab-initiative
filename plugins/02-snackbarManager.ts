@@ -11,12 +11,11 @@ import { NumberTransformService } from "~/utils/service/singleton/numberTransfor
 import type { MainStore } from "~/store"
 import { useSnackbarStore } from "~/store/snackbar"
 
-const numberTransformService = new NumberTransformService()
-const snackbar = useSnackbarStore()
-
 export default defineNuxtPlugin((context: any) => {
   const { app } = context
-
+  const numberTransformService = new NumberTransformService()
+  const snackbar = useSnackbarStore()
+  
   const sendError = (err: any) => {
     if (typeof err === "string") {
       snackbar.showSnackbar({
@@ -34,8 +33,8 @@ export default defineNuxtPlugin((context: any) => {
   return {
     provide: {
       validCharts: ["MAP_TOPOJSON", "LINE", "STACKED", "BAR", "TREEMAP", "SCATTERPLOT", "BOXPLOT", "CALENDAR", "SANKEYD3", "MAP_BUBBLES", "MAP_HEAT", "MAP_CLUSTER", "MAP_MIGRATION", "MAP_POLYGON", "MIXED_MAP"],
-      leafletBasedCharts : ["MAP_BUBBLES", "MAP_HEAT", "MAP_CLUSTER", "MAP_MIGRATION", "MAP_POLYGON", "MIXED_MAP"],
-          openBugDialog(cardTitle: any) {
+      leafletBasedCharts: ["MAP_BUBBLES", "MAP_HEAT", "MAP_CLUSTER", "MAP_MIGRATION", "MAP_POLYGON", "MIXED_MAP"],
+      openBugDialog(cardTitle: any) {
         app._context.emitter.emit("showBugDialog", cardTitle)
       },
 
@@ -252,46 +251,46 @@ export default defineNuxtPlugin((context: any) => {
           let vl_res_nu_competencia_max
           for (const item of dt) {
             switch (item.cd_indicador) {
-              case "te_ope": // Operações
-                vl_ope_nu_competencia_max = item.nu_competencia_max ? item.nu_competencia_max : null
-                vl_ope_nu_competencia_min = item.nu_competencia_min ? item.nu_competencia_min : null
-                vl_ope = item.agr_sum_vl_indicador ? item.agr_sum_vl_indicador : 0
-                vl_ope_nu_competencia_max = item.nu_competencia_max ? item.nu_competencia_max : null
-                vl_ope_nu_competencia_min = item.nu_competencia_min ? item.nu_competencia_min : null
-                break
-              case "te_inspecoes": // Inspeções
-                vl_inspecoes = item.agr_sum_vl_indicador ? item.agr_sum_vl_indicador : 0
-                break
-              case "te_insp_rgt": // Inspeções com resgate
-                vl_insp_rgt = item.agr_sum_vl_indicador ? item.agr_sum_vl_indicador : 0
-                break
-              case "te_sit_trab_resgatados": // Resgates
-                vl_rgt_nu_competencia_max = item.nu_competencia_max ? item.nu_competencia_max : null
-                vl_rgt_nu_competencia_min = item.nu_competencia_min ? item.nu_competencia_min : null
-                vl_rgt = item.agr_sum_vl_indicador ? item.agr_sum_vl_indicador : 0
-                vl_rgt_rank_uf = item.rerank_rank_uf ? (numberTransformService.formatNumber(item.rerank_rank_uf, "inteiro") as string) : "0"
-                vl_rgt_rank_br = item.rerank_rank_br ? (numberTransformService.formatNumber(item.rerank_rank_br, "inteiro") as string) : "0"
-                vl_rgt_pct_uf = item.rerank_rank_uf ? (numberTransformService.formatNumber(item.rerank_perc_uf, "porcentagem", 2, 100) as string) : "0"
-                vl_rgt_pct_br = item.rerank_rank_br ? (numberTransformService.formatNumber(item.rerank_perc_br, "porcentagem", 3, 100) as string) : "0"
-                break
-              case "te_nat": // Resgatados Naturais
-                vl_nat_nu_competencia_max = item.nu_competencia_max ? item.nu_competencia_max : null
-                vl_nat_nu_competencia_min = item.nu_competencia_min ? item.nu_competencia_min : null
-                vl_nat = item.agr_sum_vl_indicador ? item.agr_sum_vl_indicador : 0
-                vl_nat_rank_uf = item.rerank_rank_uf ? (numberTransformService.formatNumber(item.rerank_rank_uf, "inteiro") as string) : "0"
-                vl_nat_rank_br = item.rerank_rank_br ? (numberTransformService.formatNumber(item.rerank_rank_br, "inteiro") as string) : "0"
-                vl_nat_pct_uf = item.rerank_rank_uf ? (numberTransformService.formatNumber(item.rerank_perc_uf, "porcentagem", 2, 100) as string) : "0"
-                vl_nat_pct_br = item.rerank_rank_br ? (numberTransformService.formatNumber(item.rerank_perc_br, "porcentagem", 3, 100) as string) : "0"
-                break
-              case "te_res": // Resgatados Residentes
-                vl_res_nu_competencia_max = item.nu_competencia_max ? item.nu_competencia_max : null
-                vl_res_nu_competencia_min = item.nu_competencia_min ? item.nu_competencia_min : null
-                vl_res = item.agr_sum_vl_indicador ? item.agr_sum_vl_indicador : 0
-                vl_res_rank_uf = item.rerank_rank_uf ? (numberTransformService.formatNumber(item.rerank_rank_uf, "inteiro") as string) : "0"
-                vl_res_rank_br = item.rerank_rank_br ? (numberTransformService.formatNumber(item.rerank_rank_br, "inteiro") as string) : "0"
-                vl_res_pct_uf = item.rerank_rank_uf ? (numberTransformService.formatNumber(item.rerank_perc_uf, "porcentagem", 2, 100) as string) : "0"
-                vl_res_pct_br = item.rerank_rank_br ? (numberTransformService.formatNumber(item.rerank_perc_br, "porcentagem", 3, 100) as string) : "0"
-                break
+            case "te_ope": // Operações
+              vl_ope_nu_competencia_max = item.nu_competencia_max ? item.nu_competencia_max : null
+              vl_ope_nu_competencia_min = item.nu_competencia_min ? item.nu_competencia_min : null
+              vl_ope = item.agr_sum_vl_indicador ? item.agr_sum_vl_indicador : 0
+              vl_ope_nu_competencia_max = item.nu_competencia_max ? item.nu_competencia_max : null
+              vl_ope_nu_competencia_min = item.nu_competencia_min ? item.nu_competencia_min : null
+              break
+            case "te_inspecoes": // Inspeções
+              vl_inspecoes = item.agr_sum_vl_indicador ? item.agr_sum_vl_indicador : 0
+              break
+            case "te_insp_rgt": // Inspeções com resgate
+              vl_insp_rgt = item.agr_sum_vl_indicador ? item.agr_sum_vl_indicador : 0
+              break
+            case "te_sit_trab_resgatados": // Resgates
+              vl_rgt_nu_competencia_max = item.nu_competencia_max ? item.nu_competencia_max : null
+              vl_rgt_nu_competencia_min = item.nu_competencia_min ? item.nu_competencia_min : null
+              vl_rgt = item.agr_sum_vl_indicador ? item.agr_sum_vl_indicador : 0
+              vl_rgt_rank_uf = item.rerank_rank_uf ? (numberTransformService.formatNumber(item.rerank_rank_uf, "inteiro") as string) : "0"
+              vl_rgt_rank_br = item.rerank_rank_br ? (numberTransformService.formatNumber(item.rerank_rank_br, "inteiro") as string) : "0"
+              vl_rgt_pct_uf = item.rerank_rank_uf ? (numberTransformService.formatNumber(item.rerank_perc_uf, "porcentagem", 2, 100) as string) : "0"
+              vl_rgt_pct_br = item.rerank_rank_br ? (numberTransformService.formatNumber(item.rerank_perc_br, "porcentagem", 3, 100) as string) : "0"
+              break
+            case "te_nat": // Resgatados Naturais
+              vl_nat_nu_competencia_max = item.nu_competencia_max ? item.nu_competencia_max : null
+              vl_nat_nu_competencia_min = item.nu_competencia_min ? item.nu_competencia_min : null
+              vl_nat = item.agr_sum_vl_indicador ? item.agr_sum_vl_indicador : 0
+              vl_nat_rank_uf = item.rerank_rank_uf ? (numberTransformService.formatNumber(item.rerank_rank_uf, "inteiro") as string) : "0"
+              vl_nat_rank_br = item.rerank_rank_br ? (numberTransformService.formatNumber(item.rerank_rank_br, "inteiro") as string) : "0"
+              vl_nat_pct_uf = item.rerank_rank_uf ? (numberTransformService.formatNumber(item.rerank_perc_uf, "porcentagem", 2, 100) as string) : "0"
+              vl_nat_pct_br = item.rerank_rank_br ? (numberTransformService.formatNumber(item.rerank_perc_br, "porcentagem", 3, 100) as string) : "0"
+              break
+            case "te_res": // Resgatados Residentes
+              vl_res_nu_competencia_max = item.nu_competencia_max ? item.nu_competencia_max : null
+              vl_res_nu_competencia_min = item.nu_competencia_min ? item.nu_competencia_min : null
+              vl_res = item.agr_sum_vl_indicador ? item.agr_sum_vl_indicador : 0
+              vl_res_rank_uf = item.rerank_rank_uf ? (numberTransformService.formatNumber(item.rerank_rank_uf, "inteiro") as string) : "0"
+              vl_res_rank_br = item.rerank_rank_br ? (numberTransformService.formatNumber(item.rerank_rank_br, "inteiro") as string) : "0"
+              vl_res_pct_uf = item.rerank_rank_uf ? (numberTransformService.formatNumber(item.rerank_perc_uf, "porcentagem", 2, 100) as string) : "0"
+              vl_res_pct_br = item.rerank_rank_br ? (numberTransformService.formatNumber(item.rerank_perc_br, "porcentagem", 3, 100) as string) : "0"
+              break
             }
           }
 
@@ -347,18 +346,18 @@ export default defineNuxtPlugin((context: any) => {
           text += "<tr><td class='font-weight-bold'><br/>INDICADORES MUNICIPAIS:</td></tr>"
           for (const item of dtIndicadores) {
             switch (item.cd_indicador) {
-              case "01_15_01_00": // População
-                text += "<tr><td>" + item.ds_indicador_radical + ": " + numberTransformService.formatNumber(item.vl_indicador, "inteiro") + " (" + item.nu_competencia + ")</td></tr>"
-                break
-              case "06_01_09_01": // IDHM
-                text += "<tr><td>" + item.ds_indicador_radical + ": " + numberTransformService.formatNumber(item.vl_indicador, "real", 3) + " (" + item.nu_competencia + ")</td></tr>"
-                break
-              case "01_14_13_00": // Proporção Pobreza
-                text += "<tr><td>" + item.ds_indicador_radical + ": " + numberTransformService.formatNumber(item.vl_indicador, "porcentagem") + " (" + item.nu_competencia + ")</td></tr>"
-                break
-              case "01_16_02_00": // PIB per capita
-                text += "<tr><td>" + item.ds_indicador_radical + ": " + numberTransformService.formatNumber(item.vl_indicador, "monetario", 2) + " (" + item.nu_competencia + ")</td></tr>"
-                break
+            case "01_15_01_00": // População
+              text += "<tr><td>" + item.ds_indicador_radical + ": " + numberTransformService.formatNumber(item.vl_indicador, "inteiro") + " (" + item.nu_competencia + ")</td></tr>"
+              break
+            case "06_01_09_01": // IDHM
+              text += "<tr><td>" + item.ds_indicador_radical + ": " + numberTransformService.formatNumber(item.vl_indicador, "real", 3) + " (" + item.nu_competencia + ")</td></tr>"
+              break
+            case "01_14_13_00": // Proporção Pobreza
+              text += "<tr><td>" + item.ds_indicador_radical + ": " + numberTransformService.formatNumber(item.vl_indicador, "porcentagem") + " (" + item.nu_competencia + ")</td></tr>"
+              break
+            case "01_16_02_00": // PIB per capita
+              text += "<tr><td>" + item.ds_indicador_radical + ": " + numberTransformService.formatNumber(item.vl_indicador, "monetario", 2) + " (" + item.nu_competencia + ")</td></tr>"
+              break
             }
           }
           text += "</table>"
@@ -567,10 +566,10 @@ export default defineNuxtPlugin((context: any) => {
           }
 
           const [resultPeriodo, resultTipo, resultAtividade, resultObs1, resultObs2]: any[] = await Promise.all([$fetch(UrlTransformService.getApiUrl(urlPeriodo)),
-          $fetch(UrlTransformService.getApiUrl(urlTipo)),
-          $fetch(UrlTransformService.getApiUrl(urlAtividade)),
-          $fetch(UrlTransformService.getApiUrl(urlObs1)),
-          $fetch(UrlTransformService.getApiUrl(urlObs2))])
+            $fetch(UrlTransformService.getApiUrl(urlTipo)),
+            $fetch(UrlTransformService.getApiUrl(urlAtividade)),
+            $fetch(UrlTransformService.getApiUrl(urlObs1)),
+            $fetch(UrlTransformService.getApiUrl(urlObs2))])
 
           // this.$axios.all([$fetch(UrlTransformService.getApiUrl(urlPeriodo)),
           //   $fetch(UrlTransformService.getApiUrl(urlTipo)),
@@ -907,14 +906,14 @@ export default defineNuxtPlugin((context: any) => {
         if (idLocalidade.includes("prt") || idLocalidade.includes("PRT") ||
           idLocalidade.includes("ptm") || idLocalidade.includes("PTM")) { return "prtptm" }
         switch (idLocalidade.length) {
-          case 1:
-            return "regiao"
-          case 2:
-            return "estado"
-          case 4:
-            return "mesorregiao"
-          case 5:
-            return "microrregiao"
+        case 1:
+          return "regiao"
+        case 2:
+          return "estado"
+        case 4:
+          return "mesorregiao"
+        case 5:
+          return "microrregiao"
         }
         return "municipio"
       },

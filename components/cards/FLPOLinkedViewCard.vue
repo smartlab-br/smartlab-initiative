@@ -111,7 +111,7 @@ import { computed, defineComponent } from "vue"
 import { NavigationService } from "~/utils/service/singleton/navigation"
 import colors from "vuetify/lib/util/colors.mjs"
 import { useSnackbarStore } from "~/store/snackbar"
-import { useRoute, useRouter } from "vue-router"
+import { useRouter } from "vue-router"
 
 
 
