@@ -1,48 +1,40 @@
 <template>
   <v-col :class="`${rowClass ? rowClass : 'pl-4 pr-0 pb-3 pt-3'} ${cardClass}`">
     <v-row
-      :class="`minicard fill-height${colorClass} ${relevance}`"
-      :columns="true"
+      :class="`minicard fill-height ${colorClass} ${relevance}`"
       align="center"
+      class="flex-column" 
     >
-      <div v-if="errorMessage" :class="`minicard-comment ${commentColorClass}`" v-html="errorMessage" />
-      
-      <v-row v-if="structure?.desc_position === 'right'" align="center">
-        <v-col class="minicard-value">
-          <span v-html="value"></span>
-        </v-col>
-        <v-col v-if="structure?.desc_position === 'right'" class="pl-1 title-obs-desc minicard-description">
-          <span v-html="description ? description.toUpperCase() : ''"></span>
-        </v-col>
-      </v-row>
-      
-      <v-row v-else>
-        <v-col class="minicard-value">
-          <span v-html="value"></span>
-        </v-col>
-      </v-row>
-      
-      <v-row v-if="dataset?.length > 1 && structure?.chart" class="minicard-chart">
-        <v-col
+      <!-- Error Message -->
+      <v-col v-if="errorMessage" :class="`minicard-comment ${commentColorClass}`">
+        <span v-html="errorMessage"></span>
+      </v-col>
+
+      <!-- Value -->
+      <v-col class="pa-0">
+        <span class="minicard-value" v-html="value"></span>
+      </v-col>
+
+      <!-- Description -->
+      <v-col class="pa-0">
+        <span class="title-obs-desc minicard-description" v-html="description ? description.toUpperCase() : ''"></span>
+      </v-col>
+
+      <!-- Chart -->
+      <v-col v-if="dataset?.length > 1 && structure?.chart" class="minicard-chart">
+        <div
           v-if="structure.chart?.type && isValidChart(structure.chart.type)"
           :id="chartId"
           ref="chart"
           :class="isLeafletBasedCharts(structure.chart.type) ? 'map_geo' : ''"
-          fill-height
+          class="fill-height"
         />
-      </v-row>
-      
-      <v-row v-if="structure?.desc_position !== 'right'">
-        <v-col class="title-obs-desc minicard-description">
-          <span v-html="description ? description.toUpperCase() : ''"></span>
-        </v-col>
-      </v-row>
+      </v-col>
 
-      <v-row>
-        <v-col :class="`minicard-comment ${commentColorClass}`">
-          <span v-html="comment"></span>
-        </v-col>
-      </v-row>
+      <!-- Comment -->
+      <v-col class="pa-0">
+        <span :class="`minicard-comment ${commentColorClass}`" v-html="comment"></span>
+      </v-col>
     </v-row>
   </v-col>
 </template>
