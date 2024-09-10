@@ -96,11 +96,11 @@
               class="section-complement"
               :class="section.complement.cls ? section.complement.cls : 'col-3'"
             >
-              <!-- <FLPOMinicard
+              <FLPOMinicard
                 v-for="(miniCard, indexMinicard) in section.complement.minicards"
                 :key="'minicard_'+indexMinicard"
                 :structure="miniCard"
-              /> -->
+              />
               <!-- <v-row
                 v-for="(image, indexImage) in section.complement.images"
                 :key="'img_'+indexImage"

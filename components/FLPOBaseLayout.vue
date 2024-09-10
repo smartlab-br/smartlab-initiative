@@ -13,23 +13,25 @@ export default defineComponent({
   setup(props, { emit }) {
     // Arrow function para o método setComplexAttribute
     const setComplexAttribute = (dataset: Record<string, any> | string, _rules: Record<string, any>, structure:Record<string, any>, addedParams?: Record<string, any> | string, _metadata?: Record<string, any>) => {
-      if (typeof dataset === "string") {
-        addedParams = dataset
-      } else {
-        let base_object = {}
-        if (Array.isArray(dataset) && dataset.length === 1) {
-          base_object = dataset[0]
-        } else if (dataset !== null && dataset !== undefined) {
-          base_object = dataset
-        }
+      if (typeof addedParams === "object" && addedParams.attribute) {
+        if (typeof dataset === "string") {
+          addedParams.attribute.value = dataset
+        } else {
+          let base_object = {}
+          if (Array.isArray(dataset) && dataset.length === 1) {
+            base_object = dataset[0]
+          } else if (dataset !== null && dataset !== undefined) {
+            base_object = dataset
+          }
 
-        // Aplicação de interpolação usando um serviço que está disponível no contexto
-        addedParams = textTransformService.applyInterpol(
-          structure,
-          props.customParams,
-          base_object,
-          sendInvalidInterpol // Emitindo o evento ou chamando uma função de callback
-        )
+          // Aplicação de interpolação usando um serviço que está disponível no contexto
+          addedParams.attribute.value = textTransformService.applyInterpol(
+            structure,
+            props.customParams,
+            base_object,
+            sendInvalidInterpol // Emitindo o evento ou chamando uma função de callback
+          )
+        }
       }
     }
 

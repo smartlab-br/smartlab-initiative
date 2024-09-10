@@ -1,34 +1,54 @@
 <template>
-  <v-col :class="(rowClass ? rowClass : 'pl-4 pr-0 pb-3 pt-3') + ' ' + cardClass">
-    <v-row column :class="'minicard fill-height' + colorClass + ' ' + relevance">
-      <div v-if="errorMessage" :class="'minicard-comment ' + commentColorClass" v-html="errorMessage" />
-
-      <v-row v-if="structure?.desc_position == 'right'" class="align-center">
-        <v-col class="minicard-value" v-html="value" />
-        <v-col v-if="structure.desc_position == 'right'" class="pl-1 title-obs-desc minicard-description" v-html="description != null ? description.toUpperCase() : ''" />
+  <v-col :class="`${rowClass ? rowClass : 'pl-4 pr-0 pb-3 pt-3'} ${cardClass}`">
+    <v-row
+      :class="`minicard fill-height${colorClass} ${relevance}`"
+      :columns="true"
+      align="center"
+    >
+      <div v-if="errorMessage" :class="`minicard-comment ${commentColorClass}`" v-html="errorMessage" />
+      
+      <v-row v-if="structure?.desc_position === 'right'" align="center">
+        <v-col class="minicard-value">
+          <span v-html="value"></span>
+        </v-col>
+        <v-col v-if="structure?.desc_position === 'right'" class="pl-1 title-obs-desc minicard-description">
+          <span v-html="description ? description.toUpperCase() : ''"></span>
+        </v-col>
       </v-row>
-
-      <div v-else class="minicard-value" v-html="value" />
-
-      <div v-if="dataset !== null && dataset.length > 1 && structure && structure.chart" class="minicard-chart">
-        <div
-          v-if="structure && structure.chart && structure.chart.type && $validCharts.includes(structure.chart.type)"
+      
+      <v-row v-else>
+        <v-col class="minicard-value">
+          <span v-html="value"></span>
+        </v-col>
+      </v-row>
+      
+      <v-row v-if="dataset?.length > 1 && structure?.chart" class="minicard-chart">
+        <v-col
+          v-if="structure.chart?.type && isValidChart(structure.chart.type)"
           :id="chartId"
           ref="chart"
-          class="fill-height"
-          :class="$leafletBasedCharts.includes(structure.chart.type) ? 'map_geo' : ''"
+          :class="isLeafletBasedCharts(structure.chart.type) ? 'map_geo' : ''"
+          fill-height
         />
-      </div>
+      </v-row>
+      
+      <v-row v-if="structure?.desc_position !== 'right'">
+        <v-col class="title-obs-desc minicard-description">
+          <span v-html="description ? description.toUpperCase() : ''"></span>
+        </v-col>
+      </v-row>
 
-      <div v-if="structure?.desc_position != 'right'" class="title-obs-desc minicard-description" v-html="description != null ? description.toUpperCase() : ''" />
-
-      <div :class="'minicard-comment ' + commentColorClass" v-html="comment" />
+      <v-row>
+        <v-col :class="`minicard-comment ${commentColorClass}`">
+          <span v-html="comment"></span>
+        </v-col>
+      </v-row>
     </v-row>
   </v-col>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed, watch, onMounted, onBeforeMount } from "vue"
+import { defineComponent, ref, computed, watch, onBeforeMount } from "vue"
 import FLPOBaseLayout from "~/components/FLPOBaseLayout.vue"
 import { useNuxtApp } from "#app"
 import { TextTransformService } from "~/utils/service/singleton/textTransform"
@@ -58,10 +78,19 @@ export default defineComponent({
     const dataset = ref<Record<string, any> | string | null>(null)
     const metadata = ref<Record<string, any> | null | undefined>(null)
     const errorMessage = ref<string | null>(null)
+    const miniRefs: Record<string, any>  = {"value": value, "description": description, "comment": comment}
 
     const chartId = computed(() => {
       return props.structure?.chart ? "chart_" + props.structure.chart.id : undefined
     })
+
+    const isValidChart = (type: string): boolean => {
+      return $validCharts.includes(type)
+    }
+
+    const isLeafletBasedCharts = (type:string): boolean => {
+      return $leafletBasedCharts.includes(type)
+    }
 
     const updateReactiveDataStructure = (filterUrl: string) => {
       let apiUrl = ""
@@ -131,22 +160,22 @@ export default defineComponent({
         const rule = addedParams.rule
         if (rule.fixed !== undefined) {
           if (rule.format) {
-            value.value = numberTransformService.formatNumber(rule.fixed, rule.format, rule.precision, rule.multiplier, rule.collapse, rule.signed, rule.uiTags)
+            miniRefs[rule.prop].value = numberTransformService.formatNumber(rule.fixed, rule.format, rule.precision, rule.multiplier, rule.collapse, rule.signed, rule.uiTags)
           } else {
-            value.value = rule.fixed
+            miniRefs[rule.prop].value = rule.fixed
           }
         } else if (rule.template !== undefined) {
           super.setComplexAttribute(baseObjectList, [rule], rule, { attribute: rule.prop }, metadata)
         } else if (rule.id === undefined) {
           if (baseObjectList && typeof baseObjectList === "object" && baseObjectList.length > 0) {
-            value.value = indicators.getAttributeFromIndicatorInstance(rule, baseObjectList[0])
+            miniRefs[rule.prop].value = indicators.getAttributeFromIndicatorInstance(rule, baseObjectList[0])
           } else if (rule.default !== null && rule.default !== undefined) {
-            value.value = rule.default
+            miniRefs[rule.prop].value = rule.default
           } else {
-            value.value = "Sem Registros"
+            miniRefs[rule.prop].value = "Sem Registros"
           }
         } else {
-          value.value = indicators.getIndicatorValueFromStructure(rule, baseObjectList)
+          miniRefs[rule.prop].value = indicators.getIndicatorValueFromStructure(rule, baseObjectList)
         }
         
         if (rule.prop == "comment" && rule.color_changing) {
@@ -243,14 +272,8 @@ export default defineComponent({
       metadata,
       errorMessage,
       chartId,
-      triggerChartUpdates,
-      setDataset,
-      fillProp,
-      fillMinicard,
-      updateReactiveDataStructure,
-      sendDataStructureError,
-      $validCharts,
-      $leafletBasedCharts
+      isValidChart,
+      isLeafletBasedCharts
     }
   }
 })
