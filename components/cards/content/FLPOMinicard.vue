@@ -6,7 +6,7 @@
       class="flex-column" 
     >
       <!-- Error Message -->
-      <v-col v-if="errorMessage" :class="`minicard-comment ${commentColorClass}`">
+      <v-col v-if="errorMessage" :class="`pa-0 minicard-comment ${commentColorClass}`">
         <span v-html="errorMessage"></span>
       </v-col>
 
@@ -70,7 +70,7 @@ export default defineComponent({
     const dataset = ref<Record<string, any> | string | null>(null)
     const metadata = ref<Record<string, any> | null | undefined>(null)
     const errorMessage = ref<string | null>(null)
-    const miniRefs: Record<string, any>  = {"value": value, "description": description, "comment": comment}
+    const miniRefs: Record<string, Ref<any>>  = {"value": value, "description": description, "comment": comment}
 
     const chartId = computed(() => {
       return props.structure?.chart ? "chart_" + props.structure.chart.id : undefined
