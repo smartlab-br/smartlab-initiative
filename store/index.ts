@@ -24,6 +24,8 @@ export const useMainStore = defineStore("main", {
         for (const obs of this.observatoriesData) {
           const dims = await YamlFetcherService.loadYaml("br/dimensao/"+obs.id)
           obs.dimensions = dims.dimensoes
+          const obsPage = await YamlFetcherService.loadYaml("br/observatorio/"+obs.id)
+          obs.obsPage = obsPage
         }
       }
       const aboutData = await YamlFetcherService.loadYaml("br/about")
@@ -99,6 +101,7 @@ export const useMainStore = defineStore("main", {
           }
         }
       }
+      ColorsService.changeTheme(this.currentObsIdStr)
     },
     setCurrentDimension(id: string = "") {
       if (id != "") {

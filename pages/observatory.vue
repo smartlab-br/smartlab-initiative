@@ -33,13 +33,13 @@
             </v-row>
           </v-col>
           <v-row
-            v-if="smartlab"
+            v-if="currentObs"
             class="px-5"
             :class="{'justify-center': xlAndUp }"
           >
             <v-col
-              v-for="(observatorio, indxObs) in smartlab.observatories"
-              :key="'linked_card_obs_' + indxObs"
+              v-for="(dimensao, indxDim) in currentObs?.dimensions"
+              :key="'linked_card_obs_' + indxDim"
               class="pa-3"
               :cols="12"
               :sm="6"
@@ -48,14 +48,13 @@
             >
               <FLPOLinkedViewCard
                 title-color="white"
-                :index-tab="30 + indxObs"
-                :tag-color="observatorio.tagColor"
-                :status="observatorio.status"
-                :to="observatorio.to"
-                :external="observatorio.external"
-                :title="observatorio.short_desc"
-                :ripple-color="ColorsService.getThemeFromId(observatorio.id).primary"
-                :blocked="observatorio.blocked"
+                :index-tab="30 + indxDim"
+                :tag-color="dimensao.tagColor"
+                :status="dimensao.status"
+                :to="dimensao.to"
+                :external="dimensao.external"
+                :title="dimensao.short_desc"
+                :blocked="dimensao.blocked"
               />
             </v-col>
           </v-row>
@@ -117,11 +116,11 @@ export default {
     }
 
     watch(
-      () => smartlab.value, 
+      () => currentObs.value, 
       async (newValue) => {
         if (newValue){
-          if (smartlab.value){
-            parallaxFile.value = smartlab.value.background_images[idParallaxfile.value]
+          if (currentObs.value){
+            parallaxFile.value = currentObs.value.obsPage.background_images[idParallaxfile.value]
           }
 
         }
@@ -134,6 +133,7 @@ export default {
 
     onMounted(() => {
       setInterval(setParallaxFile, 20000)
+      store.setCurrentObs(route)
       // if (smAndDown.value) {
       //   obsMaxSlice.value = 11;
       //   obsSlice.value = 0;

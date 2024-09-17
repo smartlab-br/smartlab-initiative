@@ -19,6 +19,7 @@ declare global {
     external: boolean;
     rippleColor: string;
     dimensions: Dimension[];
+    obsPage?: any;
     app_icon?: string;
     icon?: string;
     section_title?: string;
@@ -46,6 +47,7 @@ declare global {
     media: string;
     status?: string;
     default?: boolean;
+    external?: boolean;
   }
         
   interface Footer {

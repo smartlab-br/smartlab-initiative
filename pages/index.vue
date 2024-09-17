@@ -216,6 +216,7 @@ export default {
 
     onMounted(() => {
       setInterval(setParallaxFile, 20000)
+      store.setCurrentObs(route)
       // if (smAndDown.value) {
       //   obsMaxSlice.value = 11;
       //   obsSlice.value = 0;
