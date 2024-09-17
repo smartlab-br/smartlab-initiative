@@ -1,4 +1,7 @@
 import vuetify, { transformAssetUrls } from "vite-plugin-vuetify"
+import { join } from "path"
+import { readFileSync } from "fs"
+import * as yaml from "js-yaml"
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
@@ -20,19 +23,19 @@ export default defineNuxtConfig({
       htmlAttrs: {
         lang: "pt-br"
       },
-      meta:[
+      meta: [
         { hid: "description", name: "description", content: "Iniciativa SmartLab de Trabalho Decente Políticas Públicas de Trabalho Decente Guiadas por Dados" },
         { name: "format-detection", content: "telephone=no" },
         { name: "theme-color", content: "#E0E0E0" },
         { property: "og:title", content: "Smartlab - Promoção do Trabalho Decente" },
         { property: "og:url", content: "https://smartlabbr.org" },
         { property: "og:image", content: "https://smartlabbr.org/static/icons/smartlab.png" }
-  
+
       ],
       link: [
         { rel: "icon", type: "image/x-icon", href: "/icons/smartlab.png" },
         { href: "https://fonts.googleapis.com/css?family=Material+Icons", rel: "stylesheet", type: "text/css" }
-      ]  
+      ]
     }
   },
 
@@ -68,10 +71,11 @@ export default defineNuxtConfig({
     },
     server: {
       proxy: {
-        "/viewconf/": { 
-          target: process.env.GIT_VIEWCONF_TAG_URL, 
+        "/viewconf/": {
+          target: process.env.GIT_VIEWCONF_TAG_URL,
           changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/viewconf\//, "")},    
+          rewrite: (path) => path.replace(/^\/viewconf\//, "")
+        },
       }
     }
   },
@@ -80,6 +84,42 @@ export default defineNuxtConfig({
     "@fortawesome/fontawesome-svg-core/styles.css",
     "~/assets/smartlab.css"
   ],
+  hooks: {
+    async "pages:extend"(pages) {
+
+      if (process.env.GIT_VIEWCONF_TAG_URL) {
+        const response = await fetch(`${process.env.GIT_VIEWCONF_TAG_URL}br/observatorios.yaml`)
+        const yamlText = await response.text()
+        const data = yaml.load(yamlText, { json: true }) as Smartlab
+        const observatories = data.observatories.filter((obs: any) => !obs.external)
+        for (const obs of observatories) {
+          pages.push({
+            name: obs.title,
+            path: obs.to,
+            file: "~/pages/observatory.vue"
+          })
+        }
+      } else {
+        const yamlPath = join(process.cwd(), "public/smartlab-initiative-viewconf/br/observatorios.yaml")
+        try {
+          const yamlData = readFileSync(yamlPath, "utf-8")
+          const data = yaml.load(yamlData) as any
+
+          const observatories = data.observatories.filter((obs: any) => !obs.external)
+          for (const obs of observatories) {
+            pages.push({
+              name: obs.title,
+              path: obs.to,
+              file: "~/pages/observatory.vue"
+            })
+          }
+        } catch (error) {
+          console.error("Erro ao carregar o arquivo YAML:", error)
+        }
+      }
+    }
+  },
+
 
   // Global CSS: https://go.nuxtjs.dev/config-css
   // css: [
