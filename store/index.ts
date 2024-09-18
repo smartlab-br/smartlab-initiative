@@ -101,7 +101,6 @@ export const useMainStore = defineStore("main", {
           }
         }
       }
-      ColorsService.changeTheme(this.currentObsIdStr)
     },
     setCurrentDimension(id: string = "") {
       if (id != "") {
