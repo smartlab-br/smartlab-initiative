@@ -22,13 +22,31 @@
           ></v-img>
           <v-col cols="12" class="text-center py-4 my-5 animated-background-content">
             <v-row justify="center">
-              <v-col cols="12">
-                <div class="display-4-obs ubuntu">
-                  Observatório
-                </div>
+              <v-col
+                id="screenTitle"
+                cols="12"
+                :class="`d-flex justify-center ${computedClasses}`"
+              >
+                <v-img
+                  :src="`/smartlab/${currentObsId ? currentObsId.concat('.svg') : ''}`"
+                  :alt="currentObs ? currentObs.title : ''"
+                  width="100%"
+                  max-width="680px"
+                />
               </v-col>
-              <v-col cols="10" md="4" class="pt-5 mt-3">
-                <FLPOSearchBar />
+              <v-col cols="12">
+                <v-row
+                  align="center"
+                  justify="center"
+                >
+                  <v-col
+                    cols="10"
+                    md="4"
+                    class="pt-5 mt-3"
+                  >
+                    <FLPOSearchBar />
+                  </v-col>
+                </v-row>
               </v-col>
             </v-row>
           </v-col>
@@ -82,6 +100,7 @@ export default {
     const displayHeight = ref("auto")
     const parallaxFile = ref<string|null>(null)
     const { mdAndUp, xlAndUp } = useDisplay()
+    const { xs, sm, md, lg } = useDisplay()
     const idParallaxfile = ref(0)
     const isFading = ref(false)
 
@@ -114,6 +133,19 @@ export default {
         displayHeight.value = "height:auto"
       }
     }
+
+    const computedClasses = computed(() => {
+      if (xs.value) {
+        return "px-1 pt-1 mx-1 mt-1"
+      } else if (sm.value && !xs.value) {
+        return "px-2 pt-2 mx-2 mt-2"
+      } else if (md.value && !sm.value) {
+        return "px-3 pt-3 mx-3 mt-3"
+      } else if (lg.value) {
+        return "px-4 pt-4 mx-4 mt-4"
+      }
+      return ""
+    })    
 
     watch(
       () => currentObs.value, 
@@ -175,7 +207,8 @@ export default {
       parallaxFile,
       currentParallax,
       xlAndUp,
-      isFading
+      isFading,
+      computedClasses
     }
   }
 }
