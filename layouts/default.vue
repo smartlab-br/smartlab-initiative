@@ -507,8 +507,6 @@ export default {
 
 
     onMounted(() => {
-      ColorsService.changeTheme(store.currentObsId)
-      ColorsService.getThemeFromId("des")
       getPlaces().then(() => {
         if (places.value) {
           auOptions.value = places.value.slice()  
@@ -568,7 +566,8 @@ export default {
       smartlab,
       focusChangePlace,
       autocompleteChangePlace,
-      itemClick
+      itemClick,
+      ColorsService
     }
   }
 }
