@@ -160,7 +160,7 @@ export const useMainStore = defineStore("main", {
         // this.customParams[nm_var] = localidade
         // this.$analysisUnitModel.setPlace(nm_var, localidade)
       } catch (error) {
-        snackbar.showSnackbar({ color: "error", text: "Erro ao carregar dados da Unidade de Análise escolhida (Brasil, município ou UF)" })    
+        snackbar.showSnackbar({ color: "error", text: "Erro ao carregar dados da unidade de análise escolhida (Brasil, município ou UF)" })    
       }
     },
     async getPlaces() {
@@ -261,7 +261,7 @@ export const useMainStore = defineStore("main", {
         this.placesData = options
       } catch (error) {
         this.placesData = options // Você pode manter os dados padrão ou realizar outra ação
-        snackbar.showSnackbar({ color: "error", text: "Erro ao carregar unidades de análises (municípios e UFs)" })    
+        snackbar.showSnackbar({ color: "error", text: "Erro ao carregar unidades de análise (municípios e UFs)" })    
       }        
     }
   },
