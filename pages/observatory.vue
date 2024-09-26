@@ -151,7 +151,7 @@ export default {
       () => currentObs.value, 
       async (newValue) => {
         if (newValue){
-          if (currentObs.value){
+          if (currentObs.value && currentObs.value.obsPage){
             parallaxFile.value = currentObs.value.obsPage.background_images[idParallaxfile.value]
           }
 

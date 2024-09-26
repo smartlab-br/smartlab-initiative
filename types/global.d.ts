@@ -267,9 +267,6 @@ declare global {
 
   // ObsPage Interfaces
   interface ObsPage {
-    title_sup:         string;
-    title:             string;
-    title_sub:         string;
     map_image:         string;
     background_images: string[];
     tematicos:         string[];
