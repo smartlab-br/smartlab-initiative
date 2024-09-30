@@ -199,7 +199,7 @@ export default {
     }
 
     watch(
-      () => smartlab.value, // Função getter que retorna observatories.value
+      () => currentObs.value, 
       async (newValue) => {
         if (newValue){
           if (smartlab.value){
