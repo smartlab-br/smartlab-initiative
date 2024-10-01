@@ -163,11 +163,8 @@ export default {
       resizeFirstSection()
     })
 
-    onMounted(async() => {
+    onMounted(() => {
       setInterval(setParallaxFile, 20000)
-      if (store.smartlab == null){
-        await store.loadSmartlabData()
-      }
       store.setCurrentObs(route)
       store.setCurrentAnalysisUnit("0")
       ColorsService.changeTheme(currentObsId.value)

@@ -506,7 +506,10 @@ export default {
     // )
 
 
-    onMounted(() => {
+    onMounted(async() => {
+      if (store.smartlab == null){
+        await store.loadSmartlabData()
+      }
       getPlaces().then(() => {
         if (places.value) {
           auOptions.value = places.value.slice()  
