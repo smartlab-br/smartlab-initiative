@@ -51,7 +51,63 @@
             </v-row>
           </v-col>
           <v-row
-            v-if="currentObs"
+            v-if="smartlab && currentObs"
+            class="px-5"
+            :class="{'justify-center': xlAndUp }"
+          >
+            <v-col
+              xs="12"
+              class="d-flex justify-end px-5 mx-5"
+              style="min-height:48px"
+            >
+              <!-- Botão para SmartMap -->
+              <v-tooltip location="bottom">
+                <template #activator="{ props }">
+                  <v-btn 
+                    v-bind="props" 
+                    v-if="currentObs && currentObs.obsPage?.prevalencia"
+                    class="ml-0"
+                    icon
+                    aria-label="SmartMap"
+                    variant="text"
+                    dark
+                    @click="scrollTo('smartmap')"
+                  >
+                  <v-icon
+                    color="white"
+                  >
+                    mdi-earth
+                  </v-icon>
+                  </v-btn>
+                </template>
+                SmartMap
+              </v-tooltip>
+
+              <!-- Botão para SmartLines -->
+              <v-tooltip location="bottom">
+                <template #activator="{ props }">
+                  <v-btn 
+                    v-bind="props" 
+                    v-if="currentObs && currentObs.obsPage?.sparklines"
+                    class="ml-0"
+                    icon
+                    aria-label="SmartLines"
+                    variant="text"
+                    @click="scrollTo('sparklines')"
+                  >
+                    <v-icon
+                      color="white"
+                    >
+                      mdi-chart-line
+                    </v-icon>
+                  </v-btn>
+                </template>
+                SmartLines
+              </v-tooltip>
+            </v-col>
+          </v-row>
+          <v-row
+            v-if="smartlab && currentObs"
             class="px-5"
             :class="{'justify-center': xlAndUp }"
           >
@@ -79,13 +135,39 @@
         </v-row>
       </v-col>
     </v-row>
+    <v-row
+      v-if="smartlab && currentObs"
+    >
+      <v-col v-if="currentObs && currentObs.obsPage && currentObs.obsPage.prevalencia && currentObs.obsPage.prevalencia.odometers" cols="12" class="pt-0">
+        <v-col>
+          <v-row>
+            <v-col
+              class="headline-obs text-xs-center pa-0"
+              :style="{
+                backgroundColor: currentObs.obsPage.prevalencia.odometers.bg_color || 'black',
+                color: currentObs.obsPage.prevalencia.odometers.title_font_color || 'white'
+              }"
+            >
+              {{ currentObs.obsPage.prevalencia.odometers.title }}
+            </v-col>
+          </v-row>
+
+          <FLPOOdometer
+            :odometer-items="currentObs.obsPage.prevalencia.odometers.odometer_items"
+            :comment-title="currentObs.obsPage.prevalencia.odometers.comment_title"
+            :title-font-color="currentObs.obsPage.prevalencia.odometers.title_font_color"
+            :bg-color="currentObs.obsPage.prevalencia.odometers.bg_color"
+          />
+        </v-col>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
 <script lang="ts">
 import { useDisplay } from "vuetify"
 import { useMainStore } from "~/store"
-import { onMounted, ref, watchEffect } from "vue"
+import { onMounted, onBeforeMount, ref, watchEffect } from "vue"
 import { storeToRefs } from "pinia"
 import { NavigationService } from "~/utils/service/singleton/navigation"
 import { ColorsService } from "~/utils/service/singleton/colors.js"
@@ -154,7 +236,6 @@ export default {
           if (currentObs.value && currentObs.value.obsPage){
             parallaxFile.value = currentObs.value.obsPage.background_images[idParallaxfile.value]
           }
-
         }
       }
     )
@@ -163,10 +244,14 @@ export default {
       resizeFirstSection()
     })
 
-    onMounted(() => {
-      setInterval(setParallaxFile, 20000)
+    onBeforeMount(async() => {
+      if (store.smartlab == null){
+        await store.loadSmartlabData()
+      }
       store.setCurrentObs(route)
-      store.setCurrentAnalysisUnit("0")
+      setInterval(setParallaxFile, 20000)
+    })
+    onMounted(() => {
       ColorsService.changeTheme(currentObsId.value)
       // if (smAndDown.value) {
       //   obsMaxSlice.value = 11;
@@ -189,7 +274,14 @@ export default {
       }, 2000)
     }
 
-
+    const scrollTo = (anchor: string) => {
+      const el = document.getElementById(anchor)
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth" })
+        window.scrollBy(0, -60) // Ajuste de posição após o scroll
+      }
+    }    
+    
     return {
       smartlab,
       observatories,
@@ -205,7 +297,8 @@ export default {
       currentParallax,
       xlAndUp,
       isFading,
-      computedClasses
+      computedClasses,
+      scrollTo
     }
   }
 }

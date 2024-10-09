@@ -439,8 +439,12 @@ declare global {
   }
 
   interface Odometers {
-    type:           string;
-    odometer_items: OdometerItem[];
+    title:            string;
+    comment_title:    string;
+    type:             string;
+    odometer_items:   OdometerItem[];
+    bg_color:         string;
+    title_font_color: string;
   }
 
   interface OdometerItem {
@@ -452,9 +456,22 @@ declare global {
     pace_description?: string;
     options:           OdometerItemOptions;
   }
-
+  
   interface OdometerItemOptions {
     cls_format: string;
+  }
+
+  interface OdometerDataItem {
+    cd_indicador: string;
+    delta_por_ms: number;
+    ds_indicador: string;
+    momento_ms: number;
+    nu_competencia_max: number;
+    nu_competencia_max_ms: number;
+    nu_competencia_min: number;
+    nu_competencia_min_ms: number;
+    vl_estimado: number;
+    vl_indicador: number;
   }
 
   interface RankingCard {

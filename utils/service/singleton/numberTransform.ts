@@ -2,7 +2,7 @@ export class NumberTransformService {
   // Adicionando uma assinatura de índice para permitir acesso dinâmico
   [index: string]: (...args: any[]) => void
 
-  formatNumber(valor: number | string | null,
+  formatNumber(valor: number | string | null | undefined,
     formato: string | null = null,
     casasDecimais: number | null = null,
     multiplier: number | null = 1,
