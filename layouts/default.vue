@@ -384,7 +384,6 @@
             :class="{
               'pt-5 pb-3': $vuetify.display.smAndDown,
             }"
-            xs6 sm6 md6 lg1 
             cols="12"
             md="6"
             lg="1"
@@ -507,9 +506,9 @@ export default {
 
 
     onMounted(async() => {
-      if (store.smartlab == null){
-        await store.loadSmartlabData()
-      }
+      // if (store.smartlab == null){
+      //   await store.loadSmartlabData()
+      // }
       getPlaces().then(() => {
         if (places.value) {
           auOptions.value = places.value.slice()  

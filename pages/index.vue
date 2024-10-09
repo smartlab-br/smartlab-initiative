@@ -217,7 +217,6 @@ export default {
     onMounted(() => {
       setInterval(setParallaxFile, 20000)
       store.setCurrentObs(route)
-      store.setCurrentAnalysisUnit("0")
       ColorsService.changeTheme(currentObsId.value)
       // if (smAndDown.value) {
       //   obsMaxSlice.value = 11;
