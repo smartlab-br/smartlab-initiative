@@ -12,7 +12,7 @@
         <v-col
           v-for="(odometer, odoIndex) in odometerItems"
           :key="'odo_'+odoIndex"
-          :xs="getColSize('xs',odometer.cls)"
+          :xs="getColSize('xs',odometer.cls) || 12"
           :sm="getColSize('sm',odometer.cls)"
           :md="getColSize('md',odometer.cls)"
           :lg="getColSize('lg',odometer.cls)"

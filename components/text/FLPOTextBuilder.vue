@@ -67,7 +67,6 @@ export default defineComponent({
   props: {
     structure: Object,
     customParams: Object,
-    customFunctions: Object,
     readMoreLimit: Number,
     reactiveFilter: String,
   },
