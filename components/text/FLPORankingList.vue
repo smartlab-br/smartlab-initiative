@@ -1,7 +1,7 @@
 <template>
   <v-col :class="cls || 'xs12'">
     <v-row v-if="structure?.look !== 'minicard'" class="ml-2 mb-2" wrap>
-      <v-col cols="12" class="display-1-obs ranking-list-title pb-2" v-html="title" />
+      <v-col cols="12" class="display-1-obs ranking-list-title pb-2" ><span v-html="title"></span></v-col>
       <v-col v-if="errorMessage" cols="12" class="display-1-obs ranking-list-text pb-2">
         {{ errorMessage }}
       </v-col>
@@ -30,13 +30,13 @@
       >
         <div :class="`ranking-list-minicard-text ${structure.text_size ? '-' + structure.text_size : ''}`" v-html="`${item.rank ? item.rank : itemIndx + 1}. ${item.localidade} ${item.vl_indicador ? item.vl_indicador : ''}`" />
       </v-col>
-      <v-col cols="12" class="ranking-list-minicard-title pb-2" v-html="title" />
+      <v-col cols="12" class="ranking-list-minicard-title pb-2" ><span v-html="title"></span></v-col>
     </v-row>
   </v-col>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, watch, onMounted } from 'vue'
+import { defineComponent, ref, watch, onMounted } from "vue"
 import { NumberTransformService } from "~/utils/service/singleton/numberTransform"
 const numberTransformService = new NumberTransformService()
 
@@ -50,7 +50,7 @@ export default defineComponent({
   },
   setup(props) {
     const ranking = ref<any[]>([])
-    const cls = ref<string>(props.structure?.cls || 'xs12')
+    const cls = ref<string>(props.structure?.cls || "xs12")
     const title = ref<string | null>(props.structure?.title || null)
     const errorMessage = ref<string | null>(null)
     const { $fillDataStructure } = useNuxtApp()
