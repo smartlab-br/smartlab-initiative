@@ -41,24 +41,31 @@
 
 <script lang="ts">
 import { defineComponent, ref, computed, watch, onBeforeMount } from "vue"
-import FLPOBaseLayout from "~/components/FLPOBaseLayout.vue"
 import { useNuxtApp } from "#app"
-import { TextTransformService } from "~/utils/service/singleton/textTransform"
-import { NumberTransformService } from "~/utils/service/singleton/numberTransform"
-import { Indicators } from "~/utils/model/indicators"
+import { TextTransformService } from "@/utils/service/singleton/textTransform"
+import { NumberTransformService } from "@/utils/service/singleton/numberTransform"
+import { Indicators } from "@/utils/model/indicators"
+import { useBaseLayout } from "@/composables/useBaseLayout"
 
 const textTransformService = new TextTransformService()
 const numberTransformService = new NumberTransformService()
 const indicators = new Indicators()
 
 export default defineComponent({
-  extends: FLPOBaseLayout,
   props: {
+    structure: Object,
+    customParams: Object,
+    topology: Object,
+    sectionIndex: Number,
     rowClass: String,
     reactiveFilter: [String, Object, Array],
     customFilters: Object
   },
-  setup(props) {
+  setup(props, { emit }) {
+    const { setComplexAttribute } = useBaseLayout(
+      props.customParams, 
+      emit 
+    )    
     const { $reformDataset, $fillDataStructure, $validCharts, $leafletBasedCharts, $chartGen } = useNuxtApp()
     const relevance = ref("")
     const description = ref("")
@@ -157,7 +164,7 @@ export default defineComponent({
             miniRefs[rule.prop].value = rule.fixed
           }
         } else if (rule.template !== undefined) {
-          super.setComplexAttribute(baseObjectList, [rule], rule, { attribute: rule.prop }, metadata)
+          setComplexAttribute(baseObjectList, [rule], rule, { attribute: rule.prop }, metadata)
         } else if (rule.id === undefined) {
           if (baseObjectList && typeof baseObjectList === "object" && baseObjectList.length > 0) {
             miniRefs[rule.prop].value = indicators.getAttributeFromIndicatorInstance(rule, baseObjectList[0])

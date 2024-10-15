@@ -15,8 +15,7 @@ export default defineComponent({
   props: {
     id: String,
     structure: Object,
-    customParams: Object,
-    customFunctions: Object,
+    customParams: Object
   },
   setup(props) {
     // Data properties (substituindo data() por ref/reativo)

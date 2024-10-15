@@ -6,7 +6,7 @@
       hide-details
     >
       <v-radio
-        v-for="item in structure.items"
+        v-for="item in structure?.items"
         :key="item.id"
         :color="item.color ? item.color : 'accent'"
         :value="item.value"
@@ -20,7 +20,6 @@
                 v-for="(miniCard, index) in item.minicards"
                 :key="index"
                 :structure="miniCard"
-                :custom-functions="customFunctions"
                 :custom-params="customParams"
                 row-class="pa-1"
               />
@@ -40,42 +39,33 @@ import FLPOMinicard from "~/components/cards/content/FLPOMinicard.vue"
 export default defineComponent({
   components: { FLPOMinicard },
   props: {
-    structure: {
-      type: Object,
-      required: true
-    },
-    customFunctions: {
-      type: Object,
-      default: () => ({})
-    },
-    customParams: {
-      type: Object,
-      default: () => ({})
-    }
+    id: String,
+    structure: Object,
+    customParams: Object
   },
   setup(props, { emit }) {
-    const chosen = ref(props.structure.items[0].value)
+    const chosen = ref(props.structure?.items[0].value)
     const selection = ref<Record<string, boolean>>({})
 
-    const { toItem } = useEmitter(props, emit)
+    useEmitter(props, emit)
 
     onMounted(() => {
-      chosen.value = props.structure.items[0].value
+      chosen.value = props.structure?.items[0].value
     })
 
     const toggleRadio = (chosenItem: any) => {
-      props.structure.items.forEach((item: any) => {
+      props.structure?.items.forEach((item: any) => {
         selection.value[item.value] = item.value === chosenItem.value
       })
 
       emit(
-        props.structure.event ? props.structure.event : props.structure.selection?.event,
+        props.structure?.event ? props.structure.event : props.structure?.selection?.event,
         {
-          id: props.structure.id,
+          id: props.structure?.id,
           type: "radio",
           enabled: selection.value,
           item: chosenItem,
-          rules: props.structure.selection ? props.structure.selection.rules : null
+          rules: props.structure?.selection ? props.structure.selection.rules : null
         }
       )
     }
@@ -83,8 +73,7 @@ export default defineComponent({
     return {
       chosen,
       selection,
-      toggleRadio,
-      toItem
+      toggleRadio
     }
   }
 })

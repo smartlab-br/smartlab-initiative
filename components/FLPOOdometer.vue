@@ -52,7 +52,6 @@
 // import Odometer from "odometer"
 // import "odometer/themes/odometer-theme-car.css"
 import { defineComponent, ref, onMounted, onBeforeUnmount } from "vue"
-import FLPOBaseLayout from "./FLPOBaseLayout.vue"
 import { NumberTransformService } from "~/utils/service/singleton/numberTransform"
 import { TextTransformService } from "~/utils/service/singleton/textTransform"
 const textTransformService = new TextTransformService()
@@ -60,7 +59,6 @@ const numberTransformService = new NumberTransformService()
 const { $getColSize } = useNuxtApp()
 
 export default defineComponent({
-  extends: FLPOBaseLayout,
   props: {
     odometerItems: {
       type: Array as () => OdometerItem[],
@@ -79,7 +77,7 @@ export default defineComponent({
       default: "white"
     }
   },
-  setup(props) {
+  setup(props, { emit }) {
     const commentItems = ref<string[]>([])
     const commentData = ref<string>("")
     const dtOdometros = ref<OdometerDataItem[]>([])
