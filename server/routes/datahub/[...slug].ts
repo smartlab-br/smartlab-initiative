@@ -2,7 +2,6 @@ import { H3Event } from "h3"
 
 export default defineEventHandler(async (event: H3Event): Promise<any> => {
   const { datahubKey, datahubUrl } = useRuntimeConfig()
-  
   if (!datahubKey || !datahubUrl) {
     throw createError({
       statusCode: 500,
@@ -22,6 +21,7 @@ export default defineEventHandler(async (event: H3Event): Promise<any> => {
     })
     return response
   } catch (error) {
+    console.log(error)
     const typedError = error as { response?: Response; message: string }
     throw createError({
       statusCode: typedError.response?.status || 500,

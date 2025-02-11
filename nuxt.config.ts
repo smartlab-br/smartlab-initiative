@@ -69,15 +69,6 @@ export default defineNuxtConfig({
         transformAssetUrls,
       },
     },
-    server: {
-      proxy: {
-        "/viewconf/": {
-          target: process.env.GIT_VIEWCONF_TAG_URL,
-          changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/viewconf\//, "")
-        },
-      }
-    }
   },
 
   css: [
@@ -86,9 +77,9 @@ export default defineNuxtConfig({
   ],
   hooks: {
     async "pages:extend"(pages) {
-
+      console.log("VIEWCONF location: " + process.env.GIT_VIEWCONF_TAG_URL)
       if (process.env.GIT_VIEWCONF_TAG_URL) {
-        const response = await fetch(`${process.env.GIT_VIEWCONF_TAG_URL}br/observatorios.yaml`)
+        const response = await fetch(`${process.env.GIT_VIEWCONF_TAG_URL}/br/observatorios.yaml`)
         const yamlText = await response.text()
         const data = yaml.load(yamlText, { json: true }) as Smartlab
         const observatories = data.observatories.filter((obs: any) => !obs.external)
@@ -201,5 +192,18 @@ export default defineNuxtConfig({
     }
   },
 
-  compatibilityDate: "2024-08-02"
+  compatibilityDate: "2024-08-02",
+
+  // Server configuration
+  nitro: {
+    routeRules: {
+      '/**': { cors: true }
+    }
+  },
+
+  // Port and host configuration
+  appConfig: {
+    host: '0.0.0.0',
+    port: 8080
+  }
 })

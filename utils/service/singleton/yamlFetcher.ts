@@ -4,7 +4,7 @@ export class YamlFetcherService {
 
   static getBasePath() {
     const config = useRuntimeConfig()
-    if (config.public.gitViewConfUrl) { return "/viewconf/" }
+    if (config.public.gitViewConfUrl) { return config.public.gitViewConfUrl }
     return "/smartlab-initiative-viewconf/"
   }
 
