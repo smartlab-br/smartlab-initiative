@@ -26,7 +26,12 @@
     "leaflet-curve": "^1.0.0",
     "leaflet.heat": "^0.2.0",
     "leaflet.markercluster": "^1.5.3",
-    "pinia": "^2.1.7"
+    "pinia": "^2.1.7",
+    "nuxt": "^3.13.0",
+    "nuxt-gtag": "^1.1.1",
+    "nuxt3-leaflet": "^1.0.12",
+    "typescript": "^5.2.2",
+    "vite-plugin-vuetify": "^2.0.2"
   },
   "devDependencies": {
     "@nuxt/devtools": "latest",
@@ -43,11 +48,6 @@
     "@typescript-eslint/parser": "^6.10.0",
     "eslint": "^8.53.0",
     "eslint-plugin-vue": "^9.18.1",
-    "nuxt": "^3.13.0",
-    "nuxt-gtag": "^1.1.1",
-    "nuxt3-leaflet": "^1.0.12",
-    "typescript": "^5.2.2",
-    "vite-plugin-vuetify": "^2.0.2",
     "vitest": "^0.34.6",
     "vue": "^3.3.8",
     "vue-router": "^4.2.5",
