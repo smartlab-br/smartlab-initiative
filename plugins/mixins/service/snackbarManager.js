@@ -168,7 +168,7 @@ if (!Vue.__snackbarManager__) {
           let url = "/te/indicadoresmunicipais/rerank?categorias=cd_mun_ibge,cd_uf,cd_indicador,nm_municipio_uf,nu_competencia_max,nu_competencia_min&valor=vl_indicador&agregacao=sum&filtros=nn-vl_indicador,and,in-cd_indicador-'te_ope'-'te_sit_trab_resgatados'-'te_nat'-'te_res'-'te_inspecoes'-'te_insp_rgt',and,post-eq-cd_mun_ibge-" + target.options.rowData.cd_mun_ibge
           let urlSUAS = "/indicadoresmunicipais?categorias=cd_mun_ibge,cd_uf,nm_municipio_uf&valor=vl_indicador&agregacao=SUM&filtros=nn-vl_indicador,and,in-cd_indicador-'G_CREAS_00_17'-'G_CREAS_18_99',and,eq-cd_municipio_ibge_dv-" + target.options.rowData.cd_mun_ibge
           // let url = "/te/indicadoresmunicipais?categorias=cd_mun_ibge,nm_municipio_uf,nu_competencia_max,nu_competencia_min&valor=vl_indicador&agregacao=sum&pivot=cd_indicador&filtros=nn-vl_indicador,and,in-cd_indicador-'te_ope'-'te_rgt'-'te_nat'-'te_res'-'te_inspecoes',and,eq-cd_mun_ibge-"+ target.options.rowData.cd_mun_ibge;
-          const urlIndicadores = "/indicadoresmunicipais?categorias=cd_indicador,ds_indicador_radical,nu_competencia,nu_competencia_max,nu_competencia_min,vl_indicador&filtros=nn-vl_indicador,and,in-cd_indicador-'06_01_09_01'-'01_16_02_00'-'01_15_01_00'-'01_14_13_00',and,eq-cd_mun_ibge-" + target.options.rowData.cd_mun_ibge + ',and,eq-nu_competencia-nu_competencia_max&ordenacao=ds_indicador_radical'
+          const urlIndicadores = "/indicadoresmunicipais?categorias=cd_indicador,ds_indicador_radical,nu_competencia,nu_competencia_max,nu_competencia_min,vl_indicador&ordenacao=-cd_indicador&filtros=nn-vl_indicador,and,in-cd_indicador-'06_01_09_01'-'PIB_00002'-'01_17_01_00'-'01_14_13_00',and,eq-cd_mun_ibge-" + target.options.rowData.cd_mun_ibge + ',and,eq-nu_competencia-nu_competencia_max&ordenacao=ds_indicador_radical'
           if (options && options.clickable) {
             text += "<p class='text-xs-right ma-0'><a href='" + this.$tooltipBuildingService.getUrlByPlace(target.options.rowData.cd_mun_ibge, route) + "' class='primary--text font-weight-black'>IR PARA</a></p>"
           }
@@ -201,11 +201,11 @@ if (!Vue.__snackbarManager__) {
 
           text += "<p class='headline-obs'>Município: <b>" + (dt[0] && dt[0].nm_municipio_uf ? dt[0].nm_municipio_uf : dtSUAS[0].nm_municipio_uf) + '</b></p>'
           text += "<table width='100%'>"
-          let vl_ope = 0
-          let vl_ope_nu_competencia_min
-          let vl_ope_nu_competencia_max
-          let vl_inspecoes = 0
-          let vl_insp_rgt = 0
+          // let vl_ope = 0
+          // let vl_ope_nu_competencia_min
+          // let vl_ope_nu_competencia_max
+          // let vl_inspecoes = 0
+          // let vl_insp_rgt = 0
           let vl_rgt = 0
           let vl_rgt_rank_uf = 0
           let vl_rgt_pct_uf = 0
@@ -229,19 +229,19 @@ if (!Vue.__snackbarManager__) {
           let vl_res_nu_competencia_max
           for (const item of dt) {
             switch (item.cd_indicador) {
-              case 'te_ope': // Operações
-                vl_ope_nu_competencia_max = item.nu_competencia_max ? item.nu_competencia_max : null
-                vl_ope_nu_competencia_min = item.nu_competencia_min ? item.nu_competencia_min : null
-                vl_ope = item.agr_sum_vl_indicador ? item.agr_sum_vl_indicador : 0
-                vl_ope_nu_competencia_max = item.nu_competencia_max ? item.nu_competencia_max : null
-                vl_ope_nu_competencia_min = item.nu_competencia_min ? item.nu_competencia_min : null
-                break
-              case 'te_inspecoes': // Inspeções
-                vl_inspecoes = item.agr_sum_vl_indicador ? item.agr_sum_vl_indicador : 0
-                break
-              case 'te_insp_rgt': // Inspeções com resgate
-                vl_insp_rgt = item.agr_sum_vl_indicador ? item.agr_sum_vl_indicador : 0
-                break
+              // case 'te_ope': // Operações
+              //   vl_ope_nu_competencia_max = item.nu_competencia_max ? item.nu_competencia_max : null
+              //   vl_ope_nu_competencia_min = item.nu_competencia_min ? item.nu_competencia_min : null
+              //   vl_ope = item.agr_sum_vl_indicador ? item.agr_sum_vl_indicador : 0
+              //   vl_ope_nu_competencia_max = item.nu_competencia_max ? item.nu_competencia_max : null
+              //   vl_ope_nu_competencia_min = item.nu_competencia_min ? item.nu_competencia_min : null
+              //   break
+              // case 'te_inspecoes': // Inspeções
+              //   vl_inspecoes = item.agr_sum_vl_indicador ? item.agr_sum_vl_indicador : 0
+              //   break
+              // case 'te_insp_rgt': // Inspeções com resgate
+              //   vl_insp_rgt = item.agr_sum_vl_indicador ? item.agr_sum_vl_indicador : 0
+              //   break
               case 'te_sit_trab_resgatados': // Resgates
                 vl_rgt_nu_competencia_max = item.nu_competencia_max ? item.nu_competencia_max : null
                 vl_rgt_nu_competencia_min = item.nu_competencia_min ? item.nu_competencia_min : null
@@ -282,20 +282,20 @@ if (!Vue.__snackbarManager__) {
             text += '<tr><td>Fonte: Radar SIT - Painel de Informações e Estatísticas da Inspeção do Trabalho no Brasil</td></tr>'
             text += '<tr><td>Período: ' + ano_min + (ano_min != ano_max ? ' a ' + ano_max : '') + '</td></tr>'
           }
-          text += "<tr><td class='font-weight-bold accent-4'><br/>OPERAÇÕES</td></tr>"
-          text += '<tr><td>' + this.$numberTransformService.formatNumber(vl_ope, 'inteiro') + ' operações</td></tr>'
-          if (vl_ope != 0) {
-            text += '<tr><td>' + this.$numberTransformService.formatNumber(vl_rgt / vl_ope, 'real', 2) + ' resgates por operação (envolvendo ' + vl_inspecoes + ' inspeções/fiscalizações)</td></tr>'
-          }
-          if (vl_inspecoes != 0) {
-            text += '<tr><td>' + this.$numberTransformService.formatNumber(vl_insp_rgt / vl_inspecoes, 'real', 2, 100) + '% de inspeções/fiscalizações com resgates</td></tr>'
-          }
-          if (vl_ope != 0) {
-            ano_min = this.customParams.value_min && this.customParams.value_min >= vl_ope_nu_competencia_min ? this.customParams.value_min : vl_ope_nu_competencia_min
-            ano_max = this.customParams.value_max && this.customParams.value_max <= vl_ope_nu_competencia_max ? this.customParams.value_max : vl_ope_nu_competencia_max
-            text += '<tr><td>Fonte: COETE</td></tr>'
-            text += '<tr><td>Período: ' + ano_min + (ano_min != ano_max ? ' a ' + ano_max : '') + '</td></tr>'
-          }
+          // text += "<tr><td class='font-weight-bold accent-4'><br/>OPERAÇÕES</td></tr>"
+          // text += '<tr><td>' + this.$numberTransformService.formatNumber(vl_ope, 'inteiro') + ' operações</td></tr>'
+          // if (vl_ope != 0) {
+          //   text += '<tr><td>' + this.$numberTransformService.formatNumber(vl_rgt / vl_ope, 'real', 2) + ' resgates por operação (envolvendo ' + vl_inspecoes + ' inspeções/fiscalizações)</td></tr>'
+          // }
+          // if (vl_inspecoes != 0) {
+          //   text += '<tr><td>' + this.$numberTransformService.formatNumber(vl_insp_rgt / vl_inspecoes, 'real', 2, 100) + '% de inspeções/fiscalizações com resgates</td></tr>'
+          // }
+          // if (vl_ope != 0) {
+          //   ano_min = this.customParams.value_min && this.customParams.value_min >= vl_ope_nu_competencia_min ? this.customParams.value_min : vl_ope_nu_competencia_min
+          //   ano_max = this.customParams.value_max && this.customParams.value_max <= vl_ope_nu_competencia_max ? this.customParams.value_max : vl_ope_nu_competencia_max
+          //   text += '<tr><td>Fonte: COETE</td></tr>'
+          //   text += '<tr><td>Período: ' + ano_min + (ano_min != ano_max ? ' a ' + ano_max : '') + '</td></tr>'
+          // }
           text += "<tr><td class='font-weight-bold red--text'><br/>RESGATADOS NATURAIS</td></tr>"
           text += '<tr><td>' + this.$numberTransformService.formatNumber(vl_nat, 'inteiro') + ' trabalhadores regatados nascidos no município em destaque</td></tr>'
           if (vl_nat != 0) {
@@ -324,7 +324,7 @@ if (!Vue.__snackbarManager__) {
           text += "<tr><td class='font-weight-bold'><br/>INDICADORES MUNICIPAIS:</td></tr>"
           for (const item of dtIndicadores) {
             switch (item.cd_indicador) {
-              case '01_15_01_00': // População
+              case '01_17_01_00': // População
                 text += '<tr><td>' + item.ds_indicador_radical + ': ' + this.$numberTransformService.formatNumber(item.vl_indicador, 'inteiro') + ' (' + item.nu_competencia + ')</td></tr>'
                 break
               case '06_01_09_01': // IDHM
@@ -333,7 +333,7 @@ if (!Vue.__snackbarManager__) {
               case '01_14_13_00': // Proporção Pobreza
                 text += '<tr><td>' + item.ds_indicador_radical + ': ' + this.$numberTransformService.formatNumber(item.vl_indicador, 'porcentagem') + ' (' + item.nu_competencia + ')</td></tr>'
                 break
-              case '01_16_02_00': // PIB per capita
+              case 'PIB_00002': // PIB per capita
                 text += '<tr><td>' + item.ds_indicador_radical + ': ' + this.$numberTransformService.formatNumber(item.vl_indicador, 'monetario', 2) + ' (' + item.nu_competencia + ')</td></tr>'
                 break
             }
