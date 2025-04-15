@@ -1,12 +1,12 @@
 export class DateFormatService {
   weekDays = {
-    seg: 'SEGUNDA',
-    ter: 'TERÇA',
-    qua: 'QUARTA',
-    qui: 'QUINTA',
-    sex: 'SEXTA',
-    sáb: 'SÁBADO',
-    dom: 'DOMINGO'
+    Seg: 'SEGUNDA',
+    Ter: 'TERÇA',
+    Qua: 'QUARTA',
+    Qui: 'QUINTA',
+    Sex: 'SEXTA',
+    Sáb: 'SÁBADO',
+    Dom: 'DOMINGO'
   }
 
   // constructor () {}

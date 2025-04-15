@@ -21,7 +21,7 @@
         pa-0
         class="parallax-content-home"
       >
-        <v-flex id="screenTitle" xs12 class="white--text text-xs-center py-4 my-5" style="line-height: normal;">
+        <v-flex id="screenTitle" xs12 class="text-xs-center py-4 my-5 white--text" style="line-height: normal;">
           <v-layout row wrap justify-center>
             <v-flex xs12>
               <div class="display-4-obs ubuntu">
@@ -30,7 +30,7 @@
             </v-flex>
             <v-flex xs12>
               <div class="display-1-obs ubuntu-condensed">
-                Promoção do Trabalho Decente Guiada por Dados
+                Promoção do Trabalho Decente Guiada por Dados - 10 anos
               </div>
             </v-flex>
             <v-flex xs10 md4 pt-5 mt-3>
