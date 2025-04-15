@@ -90,7 +90,8 @@
             >
               <img
                 tabindex="20"
-                src="/icons/smartlab_labeled-30.png"
+                height="40"
+                src="/icons/smartlab_labeled.png"
                 class="cursor-pointer"
                 alt="Smartlab"
                 @click="$navigationManager.pushRoute($router, '/', false)"
@@ -104,7 +105,8 @@
             >
               <img
                 tabindex="20"
-                src="/icons/smartlab-icon-30x30.png"
+                height="30"
+                src="/icons/smartlab_icon.png"
                 class="cursor-pointer"
                 alt="Smartlab"
                 @click="$navigationManager.pushRoute($router, '/', false)"
