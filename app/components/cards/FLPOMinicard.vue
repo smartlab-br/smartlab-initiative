@@ -1,13 +1,11 @@
 <template>
   <v-col 
-    cols="12"
+    :cols="$getColSize('xs',cardClass) || 12"
     :class="`${rowClass ? rowClass : 'pl-4 pr-0 pb-3 pt-3'} ${cardClass}`"
-    :xs="getColSize('xs',cardClass)"
-    :sm="getColSize('sm',cardClass)"
-    :md="getColSize('md',cardClass)"
-    :lg="getColSize('lg',cardClass)"
-    :xl="getColSize('xl',cardClass)"
-
+    :sm="$getColSize('sm',cardClass)"
+    :md="$getColSize('md',cardClass)"
+    :lg="$getColSize('lg',cardClass)"
+    :xl="$getColSize('xl',cardClass)"
   >
     <v-row
       :class="`minicard fill-height ${colorClass} ${relevance}`"
@@ -50,6 +48,7 @@
         <!-- Comment -->
         <v-row>
           <v-col class="pa-0">
+            <!-- eslint-disable-next-line vue/no-v-html -->
             <span :class="`minicard-comment ${commentColorClass}`" v-html="comment"/>
           </v-col>
         </v-row>
@@ -95,7 +94,7 @@ const commentColorClass = ref("")
 const dataset = ref<Record<string, any>[] | string | null>(null)
 const metadata = ref<Record<string, any> | null | undefined>(null)
 const errorMessage = ref<string | null>(null)
-const miniRefs: Record<string, Ref<any>> = { "value": value, "description": description, "comment": comment }
+const miniRefs: Record<string, Ref<string>> = { "value": value, "description": description, "comment": comment }
 
 const chartId = computed(() => {
   return props.structure?.chart ? "chart_" + props.structure.chart.id : undefined
@@ -166,13 +165,25 @@ const triggerChartUpdates = () => {
   }
 }
 
-const setDataset = (datasetValue: Record<string, any>[], _rules: Record<string, any>, _structure: Record<string, any>, _addedParams?: Record<string, any> | string, metadataValue?: Record<string, any>) => {
+const setDataset = (
+  datasetValue: Record<string, any>[], 
+  _rules: Record<string, any>, 
+  _structure: Record<string, any>, 
+  _addedParams?: Record<string, any> | string, 
+  metadataValue?: Record<string, any>
+) => {
   dataset.value = datasetValue
   metadata.value = metadataValue
   triggerChartUpdates()
 }
 
-const fillProp = (baseObjectList: Record<string, any>[], args: Record<string, any>, _preloaded: Record<string, any>, addedParams?: Record<string, any> | string, _metadata?: Record<string, any>) => {
+const fillProp = (
+  baseObjectList: Record<string, any>[], 
+  args: Record<string, any>, 
+  _preloaded: Record<string, any>, 
+  addedParams?: Record<string, any> | string, 
+  _metadata?: Record<string, any>
+) => {
   if (typeof addedParams === "object" && addedParams !== null) {
     const rule = addedParams.rule
     if (rule.fixed !== undefined) {
@@ -252,8 +263,6 @@ const fillMinicard = (
 const sendDataStructureError = (message: string) => {
   errorMessage.value = message
 }
-
-const getColSize = $getColSize
 
 onBeforeMount(() => {
   relevance.value = props.structure?.relevance
