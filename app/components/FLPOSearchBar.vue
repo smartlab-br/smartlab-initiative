@@ -2,19 +2,32 @@
   <v-container>
     <v-row>
       <v-col>
-
-        <v-menu v-if="items_site.length > 0" v-model="menu" allow-overflow>
-          <!-- Configurando o slot `activator` -->
-          <template #activator="{ props }">
-            <v-text-field v-bind="props" v-model="search_site" class="search-text" label="Pesquisa por Tema"
-              variant="outlined" density="compact" prepend-inner-icon="mdi-magnify" @keyup.enter="menu = true" />
-          </template>
-
-          <v-card class="treeview-card">
-            <v-card-text>
-              <v-treeview v-if="items_site.length > 0" ref="treeRef" v-model:opened="open" :items="items_site"
-                :search="search_site" :custom-filter="searchFilter" class="treeview-card-item" item-value="id"
-                :open-all="openAll">
+        <div class="position-relative" v-click-outside="closeMenu">     
+          <v-text-field
+            v-model="search_site"
+            class="search-text"
+            placeholder="Pesquisa por Tema"
+            variant="outlined"
+            density="compact"
+            prepend-inner-icon="mdi-magnify"
+            autocomplete="off"
+            @focus="menu = true"
+            @keyup.enter="menu = true"
+          />
+          
+          <v-card v-show="menu && items_site.length > 0" class="treeview-card dropdown-menu">
+            <v-card-text class="pa-2">
+              <v-treeview 
+                v-if="items_site.length > 0" 
+                ref="treeRef" 
+                v-model:opened="open" 
+                :items="items_site"
+                :search="search_site" 
+                :custom-filter="searchFilter" 
+                class="treeview-card-item" 
+                item-value="id"
+                :open-all="openAll"
+              >
                 <template #prepend="{ item }">
                   <svg v-if="item.item_type === 'observatorio'" viewBox="0 0 24 24" width="24" height="24"
                     role="presentation" :fill="'white'" class="icon--inline" :title="item.short_title">
@@ -28,16 +41,19 @@
                     mdi-card-text-outline
                   </v-icon>
                 </template>
+
                 <template #title="{ item }">
                   <a v-if="item.item_type === 'observatorio'" class="text-white pl-5" @click="goToItem(item.url)">
                     {{ $vuetify.display.smAndDown ? item.short_title : item.title }}
                   </a>
-                  <a v-else class="text-white pl-5" @click="goToItem(item.url)">{{ item.title }}</a>
+                  <a v-else class="text-white pl-5" @click="goToItem(item.url)">
+                    {{ item.title }}
+                  </a>
                 </template>
-              </v-treeview>
+              </v-treeview>          
             </v-card-text>
           </v-card>
-        </v-menu>
+        </div>  
       </v-col>
     </v-row>
   </v-container>
@@ -73,6 +89,9 @@ const open = ref<string[]>([])
 const openAll = ref(false)
 
 const textTransformService = new TextTransformService()
+const closeMenu = () => {
+  menu.value = false
+}
 
 watch(search_site, (newSearch: string) => {
   if (treeRef.value) {
@@ -108,44 +127,75 @@ const goToItem = (url: string) => {
 </script>
 
 <style scoped>
-.search-text :deep(.v-input__control .v-field) {
+/* 1. Container Principal: Resolve arredondamento e bordas */
+.search-text :deep(.v-field) {
   border-radius: 100px !important;
+  overflow: hidden !important; 
   background-color: #212121 !important;
-  opacity: 0.7;
-  text-align: center;
-  caret-color: auto;
   border: 1px solid rgba(255, 255, 255, 0.4) !important;
+  transition: border 0.3s ease;
 }
 
-.search-text :deep(.v-input__control .v-field .v-field__prepend-inner) {
+/* 2. Alinhamento do Input */
+.search-text :deep(input) {
+  text-align: center !important;
+  color: white !important;
+}
+
+/* 3. Lupa */
+.search-text :deep(.v-field__prepend-inner) {
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
   color: rgba(255, 255, 255, 0.4) !important;
+  padding: 0 !important;
+  margin: 0 !important;
 }
 
-.search-text :deep(.v-input__control .v-field .v-label) {
-  width: 100% !important;
-}
-
-.search-text :deep(.v-input__control .v-field input) {
-  max-width: 90% !important;
-  text-align: center;
-  color: white
-}
-
-.search-text :deep(.v-input__control .v-field--focused) {
-  border-radius: 100px !important;
+/* 4. Resets */
+.search-text :deep(.v-field--focused) {
   border: 2px solid #ffffff !important;
 }
 
-.search-text :deep(.v-input__control .v-field--focused .v-field__prepend-inner) {
-  color: #ffffff !important;
+.search-text :deep(.v-field__outline) {
+  display: none !important;
 }
 
+.search-text :deep(.v-field__overlay) {
+  border-radius: 100px !important;
+}
+
+/* 5. Estilos do Card e Árvore */
 .treeview-card {
   border-radius: 20px;
   background-color: #212121 !important;
-  opacity: 0.9;
+  opacity: 0.95;
+  border: 1px solid rgba(255, 255, 255, 0.2);
   max-height: 400px;
+  
+  /* Rolagem vertical e horizontal caso a lista seja muito longa ou muito larga */
   overflow-y: auto;
+  overflow-x: auto; 
+}
+
+/* 6. Comportamento do Dropdown Customizado */
+.dropdown-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  
+  /* Garante que o card nunca seja menor que a barra de pesquisa */
+  min-width: 100%; 
+  
+  /* Permite que o card cresça na horizontal para caber a linha inteira do texto */
+  width: max-content; 
+  
+  /* Limite de segurança para o card não estourar para fora do monitor/celular */
+  max-width: 90vw; 
+  
+  z-index: 100;
 }
 
 .treeview-card-item {
@@ -153,12 +203,26 @@ const goToItem = (url: string) => {
   color: white;
 }
 
-.v-field--variant-outlined {
-  border-radius: 100px !important;
-  background-color: #212121 !important;
-  opacity: 0.7;
-  text-align: center;
-  caret-color: auto;
-  border: 1px solid rgba(255, 255, 255, 0.4) !important;
+/* 1. Reduz o espaço gigante padrão entre o ícone (prepend) e o texto */
+.treeview-card-item :deep(.v-list-item__prepend) {
+  margin-inline-end: 5px !important; /* Você pode diminuir para 8px se quiser mais grudado */
+}
+
+/* 2. Força o bloco de texto a ficar alinhado totalmente à esquerda */
+.treeview-card-item :deep(.v-list-item__content) {
+  text-align: left !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+/* 3. Remove o espaço invisível reservado para a setinha de expandir em itens sem filhos */
+.treeview-card-item :deep(.v-list-item__spacer) {
+  display: none !important;
+  width: 0 !important;
+}
+
+/* 4. Opcional: Ajusta a margem do ícone de expansão (setinha) para não empurrar o conteúdo */
+.treeview-card-item :deep(.v-treeview-group__header .v-list-item__prepend) {
+    margin-inline-end: 8px !important;
 }
 </style>
