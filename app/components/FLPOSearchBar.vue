@@ -2,7 +2,7 @@
   <v-container>
     <v-row>
       <v-col>
-        <div class="position-relative" v-click-outside="closeMenu">     
+        <div v-click-outside="closeMenu" class="position-relative" >     
           <v-text-field
             v-model="search_site"
             class="search-text"
@@ -26,12 +26,14 @@
                 :custom-filter="searchFilter" 
                 class="treeview-card-item" 
                 item-value="id"
-                :open-all="openAll"
+                density="compact"
               >
                 <template #prepend="{ item }">
-                  <svg v-if="item.item_type === 'observatorio'" viewBox="0 0 24 24" width="24" height="24"
+                  <svg 
+                    v-if="item.item_type === 'observatorio'" viewBox="0 0 24 24" width="24" height="24"
                     role="presentation" :fill="'white'" class="icon--inline" :title="item.short_title">
-                    <use xmlns:xlink="http://www.w3.org/1999/xlink"
+                    <use 
+                      xmlns:xlink="http://www.w3.org/1999/xlink"
                       :xlink:href="'/icons/sprite/coord-sprites.svg#' + item.app_icon" />
                   </svg>
                   <v-icon v-else-if="item.item_type === 'dimensao'" color="white">
@@ -43,10 +45,10 @@
                 </template>
 
                 <template #title="{ item }">
-                  <a v-if="item.item_type === 'observatorio'" class="text-white pl-5" @click="goToItem(item.url)">
+                  <a v-if="item.item_type === 'observatorio'" class="text-white pl-2" @click="goToItem(item.url)">
                     {{ $vuetify.display.smAndDown ? item.short_title : item.title }}
                   </a>
-                  <a v-else class="text-white pl-5" @click="goToItem(item.url)">
+                  <a v-else class="text-white pl-2" @click="goToItem(item.url)">
                     {{ item.title }}
                   </a>
                 </template>
@@ -86,23 +88,32 @@ const search_site = ref("")
 const items_site = ref<SiteMapReg[]>([])
 const treeRef = ref<VTreeview | null>(null)
 const open = ref<string[]>([])
-const openAll = ref(false)
 
 const textTransformService = new TextTransformService()
 const closeMenu = () => {
   menu.value = false
 }
 
-watch(search_site, (newSearch: string) => {
-  if (treeRef.value) {
-    if (!openAll.value) {
-      openAll.value = true
-      treeRef.value.$forceUpdate()
+// Helper function to get all item IDs recursively
+const getAllItemIds = (items: SiteMapReg[]): string[] => {
+  const ids: string[] = []
+  const traverse = (item: SiteMapReg) => {
+    ids.push(item.id)
+    if (item.children && item.children.length > 0) {
+      item.children.forEach(traverse)
     }
   }
-  if (treeRef.value && newSearch === "") {
-    openAll.value = false
-    treeRef.value.$forceUpdate()
+  items.forEach(traverse)
+  return ids
+}
+
+watch(search_site, (newSearch: string) => {
+  if (newSearch && newSearch.trim() !== "") {
+    // Open all nodes when searching
+    open.value = getAllItemIds(items_site.value)
+  } else {
+    // Clear opened nodes when search is empty
+    open.value = []
   }
 })
 
@@ -134,6 +145,18 @@ const goToItem = (url: string) => {
   background-color: #212121 !important;
   border: 1px solid rgba(255, 255, 255, 0.4) !important;
   transition: border 0.3s ease;
+  height: 54px !important;
+  min-height: 54px !important;
+}
+
+.search-text :deep(.v-field__field) {
+  height: 54px !important;
+}
+
+.search-text :deep(.v-field__input) {
+  min-height: 54px !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
 }
 
 /* 2. Alinhamento do Input */
@@ -167,6 +190,14 @@ const goToItem = (url: string) => {
   border-radius: 100px !important;
 }
 
+/* Remove o espaço extra do v-input__details */
+.search-text :deep(.v-input__details) {
+  display: none !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
 /* 5. Estilos do Card e Árvore */
 .treeview-card {
   border-radius: 20px;
@@ -183,7 +214,7 @@ const goToItem = (url: string) => {
 /* 6. Comportamento do Dropdown Customizado */
 .dropdown-menu {
   position: absolute;
-  top: calc(100% + 8px);
+  top: 100%;
   left: 0;
   
   /* Garante que o card nunca seja menor que a barra de pesquisa */
