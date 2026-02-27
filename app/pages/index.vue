@@ -300,14 +300,15 @@ onMounted(() => {
   }
   .section-title {
     font-family: titulos-observatorio, sans-serif;
-    font-size: 3rem;
+    font-size: 2.60rem;
     margin: 16px;
     line-height: 1.1;
     margin-bottom: 40px;
   }
   .section-description {
-    font-size: 1.45rem;
+    font-size: 1.25rem;
      margin: 16px;
+    font-family: Palanquin, sans-serif; 
   }
   .section-complement {
     font-size: 1.3rem;
