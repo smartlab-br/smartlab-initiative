@@ -73,7 +73,7 @@
           v-for="(section, indxSctn) in smartlab.sections"
           :key="indxSctn"
           :style="{'background-image': `url('${section.section_background}')`}"
-          class="obs_container text-left"
+          class="obs_container text-left section"
         >
           <v-row
             class="px-5 py-3"
@@ -134,13 +134,12 @@ v-if="section.complement"
           </v-row>
         </v-row>
         <v-row
-          v-for="(observatorio, indxObs) in observatories"
+          v-for="(observatorio, indxObs) in unlockedObservatories"
           :key="'obs_section_'+indxObs"
           :style="{'background-image': `url('${observatorio.section_background}')`}"
-          class="obs_container text-left"
+          class="obs_container text-left section"
         >
           <v-row
-            v-if="!observatorio.blocked"
             class="px-5"
             align="start"
           >
@@ -175,6 +174,10 @@ const isFading = ref(false)
 const { $getColSize } = useNuxtApp()
 
 const { smartlab, observatories, currentObs, currentObsId, currentDimension } = storeToRefs(store)
+
+const unlockedObservatories = computed(() => {
+  return observatories.value?.filter(obs => !obs.blocked) || []
+})
 
 const currentParallax = computed(() => {
   return parallaxFile.value
@@ -297,6 +300,7 @@ onMounted(() => {
     padding-right: 8px;
     background-size: cover;
     background-position: top;
+    align-items: center;
   }
   .section-title {
     font-family: titulos-observatorio, sans-serif;
