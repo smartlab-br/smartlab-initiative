@@ -73,7 +73,7 @@
           v-for="(section, indxSctn) in smartlab.sections"
           :key="indxSctn"
           :style="{'background-image': `url('${section.section_background}')`}"
-          class="obs_container text-left"
+          class="obs_container text-left section"
         >
           <v-row
             class="px-5 py-3"
@@ -137,7 +137,7 @@ v-if="section.complement"
           v-for="(observatorio, indxObs) in observatories"
           :key="'obs_section_'+indxObs"
           :style="{'background-image': `url('${observatorio.section_background}')`}"
-          class="obs_container text-left"
+          class="obs_container text-left section"
         >
           <v-row
             v-if="!observatorio.blocked"
@@ -287,6 +287,8 @@ onMounted(() => {
     background-size: cover;
     background-position: top;
     color: white;
+    /* padding-top: 30px; */
+    
   }
   .section {
     min-height: 95vh;
