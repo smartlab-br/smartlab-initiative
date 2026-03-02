@@ -73,7 +73,7 @@
           v-for="(section, indxSctn) in smartlab.sections"
           :key="indxSctn"
           :style="{'background-image': `url('${section.section_background}')`}"
-          class="obs_container text-left section"
+          class="obs_container text-left"
         >
           <v-row
             class="px-5 py-3"
@@ -137,7 +137,7 @@ v-if="section.complement"
           v-for="(observatorio, indxObs) in observatories"
           :key="'obs_section_'+indxObs"
           :style="{'background-image': `url('${observatorio.section_background}')`}"
-          class="obs_container text-left section"
+          class="obs_container text-left"
         >
           <v-row
             v-if="!observatorio.blocked"
