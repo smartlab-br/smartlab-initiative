@@ -290,6 +290,8 @@ onMounted(() => {
     background-size: cover;
     background-position: top;
     color: white;
+    /* padding-top: 30px; */
+    
   }
   .section {
     min-height: 95vh;
