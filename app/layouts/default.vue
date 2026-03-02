@@ -61,47 +61,43 @@
           @blur="gsItemBusca = ''">
           <template #item="{ props: itemProps, item }">
             <v-list-item v-bind="itemProps" :title="undefined">
-              <template v-if="auOptions.length < 2">
-                <v-list-item-title>
-                  <v-progress-circular :size="20" indeterminate color="primary" />
-                </v-list-item-title>
-              </template>
-              <template v-else>
-                <v-row no-gutters>
-                  <v-col>
-                    <v-list-item-title @click="changeAnalysisUnit(router, item.raw)">
-                      {{ item.raw.label + (item.raw.scope === 'uf' ? ' (UF)' : '') }}
-                    </v-list-item-title>
-                  </v-col>
-                  <v-col class="d-flex justify-end">
-                    <v-list-item-action style="min-width: 120px">
-                      <v-row no-gutters>
-                        <v-col 
-                          v-for="(search_item, indxSearch) in (observatories || [])"
-                          :key="'search_item_obs_' + indxSearch">
-                          <v-col
-                            v-if="!search_item.blocked && (!item.raw.exclude_from || !item.raw.exclude_from.includes(search_item.id))"
-                            class="d-flex flex-column align-center pa-0"
-                            @click="changeAnalysisUnit(router, item.raw, search_item.id)">
-                            <v-tooltip location="bottom" :text="search_item.tooltip">
-                              <template #activator="{ props }">
-                                <svg 
-                                  v-if="search_item.app_icon" v-bind="props" viewBox="0 0 16 16" width="16"
-                                  height="16" role="img" :aria-label="search_item.short_title"
-                                  :fill="ColorsService.getThemeFromId(search_item.id).primary" class="icon--inline">
-                                  <use 
-                                    xmlns:xlink="http://www.w3.org/1999/xlink"
-                                    :xlink:href="'/icons/sprite/coord-sprites.svg#' + search_item.app_icon" />
-                                </svg>
-                              </template>
-                            </v-tooltip>
-                          </v-col>
+              <v-list-item-title v-if="auOptions.length < 2">
+                <v-progress-circular :size="20" indeterminate color="primary" />
+              </v-list-item-title>
+              <v-row v-else no-gutters>
+                <v-col>
+                  <v-list-item-title @click="changeAnalysisUnit(router, item.raw)">
+                    {{ item.raw.label + (item.raw.scope === 'uf' ? ' (UF)' : '') }}
+                  </v-list-item-title>
+                </v-col>
+                <v-col class="d-flex justify-end">
+                  <v-list-item-action style="min-width: 120px">
+                    <v-row no-gutters>
+                      <v-col 
+                        v-for="(search_item, indxSearch) in (observatories || [])"
+                        :key="'search_item_obs_' + indxSearch">
+                        <v-col
+                          v-if="!search_item.blocked && (!item.raw.exclude_from || !item.raw.exclude_from.includes(search_item.id))"
+                          class="d-flex flex-column align-center pa-0"
+                          @click="changeAnalysisUnit(router, item.raw, search_item.id)">
+                          <v-tooltip location="bottom" :text="search_item.tooltip">
+                            <template #activator="{ props }">
+                              <svg 
+                                v-if="search_item.app_icon" v-bind="props" viewBox="0 0 16 16" width="16"
+                                height="16" role="img" :aria-label="search_item.short_title"
+                                :fill="ColorsService.getThemeFromId(search_item.id).primary" class="icon--inline">
+                                <use 
+                                  xmlns:xlink="http://www.w3.org/1999/xlink"
+                                  :xlink:href="'/icons/sprite/coord-sprites.svg#' + search_item.app_icon" />
+                              </svg>
+                            </template>
+                          </v-tooltip>
                         </v-col>
-                      </v-row>
-                    </v-list-item-action>
-                  </v-col>
-                </v-row>
-              </template>
+                      </v-col>
+                    </v-row>
+                  </v-list-item-action>
+                </v-col>
+              </v-row>
             </v-list-item>
           </template>
         </v-autocomplete>
