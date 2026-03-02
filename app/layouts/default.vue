@@ -6,17 +6,20 @@
       <v-app-bar-title class="ml-2">
         <v-row class="pa-0" align="center">
           <v-col class="flex-grow-0 flex-shrink-1 pr-2 pt-5 d-none d-sm-block">
-            <img height="40" src="/icons/smartlab_labeled.png" class="cursor-pointer" alt="Smartlab"
+            <img 
+              height="40" src="/icons/smartlab_labeled.png" class="cursor-pointer" alt="Smartlab"
               @click="pushRoute('/', false)" @keyup.enter="pushRoute('/', false)">
           </v-col>
           <v-col class="flex-grow-0 flex-shrink-1 pr-2 pt-3 d-block d-sm-none">
-            <img height="30" src="/icons/smartlab_icon.png" class="cursor-pointer" alt="Smartlab"
+            <img 
+              height="30" src="/icons/smartlab_icon.png" class="cursor-pointer" alt="Smartlab"
               @click="pushRoute('/', false)">
           </v-col>
           <v-divider v-show="currentObs?.title" vertical class="mx-2" style="background-color:rgba(255,255,255,0.7)" />
           <v-col v-show="currentObs?.title" class="flex-grow-0 flex-shrink-1 line-height-1">
             <v-row>
-              <v-col v-if="currentObs" class="cursor-pointer pa-0 text-right"
+              <v-col 
+                v-if="currentObs" class="cursor-pointer pa-0 text-right"
                 @click="pushRoute((route && route.path.includes('localidade')) ? '../' : (route && (route.path.includes('estudo') || route.path.includes('smartmap'))) ? './' : '', false);">
                 {{ currentObs.title }}
               </v-col>
@@ -27,7 +30,8 @@
               </v-col>
             </v-row>
           </v-col>
-          <v-divider v-show="currentAnalysisUnit" vertical class="mx-2"
+          <v-divider 
+            v-show="currentAnalysisUnit" vertical class="mx-2"
             style="background-color:rgba(255,255,255,0.7)" />
           <!-- 
               @mousedown="seen = true" 
@@ -47,7 +51,8 @@
       <v-spacer />
 
       <div class="d-flex align-center">
-        <v-autocomplete v-if="auOptions.length > 0" v-show="seen" ref="autocompleteChangePlace" v-model="gsItemBusca"
+        <v-autocomplete 
+          v-if="auOptions.length > 0" v-show="seen" ref="autocompleteChangePlace" v-model="gsItemBusca"
           class="input-group--focused global-search pt-3 transparent-autocomplete" persistent-hint item-title="label"
           item-value="id" persistent-placeholder placeholder="Mudar localidade" return-object
           :custom-filter="customFilter" :items="auOptions" :menu-props="{ minWidth: '380px' }"
@@ -71,7 +76,8 @@
                   <v-col class="d-flex justify-end">
                     <v-list-item-action style="min-width: 120px">
                       <v-row no-gutters>
-                        <v-col v-for="(search_item, indxSearch) in (observatories || [])"
+                        <v-col 
+                          v-for="(search_item, indxSearch) in (observatories || [])"
                           :key="'search_item_obs_' + indxSearch">
                           <v-col
                             v-if="!search_item.blocked && (!item.raw.exclude_from || !item.raw.exclude_from.includes(search_item.id))"
@@ -79,10 +85,12 @@
                             @click="changeAnalysisUnit(router, item.raw, search_item.id)">
                             <v-tooltip location="bottom" :text="search_item.tooltip">
                               <template #activator="{ props }">
-                                <svg v-if="search_item.app_icon" v-bind="props" viewBox="0 0 16 16" width="16"
+                                <svg 
+                                  v-if="search_item.app_icon" v-bind="props" viewBox="0 0 16 16" width="16"
                                   height="16" role="img" :aria-label="search_item.short_title"
                                   :fill="ColorsService.getThemeFromId(search_item.id).primary" class="icon--inline">
-                                  <use xmlns:xlink="http://www.w3.org/1999/xlink"
+                                  <use 
+                                    xmlns:xlink="http://www.w3.org/1999/xlink"
                                     :xlink:href="'/icons/sprite/coord-sprites.svg#' + search_item.app_icon" />
                                 </svg>
                               </template>
@@ -104,7 +112,8 @@
           </v-icon>
           <v-tooltip activator="parent" location="bottom">Alterar Localidade</v-tooltip>
         </v-btn>
-        <v-btn icon class="ml-2" aria-label="Instagram" color="white"
+        <v-btn 
+          icon class="ml-2" aria-label="Instagram" color="white"
           @click="pushRoute('https://www.instagram.com/smartlab_br/', true)">
           <v-icon color="white">
             <font-awesome-icon icon="fa-brands fa-instagram fa-sm" size="sm" />
@@ -115,19 +124,23 @@
         </v-btn>
       </div>
     </v-app-bar>
-    <v-navigation-drawer v-if="observatories && !isLayoutLoading && menuItems.length > 0" v-model="drawer" :rail="rail"
+    <v-navigation-drawer 
+      v-if="observatories && !isLayoutLoading && menuItems.length > 0" v-model="drawer" :rail="rail"
       :scrim="false" :width="330">
       <v-list>
         <!-- Usando v-for para iterar sobre uma lista de itens -->
-        <v-list-item v-for="(item, index) in menuItems" :key="index" link :ripple="{ class: item.rippleColor }"
+        <v-list-item 
+          v-for="(item, index) in menuItems" :key="index" link :ripple="{ class: item.rippleColor }"
           :tabindex="drawer ? 10 + index : ''" @click="itemClick(item)" @keyup.enter="itemClick(item)">
           <template #prepend>
             <v-icon v-if="item.icon" :title="item.short_title" :color="ColorsService.getThemeFromId(item.id).primary">
               {{ item.icon }}
             </v-icon>
-            <svg v-else-if="item.app_icon" viewBox="0 0 24 24" width="24" height="24" role="presentation"
+            <svg 
+              v-else-if="item.app_icon" viewBox="0 0 24 24" width="24" height="24" role="presentation"
               :fill="ColorsService.getThemeFromId(item.id).primary" class="icon--inline" :title="item.short_title">
-              <use xmlns:xlink="http://www.w3.org/1999/xlink"
+              <use 
+                xmlns:xlink="http://www.w3.org/1999/xlink"
                 :xlink:href="'/icons/sprite/coord-sprites.svg#' + item.app_icon" />
             </svg>
             <v-tooltip activator="parent" location="bottom">{{ item.short_title }}</v-tooltip>
@@ -159,13 +172,16 @@
     </v-main>
     <client-only>
       <v-footer v-if="!isLayoutLoading" :color="theme.current.value.colors.primary" padless>
-        <v-container fluid :class="{
+        <v-container 
+          fluid :class="{
           'px-2 py-4': $vuetify.display.xs,
           'px-3 py-4': $vuetify.display.smAndDown,
           'px-5 py-5': $vuetify.display.mdAndUp,
-        }">
+          }"
+        >
           <v-row wrap align="center">
-            <v-col class="text-xs-left text-lg-center" :class="{
+            <v-col 
+              class="text-xs-left text-lg-center" :class="{
               'pt-5 pb-3': $vuetify.display.smAndDown,
             }" cols="12" xs="2" sm="1">
               <a @click="pushRoute('/saibamais/smartlab', false)">
@@ -174,7 +190,8 @@
               </a>
             </v-col>
 
-            <v-col v-if="smartlab" class="text-xs-right text-md-center" :class="{
+            <v-col 
+              v-if="smartlab" class="text-xs-right text-md-center" :class="{
               'pt-5 pb-3': $vuetify.display.smAndDown,
             }" cols="12" xs="10" sm="11" lg="9">
               <v-row justify="center" wrap>
@@ -182,7 +199,8 @@
                   {{ smartlab.footer.title }}
                 </v-col>
                 <v-col v-if="smartlab?.footer?.images" cols="12">
-                  <img v-for="(footerImg, footerImgIndex) in smartlab.footer.images" :key="footerImgIndex"
+                  <img 
+                    v-for="(footerImg, footerImgIndex) in smartlab.footer.images" :key="footerImgIndex"
                     :src="footerImg.src" :class="footerImg.class" :alt="footerImg.title"
                     :height="footerImg.height ? footerImg.height : ''"
                     :max-height="footerImg.maxHeight ? footerImg.maxHeight : ''"
@@ -202,35 +220,44 @@
             </v-row>
           </v-col> -->
 
-            <v-col class="text-md-left text-lg-center subheading" :class="{
+            <v-col 
+              class="text-md-left text-lg-center subheading" 
+              :class="{
               'pt-5 pb-3': $vuetify.display.smAndDown,
-            }" cols="12" md="6" lg="1" sm="6">
+              }" 
+              cols="12" md="6" lg="1" sm="6">
               <a class="mr-2" @click="pushRoute('https://www.instagram.com/smartlab_br/', true)">
-                <font-awesome-icon icon="fa-brands fa-instagram" :style="{ width: '20px', height: '20px' }"
+                <font-awesome-icon 
+                  icon="fa-brands fa-instagram" :style="{ width: '20px', height: '20px' }"
                   title="Instagram" />
               </a>
               <a class="mr-2" @click="pushRoute('https://github.com/smartlab-br', true)">
-                <font-awesome-icon icon="fa-brands fa-github" :style="{ width: '20px', height: '20px' }"
+                <font-awesome-icon 
+                  icon="fa-brands fa-github" :style="{ width: '20px', height: '20px' }"
                   title="GitHub" />
               </a>
               <a class="mr-2" @click="pushRoute('https://hub.docker.com/u/mptrabalho', true)">
-                <font-awesome-icon icon="fa-brands fa-docker" :style="{ width: '20px', height: '20px' }"
+                <font-awesome-icon 
+                  icon="fa-brands fa-docker" :style="{ width: '20px', height: '20px' }"
                   title="Docker" />
               </a>
             </v-col>
 
-            <v-col class="text-xs-right subheading text-lg-center" :class="{
+            <v-col 
+              class="text-xs-right subheading text-lg-center" :class="{
               'pt-5 pb-3': $vuetify.display.smAndDown,
             }" cols="12" md="6" lg="1" sm="6">
               <div class="caption mr-1 mb-1">
                 Licenças
               </div>
               <a class="mx-2" @click="pushRoute('https://creativecommons.org/licences/by-nc-sa/4.0/', true)">
-                <font-awesome-icon icon="fa-brands fa-creative-commons" :style="{ width: '20px', height: '20px' }"
+                <font-awesome-icon 
+                  icon="fa-brands fa-creative-commons" :style="{ width: '20px', height: '20px' }"
                   title="CC BY 4.0" />
               </a>
               <a @click="pushRoute('https://opensource.org/licenses/MIT', true)">
-                <font-awesome-icon icon="fa-brands fa-osi" :style="{ width: '20px', height: '20px' }"
+                <font-awesome-icon 
+                  icon="fa-brands fa-osi" :style="{ width: '20px', height: '20px' }"
                   title="MIT - Open Source Initiative" />
               </a>
             </v-col>
