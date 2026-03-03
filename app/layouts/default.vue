@@ -222,17 +222,17 @@
               'pt-5 pb-3': $vuetify.display.smAndDown,
               }" 
               cols="12" md="6" lg="1" sm="6">
-              <a class="mr-2" @click="pushRoute('https://www.instagram.com/smartlab_br/', true)">
+              <a class="mr-2 cursor-pointer" @click="pushRoute('https://www.instagram.com/smartlab_br/', true)">
                 <font-awesome-icon 
                   icon="fa-brands fa-instagram" :style="{ width: '20px', height: '20px' }"
                   title="Instagram" />
               </a>
-              <a class="mr-2" @click="pushRoute('https://github.com/smartlab-br', true)">
+              <a class="mr-2 cursor-pointer" @click="pushRoute('https://github.com/smartlab-br', true)">
                 <font-awesome-icon 
                   icon="fa-brands fa-github" :style="{ width: '20px', height: '20px' }"
                   title="GitHub" />
               </a>
-              <a class="mr-2" @click="pushRoute('https://hub.docker.com/u/mptrabalho', true)">
+              <a class="mr-2 cursor-pointer" @click="pushRoute('https://hub.docker.com/u/mptrabalho', true)">
                 <font-awesome-icon 
                   icon="fa-brands fa-docker" :style="{ width: '20px', height: '20px' }"
                   title="Docker" />
@@ -246,12 +246,12 @@
               <div class="caption mr-1 mb-1">
                 Licenças
               </div>
-              <a class="mx-2" @click="pushRoute('https://creativecommons.org/licences/by-nc-sa/4.0/', true)">
+              <a class="mx-2 cursor-pointer" @click="pushRoute('https://creativecommons.org/licences/by-nc-sa/4.0/', true)">
                 <font-awesome-icon 
                   icon="fa-brands fa-creative-commons" :style="{ width: '20px', height: '20px' }"
                   title="CC BY 4.0" />
               </a>
-              <a @click="pushRoute('https://opensource.org/licenses/MIT', true)">
+              <a class="cursor-pointer" @click="pushRoute('https://opensource.org/licenses/MIT', true)">
                 <font-awesome-icon 
                   icon="fa-brands fa-osi" :style="{ width: '20px', height: '20px' }"
                   title="MIT - Open Source Initiative" />
@@ -261,7 +261,34 @@
         </v-container>
       </v-footer>
     </client-only>
+    <v-fade-transition>
+      <v-btn
+        v-show="isPageScrollable"
+        position="fixed"
+        location="bottom center"
+        class="mb-0 btn-scroll-custom text-none px-3 py-2" 
+        style="z-index: 100; opacity: 0.85; backdrop-filter: blur(4px);"
+        :color="theme.current.value.colors.primary"
+        rounded="0"
+        elevation="6"
+        height="auto"
+        @click="executeScrollAction"
+      >
+        <div class="d-flex flex-column align-center justify-center line-height-1">
+          
+          <template v-if="isAtBottom">
+            <v-icon size="small" class="mb-1">mdi-arrow-up</v-icon>
+            <span>Para o topo</span>
+          </template>
 
+          <template v-else>
+            <span>Leia mais</span>
+            <v-icon size="small" class="mt-1">mdi-arrow-down</v-icon>
+          </template>
+
+        </div>
+      </v-btn>
+    </v-fade-transition>
   </v-app>
 
 </template>
@@ -293,6 +320,8 @@ const seen = ref(false)
 const auOptions = ref<Place[]>([])
 const gsItemBusca = ref<string | null>(null)
 const gsLoadingStatusSearchOptions = ref<"" | "LOADING" | "ERROR">("")
+const isAtBottom = ref(false)
+const isPageScrollable = ref(false)
 
 // Template refs com tipagem correta para Vuetify 3
 const autocompleteChangePlace = ref<any>(null) // ou use ComponentPublicInstance
@@ -353,6 +382,15 @@ onMounted(async () => {
     store.setCurrentObs(route)
   }
   checkLayoutReady()
+
+  window.addEventListener('scroll', onScroll, { passive: true })
+  window.addEventListener('resize', checkScroll, { passive: true })
+  setTimeout(checkScroll, 500)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', onScroll)
+  window.removeEventListener('resize', checkScroll)
 })
 
 // Methods
@@ -409,6 +447,29 @@ const itemClick = (item: Observatory) => {
   } else {
     pushRoute(item.to, item.external)
     drawer.value = false
+  }
+}
+
+const checkScroll = () => {
+  const { scrollTop, scrollHeight, clientHeight } = document.documentElement
+  isPageScrollable.value = scrollHeight > clientHeight
+  isAtBottom.value = Math.ceil(scrollTop + clientHeight) >= (scrollHeight - 100)
+}
+
+let scrollTimeout: number | null = null
+const onScroll = () => {
+  if (scrollTimeout) return
+  scrollTimeout = window.requestAnimationFrame(() => {
+    checkScroll()
+    scrollTimeout = null
+  })
+}
+
+const executeScrollAction = () => {
+  if (isAtBottom.value) {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  } else {
+    window.scrollBy({ top: window.innerHeight * 0.8, behavior: 'smooth' })
   }
 }
 </script>
@@ -545,6 +606,13 @@ a {
 .leaflet-control-zoom-in,
 .leaflet-control-zoom-out {
   z-index: 4 !important;
+}
+
+.btn-scroll-custom {
+  font-family: 'Palanquin', Calibri, sans-serif !important; /* Puxa a sua fonte do projeto */
+  font-size: 12px !important; /* Define o tamanho que você pediu */
+  text-transform: none !important; /* Garante as maiúsculas e minúsculas corretas */
+  letter-spacing: normal !important;
 }
 
 .map_geo {
