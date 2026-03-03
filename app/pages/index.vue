@@ -28,7 +28,7 @@
               </v-col>
               <v-col cols="12">
                 <div class="display-1-obs ubuntu-condensed">
-                  Promoção do Trabalho Decente Guiada por Dados
+                  Promoção do Trabalho Decente Guiada por Dados - 10 anos
                 </div>
               </v-col>
               <v-col cols="10" md="4" class="pt-5 mt-3">
