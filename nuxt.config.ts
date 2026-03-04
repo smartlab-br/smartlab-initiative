@@ -14,23 +14,16 @@ export default defineNuxtConfig({
     transpile: ['vuetify'],
   },
 
+  routeRules: {
+    '/viewconf/**': {
+      proxy: `${process.env.NUXT_PUBLIC_GIT_VIEW_CONF_URL || ''}/**`
+    }
+  },
+
   vite: {
     define: {
       'process.env.DEBUG': false,
-    },
-    server: {
-      watch: {
-        usePolling: true,
-        interval: 1000,
-      },
-      proxy: {
-        "/viewconf/": {
-          target: process.env.NUXT_PUBLIC_GIT_VIEW_CONF_URL || '',
-          changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/viewconf\//, "")
-        },
-      }
-    },
+    }
   },
 
   modules: [
