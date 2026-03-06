@@ -1,5 +1,5 @@
 <template>
-  <v-row class="pt-0">
+  <v-row v-if="shouldRender" class="pt-0">
     <v-col
       cols="12"
       :style="`background-color: ${bgColor || 'black'}; color: ${titleFontColor || 'white'}`"
@@ -20,10 +20,16 @@
           class="px-2 py-2"
         >
           <v-row align="start" justify="center" class="fill-height">
-            <v-col cols="12" class="pa-0 odometer-title text-caption text-center">
-              <div :id="'odm_' + odometer.id" :ref="odometer.id" :class="odometer.options.cls_format || ''" v-html="numberTransformService.formatNumber(dtOdometros.find((odom: OdometerDataItem) => odom.cd_indicador == odometer.id_odometer)?.vl_estimado, odometer.options.cls_format || 'inteiro')" />
-              <div v-html="odometer.title || ''" />
-              <div v-if="odometer.show_pace && dtOdometros.length > 0" class="pa-0 odometer-title text-caption text-center">
+            <v-col cols="12" class="pa-2 odometer-title text-center" style="overflow: visible;">
+              <div 
+                :id="'odm_' + odometer.id" 
+                :ref="odometer.id" 
+                :class="odometer.options?.cls_format || ''" 
+                :style="`color: ${titleFontColor || 'white'}; font-size: 2rem; font-weight: bold; line-height: 1.2; padding: 0.5rem 0;`"
+                v-html="numberTransformService.formatNumber(dtOdometros.find((odom: OdometerDataItem) => odom.cd_indicador == odometer.id_odometer)?.vl_estimado, odometer.options?.cls_format || 'inteiro')" 
+              />
+              <div :style="`color: ${titleFontColor || 'white'}; line-height: 1.4;`" v-html="odometer.title || ''" />
+              <div v-if="odometer.show_pace && dtOdometros.length > 0" class="pa-0 odometer-title text-caption text-center" :style="`color: ${titleFontColor || 'white'}; line-height: 1.4;`">
               {{ odometer.pace_description || '' }}
               {{ numberTransformService.getPaceString((dtOdometros.find((odom: OdometerDataItem) => odom.cd_indicador == odometer.id_odometer) as OdometerDataItem).delta_por_ms || 0, true) }}
               </div>
@@ -33,7 +39,7 @@
       </v-row>
     </v-col>
   </v-row>
-  <v-row>
+  <v-row v-if="shouldRender">
     <v-col class="py-3 px-0 title-obs">
       {{ commentTitle || '' }}
     </v-col>
@@ -49,10 +55,12 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 // import Odometer from "odometer"
 // import "odometer/themes/odometer-theme-car.css"
 import { NumberTransformService } from "~/utils/service/singleton/numberTransform"
 import { TextTransformService } from "~/utils/service/singleton/textTransform"
+import { UrlTransformService } from "~/utils/service/singleton/urlTransform"
 
 // Estendendo OdometerItemOptions para incluir campos runtime
 interface OdometerRuntimeOptions extends OdometerItemOptions {
@@ -97,6 +105,7 @@ const numberTransformService = new NumberTransformService()
 const commentItems = ref<string[]>([])
 const commentData = ref<string>("")
 const dtOdometros = ref<OdometerDataItem[]>([])
+const isLoading = ref(true)
 
 const startCounter = (id: string, options: OdometerRuntimeOptions, comment: string | CommentData = "") => {
   if (comment && typeof comment !== 'string') {
@@ -154,27 +163,62 @@ const buildCommentData = (comment: CommentData) => {
   commentItems.value.push(commentData.value)
 }
 
+const shouldRender = computed(() => {
+  const result = !isLoading.value && props.odometerItems && props.odometerItems.length > 0 && dtOdometros.value.length > 0
+  console.log('shouldRender:', result, {
+    isLoading: isLoading.value,
+    hasOdometerItems: !!props.odometerItems,
+    odometerItemsLength: props.odometerItems?.length,
+    dtOdometrosLength: dtOdometros.value.length
+  })
+  return result
+})
+
 onMounted(async () => {
-  const result = await $fetch(UrlTransformService.getApiUrl("/odometros/sst"))
-  const data = JSON.parse(result as string)
-  dtOdometros.value = data
+  console.log('FLPOOdometer montado, odometerItems:', props.odometerItems)
+  
+  try {
+    const url = UrlTransformService.getApiUrl("/odometros/sst")
+    console.log('Carregando odômetros de:', url)
+    
+    const result = await $fetch(url)
+    console.log('Resultado API:', result)
+    
+    const data = JSON.parse(result as string)
+    dtOdometros.value = data
+    console.log('Dados processados:', dtOdometros.value)
+    console.log('dtOdometros.length:', dtOdometros.value.length)
 
-  if (dtOdometros.value){
-    props.odometerItems.forEach((odometer) => {
-      const curOdometro: OdometerDataItem = dtOdometros.value.find((odom: OdometerDataItem) => odom.cd_indicador == odometer.id_odometer) as OdometerDataItem
-      odometer.title = textTransformService.applyInterpol(
-        odometer.title,
-        {},
-        curOdometro,
-        null)
+    if (dtOdometros.value && props.odometerItems) {
+      props.odometerItems.forEach((odometer) => {
+        console.log(`Procurando odômetro com id: ${odometer.id}, id_odometer: ${odometer.id_odometer}`)
+        const curOdometro: OdometerDataItem = dtOdometros.value.find((odom: OdometerDataItem) => odom.cd_indicador == odometer.id_odometer) as OdometerDataItem
+        console.log(`Odômetro ${odometer.id}:`, curOdometro)
+        
+        if (curOdometro && odometer.title) {
+          odometer.title = textTransformService.applyInterpol(
+            odometer.title,
+            {},
+            curOdometro,
+            null)
+        }
 
-      const options: OdometerRuntimeOptions = { 
-        ...odometer.options,
-        start: curOdometro.vl_estimado,
-        pace: curOdometro.delta_por_ms
-      }
-      startCounter(odometer.id, options)
-    })
+        if (curOdometro && odometer.options) {
+          const options: OdometerRuntimeOptions = { 
+            ...odometer.options,
+            start: curOdometro.vl_estimado,
+            pace: curOdometro.delta_por_ms
+          }
+          startCounter(odometer.id, options)
+        }
+      })
+    }
+  } catch (error) {
+    console.error('Erro ao carregar odômetros:', error)
+  } finally {
+    isLoading.value = false
+    console.log('isLoading definido como false')
+    console.log('Estado final - isLoading:', isLoading.value, 'dtOdometros.length:', dtOdometros.value.length, 'odometerItems.length:', props.odometerItems?.length)
   }
 
   // props.odometerItems.forEach((odometer) => {

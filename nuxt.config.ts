@@ -26,10 +26,7 @@ export default defineNuxtConfig({
     }
   },
 
-  modules: [
-    '@pinia/nuxt', 
-    '@nuxt/eslint'
-  ],
+  modules: ['@pinia/nuxt', '@nuxt/eslint', '@vueuse/nuxt'],
 
   runtimeConfig: {
     // The private keys which are only available server-side
