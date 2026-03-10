@@ -1,5 +1,5 @@
 <template>
-  <v-row v-for="(descSection, index) in structure" :key="index" :class="descSection.class ? descSection.class : 'pr-0 pl-2 pb-0 pt-5'">
+  <v-row v-for="(descSection, index) in normalizedStructure" :key="index" :class="descSection.class ? descSection.class : 'pr-0 pl-2 pb-0 pt-5'">
     <v-col>
       <v-row :class="sectionClass ? sectionClass : 'px-3'">
         <v-col>
@@ -223,6 +223,15 @@ interface Props {
 }
 
 const props = defineProps<Props>()
+
+// Normaliza a prop structure para lidar com o caso em que campos YAML
+// (já arrays) são passados envoltos em [] extras, criando arrays aninhados.
+const normalizedStructure = computed<DescSection[]>(() => {
+  if (!props.structure) return []
+  return (props.structure as any[]).flatMap((item: any) =>
+    Array.isArray(item) ? item : [item]
+  )
+})
 
 const emit = defineEmits<{
   selection: [payload: any]
