@@ -34,12 +34,12 @@
         <v-col v-if="readMoreLimit && !maxedOut" class="d-flex flex-column pl-0 py-0 pb-0 body-obs">
           <span
             v-if="collapsed"
-            :class="'d-inline-block text-left ' + (structure?.cls ? structure.cls : '')"
+            :class="'d-inline-block ' + (structure?.cls ? structure.cls : 'text-justify')"
             v-html="finalShortText"
           ></span>
           <span
             v-else
-            :class="'d-inline-block text-left ' + (structure?.cls ? structure.cls : '')"
+            :class="'d-inline-block ' + (structure?.cls ? structure.cls : 'text-justify')"
             v-html="finalText"
           ></span>
           <v-btn variant="text" color="accent" class="read-more-less text-left" @click="toggleCollapseExpand()">
@@ -48,7 +48,7 @@
           </v-btn>
         </v-col>
 
-        <v-col v-else :class="'d-inline-block body-obs text-left ' + (structure?.cls ? structure.cls : 'pl-2 py-0 pb-3')">
+        <v-col v-else :class="'d-inline-block body-obs ' + (structure?.cls ? structure.cls : 'text-justify pl-2 py-0 pb-3')">
           <span v-html="finalText"></span>
         </v-col>
       </v-row>

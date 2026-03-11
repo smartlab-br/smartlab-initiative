@@ -159,8 +159,9 @@
         />
       </v-col>
     </v-row>
-    <v-row>
-      <v-col v-if="currentObs?.obsPage?.prevalencia.main_title" pt-0 cols="12">
+    <div id="smartmap"></div>
+    <v-row v-if="currentObs?.obsPage?.prevalencia.main_title">
+      <v-col pt-0 cols="12">
         <v-row>
           <v-col
             pa-0
@@ -174,7 +175,8 @@
           </v-col>
         </v-row>
       </v-col>
-
+    </v-row>
+    <v-row align="start">
       <v-col cols="12" md="4" lg="3">
         <v-row
           class="fill-height wrap pl-3 pt-3 pr-2 ma-0 subheading mb-0"
@@ -412,8 +414,8 @@ const setParallaxFile = () => {
 const scrollTo = (anchor: string) => {
   const el = document.getElementById(anchor)
   if (el) {
-    el.scrollIntoView({ behavior: "smooth" })
-    window.scrollBy(0, -60) // Ajuste de posição após o scroll
+    const top = el.getBoundingClientRect().top + window.pageYOffset - 60
+    window.scrollTo({ top, behavior: 'smooth' })
   }
 }
 
