@@ -3,50 +3,42 @@
     <v-app-bar v-if="currentObs && !isLayoutLoading" app dark clipped-left :color="theme.current.value.colors.primary">
       <v-app-bar-nav-icon aria-label="Menu Principal" @click.stop="drawer = !drawer" />
 
-      <v-app-bar-title class="ml-2">
-        <v-row class="pa-0" align="center">
-          <v-col class="flex-grow-0 flex-shrink-1 pr-2 pt-5 d-none d-sm-block">
-            <img 
-              height="40" src="/icons/smartlab_labeled.png" class="cursor-pointer" alt="Smartlab"
-              @click="pushRoute('/', false)" @keyup.enter="pushRoute('/', false)">
-          </v-col>
-          <v-col class="flex-grow-0 flex-shrink-1 pr-2 pt-3 d-block d-sm-none">
-            <img 
-              height="30" src="/icons/smartlab_icon.png" class="cursor-pointer" alt="Smartlab"
-              @click="pushRoute('/', false)">
-          </v-col>
-          <v-divider v-show="currentObs?.title" vertical class="mx-2" style="background-color:rgba(255,255,255,0.7)" />
-          <v-col v-show="currentObs?.title" class="flex-grow-0 flex-shrink-1 line-height-1">
-            <v-row>
-              <v-col 
-                v-if="currentObs" class="cursor-pointer pa-0 text-right"
-                @click="pushRoute((route && route.path.includes('localidade')) ? '../' : (route && (route.path.includes('estudo') || route.path.includes('smartmap'))) ? './' : '', false);">
-                {{ currentObs.title }}
-              </v-col>
-              <v-col v-if="currentObs" class="pa-0 text-caption text-right">
-                <a @click="pushRoute('https://www.instagram.com/smartlab_br/', true)">
-                  {{ currentObs.hash_tag ? "#" + currentObs.hash_tag : "" }}
-                </a>
-              </v-col>
-            </v-row>
-          </v-col>
-          <v-divider 
-            v-show="currentAnalysisUnit" vertical class="mx-2"
-            style="background-color:rgba(255,255,255,0.7)" />
+      <img 
+        height="40" src="/icons/smartlab_labeled.png" class="cursor-pointer ml-2 d-none d-sm-block" alt="Smartlab"
+        @click="pushRoute('/', false)" @keyup.enter="pushRoute('/', false)">
+      <img 
+        height="30" src="/icons/smartlab_icon.png" class="cursor-pointer ml-2 d-block d-sm-none" alt="Smartlab"
+        @click="pushRoute('/', false)">
+
+      <v-divider v-show="currentObs?.title" vertical class="mx-2" style="background-color:rgba(255,255,255,0.7)" />
+
+      <div class="d-flex align-center flex-grow-1" style="min-width: 0;">
+        <div 
+          v-if="currentObs?.title"
+          role="heading"
+          aria-level="1"
+          class="cursor-pointer line-height-1"
+          style="min-width: 0;"
+          @click="pushRoute((route && route.path.includes('localidade')) ? '../' : (route && (route.path.includes('estudo') || route.path.includes('smartmap'))) ? './' : '', false);">
+          <div>{{ currentObs.title }}</div>
+          <div v-if="currentObs?.hash_tag" class="text-caption text-right">
+            <a @click.stop="pushRoute('https://www.instagram.com/smartlab_br/', true)">
+              {{ "#" + currentObs.hash_tag }}
+            </a>
+          </div>
+        </div>
+        <template v-if="currentAnalysisUnit">
+          <v-divider vertical class="mx-2" style="background-color:rgba(255,255,255,0.7)" />
           <!-- 
               @mousedown="seen = true" 
               @click="focusChangePlace()"
             -->
-          <v-col v-if="currentAnalysisUnit" class="line-height-1 pl-2 flex-grow-1 flex-shrink-0 ">
-            <v-row @click="focusChangePlace()">
-              <v-col><span class="cursor-pointer">{{ currentAnalysisUnit.nm_localidade }}</span></v-col>
-              <v-col class="pa-0 text-caption">
-                {{ currentAnalysisUnit.nm_tipo }}
-              </v-col>
-            </v-row>
-          </v-col>
-        </v-row>
-      </v-app-bar-title>
+          <div class="cursor-pointer line-height-1" style="min-width: 0;" @click="focusChangePlace()">
+            <div>{{ currentAnalysisUnit.nm_localidade }}</div>
+            <div class="text-caption">{{ currentAnalysisUnit.nm_tipo }}</div>
+          </div>
+        </template>
+      </div>
 
       <v-spacer />
 
