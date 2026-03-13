@@ -8,9 +8,9 @@
     :xl="$getColSize('xl',cardClass)"
   >
     <v-row
-      :class="`minicard fill-height ${colorClass} ${relevance}`"
+      :class="`minicard mx-0 ${colorClass} ${relevance}`"
     >
-      <v-col>
+      <v-col style="min-width: 0;">
         <!-- Error Message -->
         <v-row>
           <v-col v-if="errorMessage" :class="`pa-0 minicard-comment ${commentColorClass}`">
@@ -27,7 +27,7 @@
 
         <!-- Description -->
         <v-row>
-          <v-col class="pa-0">
+          <v-col class="pa-0" style="min-width: 0;">
             <span class="title-obs-desc minicard-description" v-html="description ? description.toUpperCase() : ''"/>
           </v-col>
         </v-row>  

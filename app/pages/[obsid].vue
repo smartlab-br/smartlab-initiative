@@ -20,7 +20,7 @@
             alt="Imagem de Fundo"
             cover
           ></v-img>
-          <v-col cols="12" class="text-center py-4 my-5 animated-background-content">
+          <v-col cols="12" class="text-center py-2 my-2 animated-background-content">
             <v-row justify="center">
               <v-col
                 id="screenTitle"
@@ -32,6 +32,7 @@
                   :alt="currentObs ? currentObs.title : ''"
                   width="100%"
                   max-width="680px"
+                  height="100"
                 />
               </v-col>
               <v-col cols="12">
@@ -42,7 +43,7 @@
                   <v-col
                     cols="10"
                     md="4"
-                    class="pt-5 mt-3"
+                    class="pt-2 mt-1"
                   >
                     <FLPOSearchBar />
                   </v-col>
@@ -176,7 +177,7 @@
         </v-row>
       </v-col>
     </v-row>
-    <v-row align="start">
+    <v-row align="start" class="mx-0">
       <v-col cols="12" md="4" lg="3">
         <v-row
           class="fill-height wrap pl-3 pt-3 pr-2 ma-0 subheading mb-0"
@@ -184,7 +185,7 @@
           <v-col>
             <v-row>
               <v-col class="headline-obs card-title pb-0 pl-3">
-                {{ prevTitle }}
+                <div class="card-title-text">{{ prevTitle }}</div>
                 <v-tooltip v-if="currentObs?.obsPage?.prevalencia.info" bottom>
                   <template v-slot:activator="{ props }">
                     <v-icon
@@ -204,7 +205,7 @@
                 <div v-if="prevTitleComment != null" class="title-comment" v-html="prevTitleComment"></div>
               </v-col>
             </v-row>
-            <v-row>
+            <v-row class="mt-2">
               <v-col>
               <FLPOCompositeText
                 v-if="currentObs && currentObs.obsPage && currentObs.obsPage.prevalencia"
@@ -233,7 +234,7 @@
       <v-col cols="12" md="8" lg="6">
         <v-row>
           <v-col>
-            <v-container style="position: relative;">
+            <v-container class="pa-0" style="position: relative;">
               <v-row v-if="currentObs" class="cursor-pointer" style="height: auto;" @mousedown="dialogMapLoading = true">
                 <v-col cols="12">
                   <v-img
@@ -273,7 +274,7 @@
           </v-col>
         </v-row>
       </v-col>
-      <v-col cols="12" sm="12" md="12" lg="3">
+      <v-col cols="12" sm="12" md="12" lg="3" class="pe-3">
          <FLPOCompositeText
             v-if="currentObs?.obsPage?.prevalencia.description_right &&
               (!hasOdometers || loadedOdometers)"

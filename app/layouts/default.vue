@@ -795,6 +795,19 @@ a {
   font-size: 1.714rem !important;
 }
 
+.card-title-text {
+  font-size: 1.5rem !important;
+  font-weight: 400;
+  line-height: 1.3;
+}
+
+.title-comment {
+  font-size: 0.85rem;
+  color: #e53935;
+  font-weight: 400;
+  margin-top: 2px;
+}
+
 .title-obs {
   font-size: 1.429rem;
 }
@@ -805,6 +818,18 @@ a {
 
 .title-obs-desc {
   font-size: 1.429rem;
+}
+
+.minicard .title-obs-desc {
+  font-size: 0.8rem;
+  display: block;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+.minicard .v-col .v-row {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
 }
 
 .ident-list {
