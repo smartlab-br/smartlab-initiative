@@ -274,7 +274,7 @@
           </v-col>
         </v-row>
       </v-col>
-      <v-col cols="12" sm="12" md="12" lg="3" class="pe-3">
+      <v-col cols="12" sm="12" md="12" lg="3" class="pe-8">
          <FLPOCompositeText
             v-if="currentObs?.obsPage?.prevalencia.description_right &&
               (!hasOdometers || loadedOdometers)"
