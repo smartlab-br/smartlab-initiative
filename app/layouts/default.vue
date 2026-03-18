@@ -799,13 +799,21 @@ a {
   font-size: 1.5rem !important;
   font-weight: 400;
   line-height: 1.3;
+  text-align: left !important;
+  display: block !important;
+  margin-left: 0 !important;
+  color: inherit !important;
+  font-family: titulos-observatorio, Calibri, sans-serif !important;
 }
 
 .title-comment {
-  font-size: 0.85rem;
-  color: #e53935;
+  font-size: 0.85rem !important;
+  color: #e53935 !important;
   font-weight: 400;
-  margin-top: 2px;
+  text-align: left !important;
+  display: block !important;
+  margin-left: 0 !important;
+  font-family: titulos-observatorio, Calibri, sans-serif !important;
 }
 
 .title-obs {
@@ -973,4 +981,5 @@ a {
 .v-radio-group .v-selection-control {
   margin-bottom: 2.2rem !important;
 }
+
 </style>

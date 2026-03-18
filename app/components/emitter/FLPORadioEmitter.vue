@@ -14,13 +14,13 @@
       >
         <template #label>
           <v-row align="center">
-            <v-col class="d-flex"><span v-html="item.label || ''"></span></v-col>
+            <v-col v-if="item.label" class="d-flex"><span v-html="item.label"></span></v-col>
             <FLPOMinicard
               v-for="(miniCard, index) in item.minicards"
               :key="index"
               :structure="miniCard"
               :custom-params="customParams"
-              row-class="pa-1"
+              :row-class="miniCard.rowClass || 'pa-1'"
             />
           </v-row>
         </template>

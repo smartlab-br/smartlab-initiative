@@ -320,7 +320,6 @@ watch(() => props.reactiveFilter, (newVal, oldVal) => {
     font-size: 2.2rem;
     line-height: 2rem;
     display: block;
-    text-align: left;
   }
   .minicard-value span {
     text-transform: uppercase;
@@ -330,9 +329,6 @@ watch(() => props.reactiveFilter, (newVal, oldVal) => {
   .minicard .minicard-description {
     font-size: 0.8rem;
     font-weight: 400;
-    text-align: left !important;
-    justify-content: flex-start !important;
-    align-items: flex-start !important;
   }
   .minicard .minicard-comment {
     font-size: 0.857rem;
