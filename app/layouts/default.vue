@@ -957,4 +957,20 @@ a {
   background: transparent !important;
   box-shadow: none !important;
 }
+
+/* Corrige labels cortadas nos radios do Vuetify */
+.v-radio-group .v-label {
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: initial !important;
+  display: block !important;
+}
+.v-radio-group .v-selection-control {
+  align-items: flex-start !important;
+  contain: none !important;
+}
+/* Espaçamento extra entre radios  */
+.v-radio-group .v-selection-control {
+  margin-bottom: 2.2rem !important;
+}
 </style>
