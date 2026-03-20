@@ -206,11 +206,11 @@
               </v-col>
             </v-row>
             <v-row class="mt-2">
-              <v-col>
+              <v-col class="pl-0 pr-0 pb-0 pt-6">
               <FLPOCompositeText
                 v-if="currentObs && currentObs.obsPage && currentObs.obsPage.prevalencia"
                 :id="'story_home_prevalencia' + currentObsId"
-                :section-class="'px-2 py-0'"
+                :section-class="'py-0'"
                 :structure="[currentObs.obsPage.prevalencia.description]"
                 :custom-params="customParams"
                 :reactive-filter="reactiveFilter"
