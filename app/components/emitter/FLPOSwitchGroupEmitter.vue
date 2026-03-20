@@ -1,18 +1,18 @@
 <template>
-  <v-row align="center" wrap>
+  <v-row align="center" wrap class="pt-10">
     <v-col
       v-for="eachSwitch in structure?.switches"
       :key="eachSwitch.id"
       :cols="12"
-      :class="'ma-0 ' + (eachSwitch.cls || 'pb-0 pl-3')"
+      :class="'mb-6 ' + (eachSwitch.cls || 'pb-0 pl-3')"
     >
       <v-row>
         <v-col v-if="eachSwitch.title" class="title-obs pa-0">
           {{ eachSwitch.title }}
         </v-col>
       </v-row>
-      <v-row >
-        <v-col>
+      <v-row no-gutters align="start">
+        <v-col cols="auto" class="pa-0">
           <v-switch
             v-model="selection[eachSwitch.id]"
             class="ma-0 pa-0"
@@ -21,21 +21,19 @@
             :readonly="!!eachSwitch.readonly"
             @update:model-value="toggleSwitch(eachSwitch)"
           >
-            <template #label>
-              <v-row align="center">
-                <v-col v-if="eachSwitch.label">
-                  {{ eachSwitch.label }}
-                </v-col>
-                <FLPOMinicard
-                  v-for="(miniCard, index) in eachSwitch.minicards"
-                  :key="index"
-                  :structure="miniCard"
-                  :custom-params="customParams"
-                  :row-class="miniCard.rowClass || 'pa-1'"
-                />
-              </v-row>
+            <template v-if="eachSwitch.label" #label>
+              {{ eachSwitch.label }}
             </template>
           </v-switch>
+        </v-col>
+        <v-col class="pa-0">
+          <FLPOMinicard
+            v-for="(miniCard, index) in eachSwitch.minicards"
+            :key="index"
+            :structure="miniCard"
+            :custom-params="customParams"
+            :row-class="miniCard.rowClass || 'pa-1'"
+          />
         </v-col>
       </v-row>
     </v-col>

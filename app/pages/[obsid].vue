@@ -234,7 +234,7 @@
       <v-col cols="12" md="8" lg="6">
         <v-row>
           <v-col>
-            <v-container class="pa-0" style="position: relative;">
+            <v-container class="pa-0" :class="{'pt-3': currentObsId === 'ti' || currentObsId === 'te'}" style="position: relative;">
               <v-row v-if="currentObs" class="cursor-pointer" style="height: auto;" @mousedown="dialogMapLoading = true">
                 <v-col cols="12">
                   <v-img
