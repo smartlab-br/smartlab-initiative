@@ -804,6 +804,7 @@ a {
   margin-left: 0 !important;
   color: inherit !important;
   font-family: titulos-observatorio, Calibri, sans-serif !important;
+  white-space: nowrap;
 }
 
 .title-comment {

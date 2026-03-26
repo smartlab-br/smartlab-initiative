@@ -1,14 +1,14 @@
 <template>
   <v-col 
     :cols="$getColSize('xs',cardClass) || 12"
-    :class="`${rowClass ? rowClass : 'pl-4 pr-0 pb-3 pt-3'} ${cardClass}`"
+    :class="`${rowClass ? rowClass : 'pl-4 pr-0 pb-3 pt-3'} ${cardClass} d-flex flex-column`"
     :sm="$getColSize('sm',cardClass)"
     :md="$getColSize('md',cardClass)"
     :lg="$getColSize('lg',cardClass)"
     :xl="$getColSize('xl',cardClass)"
   >
     <v-row
-      :class="`minicard mx-0 ${colorClass} ${relevance}`"
+      :class="`minicard mx-0 my-0 ${colorClass} ${relevance}`"
     >
       <v-col style="min-width: 0;">
         <!-- Error Message -->
