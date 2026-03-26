@@ -1,13 +1,13 @@
 <template>
-  <v-row align="center" wrap class="pt-10">
+  <v-row align="center" wrap class="pt-2 pl-4">
     <v-col
       v-for="eachSwitch in structure?.switches"
       :key="eachSwitch.id"
       :cols="12"
-      :class="'mb-6 ' + (eachSwitch.cls || 'pb-0 pl-3')"
+      :class="'mb-2 ' + (eachSwitch.cls || 'pb-0 pl-3')"
     >
-      <v-row>
-        <v-col v-if="eachSwitch.title" class="title-obs pa-0">
+      <v-row no-gutters>
+        <v-col v-if="eachSwitch.title" class="title-obs pa-0 text-start">
           {{ eachSwitch.title }}
         </v-col>
       </v-row>
@@ -26,7 +26,7 @@
             </template>
           </v-switch>
         </v-col>
-        <v-col class="pa-0">
+        <v-col class="pa-0 text-start">
           <FLPOMinicard
             v-for="(miniCard, index) in eachSwitch.minicards"
             :key="index"

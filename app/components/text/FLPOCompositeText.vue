@@ -104,7 +104,7 @@
             column
             :class="descSection.cls ? descSection.cls : 'pb-2'"
           >
-            <v-col v-if="descSection.title" class="title-obs pa-0">
+            <v-col v-if="descSection.title" class="title-obs pt-0 pb-0 pr-0 pl-4 text-start">
               {{ descSection.title }}
             </v-col>
             <FLPOSwitchGroupEmitter

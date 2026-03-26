@@ -27,7 +27,7 @@
 
         <!-- Description -->
         <v-row>
-          <v-col class="pa-0" style="min-width: 0;">
+          <v-col :class="`pa-0 ${textAlignClass}`" style="min-width: 0;">
             <span class="title-obs-desc minicard-description" v-html="description ? description.toUpperCase() : ''"/>
           </v-col>
         </v-row>  
@@ -47,7 +47,7 @@
 
         <!-- Comment -->
         <v-row>
-          <v-col class="pa-0">
+          <v-col :class="`pa-0 ${textAlignClass}`">
             <!-- eslint-disable-next-line vue/no-v-html -->
             <span :class="`minicard-comment ${commentColorClass}`" v-html="comment"/>
           </v-col>
@@ -91,6 +91,7 @@ const comment = ref("")
 const cardClass = ref("")
 const colorClass = ref("")
 const commentColorClass = ref("")
+const textAlignClass = ref("")
 const dataset = ref<Record<string, any>[] | string | null>(null)
 const metadata = ref<Record<string, any> | null | undefined>(null)
 const errorMessage = ref<string | null>(null)
@@ -268,6 +269,7 @@ onBeforeMount(() => {
   relevance.value = props.structure?.relevance
   if (props.structure?.cls) cardClass.value = props.structure.cls
   if (props.structure?.color) colorClass.value = " bg-" + props.structure.color
+  if (props.structure?.text_align) textAlignClass.value = "text-" + props.structure.text_align
   $fillDataStructure(
     props.structure,
     props.customParams,
@@ -308,7 +310,11 @@ watch(() => props.reactiveFilter, (newVal, oldVal) => {
   .minicard {
     color: rgb(53,94,168,1);
   }
-  .red.minicard, .light-blue.minicard, .green.minicard, .orange.minicard, .minicard.lead {
+  .red.minicard, .light-blue.minicard, .green.minicard, .orange.minicard, .minicard.lead,
+  .bg-red.minicard, .bg-light-blue.minicard, .bg-green.minicard, .bg-orange.minicard,
+  .bg-brown.minicard, .bg-purple.minicard, .bg-blue.minicard, .bg-teal.minicard,
+  .bg-indigo.minicard, .bg-cyan.minicard, .bg-pink.minicard, .bg-deep-purple.minicard,
+  .bg-deep-orange.minicard {
     color: white !important;
   }
   .minicard-chart {
