@@ -8,7 +8,7 @@
     :xl="getColSize('xl',cls)"
   >
     <v-row v-if="structure?.look !== 'minicard'" class="ml-2 mb-2" wrap>
-      <v-col cols="12" class="display-1-obs ranking-list-title pb-2" ><span v-html="title"></span></v-col>
+      <v-col cols="12" class="display-1-obs ranking-list-title pb-2 pl-0" ><span v-html="title"></span></v-col>
       <v-col v-if="errorMessage" cols="12" class="display-1-obs ranking-list-text pb-2">
         {{ errorMessage }}
       </v-col>
@@ -175,6 +175,7 @@ const getColSize = $getColSize
 .ranking-list-title {
   text-transform: uppercase;
   font-size: 1.25rem;
+  text-align: left;
 }
 
 .ranking-list-minicard {
