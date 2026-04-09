@@ -20,7 +20,7 @@ const isLoading = ref(true)
 
 onMounted(async () => {
   // Garante que os dados sejam carregados antes de renderizar o conteúdo
-  if (!store.smartlab) {
+  if (!store.smartlabData) {
     await store.loadSmartlabData()
   }
   isLoading.value = false

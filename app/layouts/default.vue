@@ -148,13 +148,7 @@
     </v-navigation-drawer>
     <v-main>
       <v-container class="pa-0" fluid>
-        <v-responsive class="d-flex align-center text-center fill-height">
-          <v-row class="d-flex align-center justify-center">
-            <v-col cols="auto">
-              <slot />
-            </v-col>
-          </v-row>
-        </v-responsive>
+        <slot />
         <GlobalSnackbar />
       </v-container>
     </v-main>
@@ -172,7 +166,7 @@
               class="text-xs-left text-lg-center" :class="{
               'pt-5 pb-3': $vuetify.display.smAndDown,
             }" cols="12" xs="2" sm="1">
-              <a @click="pushRoute('/saibamais/smartlab', false)">
+              <a class="cursor-pointer" @click="pushRoute('/saibamais/smartlab', false)">
                 <img src="/smartlab/smartlab-small.svg" alt="Smartlab" height="25px" style="margin-bottom: -5px;">
                 <span class="ml-3">Sobre</span>
               </a>

@@ -235,11 +235,15 @@ declare global {
     title?: string;
     list_height?: string;
     list?: ListItem[];
+    id?: string;
   }
   
   interface ListItem {
     name: string;
     values: string[];
+    title?: string;
+    content?: string;
+    avatar?: string;
   }
   
   interface Team {
