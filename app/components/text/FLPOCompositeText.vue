@@ -168,7 +168,7 @@
           <!-- Seção de odômetro -->
           <v-row v-if="descSection.type === 'odometer'" column pb-2>
             <v-col
-              class="headline-obs text-xs-center pa-0"
+              class="headline-obs text-center pa-0"
               :style="`background-color:${descSection.bg_color || 'black'};color:${descSection.title_font_color || 'white'}`"
             >
               {{ descSection.title }}

@@ -21,19 +21,20 @@ export const useMainStore = defineStore("main", {
     async loadSmartlabData() {
       const snackbar = useSnackbarStore()
       try {
-        const { $yamlPath } = useNuxtApp()
-        const data = await YamlFetcherService.loadYaml<Smartlab>($yamlPath, "br/observatorios")
+        const config = useRuntimeConfig()
+        const yamlPath = config.public.gitViewConfUrl ? "/viewconf/" : "/smartlab-initiative-viewconf/"
+        const data = await YamlFetcherService.loadYaml<Smartlab>(yamlPath, "br/observatorios")
         this.smartlabData = data
         this.observatoriesData = data.observatories.filter((obs: any) => !obs.external)
         if (this.observatoriesData){
           for (const obs of this.observatoriesData) {
-            const dims = await YamlFetcherService.loadYaml<Dimension[]>($yamlPath, "br/dimensao/"+obs.id)
+            const dims = await YamlFetcherService.loadYaml<Dimension[]>(yamlPath, "br/dimensao/"+obs.id)
             obs.dimensions = dims
-            const obsPage: ObsPage = await YamlFetcherService.loadYaml($yamlPath, "br/observatorio/"+obs.id)
+            const obsPage: ObsPage = await YamlFetcherService.loadYaml(yamlPath, "br/observatorio/"+obs.id)
             obs.obsPage = obsPage
           }
         }
-        const aboutData = await YamlFetcherService.loadYaml<About>($yamlPath, "br/about")
+        const aboutData = await YamlFetcherService.loadYaml<About>(yamlPath, "br/about")
         this.aboutSmartlabData = aboutData  
       } catch (_error) {
         snackbar.showSnackbar({ color: "error", text: "Erro ao carregar estrutura do Smartlab." })    

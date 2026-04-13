@@ -114,7 +114,7 @@
     </v-app-bar>
     <v-navigation-drawer 
       v-if="observatories && !isLayoutLoading && menuItems.length > 0" v-model="drawer" :rail="rail"
-      :scrim="false" :width="330">
+      temporary :scrim="false" :width="330">
       <v-list>
         <!-- Usando v-for para iterar sobre uma lista de itens -->
         <v-list-item 
@@ -298,7 +298,7 @@ const router = useRouter()
 const route = useRoute()
 
 // Reactive state
-const isLayoutLoading = ref(true)
+const isLayoutLoading = ref(!smartlab.value || !observatories.value || !currentObs.value)
 const menuItems = ref<Observatory[]>([])
 const drawer = ref(false)
 const rail = ref(false)
@@ -311,6 +311,13 @@ const isPageScrollable = ref(false)
 
 // Template refs com tipagem correta para Vuetify 3
 const autocompleteChangePlace = ref<any>(null) // ou use ComponentPublicInstance
+
+// Verifica se o layout está pronto para ser exibido
+const checkLayoutReady = () => {
+  if (observatories.value && currentObs.value && smartlab.value) {
+    isLayoutLoading.value = false
+  }
+}
 
 // Watchers com tipagem
 watch(
@@ -336,7 +343,8 @@ watch(
       }
     }
     checkLayoutReady()
-  }
+  },
+  { immediate: true }
 )
 
 // Watcher para detectar mudanças na rota e atualizar currentObs
@@ -349,13 +357,6 @@ watch(
   },
   { immediate: true }
 )
-
-// Verifica se o layout está pronto para ser exibido
-const checkLayoutReady = () => {
-  if (observatories.value && currentObs.value && smartlab.value) {
-    isLayoutLoading.value = false
-  }
-}
 
 // Lifecycle
 onMounted(async () => {

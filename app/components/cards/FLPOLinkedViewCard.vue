@@ -25,7 +25,7 @@
             <v-row align="center">
               <v-col class="pa-0" cols="12">
                 <div
-                  :class="detail ? 'linked-view-icon-container' : 'text-xs-center'"
+                  :class="detail ? 'linked-view-icon-container' : 'text-center'"
                   @click="handleNavigation"
                 >
                   <v-btn
@@ -55,7 +55,7 @@
                   </v-btn>
                 </div>
                 <div
-                  class="px-2 linked-view-title-container text-xs-center"
+                  class="px-2 linked-view-title-container text-center"
                   :class="titleColor ? titleColor + '--text' : ''"
                 >
                   <div
@@ -70,7 +70,7 @@
                   cols="12"
                 >
                   <div
-                    class="caption px-3 pb-4 pt-2 mt-4 text-xs-center body-1"
+                    class="caption px-3 pb-4 pt-2 mt-4 text-center body-1"
                     @click="handleNavigation"
                   >
                     {{ detail.fixed }}
@@ -96,7 +96,7 @@
         </v-container>
         <v-sheet
           v-if="status"
-          class="caption font-weight-bold pa-1 text-xs-center"
+          class="caption font-weight-bold pa-1 text-center"
           :class="'tag bg-' + tagColor"
           :color="tagTextColor"
         >
