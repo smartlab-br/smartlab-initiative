@@ -1,5 +1,5 @@
 import { GeneralChartBuilderService } from "../generalChartBuilder"
-import d3chrom from "d3-scale-chromatic"
+import * as d3chrom from "d3-scale-chromatic"
 import * as L from "leaflet"
 import "leaflet.heat"
 import "leaflet-curve"
@@ -55,9 +55,9 @@ export abstract class LeafletChartBuilderService extends GeneralChartBuilderServ
     // delete this.L.Icon.Default.prototype._getIconUrl
     
     this.L.Icon.Default.mergeOptions({
-      iconRetinaUrl: "leaflet/dist/images/marker-icon-2x.png",
-      iconUrl: "leaflet/dist/images/marker-icon.png",
-      shadowUrl: "leaflet/dist/images/marker-shadow.png"
+      iconRetinaUrl: "/markers/marker-icon-2x-blue.png",
+      iconUrl: "/markers/marker-icon-blue.png",
+      shadowUrl: "/markers/marker-shadow.png"
     })
 
     if (chartContainer && this.heightProportion){

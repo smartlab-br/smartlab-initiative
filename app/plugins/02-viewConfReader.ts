@@ -111,14 +111,16 @@ export default defineNuxtPlugin((_context: any) => {
         // Endpoint que sobrescreve a definição do structure.api.
         // Normalmente associado ao algum comportamento reativo,
         // como filtro.
-        if (!Array.isArray(structure.api)) {
+        if (!Array.isArray(structure.api) || addedParams.singleEndpoint) {
           // If the structure defines a single API call, execute the
           // callback after the axios call.
           $fetch(UrlTransformService.getApiUrl(addedParams.endpoint))
             .then((result: any) => {
+              const apiDef = Array.isArray(structure.api) ? null : structure.api
+              const apiOptions = addedParams.apiOptions ?? apiDef?.options
               let dataset = fnReformDataset(
                 result.dataset,
-                structure.api.options,
+                apiOptions,
                 customParams
               )
               if (structure.api_options) {
@@ -246,11 +248,15 @@ export default defineNuxtPlugin((_context: any) => {
       } else if (structure.preloaded) {
         // If the structure defines the usage of preloaded indicators.
         if (structure.preloaded.function === "slice") {
+          const preloadedDs = customParams && customParams[structure.preloaded.prop]
+            ? customParams[structure.preloaded.prop]
+            : indicators.getGlobalDatasets()[structure.preloaded.prop]?.ds
+          if (!preloadedDs) return
           cbFunction(
             fnReformDataset(
               indicators.slice(
                 structure.preloaded,
-                customParams && customParams[structure.preloaded.prop] ? customParams[structure.preloaded.prop] : indicators.getGlobalDatasets()[structure.preloaded.prop].ds
+                preloadedDs
               ),
               structure.preloaded.options
             ),
@@ -259,11 +265,15 @@ export default defineNuxtPlugin((_context: any) => {
             addedParams
           )
         } else {
+          const preloadedDs = customParams && customParams[structure.preloaded.prop]
+            ? customParams[structure.preloaded.prop]
+            : indicators.getGlobalDatasets()[structure.preloaded.prop]?.ds
+          if (!preloadedDs) return
           cbFunction(
             fnReformDataset(
               (this as any)[structure.preloaded.function](
                 structure.preloaded,
-                customParams && customParams[structure.preloaded.prop] ? customParams[structure.preloaded.prop] : indicators.getGlobalDatasets()[structure.preloaded.prop].ds,
+                preloadedDs,
                 Object.assign({}, customParams)
               ),
               structure.preloaded.options
@@ -319,6 +329,7 @@ export default defineNuxtPlugin((_context: any) => {
               }).catch((error) => {
                 console.log(error)
                 fnSendDataStructureError(msgError)
+                return null  // sinaliza falha sem quebrar Promise.all
               })
             // Adiciona o promise à lista da espera
             promises.push(promise)
@@ -327,8 +338,10 @@ export default defineNuxtPlugin((_context: any) => {
           // Define a execução após a realização de todos os promises
           Promise.all(promises).then(
             (datasets) => {
+              // Filtra null (falhas individuais já notificadas via snackbar)
+              const validDatasets = (datasets as any[]).filter(d => d != null)
               let fullDS: any = []
-              for (const dataset of datasets) {
+              for (const dataset of validDatasets) {
                 fullDS = fullDS.concat(dataset)
               }
               if (structure.api_options) {

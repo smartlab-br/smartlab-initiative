@@ -125,7 +125,8 @@ export const ColorsService = {
     return "rgba(0, 0, 0, " + opacity + ")"
   },
 
-  assessZebraAxesColor(index: number, theme: ThemeDefinition) {
+  assessZebraAxesColor(index: number, theme: ThemeDefinition | null) {
+    if (!theme?.colors) return colors.grey.base
     if (
       ColorsService.getClassIfIsDark(
         ColorsService.assessZebraBG(index, theme.colors),

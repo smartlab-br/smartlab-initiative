@@ -95,13 +95,20 @@ export class BubblesChartBuilderService extends LeafletChartBuilderService {
     this.additionalOptions.visibleLayers = enabled
     const bounds = this.L.latLngBounds([])
     for (const indx in enabled) {
-      if (enabled[indx]) {
-        this.chart?.addLayer(this.layers[indx])
-        bounds.extend(this.layers[indx].getBounds())
-      } else {
-        this.chart?.removeLayer(this.layers[indx])
+      const layer = this.layers[indx]
+      if (!layer) {
+        console.warn('[adjustVisibleLayers] layer não encontrada para:', indx, '| layers disponíveis:', Object.keys(this.layers))
+        continue
       }
-      // this.visibleLayers[indx] = options.enabled[indx];
+      if (enabled[indx]) {
+        this.chart?.addLayer(layer)
+        try {
+          const lb = layer.getBounds()
+          if (lb.isValid()) bounds.extend(lb)
+        } catch (e) { /* layer sem bounds */ }
+      } else {
+        this.chart?.removeLayer(layer)
+      }
     }
     this.fitBounds(bounds)
   }

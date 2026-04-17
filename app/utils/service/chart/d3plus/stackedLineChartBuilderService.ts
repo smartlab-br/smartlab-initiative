@@ -1,7 +1,7 @@
 import { GeneralChartBuilderService } from "../generalChartBuilder"
 import { D3PlusChartBuilderService } from "./d3plusChartBuilder"
 
-class StackedLineChartBuilderService extends D3PlusChartBuilderService {
+export class StackedLineChartBuilderService extends D3PlusChartBuilderService {
   prepareChart (viz: any, slicedDS: any, containerId: string, options: any, additionalOptions: any = {}) {
     if (options.id === null || options.id === undefined) {
       for (const row of slicedDS) {
@@ -88,4 +88,4 @@ class StackedLineChartBuilderService extends D3PlusChartBuilderService {
   }
 }
 
-module.exports = StackedLineChartBuilderService
+

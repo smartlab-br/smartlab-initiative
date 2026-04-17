@@ -4,13 +4,13 @@
       v-model="chosen"
       class="pa-0"
       hide-details
+      @update:model-value="(val) => toggleRadio(structure?.items?.find(i => i.value === val))"
     >
       <v-radio
         v-for="item in structure?.items"
         :key="item.id"
         :color="item.color || 'accent'"
         :value="item.value"
-        @update:model-value="toggleRadio(item)"
       >
         <template #label>
           <v-row align="center">

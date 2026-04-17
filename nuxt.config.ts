@@ -23,7 +23,10 @@ export default defineNuxtConfig({
   vite: {
     define: {
       'process.env.DEBUG': false,
-    }
+    },
+    ssr: {
+      noExternal: ['leaflet', 'leaflet.markercluster', 'leaflet.heat', 'leaflet-curve'],
+    },
   },
 
   modules: ['@pinia/nuxt', '@nuxt/eslint', '@vueuse/nuxt'],

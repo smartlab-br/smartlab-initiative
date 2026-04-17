@@ -1,6 +1,6 @@
 import { D3PlusChartBuilderService } from "./d3plusChartBuilder"
 
-class ScatterChartBuilderService extends D3PlusChartBuilderService {
+export class ScatterChartBuilderService extends D3PlusChartBuilderService {
   prepareChart (viz: any, slicedDS: any, containerId: string, options: any, _additionalOptions: any = {}) {
     const grafico = viz
       .container(containerId) // container DIV to hold the visualization
@@ -54,4 +54,4 @@ class ScatterChartBuilderService extends D3PlusChartBuilderService {
   }
 }
 
-module.exports = ScatterChartBuilderService
+

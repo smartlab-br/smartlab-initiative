@@ -1,11 +1,12 @@
 import { LeafletChartBuilderService } from "./leafletChartBuilderService"
+import * as topojsonClient from "topojson-client"
 
-class PolygonsChartBuilderService extends LeafletChartBuilderService {
-  topojson: any
+export class PolygonsChartBuilderService extends LeafletChartBuilderService {
+  topojson: typeof topojsonClient
   range: number[]
   constructor () {
     super()
-    this.topojson = require("topojson-client/dist/topojson-client.min.js")
+    this.topojson = topojsonClient
     this.range = []
   }
 
@@ -165,4 +166,4 @@ class PolygonsChartBuilderService extends LeafletChartBuilderService {
   }
 }
 
-module.exports = PolygonsChartBuilderService
+

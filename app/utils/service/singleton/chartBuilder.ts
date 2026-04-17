@@ -1,64 +1,69 @@
 export class ChartBuilderService {
 
-  generateChart (type: string, containerId: string, dataset: any, options: any, additionalOptions: any = {}) {
+  async generateChart (type: string, containerId: string, dataset: any, options: any, additionalOptions: any = {}) {
     return new Promise((resolve, reject) => {
-      setTimeout(() => {
+      setTimeout(async () => {
         const container: HTMLElement | null = document.getElementById(containerId)
         if (container) {
-          let Builder
+          let BuilderClass: any
           container.innerHTML = ""
-          switch (type) {
-          // D3Plus based
-          case "MAP_TOPOJSON":
-            Builder = require("../chart/d3plus/topoJsonChartBuilderService")
-            break
-          case "LINE":
-            Builder = require("../chart/d3plus/lineChartBuilderService")
-            break
-          case "STACKED": // Unused
-            Builder = require("../chart/d3plus/stackedLineChartBuilderService")
-            break
-          case "BAR":
-            Builder = require("../chart/d3plus/barChartBuilderService")
-            break
-          case "TREEMAP":
-            Builder = require("../chart/d3plus/treemapChartBuilderService")
-            break
-          case "SCATTERPLOT": // Unused
-            Builder = require("../chart/d3plus/scatterChartBuilderService")
-            break
-          case "BOXPLOT": // Unused
-            Builder = require("../chart/d3plus/boxplotChartBuilderService")
-            break
-            // D3 based
-          case "CALENDAR": // Unused
-            Builder = require("../chart/d3/calendarChartBuilderService")
-            break
-          case "SANKEYD3": // Unused
-            Builder = require("../chart/d3/sankeyChartBuilderService")
-            break
-            // Leaflet based
-          case "MAP_BUBBLES":
-            Builder = require("../chart/leaflet/bubblesChartBuilderService")
-            break
-          case "MAP_CLUSTER":
-            Builder = require("../chart/leaflet/clusterChartBuilderService")
-            break
-          case "MAP_HEAT":
-            Builder = require("../chart/leaflet/heatChartBuilderService")
-            break
-          case "MAP_POLYGON": // Unused
-            Builder = require("../chart/leaflet/polygonsChartBuilderService")
-            break
-          case "MAP_MIGRATION": // New - untested
-            Builder = require("../chart/leaflet/migrationMapChartBuilderService")
-            break
-          default:
-            break
+          try {
+            switch (type) {
+            // D3Plus based
+            case "MAP_TOPOJSON":
+              BuilderClass = (await import("../chart/d3plus/topoJsonChartBuilderService")).TopoJsonChartBuilderService
+              break
+            case "LINE":
+              BuilderClass = (await import("../chart/d3plus/lineChartBuilderService")).LineChartBuilderService
+              break
+            case "STACKED": // Unused
+              BuilderClass = (await import("../chart/d3plus/stackedLineChartBuilderService")).StackedLineChartBuilderService
+              break
+            case "BAR":
+              BuilderClass = (await import("../chart/d3plus/barChartBuilderService")).BarChartBuilderService
+              break
+            case "TREEMAP":
+              BuilderClass = (await import("../chart/d3plus/treemapChartBuilderService")).TreemapChartBuilderService
+              break
+            case "SCATTERPLOT": // Unused
+              BuilderClass = (await import("../chart/d3plus/scatterChartBuilderService")).ScatterChartBuilderService
+              break
+            case "BOXPLOT": // Unused
+              BuilderClass = (await import("../chart/d3plus/boxplotChartBuilderService")).BoxplotChartBuilderService
+              break
+              // D3 based
+            case "CALENDAR": // Unused
+              BuilderClass = (await import("../chart/d3/calendarChartBuilderService")).CalendarChartBuilderService
+              break
+            case "SANKEYD3": // Unused
+              BuilderClass = (await import("../chart/d3/sankeyChartBuilderService")).SankeyChartBuilderService
+              break
+              // Leaflet based
+            case "MAP_BUBBLES":
+              BuilderClass = (await import("../chart/leaflet/bubblesChartBuilderService")).BubblesChartBuilderService
+              break
+            case "MAP_CLUSTER":
+              BuilderClass = (await import("../chart/leaflet/clusterChartBuilderService")).ClusterChartBuilderService
+              break
+            case "MAP_HEAT":
+              BuilderClass = (await import("../chart/leaflet/heatChartBuilderService")).HeatChartBuilderService
+              break
+            case "MAP_POLYGON": // Unused
+              BuilderClass = (await import("../chart/leaflet/polygonsChartBuilderService")).PolygonsChartBuilderService
+              break
+            case "MAP_MIGRATION": // New - untested
+              BuilderClass = (await import("../chart/leaflet/migrationMapChartBuilderService")).MigrationMapChartBuilderService
+              break
+            default:
+              break
+            }
+          } catch (err) {
+            reject(err)
+            return
           }
-          if (Builder) {
+          if (BuilderClass) {
             try {
-              const chart: any = (new Builder()).generateChart(containerId, dataset, options, additionalOptions)
+              const chart: any = (new BuilderClass()).generateChart(containerId, dataset, options, additionalOptions)
               resolve(chart)
             } catch (err) {
               reject(err)

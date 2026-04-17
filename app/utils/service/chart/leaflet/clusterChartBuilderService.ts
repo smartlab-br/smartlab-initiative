@@ -1,4 +1,4 @@
-import { MarkerClusterGroup } from "leaflet"
+import type { MarkerClusterGroup } from "leaflet.markercluster"
 import { LeafletChartBuilderService } from "./leafletChartBuilderService"
 import * as L from "leaflet"
 

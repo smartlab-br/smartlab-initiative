@@ -215,9 +215,8 @@
                 :custom-params="customParams"
                 :reactive-filter="reactiveFilter"
                 :custom-filters="customParams"
+                @selection="triggerSelect"
               /> 
-              <!-- @selection="triggerSelect" -->
-
               <FLPOCompositeText
                 v-if="currentObs && currentObs.obsPage && currentObs.obsPage.prevalencia && currentObs.obsPage.prevalencia.footer"
                 :id="'story_home_prevalencia_footer_' + currentObsId"
@@ -235,20 +234,26 @@
         <v-row>
           <v-col>
             <v-container class="pa-0" :class="{'pt-3': currentObsId === 'ti' || currentObsId === 'te'}" style="position: relative;">
-              <v-row v-if="currentObs" class="cursor-pointer" style="height: auto;" @mousedown="dialogMapLoading = true">
+              <v-row v-if="currentObs" style="height: auto;">
                 <v-col cols="12">
+                  <!-- Imagem estática enquanto o mapa não foi ativado -->
                   <v-img
+                    v-if="!mapEnabled"
                     :src="'/parallax/' + currentObs?.obsPage?.map_image"
                     :aspect-ratio="currentObs?.obsPage?.prevalencia.chart_options.height_proportion || 1"
+                    style="cursor:pointer"
+                    @click="enableMap"
                   >
-                    <div 
-                      v-show="!mapEnabled" 
-                      class="bg-black-transparent pa-3 justify-end subheading fill-height d-flex align-items-center"
-                      @click="enableMap"
-                    >
+                    <div class="bg-black-transparent pa-3 justify-end subheading fill-height d-flex align-items-center">
                       Clique no mapa para ativá-lo
                     </div>
                   </v-img>
+                  <!-- Container do mapa Leaflet após ativação -->
+                  <div
+                    v-else
+                    :id="'prevalencia_' + currentObsId"
+                    class="map_geo"
+                  />
                 </v-col>
               </v-row>
             </v-container>            
@@ -312,13 +317,25 @@ const idParallaxfile = ref(0)
 const isFading = ref(false)
 const customParams = ref<Record<string, any>>({})
 const reactiveFilter = ref<any>(null)
-const { $fillDataStructure } = useNuxtApp()
+const { $fillDataStructure, $chartGen } = useNuxtApp()
 const prevTitle = ref("")
 const prevTitleComment = ref("")
 const mapEnabled = ref(false)
+const chartHandler = ref<any>(null)
+const pendingLayerPayload = ref<any>(null)
+
+watch(chartHandler, (handler) => {
+  if (handler && pendingLayerPayload.value) {
+    try {
+      handler.adjustVisibleLayers(pendingLayerPayload.value)
+    } catch (e) {
+      console.error('[adjustVisibleLayers] erro:', e)
+    }
+    pendingLayerPayload.value = null
+  }
+})
 const hasOdometers = ref(false)
 const loadedOdometers = ref(false)
-const dialogMapLoading = ref(false)
 
 const { smartlab, observatories, currentObs, currentObsId, currentDimension } = storeToRefs(store)
 
@@ -336,8 +353,138 @@ const resizeFirstSection = () => {
   }
 }
 
-const enableMap = () => {
-  if (!mapEnabled.value) { console.log("Carrega mapa") }
+const initSwitchDefaults = () => {
+  const description = currentObs.value?.obsPage?.prevalencia?.description
+  if (!description) return
+  const visibleLayers: Record<string, boolean> = {}
+  for (const section of description) {
+    if (section.type === 'switch-group' && section.switches) {
+      for (const swt of section.switches) {
+        visibleLayers[swt.id] = swt.default ?? true
+      }
+      break
+    }
+    if (section.type === 'radio' && section.items) {
+      const defaultItem = section.items.find((item: any) => item.default) ?? section.items[0]
+      for (const item of section.items) {
+        visibleLayers[item.value] = item.value === defaultItem?.value
+      }
+      break
+    }
+  }
+  if (Object.keys(visibleLayers).length > 0) {
+    customParams.value.enabled = visibleLayers
+  }
+}
+
+const enableMap = async () => {
+  if (mapEnabled.value) return
+
+  const prevalencia = currentObs.value?.obsPage?.prevalencia
+  if (!prevalencia) return
+
+  initSwitchDefaults()
+
+  const chartId = 'prevalencia_' + currentObsId.value
+  const chartType = prevalencia.chart_type
+  const chartOptions = prevalencia.chart_options
+  const compRefs = { customParams }
+
+  $fillDataStructure(
+    prevalencia,
+    customParams.value,
+    async (dataset: any[], _rules: any, _struct: any, _added: any, metadata: any) => {
+      // Filtra linhas undefined (falha parcial de API)
+      const cleanDataset = Array.isArray(dataset) ? dataset.filter(row => row != null) : []
+      if (!cleanDataset.length) {
+        console.error('[enableMap] Dataset vazio após carregamento')
+        return
+      }
+
+      // Só mostra o container do mapa após dados carregados
+      mapEnabled.value = true
+      await nextTick()
+
+      // Se chartHandler já foi setado por outra chamada (ex: radio), não sobrescrever
+      if (chartHandler.value) return
+
+      try {
+        const handler = await $chartGen(compRefs, store, chartId, chartType, prevalencia, chartOptions, cleanDataset, metadata)
+        chartHandler.value = handler
+      } catch (err) {
+        console.error('[enableMap] Erro ao gerar o mapa:', err)
+        mapEnabled.value = false
+      }
+    }
+  )
+}
+
+const triggerSelect = async (payload: any) => {
+  if (!payload.type) return
+
+  if (payload.type === 'switch-group') {
+    customParams.value.enabled = payload.enabled
+    if (!chartHandler.value) {
+      pendingLayerPayload.value = payload.enabled
+      enableMap()
+      return
+    }
+    try {
+      chartHandler.value.adjustVisibleLayers(payload.enabled)
+    } catch (e) {
+      console.error('[adjustVisibleLayers] erro:', e)
+    }
+
+  } else if (payload.type === 'radio') {
+    if (!payload.item) return
+    customParams.value.radioApi = payload.item.api
+
+    // Captura o enabled diretamente do payload do radio (já tem o estado correto)
+    const capturedEnabled = { ...payload.enabled }
+
+    const prevalencia = currentObs.value?.obsPage?.prevalencia
+    if (!prevalencia) return
+    const chartId = 'prevalencia_' + currentObsId.value
+    const chartType = prevalencia.chart_type
+    const chartOptions = prevalencia.chart_options
+    const compRefs = { customParams }
+
+    const radioParams = { ...customParams.value }
+    $fillDataStructure(
+      prevalencia,
+      radioParams,
+      async (dataset: any[], _rules: any, _struct: any, _added: any, metadata: any) => {
+        const cleanDataset = Array.isArray(dataset) ? dataset.filter(row => row != null) : []
+        if (!cleanDataset.length) return
+
+        // Restaura o enabled correto (pode ter sido sobrescrito por reatividade)
+        if (capturedEnabled) customParams.value.enabled = capturedEnabled
+        const frozenEnabled = capturedEnabled ? { ...capturedEnabled } : customParams.value.enabled
+        const frozenCompRefs = { customParams: { value: { ...customParams.value, enabled: frozenEnabled } } as any }
+
+        if (!chartHandler.value) {
+          mapEnabled.value = true
+          await nextTick()
+          try {
+            const handler = await $chartGen(frozenCompRefs, store, chartId, chartType, prevalencia, chartOptions, cleanDataset, metadata)
+            chartHandler.value = handler
+          } catch (err) {
+            console.error('[radio] Erro ao gerar o mapa:', err)
+            mapEnabled.value = false
+          }
+        } else {
+          try {
+            const { $chartRegen } = useNuxtApp()
+            const handler = await $chartRegen(frozenCompRefs, store, chartHandler.value, chartId, chartType, prevalencia, chartOptions, cleanDataset, metadata)
+            chartHandler.value = handler
+          } catch (err) {
+            console.error('[radio] Erro ao regenerar o mapa:', err)
+          }
+        }
+      },
+      { endpoint: payload.item.api, singleEndpoint: true, apiOptions: payload.item.api_options ?? null }
+    )
+  }
 }
 
 const computedClasses = computed(() => {

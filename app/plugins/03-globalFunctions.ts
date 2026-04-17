@@ -7,7 +7,7 @@ import { ChartBuilderService } from "~/utils/service/singleton/chartBuilder"
 import { ColorsService } from "~/utils/service/singleton/colors"
 import { TooltipBuildingService } from "~/utils/service/singleton/tooltipBuilding"
 import { UrlTransformService } from "~/utils/service/singleton/urlTransform"
-import { useTheme } from "vuetify"
+// useTheme removed — theme accessed via $vuetify global property instead
 // import { NumberTransformService } from "~/utils/service/singleton/numberTransform"
 import { useMainStore, type MainStore } from "~/store"
 import { useSnackbarStore } from "~/store/snackbar"
@@ -97,10 +97,14 @@ export default defineNuxtPlugin(() => {
     }
 
     const fnSendError = sendError
-    const theme = useTheme().current.value
+    const fallbackTheme = { colors: {} as Record<string, string>, dark: false, variables: {} as Record<string, any> }
+    const vuetify = nuxtApp.vueApp.config.globalProperties.$vuetify
+    const themeValue = import.meta.client
+      ? (vuetify?.theme?.current?.value ?? fallbackTheme)
+      : fallbackTheme
     const additionalOptions: any = {
       idAU: idAnalysisUnit,
-      theme: theme,
+      theme: themeValue,
       sectionIndex,
       headers: structure.headers,
       context: compRefs,
@@ -131,7 +135,7 @@ export default defineNuxtPlugin(() => {
         assessZebraTitleColor: ColorsService.assessZebraTitleColor
       },
       cleanLabel: TooltipBuildingService.removeFromLabel,
-      axesStrokeClass: ColorsService.assessZebraAxesColor(sectionIndex, theme)
+      axesStrokeClass: ColorsService.assessZebraAxesColor(sectionIndex, themeValue)
     }
 
     additionalOptions.topology = compRefs.selectedTopology?.value

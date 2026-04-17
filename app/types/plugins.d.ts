@@ -16,9 +16,9 @@ declare module "#app" {
     $openAuthenticatioDialog(): void
     $getEscopo(idLocalidade: string): "brasil" | "mptreg" | "prtptm" | "regiao" | "estado" | "mesorregiao" | "microrregiao" | "municipio"
     $getColSize(screenSize: string, classes: string | undefined): string | undefined
-    $buildChartAdditionalOptions(store: MainStore, chartType: string, structure: any, chartOptions: any, dataset: any, metadata: any, sectionIndex: number = 0): any
-    $chartGen(store: MainStore, id: string, chartType: string, structure: any, chartOptions: any, dataset: any, metadata: any, sectionIndex: number = 0): Promise<unknown> | undefined
-    $chartRegen(store: MainStore, chartHandler: any, id: string, chartType: string, structure: any, chartOptions: any, dataset: any, metadata: any, sectionIndex: number = 0): Promise<unknown> | undefined
+    $buildChartAdditionalOptions(compRefs: Record<string, any>, store: MainStore, chartType: string, structure: any, chartOptions: any, dataset: any, metadata: any, sectionIndex?: number): any
+    $chartGen(compRefs: Record<string, any>, store: MainStore, id: string, chartType: string, structure: any, chartOptions: any, dataset: any, metadata: any, sectionIndex?: number): Promise<unknown> | undefined
+    $chartRegen(compRefs: Record<string, any>, store: MainStore, chartHandler: any, id: string, chartType: string, structure: any, chartOptions: any, dataset: any, metadata: any, sectionIndex?: number): Promise<unknown> | undefined
     $showDefaultTooltip(sourceDS: any, _rules: any, _sourceStructure: any, addedParams: any = null, _metadata: any = null): void
     $obsCustomTooltip(target: any, route: RouteLocationNormalizedLoaded, tooltip_list: string[] = [], removed_text_list: string[] = [], options: any = null): void
     $tooltipLinkGoogleStreetView(target: any, route: RouteLocationNormalizedLoaded, store: MainStore, tooltip_list: string[] = [], removed_text_list: string[] = [], options: any = null): void
@@ -52,9 +52,9 @@ declare module "vue" {
     $openAuthenticatioDialog(): void
     $getEscopo(idLocalidade: string): "brasil" | "mptreg" | "prtptm" | "regiao" | "estado" | "mesorregiao" | "microrregiao" | "municipio"
     $getColSize(screenSize: string, classes: string | undefined): string | undefined
-    $buildChartAdditionalOptions(store: MainStore, chartType: string, structure: any, chartOptions: any, dataset: any, metadata: any, sectionIndex: number = 0): any
-    $chartGen(store: MainStore, id: string, chartType: string, structure: any, chartOptions: any, dataset: any, metadata: any, sectionIndex: number = 0): Promise<unknown> | undefined
-    $chartRegen(store: MainStore, chartHandler: any, id: string, chartType: string, structure: any, chartOptions: any, dataset: any, metadata: any, sectionIndex: number = 0): Promise<unknown> | undefined
+    $buildChartAdditionalOptions(compRefs: Record<string, any>, store: MainStore, chartType: string, structure: any, chartOptions: any, dataset: any, metadata: any, sectionIndex?: number): any
+    $chartGen(compRefs: Record<string, any>, store: MainStore, id: string, chartType: string, structure: any, chartOptions: any, dataset: any, metadata: any, sectionIndex?: number): Promise<unknown> | undefined
+    $chartRegen(compRefs: Record<string, any>, store: MainStore, chartHandler: any, id: string, chartType: string, structure: any, chartOptions: any, dataset: any, metadata: any, sectionIndex?: number): Promise<unknown> | undefined
     $showDefaultTooltip(sourceDS: any, _rules: any, _sourceStructure: any, addedParams: any = null, _metadata: any = null): void
     $obsCustomTooltip(target: any, route: RouteLocationNormalizedLoaded, tooltip_list: string[] = [], removed_text_list: string[] = [], options: any = null): void
     $tooltipLinkGoogleStreetView(target: any, route: RouteLocationNormalizedLoaded, store: MainStore, tooltip_list: string[] = [], removed_text_list: string[] = [], options: any = null): void
