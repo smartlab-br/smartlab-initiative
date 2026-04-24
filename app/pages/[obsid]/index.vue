@@ -256,6 +256,20 @@
                   />
                 </v-col>
               </v-row>
+              <!-- Link para SmartMap avançado -->
+              <div
+                v-if="mapEnabled && currentObs?.obsPage?.prevalencia?.mapa_filtros"
+                style="position:absolute;z-index:3;right:8px;top:8px;"
+              >
+                <v-btn
+                  size="small"
+                  variant="tonal"
+                  prepend-icon="mdi-map-search"
+                  @click="router.push((currentObs?.to ?? '/' + currentObsId) + '/smartmap')"
+                >
+                  Clique para modo avançado - SmartMap
+                </v-btn>
+              </div>
             </v-container>            
           </v-col>
           <v-col cols="12" class="pb-2">
@@ -323,6 +337,7 @@ const prevTitleComment = ref("")
 const mapEnabled = ref(false)
 const chartHandler = ref<any>(null)
 const pendingLayerPayload = ref<any>(null)
+const switchesReady = ref(false)
 
 watch(chartHandler, (handler) => {
   if (handler && pendingLayerPayload.value) {
@@ -426,7 +441,7 @@ const triggerSelect = async (payload: any) => {
     customParams.value.enabled = payload.enabled
     if (!chartHandler.value) {
       pendingLayerPayload.value = payload.enabled
-      enableMap()
+      if (switchesReady.value) enableMap()
       return
     }
     try {
@@ -613,6 +628,7 @@ onMounted(() => {
       { attribute: "prevTitleComment", attribRefs: { prevTitleComment: prevTitleComment } }
     )
   }
+  nextTick(() => { switchesReady.value = true })
 })
 </script>
 
