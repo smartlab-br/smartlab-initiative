@@ -65,7 +65,9 @@
         v-if="currentObs?.obsPage?.prevalencia?.mapa_description_right"
         cols="12"
         lg="3"
+        class="pt-4"
       >
+        <div style="padding-top: 16px;">
         <FLPOCompositeText
           :id="'story_smartmap_desc_r_' + currentObsId"
           :structure="currentObs.obsPage.prevalencia.mapa_description_right"
@@ -75,6 +77,7 @@
           :active-group="activeGroup"
           @selection="triggerSelect"
         />
+        </div>
       </v-col>
     </v-row>
 

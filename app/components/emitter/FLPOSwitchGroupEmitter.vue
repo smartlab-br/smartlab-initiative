@@ -1,43 +1,37 @@
 <template>
-  <v-row align="center" wrap class="pt-2 pl-4">
-    <v-col
+  <div class="pl-4 pt-2">
+    <div
       v-for="eachSwitch in structure?.switches"
       :key="eachSwitch.id"
-      :cols="12"
-      :class="'mb-2 ' + (eachSwitch.cls || 'pb-0 pl-3')"
+      :class="eachSwitch.cls || 'pl-3'"
     >
-      <v-row no-gutters>
-        <v-col v-if="eachSwitch.title" class="title-obs pa-0 text-start">
-          {{ eachSwitch.title }}
-        </v-col>
-      </v-row>
-      <v-row no-gutters align="start">
-        <v-col cols="auto" class="pa-0">
-          <v-switch
-            v-model="selection[eachSwitch.id]"
-            class="ma-0 pa-0"
-            hide-details
-            :color="eachSwitch.color || 'primary'"
-            :readonly="!!eachSwitch.readonly"
-            @update:model-value="toggleSwitch(eachSwitch)"
-          >
-            <template v-if="eachSwitch.label" #label>
-              {{ eachSwitch.label }}
-            </template>
-          </v-switch>
-        </v-col>
-        <v-col class="pa-0 text-start">
-          <FLPOMinicard
-            v-for="(miniCard, index) in eachSwitch.minicards"
-            :key="index"
-            :structure="miniCard"
-            :custom-params="customParams"
-            :row-class="miniCard.rowClass || 'pa-1'"
-          />
-        </v-col>
-      </v-row>
-    </v-col>
-  </v-row>
+      <div v-if="eachSwitch.title" class="title-obs text-start">
+        {{ eachSwitch.title }}
+      </div>
+      <div class="d-flex align-center">
+        <v-switch
+          v-model="selection[eachSwitch.id]"
+          class="switch-compact"
+          density="compact"
+          hide-details
+          :color="eachSwitch.color || 'primary'"
+          :readonly="!!eachSwitch.readonly"
+          @update:model-value="toggleSwitch(eachSwitch)"
+        >
+          <template v-if="eachSwitch.label" #label>
+            {{ eachSwitch.label }}
+          </template>
+        </v-switch>
+        <FLPOMinicard
+          v-for="(miniCard, index) in eachSwitch.minicards"
+          :key="index"
+          :structure="miniCard"
+          :custom-params="customParams"
+          :row-class="miniCard.rowClass || 'pa-1'"
+        />
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -110,7 +104,22 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.control-top-align .v-input__slot {
-  align-items: baseline;
+.switch-compact {
+  margin: 0;
+  padding: 0;
+}
+
+:deep(.switch-compact.v-input) {
+  --v-input-control-height: 28px;
+}
+
+:deep(.switch-compact .v-input__control) {
+  min-height: unset;
+}
+
+:deep(.switch-compact .v-selection-control) {
+  min-height: unset;
+  padding-top: 0;
+  padding-bottom: 0;
 }
 </style>
