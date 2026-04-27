@@ -36,6 +36,7 @@
                   :custom-filters="customParams"
                   :active-group="activeGroup"
                   @selection="triggerSelect"
+                  @default-selection="triggerDefaultSelect"
                 />
               </v-col>
             </v-row>
@@ -57,6 +58,10 @@
               <div class="mt-2">Carregando mapa...</div>
             </v-col>
           </v-row>
+          <div v-if="mapLoading" class="map-loading-overlay">
+            <v-progress-circular indeterminate color="primary" size="48" />
+            <div class="mt-2 text-body-2">Carregando...</div>
+          </div>
         </v-container>
       </v-col>
 
@@ -111,8 +116,10 @@ const customParams = ref<Record<string, any>>({})
 const reactiveFilter = ref<any>(null)
 const activeGroup = ref<string | null>(null)
 const mapEnabled = ref(false)
+const mapLoading = ref(false)
 const chartHandler = ref<any>(null)
 const pendingLayerPayload = ref<any>(null)
+const pendingFilterReload = ref(false)
 
 watch(chartHandler, (handler) => {
   if (handler && pendingLayerPayload.value) {
@@ -122,6 +129,17 @@ watch(chartHandler, (handler) => {
       console.error('[smartmap adjustVisibleLayers] erro:', e)
     }
     pendingLayerPayload.value = null
+  }
+  if (handler && pendingFilterReload.value) {
+    pendingFilterReload.value = false
+    reloadMap(applyFilters())
+  }
+})
+
+watch(pendingFilterReload, (isPending) => {
+  if (isPending && chartHandler.value) {
+    pendingFilterReload.value = false
+    reloadMap(applyFilters())
   }
 })
 
@@ -198,7 +216,51 @@ const enableMap = async () => {
   )
 }
 
-const reloadMap = async (overrideParams?: Record<string, any>) => {
+const applyFilters = (): string[] | string | null => {
+  const prevalencia = currentObs.value?.obsPage?.prevalencia
+  const filtros = prevalencia?.mapa_filtros
+  if (!prevalencia) return null
+
+  // Usa apiBase quando disponível (URLs limpas sem filtros default como max_competencia)
+  const apiObject = (prevalencia as any).apiBase ?? prevalencia.api
+  let filterUrl = ''
+
+  for (const filter of (filtros || [])) {
+    if (filter.group != null && filter.group !== activeGroup.value) continue
+    if (filter.type !== 'select' && filter.type !== 'slider') continue
+
+    const rulesApi = !Array.isArray(filter.selection?.rules?.api)
+      ? filter.selection?.rules?.api
+      : filter.selection?.rules?.api?.[0]
+    const filterApiArgs: any[] = rulesApi?.args || []
+    const filterTemplate: string = filter.selection?.rules?.filter
+    if (!filterTemplate || !filterApiArgs.length) continue
+
+    let filterPart = filterTemplate
+    let allArgsPresent = true
+    filterApiArgs.forEach((arg: any, i: number) => {
+      const val = customParams.value[arg.named_prop]
+      if (val != null) {
+        filterPart = filterPart.replace(`{${i}}`, val)
+      } else {
+        allArgsPresent = false
+      }
+    })
+    if (allArgsPresent) filterUrl += filterPart
+  }
+
+  // Armazena filterUrl em customParams para uso pelos minicards/rankings reativos
+  customParams.value.filterUrl = filterUrl
+
+  if (Array.isArray(apiObject)) {
+    return apiObject.map((apiItem: any) => apiItem.fixed + filterUrl)
+  } else if (apiObject?.fixed) {
+    return (apiObject.fixed as string) + filterUrl
+  }
+  return null
+}
+
+const reloadMap = async (endpoints?: string[] | string | null, overrideParams?: Record<string, any>) => {
   const prevalencia = currentObs.value?.obsPage?.prevalencia
   if (!prevalencia) return
 
@@ -207,32 +269,42 @@ const reloadMap = async (overrideParams?: Record<string, any>) => {
   const chartOptions = prevalencia.chart_options
   const params = { ...customParams.value, ...(overrideParams ?? {}) }
   const compRefs = { customParams: { value: params } as any }
+  const addedParams = endpoints ? { endpoint: endpoints } : undefined
+
+  mapLoading.value = true
 
   $fillDataStructure(
     prevalencia,
     params,
     async (dataset: any[], _rules: any, _struct: any, _added: any, metadata: any) => {
       const cleanDataset = Array.isArray(dataset) ? dataset.filter((row) => row != null) : []
-      if (!cleanDataset.length) return
+      if (!cleanDataset.length) {
+        mapLoading.value = false
+        return
+      }
 
       if (!chartHandler.value) {
         mapEnabled.value = true
         await nextTick()
         try {
           const handler = await $chartGen(compRefs, store, chartId, chartType, prevalencia, chartOptions, cleanDataset, metadata)
-          chartHandler.value = handler
+          if (handler) chartHandler.value = handler
         } catch (err) {
           console.error('[smartmap reloadMap] Erro ao gerar o mapa:', err)
         }
       } else {
         try {
           const handler = await $chartRegen(compRefs, store, chartHandler.value, chartId, chartType, prevalencia, chartOptions, cleanDataset, metadata)
-          chartHandler.value = handler
+          if (handler) chartHandler.value = handler
         } catch (err) {
           console.error('[smartmap reloadMap] Erro ao regenerar o mapa:', err)
         }
       }
-    }
+      mapLoading.value = false
+      // Atualiza reactiveFilter para acionar re-fetch nos minicards/rankings reativos
+      reactiveFilter.value = { ...customParams.value }
+    },
+    addedParams
   )
 }
 
@@ -284,7 +356,7 @@ const triggerSelect = async (payload: any) => {
           await nextTick()
           try {
             const handler = await $chartGen(frozenCompRefs, store, chartId, chartType, prevalencia, chartOptions, cleanDataset, metadata)
-            chartHandler.value = handler
+            if (handler) chartHandler.value = handler
           } catch (err) {
             console.error('[smartmap radio] Erro ao gerar o mapa:', err)
             mapEnabled.value = false
@@ -292,7 +364,7 @@ const triggerSelect = async (payload: any) => {
         } else {
           try {
             const handler = await $chartRegen(frozenCompRefs, store, chartHandler.value, chartId, chartType, prevalencia, chartOptions, cleanDataset, metadata)
-            chartHandler.value = handler
+            if (handler) chartHandler.value = handler
           } catch (err) {
             console.error('[smartmap radio] Erro ao regenerar o mapa:', err)
           }
@@ -327,7 +399,7 @@ const triggerSelect = async (payload: any) => {
       customParams.value.enabled = { [payload.rules.group]: true }
     }
 
-    await reloadMap()
+    await reloadMap(applyFilters())
     return
   }
 
@@ -339,7 +411,24 @@ const triggerSelect = async (payload: any) => {
     } else {
       customParams.value['value' + suffix] = payload.value
     }
-    await reloadMap()
+    await reloadMap(applyFilters())
+  }
+}
+
+const triggerDefaultSelect = (payload: any) => {
+  if (payload.type !== 'select' || payload.item == null) return
+
+  const itemCustomFilterName = !Array.isArray(payload.rules?.api)
+    ? payload.rules?.api?.args?.[0]?.named_prop
+    : payload.rules?.api?.[0]?.args?.[0]?.named_prop
+  if (!itemCustomFilterName) return
+
+  customParams.value[itemCustomFilterName] = payload.item[itemCustomFilterName]
+
+  if (chartHandler.value) {
+    reloadMap(applyFilters())
+  } else {
+    pendingFilterReload.value = true
   }
 }
 
@@ -370,5 +459,18 @@ watch(
 <style scoped>
 .map_geo {
   min-height: 400px;
+}
+
+.map-loading-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  border-radius: 4px;
 }
 </style>

@@ -111,14 +111,15 @@ const isLeafletBasedCharts = (type: string): boolean => {
 
 const updateReactiveDataStructure = (filterUrl: string) => {
   let apiUrl = ""
-  const namedProp = props.structure?.api_reactive.args[0]?.named_prop
+  const baseApi = props.structure?.apiBase ? props.structure.apiBase : props.structure?.api
+  const namedProp = props.structure?.api_reactive?.args?.[0]?.named_prop
   if (props.structure?.api_reactive &&
     props.customParams &&
     namedProp &&
     props.customParams[namedProp]) {
     apiUrl = textTransformService.applyInterpol(props.structure.api_reactive, props.customParams)
   } else {
-    apiUrl = textTransformService.applyInterpol(props.structure?.apiBase ? props.structure.apiBase : props.structure?.api, props.customParams)
+    apiUrl = textTransformService.applyInterpol(baseApi, props.customParams)
   }
   if (filterUrl) {
     apiUrl += filterUrl
@@ -126,8 +127,8 @@ const updateReactiveDataStructure = (filterUrl: string) => {
   $fetch(UrlTransformService.getApiUrl(apiUrl))
     .then((result: any) => {
       let datasetResult = $reformDataset(
-        result.data.dataset,
-        props.structure?.api.options,
+        result.dataset,
+        baseApi?.options,
         props.customParams
       )
       if (props.structure?.api_options) {
@@ -143,7 +144,7 @@ const updateReactiveDataStructure = (filterUrl: string) => {
           props.structure.args,
           props.structure,
           undefined,
-          result.data.metadata
+          result.metadata
         )
       }
     })

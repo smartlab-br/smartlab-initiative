@@ -69,8 +69,8 @@
             </v-col>
           </v-row>
 
-          <v-row v-else-if="descSection.type === 'select' && isGroupActive(descSection)" column :class="descSection.cls ? descSection.cls : 'pb-2'">
-            <v-col class="headline-obs pa-0">
+          <v-row v-else-if="descSection.type === 'select' && isGroupActive(descSection)" :class="descSection.cls ? descSection.cls : 'pb-2'">
+            <v-col v-if="descSection.title" cols="12" class="headline-obs pa-0 pb-1">
               {{ descSection.title }}
             </v-col>
             <FLPOSelectEmitter

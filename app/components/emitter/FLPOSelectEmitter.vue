@@ -1,12 +1,12 @@
 <template>
-  <v-col>
+  <v-col cols="12">
     <v-autocomplete
       v-model="chosen"
       :items="items"
       :filter="ignoreSpecialCharFilter"
       :variant="isOutline ? 'outlined' : 'filled'"
       :label="structure?.label"
-      item-text="label"
+      item-title="label"
       :placeholder="structure?.placeholder"
       item-value="id"
       class="input-group--focused"
@@ -23,7 +23,6 @@
 
 
 <script setup lang="ts">
-import { useEmitter } from "~/composables/useEmitter"
 import { TextTransformService } from "~/utils/service/singleton/textTransform"
 
 interface SelectDefault {
@@ -58,22 +57,34 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const emit = defineEmits<{
-  change: [payload: any]
+  selection: [payload: any]
   'default-selection': [payload: any]
 }>()
 
 const textTransformService = new TextTransformService()
-const { toItem, items: emitterItems } = useEmitter(props, emit)
+const { $fillDataStructure } = useNuxtApp()
 
-const label = ref<string | null>(null)
-const color = ref("primary")
 const chosen = ref<any>(null)
 const items = ref<any[]>([])
 const errorMessage = ref<string | undefined>(undefined)
 
+const toItem = (row: any, rules: any) => {
+  const eachItem = { ...row }
+  rules.forEach((rule: any) => {
+    if (rule.fixed != null) {
+      eachItem[rule.prop] = rule.fixed
+    } else if (rule.named_prop != null) {
+      eachItem[rule.prop] = row[rule.named_prop]
+    }
+  })
+  items.value.push(eachItem)
+}
+
 const toItems = (dataset: any, rules: any, _preloaded: any, _addedParams: any = null, _metadata: any = null) => {
   items.value = []
-  dataset.forEach((row: any) => toItem(row, rules))
+  if (dataset) {
+    dataset.forEach((row: any) => toItem(row, rules))
+  }
 
   // Seleciona o valor default, se houver
   if (props.structure?.default) {
@@ -88,7 +99,7 @@ const toItems = (dataset: any, rules: any, _preloaded: any, _addedParams: any = 
     }
 
     chosen.value = items.value.find(item => item.id === defaultValue) || null
-  } else if (!props.structure?.clearable) {
+  } else if (props.structure?.clearable === false) {
     chosen.value = items.value[0] || null
   } else {
     chosen.value = null
@@ -105,11 +116,22 @@ const ignoreSpecialCharFilter = (item: any, queryText: string, itemText: string)
   return itemText.includes(queryText)
 }
 
-const sendSelection = () => {
-  emit("change", chosen.value)
+const buildPayload = (item: any) => ({
+  id: props.id,
+  item,
+  type: props.structure?.type,
+  rules: props.structure?.selection?.rules
+})
+
+const sendSelection = (newVal: any) => {
+  emit('selection', buildPayload(newVal))
 }
 
 const sendDefaultSelection = () => {
-  emit("default-selection", chosen.value)
+  emit('default-selection', buildPayload(chosen.value))
 }
+
+onMounted(() => {
+  $fillDataStructure(props.structure, props.customParams, toItems)
+})
 </script>
