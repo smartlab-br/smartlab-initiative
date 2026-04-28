@@ -180,7 +180,7 @@
     <v-row align="start" class="mx-0">
       <v-col cols="12" md="4" lg="3">
         <v-row
-          class="fill-height wrap pl-3 pt-3 pr-2 ma-0 subheading mb-0"
+          class="fill-height pl-3 pt-3 pr-2 ma-0 subheading mb-0"
         >
           <v-col>
             <v-row>

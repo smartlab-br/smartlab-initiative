@@ -3,7 +3,7 @@
     <v-row v-if="currentObs?.obsPage?.prevalencia" class="mx-0">
       <!-- Coluna esquerda: título + filtros -->
       <v-col cols="12" md="4" lg="3">
-        <v-row class="fill-height wrap pl-3 pt-3 pr-2 ma-0 mb-0">
+        <v-row class="fill-height pl-3 pt-3 pr-2 ma-0 mb-0">
           <v-col>
             <v-row>
               <v-col class="headline-obs card-title pb-0 pl-3">

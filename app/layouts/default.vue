@@ -161,11 +161,11 @@
           'px-5 py-5': $vuetify.display.mdAndUp,
           }"
         >
-          <v-row wrap align="center">
+          <v-row align="center">
             <v-col 
-              class="text-xs-left text-lg-center" :class="{
+              class="text-left text-lg-center" :class="{
               'pt-5 pb-3': $vuetify.display.smAndDown,
-            }" cols="12" xs="2" sm="1">
+            }" cols="12" sm="1">
               <a class="cursor-pointer" @click="pushRoute('/saibamais/smartlab', false)">
                 <img src="/smartlab/smartlab-small.svg" alt="Smartlab" height="25px" style="margin-bottom: -5px;">
                 <span class="ml-3">Sobre</span>
@@ -173,11 +173,11 @@
             </v-col>
 
             <v-col 
-              v-if="smartlab" class="text-xs-right text-md-center" :class="{
+              v-if="smartlab" class="text-right text-md-center" :class="{
               'pt-5 pb-3': $vuetify.display.smAndDown,
-            }" cols="12" xs="10" sm="11" lg="9">
-              <v-row justify="center" wrap>
-                <v-col v-if="smartlab?.footer?.title" class="footer-colab-text" cols="12" xs="12" xl="11" offset-xl="1">
+            }" cols="12" sm="11" lg="9">
+              <v-row justify="center">
+                <v-col v-if="smartlab?.footer?.title" class="footer-colab-text" cols="12" xl="11" offset-xl="1">
                   {{ smartlab.footer.title }}
                 </v-col>
                 <v-col v-if="smartlab?.footer?.images" cols="12">
@@ -226,7 +226,7 @@
             </v-col>
 
             <v-col 
-              class="text-xs-right subheading text-lg-center" :class="{
+              class="text-right subheading text-lg-center" :class="{
               'pt-5 pb-3': $vuetify.display.smAndDown,
             }" cols="12" md="6" lg="1" sm="6">
               <div class="caption mr-1 mb-1">

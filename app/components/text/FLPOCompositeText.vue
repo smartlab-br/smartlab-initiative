@@ -4,7 +4,7 @@
       <v-row :class="sectionClass ? sectionClass : 'px-3'">
         <v-col>
           <!-- Seção de texto interpolado -->
-          <v-row v-if="descSection.type === 'text'" column>
+          <v-row v-if="descSection.type === 'text'" class="flex-column">
             <v-col v-if="descSection.title" :class="'headline-obs ' + (descSection.cls ? descSection.cls : 'py-0 px-4')">
               {{ descSection.title }}
             </v-col>
@@ -15,14 +15,14 @@
               :read-more-limit="descSection.read_more_limit"
               @invalidateInterpol="throwInvalidInterpol"
             />
-            <v-col v-if="descSection.comment != undefined" class="red--text pa-0 pb-4">
+            <v-col v-if="descSection.comment != undefined" class="text-red pa-0 pb-4">
               {{ descSection.comment.fixed }}
             </v-col>
           </v-row>
 
           <!-- Seção de rankings -->
-          <v-row v-else-if="descSection.type === 'ranking'" column class="pb-2">
-            <v-col pa-0 class="headline-obs">
+          <v-row v-else-if="descSection.type === 'ranking'" class="flex-column pb-2">
+            <v-col class="headline-obs pa-0">
               {{ descSection.title }}
             </v-col>
             <FLPORankingText
@@ -32,11 +32,11 @@
           </v-row>
 
           <!-- Seção de rankings lista -->
-          <v-row v-else-if="descSection.type === 'ranking_list'" column pb-2>
+          <v-row v-else-if="descSection.type === 'ranking_list'" class="flex-column pb-2">
             <v-col class="headline-obs pa-0 ml-2">
               {{ descSection.title }}
             </v-col>
-            <v-row wrap :class="descSection.sectionClass ? descSection.sectionClass : 'pb-2'">
+            <v-row :class="descSection.sectionClass ? descSection.sectionClass : 'pb-2'">
               <FLPORankingList
                 v-for="(ranking, index) in (descSection.rankings || []).filter(filterGroup)"
                 :key="(ranking.group ? ranking.group : 'group') + index"
@@ -49,11 +49,11 @@
           </v-row>
 
           <!-- Seção de minicards -->
-          <v-row v-else-if="descSection.type === 'minicards'" column pb-2>
+          <v-row v-else-if="descSection.type === 'minicards'" class="flex-column pb-2">
             <v-col class="headline-obs pa-0">
               {{ descSection.title }}
             </v-col>
-            <v-row wrap :class="descSection.sectionClass ? descSection.sectionClass : 'pb-4'">
+            <v-row :class="descSection.sectionClass ? descSection.sectionClass : 'pb-4'">
               <FLPOMinicard
                 v-for="(miniCard, index) in descSection.cards?.filter(filterGroup) || []"
                 :key="(miniCard.group ? miniCard.group : 'group') + index"
@@ -64,7 +64,7 @@
                 :row-class="descSection.rowClass"
               />
             </v-row>
-            <v-col v-if="descSection.comment != undefined" class="red--text pa-0 pb-4">
+            <v-col v-if="descSection.comment != undefined" class="text-red pa-0 pb-4">
               {{ descSection.comment.fixed }}
             </v-col>
           </v-row>
@@ -86,7 +86,7 @@
           <v-row
             v-else-if="descSection.type === 'legend-list' &&
               (descSection.group === undefined || descSection.group === null || descSection.group === activeGroup)"
-            column
+            class="flex-column"
             :class="descSection.cls ? descSection.cls : 'pb-2'"
           >
             <v-col class="title-obs pa-0">
@@ -101,7 +101,7 @@
           <v-row
             v-else-if="descSection.type === 'switch-group' &&
               (descSection.group === undefined || descSection.group === null || descSection.group === activeGroup)"
-            column
+            class="flex-column"
             :class="descSection.cls ? descSection.cls : 'pb-2'"
           >
             <v-col v-if="descSection.title" class="title-obs pt-0 pb-0 pr-0 pl-4 text-start">
@@ -118,7 +118,7 @@
           <v-row
             v-else-if="descSection.type === 'radio' &&
               (descSection.group === undefined || descSection.group === null || descSection.group === activeGroup)"
-            column
+            class="flex-column"
             :class="descSection.cls ? descSection.cls : 'pb-2'"
           >
             <FLPORadioEmitter
@@ -133,7 +133,7 @@
           <v-row
             v-else-if="descSection.type === 'check' &&
               (descSection.group === undefined || descSection.group === null || descSection.group === activeGroup)"
-            column
+            class="flex-column"
             :class="descSection.cls ? descSection.cls : 'pb-2'"
           >
             <v-col v-if="descSection.title" class="headline-obs pa-0">
@@ -151,7 +151,7 @@
           <v-row
             v-else-if="descSection.type === 'slider' &&
               (descSection.group === undefined || descSection.group === null || descSection.group === activeGroup)"
-            column
+            class="flex-column"
             :class="descSection.cls ? descSection.cls : 'pb-2'"
           >
             <v-col class="headline-obs pa-0">
@@ -166,7 +166,7 @@
             />
           </v-row>
           <!-- Seção de odômetro -->
-          <v-row v-if="descSection.type === 'odometer'" column pb-2>
+          <v-row v-if="descSection.type === 'odometer'" class="flex-column pb-2">
             <v-col
               class="headline-obs text-center pa-0"
               :style="`background-color:${descSection.bg_color || 'black'};color:${descSection.title_font_color || 'white'}`"

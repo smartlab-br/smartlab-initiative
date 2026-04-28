@@ -7,7 +7,7 @@
     :lg="getColSize('lg',cls)"
     :xl="getColSize('xl',cls)"
   >
-    <v-row v-if="structure?.look !== 'minicard'" class="ml-2 mb-2" wrap>
+    <v-row v-if="structure?.look !== 'minicard'" class="ml-2 mb-2">
       <v-col cols="12" class="display-1-obs ranking-list-title pb-2 pl-0" ><span v-html="title"></span></v-col>
       <v-col v-if="errorMessage" cols="12" class="display-1-obs ranking-list-text pb-2">
         {{ errorMessage }}
@@ -24,7 +24,6 @@
     <v-row
       v-else
       class="ml-2 mb-2 ranking-list-minicard"
-      wrap
     >
       <v-col v-if="errorMessage" cols="12" class="display-1-obs ranking-list-minicard-text pb-2">
         {{ errorMessage }}
