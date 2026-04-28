@@ -8,6 +8,7 @@
             <v-row>
               <v-col class="headline-obs card-title pb-0 pl-3">
                 <div class="card-title-text">SmartMap - Modo Avançado</div>
+                <div v-if="prevTitleComment" class="title-comment" v-html="prevTitleComment" />
                 <v-tooltip
                   v-if="currentObs?.obsPage?.prevalencia?.infomapa"
                   location="bottom"
@@ -103,6 +104,7 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
 import { ColorsService } from '~/utils/service/singleton/colors.js'
+import { TextTransformService } from '~/utils/service/singleton/textTransform'
 import { useMainStore } from '~/store'
 
 const store = useMainStore()
@@ -113,6 +115,8 @@ const { $fillDataStructure, $chartGen, $chartRegen } = useNuxtApp()
 const { currentObs, currentObsId } = storeToRefs(store)
 
 const customParams = ref<Record<string, any>>({})
+const prevTitleComment = ref<string | null>(null)
+const textTransformService = new TextTransformService()
 const reactiveFilter = ref<any>(null)
 const activeGroup = ref<string | null>(null)
 const mapEnabled = ref(false)
@@ -442,6 +446,18 @@ onBeforeMount(async () => {
 onMounted(() => {
   ColorsService.changeTheme(currentObsId.value)
   if (currentObs.value?.obsPage?.prevalencia) {
+    $fillDataStructure(
+      currentObs.value.obsPage.prevalencia.title_comment,
+      customParams.value,
+      (dataset: any, _rules: any, structure: any, addedParams: any) => {
+        if (typeof dataset === 'string') {
+          prevTitleComment.value = dataset
+        } else {
+          const base = Array.isArray(dataset) && dataset.length === 1 ? dataset[0] : (dataset ?? {})
+          prevTitleComment.value = textTransformService.applyInterpol(structure, customParams.value, base)
+        }
+      }
+    )
     enableMap()
   }
 })
