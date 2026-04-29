@@ -256,6 +256,12 @@ const applyFilters = (): string[] | string | null => {
   // Armazena filterUrl em customParams para uso pelos minicards/rankings reativos
   customParams.value.filterUrl = filterUrl
 
+  // Quando um radio foi selecionado, usa a API do radio como base (ex: /sst/beneficios, /sst/sinan...)
+  const radioApi = customParams.value.radioApi
+  if (radioApi) {
+    return (radioApi as string) + filterUrl
+  }
+
   if (Array.isArray(apiObject)) {
     return apiObject.map((apiItem: any) => apiItem.fixed + filterUrl)
   } else if (apiObject?.fixed) {
@@ -420,6 +426,17 @@ const triggerSelect = async (payload: any) => {
 }
 
 const triggerDefaultSelect = (payload: any) => {
+  if (payload.type === 'slider') {
+    const suffix = payload.rules?.suffix_params ? '_' + payload.rules.suffix_params : ''
+    if (Array.isArray(payload.value)) {
+      customParams.value['value_min' + suffix] = payload.value[0]
+      customParams.value['value_max' + suffix] = payload.value[1]
+    } else {
+      customParams.value['value' + suffix] = payload.value
+    }
+    return
+  }
+
   if (payload.type !== 'select' || payload.item == null) return
 
   const itemCustomFilterName = !Array.isArray(payload.rules?.api)
