@@ -94,13 +94,13 @@ export class BubblesChartBuilderService extends LeafletChartBuilderService {
   adjustVisibleLayers (enabled: any) {
     this.additionalOptions.visibleLayers = enabled
     const bounds = this.L.latLngBounds([])
-    for (const indx in enabled) {
+    // Itera sobre todos os layers conhecidos para garantir que layers não presentes
+    // em 'enabled' (ex: te_imigrantes, G_CREAS) também sejam ocultados corretamente
+    for (const indx in this.layers) {
       const layer = this.layers[indx]
-      if (!layer) {
-        console.warn('[adjustVisibleLayers] layer não encontrada para:', indx, '| layers disponíveis:', Object.keys(this.layers))
-        continue
-      }
-      if (enabled[indx]) {
+      if (!layer) continue
+      // Se 'enabled' não foi definido, exibe todos; se definido, apenas os explicitamente ativos
+      if (!enabled || enabled[indx]) {
         this.chart?.addLayer(layer)
         try {
           const lb = layer.getBounds()

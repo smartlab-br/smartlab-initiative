@@ -313,14 +313,15 @@ export class MigrationMapChartBuilderService extends LeafletChartBuilderService 
   adjustVisibleLayers (enabled: any) {
     this.additionalOptions.visibleLayers = enabled
     const bounds = this.L.latLngBounds([])
-    for (const indx in enabled) {
-      if (enabled[indx]) {
+    for (const indx in this.layers) {
+      if (!enabled || enabled[indx]) {
         this.chart?.addLayer(this.layers[indx])
-        bounds.extend(this.layers[indx].getBounds())
+        try {
+          bounds.extend(this.layers[indx].getBounds())
+        } catch (e) { /* layer sem bounds */ }
       } else {
         this.chart?.removeLayer(this.layers[indx])
       }
-      // this.visibleLayers[indx] = options.enabled[indx];
     }
     this.fitBounds(bounds)
   }
