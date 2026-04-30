@@ -118,7 +118,7 @@
       <v-list>
         <!-- Usando v-for para iterar sobre uma lista de itens -->
         <v-list-item 
-          v-for="(item, index) in menuItems" :key="index" link :ripple="{ class: item.rippleColor }"
+          v-for="(item, index) in menuItems" :key="item.id ?? item.short_title ?? index" link :ripple="{ class: item.rippleColor }"
           :tabindex="drawer ? 10 + index : ''" @click="itemClick(item)" @keyup.enter="itemClick(item)">
           <template #prepend>
             <v-icon v-if="item.icon" :title="item.short_title" :color="ColorsService.getThemeFromId(item.id).primary">
@@ -182,7 +182,7 @@
                 </v-col>
                 <v-col v-if="smartlab?.footer?.images" cols="12">
                   <img 
-                    v-for="(footerImg, footerImgIndex) in smartlab.footer.images" :key="footerImgIndex"
+                    v-for="(footerImg, footerImgIndex) in smartlab.footer.images" :key="footerImg.src ?? footerImg.title ?? footerImgIndex"
                     :src="footerImg.src" :class="footerImg.class" :alt="footerImg.title"
                     :height="footerImg.height ? footerImg.height : ''"
                     :max-height="footerImg.maxHeight ? footerImg.maxHeight : ''"

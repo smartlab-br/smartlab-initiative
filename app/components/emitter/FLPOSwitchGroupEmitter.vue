@@ -24,7 +24,7 @@
         </v-switch>
         <FLPOMinicard
           v-for="(miniCard, index) in eachSwitch.minicards"
-          :key="index"
+          :key="miniCardKey(eachSwitch, miniCard, index)"
           :structure="miniCard"
           :custom-params="customParams"
           :row-class="miniCard.rowClass || 'pa-1'"
@@ -96,6 +96,10 @@ const toggleSwitch = (_struct: any) => {
       enabled: selection.value
     })
   }
+}
+
+const miniCardKey = (switchItem: SwitchItem, miniCard: MiniCard, index: number) => {
+  return [switchItem.id, miniCard.id ?? miniCard.title ?? miniCard.description ?? index].join(':')
 }
 
 onMounted(() => {

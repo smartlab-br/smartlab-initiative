@@ -41,6 +41,12 @@
                 />
               </v-col>
             </v-row>
+
+            <FLPODataSource
+              class="mt-2 pl-2"
+              :source="currentObs?.obsPage?.prevalencia?.source"
+              :analysis="(currentObs?.obsPage?.prevalencia as any)?.analysis"
+            />
           </v-col>
         </v-row>
       </v-col>

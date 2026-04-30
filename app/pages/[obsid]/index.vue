@@ -225,12 +225,12 @@
                 :custom-params="customParams"
                 :custom-filters="customParams"
               /> 
-              <div v-if="sourceDesc || analysisDesc" class="data-source caption mt-6" style="margin-left: -8px">
-                <div v-if="sourceDesc && !sourceLink">Fonte: {{ sourceDesc }}</div>
-                <div v-else-if="sourceDesc && sourceLink">Fonte: <a class="text-accent cursor-pointer" :href="sourceLink" target="_blank" rel="noopener">{{ sourceDesc }}</a></div>
-                <div v-if="analysisDesc && !analysisLink">Tratamento e análise: {{ analysisDesc }}</div>
-                <div v-else-if="analysisDesc && analysisLink">Tratamento e análise: <a class="text-accent cursor-pointer" :href="analysisLink" target="_blank" rel="noopener">{{ analysisDesc }}</a></div>
-              </div>
+              <FLPODataSource
+                class="mt-6"
+                style="margin-left: -8px"
+                :source="currentObs?.obsPage?.prevalencia?.source"
+                :analysis="(currentObs?.obsPage?.prevalencia as any)?.analysis"
+              />
               </v-col>
             </v-row>
           </v-col>
@@ -284,7 +284,7 @@
             >
              <FLPORankingList
                 v-for="(ranking, index) in currentObs.obsPage.ranking_cards"
-                :key="index"
+                :key="ranking.title ?? index"
                 :structure="ranking"
                 :custom-params="customParams"
               /> 
@@ -365,19 +365,6 @@ const currentParallax = computed(() => {
     ? `/parallax/${parallaxFile.value}`
     : ""
 })
-
-const sourceDesc = computed(() => {
-  const p = currentObs.value?.obsPage?.prevalencia
-  if (p?.source?.desc) return p.source.desc
-  return null
-})
-const sourceLink = computed(() => currentObs.value?.obsPage?.prevalencia?.source?.link ?? null)
-const analysisDesc = computed(() => {
-  const p = currentObs.value?.obsPage?.prevalencia
-  if (p?.analysis?.hide_analysis) return null
-  return p?.analysis?.desc ?? 'SmartLab'
-})
-const analysisLink = computed(() => currentObs.value?.obsPage?.prevalencia?.analysis?.link ?? null)
 
 const resizeFirstSection = () => {
   if (mdAndUp.value) {

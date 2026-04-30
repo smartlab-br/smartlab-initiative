@@ -30,30 +30,30 @@
           <div v-if="eachTabItem.title" class="display-2-obs py-2">
             {{ eachTabItem.title }}
           </div>
-          <v-container v-for="(section, index) in eachTabItem.sections" :key="index" class="pa-0">
+          <v-container v-for="(section, index) in eachTabItem.sections" :key="sectionKey(eachKeyItem, section, index)" class="pa-0">
             <div class="headline-obs py-2">
               {{ section.title }}
             </div>
             <v-list v-if="section.type == 'list'" theme="dark" :class="'py-0 ' + section.list_height" style="background: transparent;">
-              <template v-for="(item, idxItem) in section.list" :key="idxItem">
+              <template v-for="(item, idxItem) in section.list" :key="item.name ?? idxItem">
                 <v-divider />
                 <v-list-item>
                   <v-list-item-title v-html="item.name" />
-                  <v-list-item-subtitle v-for="(value, idx) in item.values" :key="idx">
+                  <v-list-item-subtitle v-for="(value, idx) in item.values" :key="(value ?? idx)">
                     {{ value }}
                   </v-list-item-subtitle>
                 </v-list-item>
               </template>
             </v-list>
             <v-list v-if="section.type == 'list-avatar'" theme="dark" class="py-0" lines="three" style="background: transparent;">
-              <template v-for="(item, idxItem) in section.list" :key="idxItem">
+              <template v-for="(item, idxItem) in section.list" :key="item.name ?? idxItem">
                 <v-divider />
                 <v-list-item>
                   <!-- <v-list-item-media v-if="item.avatar" class="mr-3 my-0">
                     <v-avatar size="64"><img :src="item.avatar" :alt="item.name"></v-avatar>
                   </v-list-item-media> -->
                   <v-list-item-title class="light-link" v-html="item.name" />
-                  <v-list-item-subtitle v-for="(value, idx) in item.values" :key="idx">
+                  <v-list-item-subtitle v-for="(value, idx) in item.values" :key="(value ?? idx)">
                     <span class="light-link" v-html="value" />
                   </v-list-item-subtitle>
                 </v-list-item>
@@ -114,6 +114,10 @@ const props = defineProps<{
 const { smAndDown } = useDisplay()
 
 const active = ref<string | null>(null)
+
+const sectionKey = (tabKey: string | number, section: any, index: number) => {
+  return [tabKey, section.type ?? 'section', section.id ?? section.title ?? index].join(':')
+}
 
 onMounted(() => {
   active.value = props.activeTab ? 'tab-' + props.activeTab : null

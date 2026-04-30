@@ -1,5 +1,5 @@
 <template>
-  <v-row v-for="(descSection, index) in normalizedStructure" :key="index" :class="descSection.class ? descSection.class : 'pr-0 pl-2 pb-0 pt-5'">
+  <v-row v-for="(descSection, index) in visibleStructure" :key="sectionKey(descSection, index)" :class="descSection.class ? descSection.class : 'pr-0 pl-2 pb-0 pt-5'">
     <v-col>
       <v-row :class="sectionClass ? sectionClass : 'px-3'">
         <v-col>
@@ -233,6 +233,10 @@ const normalizedStructure = computed<DescSection[]>(() => {
   )
 })
 
+const visibleStructure = computed<DescSection[]>(() => {
+  return normalizedStructure.value.filter((descSection) => isGroupActive(descSection))
+})
+
 const emit = defineEmits<{
   selection: [payload: any]
   'default-selection': [payload: any]
@@ -267,5 +271,9 @@ const throwInvalidInterpol = (payload: any) => {
 
 const isGroupActive = (descSection: any) => {
   return descSection.group === undefined || descSection.group === null || descSection.group === props.activeGroup
+}
+
+const sectionKey = (descSection: DescSection, index: number) => {
+  return [descSection.type ?? 'section', descSection.group ?? 'all', descSection.id ?? index].join(':')
 }
 </script>

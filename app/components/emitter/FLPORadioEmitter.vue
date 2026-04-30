@@ -17,7 +17,7 @@
             <v-col v-if="item.label" class="d-flex"><span v-html="item.label"></span></v-col>
             <FLPOMinicard
               v-for="(miniCard, index) in item.minicards"
-              :key="index"
+              :key="miniCardKey(item, miniCard, index)"
               :structure="miniCard"
               :custom-params="customParams"
               :row-class="miniCard.rowClass || 'pa-1'"
@@ -92,6 +92,10 @@ const toggleRadio = (chosenItem: any) => {
       rules: props.structure?.selection?.rules || null
     })
   }
+}
+
+const miniCardKey = (item: RadioItem, miniCard: MiniCard, index: number) => {
+  return [item.id, miniCard.id ?? miniCard.title ?? miniCard.description ?? index].join(':')
 }
 </script>
 
