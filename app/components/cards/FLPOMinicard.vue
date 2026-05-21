@@ -225,9 +225,9 @@ const fillProp = (
       const lowerThanColor: "red" | "green" | "blue" = rule.color_changing.lt_color || "red"
       const equalColor: "red" | "green" | "blue" = rule.color_changing.eq_color || "blue"
       const colors = {
-        red: "text-red text-darken-1",
-        green: "text-green text-darken-4",
-        blue: "text-indigo text-darken-3"
+        red: "text-red-darken-1",
+        green: "text-green-darken-4",
+        blue: "text-indigo-darken-3"
       }
       commentColorClass.value = comparedValue > baseValue ? colors[greaterThanColor] : comparedValue == baseValue ? colors[equalColor] : colors[lowerThanColor]
     }
@@ -311,7 +311,7 @@ watch(() => props.reactiveFilter, (newVal, oldVal) => {
   .minicard {
     color: rgb(53,94,168,1);
   }
-  .red.minicard, .light-blue.minicard, .green.minicard, .orange.minicard, .minicard.lead,
+  .minicard.lead,
   .bg-red.minicard, .bg-light-blue.minicard, .bg-green.minicard, .bg-orange.minicard,
   .bg-brown.minicard, .bg-purple.minicard, .bg-blue.minicard, .bg-teal.minicard,
   .bg-indigo.minicard, .bg-cyan.minicard, .bg-pink.minicard, .bg-deep-purple.minicard,
