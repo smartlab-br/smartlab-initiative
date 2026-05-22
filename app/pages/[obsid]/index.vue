@@ -311,11 +311,65 @@
 
 
     </v-row>
+
+    <!-- Sparklines -->
+    <div ref="sparklinesRef">
+      <v-container
+        v-if="currentObs?.obsPage?.sparklines"
+        fluid
+        class="ma-0 pa-0"
+        :style="`background-color:${sparklinesZebraBg};`"
+      >
+        <v-row>
+          <v-col
+            v-if="currentObs.obsPage.sparklines.title"
+            cols="12"
+            class="px-2 py-0"
+          >
+            <FLPOCompositeText
+              :id="'desc_sparkline_' + currentObsId"
+              :structure="currentObs.obsPage.sparklines.title"
+              :custom-params="customParams"
+              :custom-filters="customParams"
+              section-class="pa-0"
+            />
+          </v-col>
+          <v-col id="sparklines" cols="12" class="px-4" style="min-height:630px">
+            <v-row v-if="visibleSparklines">
+              <v-col
+                v-for="(strSparklines, index) in currentObs.obsPage.sparklines.tables"
+                :key="index"
+                class="pt-3 pb-0 text-center"
+                v-bind="parseCls(strSparklines.cls)"
+              >
+                <FLPOSparklines
+                  :custom-params="customParams"
+                  :structure="strSparklines"
+                />
+              </v-col>
+            </v-row>
+          </v-col>
+          <v-col
+            v-if="currentObs.obsPage.sparklines.footer"
+            cols="12"
+            class="px-2 py-0"
+          >
+            <FLPOCompositeText
+              :id="'footer_sparkline_' + currentObsId"
+              :structure="currentObs.obsPage.sparklines.footer"
+              :custom-params="customParams"
+              :custom-filters="customParams"
+              section-class="pa-0"
+            />
+          </v-col>
+        </v-row>
+      </v-container>
+    </div>
   </v-container>
 </template>
 
 <script setup lang="ts">
-import { useIntervalFn } from '@vueuse/core'
+import { useIntervalFn, useIntersectionObserver } from '@vueuse/core'
 import { useDisplay } from "vuetify"
 import { storeToRefs } from "pinia"
 import { NavigationService } from "~/utils/service/singleton/navigation"
@@ -344,6 +398,33 @@ const mapEnabled = ref(false)
 const chartHandler = ref<any>(null)
 const pendingLayerPayload = ref<any>(null)
 const switchesReady = ref(false)
+const visibleSparklines = ref(false)
+const sparklinesRef = ref<HTMLElement | null>(null)
+
+const sparklinesZebraBg = computed(() => ColorsService.assessZebraBG(0, null as any))
+
+const parseCls = (cls?: string): Record<string, string | number> => {
+  if (!cls) return { cols: 12 }
+  const result: Record<string, string | number> = {}
+  for (const part of cls.split(' ')) {
+    const match = part.match(/^(xs|sm|md|lg|xl)(\d+)$/)
+    if (match && match[1] && match[2]) {
+      const size: string = match[1]
+      const value: string = match[2]
+      if (size === 'xs') result.cols = parseInt(value)
+      else result[size] = parseInt(value)
+    }
+  }
+  return Object.keys(result).length > 0 ? result : { cols: 12 }
+}
+
+useIntersectionObserver(
+  sparklinesRef,
+  (entries) => {
+    if (entries[0]?.isIntersecting) visibleSparklines.value = true
+  },
+  { threshold: 0 }
+)
 
 watch(chartHandler, (handler) => {
   if (handler && pendingLayerPayload.value) {
