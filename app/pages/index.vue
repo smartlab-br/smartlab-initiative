@@ -157,13 +157,14 @@ v-if="section.complement"
 </template>
 
 <script setup lang="ts">
-import { useDisplay } from "vuetify"
+import { useDisplay, useTheme } from "vuetify"
 import { storeToRefs } from "pinia"
 import { NavigationService } from "~/utils/service/singleton/navigation"
 import { ColorsService } from "~/utils/service/singleton/colors.js"
 import { useMainStore } from "~/store"
 
 const store = useMainStore()
+const vuetifyTheme = useTheme()
 const router = useRouter()
 const route = useRoute()
 const displayHeight = ref("auto")
@@ -227,7 +228,7 @@ watchEffect(() => {
 onMounted(() => {
   setInterval(setParallaxFile, 20000)
   store.setCurrentObs(route)
-  ColorsService.changeTheme(currentObsId.value)
+  vuetifyTheme.change(currentObsId.value ?? 'default')
 })
 </script>
 

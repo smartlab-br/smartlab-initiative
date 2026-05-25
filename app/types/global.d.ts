@@ -289,15 +289,15 @@ declare global {
     source:                 Source;
     headers:                Header[];
     footer:                 TextItem[];
-    main_title:             TextItem|RadioGroupItem|SelectItem|SwitchGroupItem|MinicardGroupItem|SliderItem[];
-    info:                   TextItem|RadioGroupItem|SelectItem|SwitchGroupItem|MinicardGroupItem|SliderItem[];
-    description:            TextItem|RadioGroupItem|SelectItem|SwitchGroupItem|MinicardGroupItem|SliderItem[];
-    description_right?:     TextItem|RadioGroupItem|SelectItem|SwitchGroupItem|MinicardGroupItem|SliderItem[];
-    description_bottom?:    TextItem|RadioGroupItem|SelectItem|SwitchGroupItem|MinicardGroupItem|SliderItem[];
+    main_title:             (TextItem|RadioGroupItem|SelectItem|SwitchGroupItem|MinicardGroupItem|SliderItem)[];
+    info:                   (TextItem|RadioGroupItem|SelectItem|SwitchGroupItem|MinicardGroupItem|SliderItem)[];
+    description:            (TextItem|RadioGroupItem|SelectItem|SwitchGroupItem|MinicardGroupItem|SliderItem)[];
+    description_right?:     (TextItem|RadioGroupItem|SelectItem|SwitchGroupItem|MinicardGroupItem|SliderItem)[];
+    description_bottom?:    (TextItem|RadioGroupItem|SelectItem|SwitchGroupItem|MinicardGroupItem|SliderItem)[];
     odometers?:             Odometers;
     default_group:          string;
-    mapa_filtros:           TextItem|RadioGroupItem|SelectItem|SwitchGroupItem|MinicardGroupItem|SliderItem[];
-    mapa_description_right: TextItem|RadioGroupItem|SelectItem|SwitchGroupItem|MinicardGroupItem|SliderItem[];
+    mapa_filtros:           (TextItem|RadioGroupItem|SelectItem|SwitchGroupItem|MinicardGroupItem|SliderItem)[];
+    mapa_description_right: (TextItem|RadioGroupItem|SelectItem|SwitchGroupItem|MinicardGroupItem|SliderItem)[];
   }
 
   interface MapBubblesChartOptions {

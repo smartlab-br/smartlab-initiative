@@ -109,11 +109,13 @@
 
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
+import { useTheme } from 'vuetify'
 import { ColorsService } from '~/utils/service/singleton/colors.js'
 import { TextTransformService } from '~/utils/service/singleton/textTransform'
 import { useMainStore } from '~/store'
 
 const store = useMainStore()
+const vuetifyTheme = useTheme()
 const route = useRoute()
 const router = useRouter()
 const { $fillDataStructure, $chartGen, $chartRegen } = useNuxtApp()
@@ -467,7 +469,7 @@ onBeforeMount(async () => {
 })
 
 onMounted(() => {
-  ColorsService.changeTheme(currentObsId.value)
+  vuetifyTheme.change(currentObsId.value ?? 'default')
   if (currentObs.value?.obsPage?.prevalencia) {
     $fillDataStructure(
       currentObs.value.obsPage.prevalencia.title_comment,

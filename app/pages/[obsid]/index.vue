@@ -370,7 +370,7 @@
 
 <script setup lang="ts">
 import { useIntervalFn, useIntersectionObserver } from '@vueuse/core'
-import { useDisplay } from "vuetify"
+import { useDisplay, useTheme } from "vuetify"
 import { storeToRefs } from "pinia"
 import { NavigationService } from "~/utils/service/singleton/navigation"
 import { ColorsService } from "~/utils/service/singleton/colors.js"
@@ -379,6 +379,7 @@ import { TextTransformService } from "~/utils/service/singleton/textTransform"
 import { useMainStore } from "~/store"
 
 const textTransformService = new TextTransformService()
+const vuetifyTheme = useTheme()
 
 const store = useMainStore()
 const router = useRouter()
@@ -401,7 +402,7 @@ const switchesReady = ref(false)
 const visibleSparklines = ref(false)
 const sparklinesRef = ref<HTMLElement | null>(null)
 
-const sparklinesZebraBg = computed(() => ColorsService.assessZebraBG(0, null as any))
+const sparklinesZebraBg = computed(() => ColorsService.assessZebraBG(0, vuetifyTheme.current.value.colors))
 
 const parseCls = (cls?: string): Record<string, string | number> => {
   if (!cls) return { cols: 12 }
@@ -699,7 +700,7 @@ onBeforeMount(async () => {
 })
 
 onMounted(() => {
-  ColorsService.changeTheme(currentObsId.value)
+  vuetifyTheme.change(currentObsId.value ?? 'default')
   if (currentObs.value?.obsPage?.prevalencia) {
     loadOdometers()
     $fillDataStructure(
