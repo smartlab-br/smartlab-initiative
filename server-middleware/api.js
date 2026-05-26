@@ -12,7 +12,6 @@ app.get('/datahub/*', (req, res) => {
       url: process.env.DATAHUB_API_BASE_URL,
       key: process.env.DATAHUB_APP_KEY
     }
-
     const apiUrl = datahub.url + req.url.replace('/datahub', '')
     const header = {
       'Content-Type': 'application/json',
@@ -24,6 +23,7 @@ app.get('/datahub/*', (req, res) => {
     if (req.headers['cache-control']) {
       header['cache-control'] = 'no-cache'
     }
+
     axios({
       method: 'get',
       url: apiUrl,
@@ -73,7 +73,10 @@ app.post('/mail', (req, res) => {
 
     const transporter = nodemailer.createTransport({
       host: smtp.host,
-      port: 25
+      port: 25,
+      tls: {
+        rejectUnauthorized: false
+      }
     })
 
     const options = {
