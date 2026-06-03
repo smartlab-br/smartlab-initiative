@@ -205,7 +205,7 @@
                       <tr>
                         <th
                           v-for="col in columns"
-                          :key="col.key"
+                          :key="col.key ?? col.title"
                           scope="colgroup"
                           :width="col.width"
                           class="text-start column sortable"
@@ -828,7 +828,7 @@ const downloadData = () => {
 }
 
 // ── Ordenação por gráfico ──────────────────────────────────────────────────────
-const changeSortForChart = (id: string, column: string) => {
+const changeSortForChart = (id: string, column: string | null) => {
   const current = sortByMap.value[id] ?? []
   if (current.length > 0 && current[0].key === column) {
     sortByMap.value[id] = [{ key: column, order: current[0].order === 'asc' ? 'desc' : 'asc' }]
