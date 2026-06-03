@@ -135,7 +135,7 @@ export const useMainStore = defineStore("main", {
           url = "/municipios?categorias=cd_uf,nm_uf&agregacao=distinct&filtros=eq-cd_uf-" + idAnalysisUnit
           await $fetch(UrlTransformService.getApiUrl(url))
             .then((result: any) => {
-              this.currentAnalysisUnitData = result.data.dataset[0]
+              this.currentAnalysisUnitData = result.dataset[0]
               this.currentAnalysisUnitData.id_localidade = this.currentAnalysisUnitData.cd_uf
               this.currentAnalysisUnitData.nm_localidade = this.currentAnalysisUnitData.nm_uf
               this.currentAnalysisUnitData.tipo = "UF"
@@ -148,7 +148,7 @@ export const useMainStore = defineStore("main", {
           url = "/municipio/" + idAnalysisUnit
           await $fetch(UrlTransformService.getApiUrl(url))
             .then((result: any) => {
-              this.currentAnalysisUnitData = result.data[0]
+              this.currentAnalysisUnitData = result[0]
               this.currentAnalysisUnitData.id_localidade = this.currentAnalysisUnitData.cd_municipio_ibge_dv
               this.currentAnalysisUnitData.nm_localidade = this.currentAnalysisUnitData.nm_municipio_uf
               this.currentAnalysisUnitData.tipo = "Município"

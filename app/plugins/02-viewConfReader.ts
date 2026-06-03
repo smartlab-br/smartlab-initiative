@@ -4,13 +4,13 @@ import { UrlTransformService } from "~/utils/service/singleton/urlTransform"
 import { TextTransformService } from "~/utils/service/singleton/textTransform"
 import { NumberTransformService } from "~/utils/service/singleton/numberTransform"
 import { ObjectTransformService } from "~/utils/service/singleton/objectTransform"
-import { Indicators } from "~/utils/model/indicators"
+import { Indicators, indicatorsSingleton } from "~/utils/model/indicators"
 import { useSnackbarStore } from "~/store/snackbar"
 
 const textTransformService = new TextTransformService()
 const numberTransformService = new NumberTransformService()
 const objectTransformService = new ObjectTransformService()
-const indicators = new Indicators()
+const indicators = indicatorsSingleton
 
 export default defineNuxtPlugin((_context: any) => {
   // const { app } = context

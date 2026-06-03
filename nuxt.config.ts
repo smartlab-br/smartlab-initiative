@@ -25,7 +25,10 @@ export default defineNuxtConfig({
       'process.env.DEBUG': false,
     },
     ssr: {
-      noExternal: ['leaflet', 'leaflet.markercluster', 'leaflet.heat', 'leaflet-curve'],
+      noExternal: ['leaflet', 'leaflet.markercluster', 'leaflet.heat', 'leaflet-curve', 'd3plus'],
+    },
+    optimizeDeps: {
+      include: ['d3plus', 'd3plus-plot', 'd3plus-hierarchy', 'd3plus-geomap', 'd3plus-viz'],
     },
   },
 

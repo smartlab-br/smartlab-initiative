@@ -213,6 +213,7 @@ interface Props {
   id?: string
   structure?: DescSection[]
   customParams?: Record<string, any>
+  customFunctions?: Record<string, any>
   customFilters?: Record<string, any>
   topology?: Record<string, any>
   sectionIndex?: number
@@ -241,6 +242,8 @@ const emit = defineEmits<{
   selection: [payload: any]
   'default-selection': [payload: any]
   resendInvalidInterpol: [payload: any]
+  showSnackbar: [payload: any]
+  showAuthenticatioDialog: [payload: any]
 }>()
 
 const dataset = ref<any[]>([])

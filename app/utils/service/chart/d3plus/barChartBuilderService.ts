@@ -111,7 +111,7 @@ export class BarChartBuilderService extends D3PlusChartBuilderService {
         shapeConfig: {
           labelConfig: {
             fontSize: 14,
-            fontColor: additionalOptions.colorHandlers.assessZebraTitleColor(additionalOptions.sectionIndex, additionalOptions.theme)
+            fontColor: additionalOptions.colorHandlers.assessZebraTitleColor(additionalOptions.sectionIndex, null, additionalOptions.theme)
           }
         }
       })

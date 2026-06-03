@@ -4,6 +4,9 @@ import { NumberTransformService } from "../service/singleton/numberTransform"
 import { ObjectTransformService } from "../service/singleton/objectTransform"
 import { basicFunctions } from "../basicFunctions"
 
+// Singleton compartilhado — use esta instância em todo o projeto
+export let indicatorsSingleton: Indicators
+
 interface DictDatasetEndpoints {
   [key: string]: {
     estado: string
@@ -598,7 +601,7 @@ export class Indicators {
     }
     // busca indicadores da localidade
     const result: any = await $fetch(UrlTransformService.getApiUrl(url))
-    const dataset = { name: dataset_name, ds: result.data.dataset, valid: true, analysisUnit: { type: scope, id: auId } }
+    const dataset = { name: dataset_name, ds: result.dataset, valid: true, analysisUnit: { type: scope, id: auId } }
     this.globalDatasets[dataset_name + suffix] = dataset
     return dataset
   }
@@ -626,3 +629,5 @@ export class Indicators {
       })
   }
 }
+
+indicatorsSingleton = new Indicators()

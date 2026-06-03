@@ -113,7 +113,7 @@ export class TreemapChartBuilderService extends D3PlusChartBuilderService {
         const label = additionalOptions.cleanLabel(d[options.text], options.removed_text_list)
         return (label == "null" && options.null_value) ? options.null_value : label
       })
-      .detectResize(true)
+      .detectResize(false)
       .sum(options.size) // key to use for x-axis
       .colorScalePosition(options.show_scale ? "right" : false)
 
@@ -129,7 +129,7 @@ export class TreemapChartBuilderService extends D3PlusChartBuilderService {
       .noDataHTML(this.noDataMessage)
       .loadingHTML(this.loadingMessage)
       .data({ opacity: 0.8 }) // data to use with the visualization
-      .detectResize(true)
+      .detectResize(false)
       .shapeConfig({
         labelConfig: {
           fontFamily: additionalOptions.fontFamily ? additionalOptions.fontFamily : this._fontFamily,

@@ -12,6 +12,7 @@ import { NumberTransformService } from "~/utils/service/singleton/numberTransfor
 interface RankingArg {
   prop: string
   fixed?: any
+  named_prop?: string
   format?: string
   precision?: number
   multiplier?: number
@@ -37,7 +38,7 @@ interface Props {
 const props = defineProps<Props>()
 
 const numberTransformService = new NumberTransformService()
-const { $fillDataStructure, $autoFillLayout } = useNuxtApp()
+const { $fillDataStructure } = useNuxtApp()
 
 const regional_rank = ref("")
 const regional_total = ref("")
@@ -73,54 +74,69 @@ const cmpText = computed(() => {
   return null
 })
 
+const setRankingProp = (prop: string, value: any) => {
+  const normalizedValue = value == null ? "" : String(value)
+  switch (prop) {
+  case "regional_rank":
+    regional_rank.value = normalizedValue
+    break
+  case "regional_total":
+    regional_total.value = normalizedValue
+    break
+  case "regional_complementary_text":
+    regional_complementary_text.value = normalizedValue
+    break
+  case "national_rank":
+    national_rank.value = normalizedValue
+    break
+  case "national_total":
+    national_total.value = normalizedValue
+    break
+  case "national_complementary_text":
+    national_complementary_text.value = normalizedValue
+    break
+  }
+}
+
+const applyRankingArgs = (baseObject: Record<string, any>, args: RankingArg[] = []) => {
+  for (const item of args) {
+    let value = item.fixed
+    if (item.named_prop) {
+      value = baseObject?.[item.named_prop]
+    }
+
+    if ((value === null || value === undefined || value === "") && item.default != null) {
+      value = item.default
+    }
+
+    if (item.format && value !== null && value !== undefined && value !== "") {
+      value = numberTransformService.formatNumber(
+        value,
+        item.format,
+        item.precision,
+        item.multiplier,
+        item.collapse,
+        item.signed,
+        item.uiTags
+      )
+    }
+
+    setRankingProp(item.prop, value)
+  }
+}
+
 onMounted(() => {
   if (props.structure?.api || props.structure?.preloaded) {
     $fillDataStructure(
       props.structure,
-      props.customParams,
-      $autoFillLayout
+      props.customParams ?? {},
+      (dataset: any, rules: RankingArg[] = []) => {
+        const row = Array.isArray(dataset) ? (dataset[0] ?? {}) : (dataset ?? {})
+        applyRankingArgs(row, rules)
+      }
     )
   } else {
-    if (props.structure?.args) {
-      for (const item of props.structure.args) {
-        let value = item.fixed
-        if (item.format) {
-          value = numberTransformService.formatNumber(
-            value,
-            item.format,
-            item.precision,
-            item.multiplier,
-            item.collapse,
-            item.signed,
-            item.uiTags
-          )
-        }
-        if ((value === null || value === undefined) && item.default != null && item.default !== undefined) {
-          value = item.default
-        }
-        // Atualizar os valores reativos conforme o prop item.prop
-        switch (item.prop) {
-        case "regional_rank":
-          regional_rank.value = value
-          break
-        case "regional_total":
-          regional_total.value = value
-          break
-        case "regional_complementary_text":
-          regional_complementary_text.value = value
-          break
-        case "national_rank":
-          national_rank.value = value
-          break
-        case "national_total":
-          national_total.value = value
-          break
-        case "national_complementary_text":
-          national_complementary_text.value = value
-          break
-        }
-      }
-    }
+    applyRankingArgs(props.customParams ?? {}, props.structure?.args ?? [])
   }
 })
 </script>

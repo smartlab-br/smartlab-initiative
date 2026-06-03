@@ -61,7 +61,7 @@ export class AnalysisUnit {
   async getIdLocalidade(estado: string, municipio: string) {
     const url = "/municipios?categorias=cd_municipio_ibge_dv,nm_municipio_uf-nm_localidade&filtros=eq-nm_uf-'" + estado + "',and,eq-nm_municipio-'" + municipio + "'"
     const result: any = await $fetch(UrlTransformService.getApiUrl(url)).catch(() => { throw new Error("Localidade não encontrada!")})
-    const infoMunicipio: any = result.data.dataset
+    const infoMunicipio: any = result.dataset
     if (infoMunicipio.length > 0) {
       const auCookie = useCookie("currentAnalysisUnit")
       auCookie.value = infoMunicipio[0].cd_municipio_ibge_dv
@@ -81,7 +81,7 @@ export class AnalysisUnit {
   async getPRTPTMInstance(scope: string, id: string) {
     const url = "/municipios?categorias=cd_unidade,nm_unidade,cd_uf&agregacao=distinct&filtros=eq-cd_unidade-" + id
     const result: any = await $fetch(UrlTransformService.getApiUrl(url)).catch(() => Promise.reject(new Error("Falha ao buscar total das localidades")))
-    const infoUnidade = result.data.dataset
+    const infoUnidade = result.dataset
     if (infoUnidade.length > 0) {
       Promise.resolve({
         id_localidade: infoUnidade[0].cd_unidade,
@@ -113,7 +113,7 @@ export class AnalysisUnit {
     if (scope == null || scope.includes("MPT")) {
       const url = "/municipios?categorias=cd_unidade,nm_unidade,cd_uf&agregacao=distinct"
       const result: any = await $fetch(UrlTransformService.getApiUrl(url)).catch((error) => Promise.reject(error))
-      const unidadesMPT = result.data.dataset
+      const unidadesMPT = result.dataset
       for (const indxPRT in unidadesMPT) {
         this.options.push({
           id: unidadesMPT[indxPRT].cd_unidade,
@@ -151,7 +151,7 @@ export class AnalysisUnit {
       this.loadStatus.places = "ERROR"
       Promise.reject(error)
     })
-    const municipios = result.data.dataset
+    const municipios = result.dataset
     // let cd_regiao = 0;
     // let added_meso = [];
     // let added_micro = [];
@@ -262,19 +262,19 @@ export class AnalysisUnit {
   async getTotalMunicipios() {
     const url = "/municipios?categorias=cd_municipio_ibge_dv"
     const result: any = await $fetch(UrlTransformService.getApiUrl(url)).catch(() => Promise.reject(new Error("Falha ao buscar total das localidades")))
-    return result.data.dataset.length
+    return result.dataset.length
   }
 
   async getTotalMunicipiosPorUF(uf: string) {
     const url = "/municipios?categorias=cd_municipio_ibge_dv,cd_uf&filtros=eq-cd_uf-" + uf
     const result: any = await $fetch(UrlTransformService.getApiUrl(url)).catch(() => Promise.reject(new Error("Falha ao buscar total das localidades")))
-    return result.data.dataset.length 
+    return result.dataset.length 
   }
 
   async findAllUF() {
     const url = "/municipios?categorias=cd_uf,sg_uf,nm_uf&valor=cd_uf&agregacao=distinct"
     const result: any = await $fetch(UrlTransformService.getApiUrl(url)).catch(() => Promise.reject(new Error("Falha ao buscar Unidades Federativas")))
-    return result.data.dataset 
+    return result.dataset 
   }
 
   getStateFromId(idLoc: string) {
@@ -290,6 +290,8 @@ export class AnalysisUnit {
     let localidade: any = {}
 
     if (id === null || id === undefined) { return }
+    // Rejeita placeholders de template não substituídos (ex: {0}, {idLocalidade})
+    if (/[{}]/.test(id)) { return }
 
     if (id == "0") { // Brasil
       localidade.id_localidade = 0
@@ -304,7 +306,7 @@ export class AnalysisUnit {
     } else if (id.length == 2) { // Estado
       url = "/municipios?categorias=cd_uf,nm_uf&filtros=eq-cd_uf-" + id
       const result: any = await $fetch(UrlTransformService.getApiUrl(url)).catch(() => Promise.reject(new Error("Falha ao buscar dados do estado")))
-      localidade = result.data.dataset[0]
+      localidade = result.dataset[0]
       localidade.id_localidade = localidade.cd_uf
       localidade.nm_localidade = localidade.nm_uf
       localidade.tipo = "UF"
@@ -312,7 +314,7 @@ export class AnalysisUnit {
     } else if (id.length == 4) { // Mesorregião
       url = "/municipios?categorias=cd_mesorregiao,nm_mesorregiao&filtros=eq-cd_mesorregiao-" + id
       const result: any = await $fetch(UrlTransformService.getApiUrl(url)).catch(() => Promise.reject(new Error("Falha ao buscar dados da mesorregião")))
-      localidade = result.data.dataset[0]
+      localidade = result.dataset[0]
       localidade.id_localidade = localidade.cd_mesorregiao
       localidade.nm_localidade = localidade.nm_mesorregiao
       localidade.tipo = "Mesorregião"
@@ -320,7 +322,7 @@ export class AnalysisUnit {
     } else if (id.length == 5) { // Microrregião
       url = "/municipios?categorias=cd_microrregiao,nm_microrregiao,latitude,longitude&filtros=eq-cd_microrregiao-" + id
       const result: any = await $fetch(UrlTransformService.getApiUrl(url)).catch(() => Promise.reject(new Error("Falha ao buscar dados da microrregião")))
-      localidade = result.data.dataset[0]
+      localidade = result.dataset[0]
       localidade.id_localidade = localidade.cd_microrregiao
       localidade.nm_localidade = localidade.nm_microrregiao
       localidade.tipo = "Microrregião"
@@ -328,7 +330,7 @@ export class AnalysisUnit {
     } else {
       url = "/municipio/" + id
       const result: any = await $fetch(UrlTransformService.getApiUrl(url)).catch(() => Promise.reject(new Error("Falha ao buscar dados do município")))
-      localidade = result.data[0]
+      localidade = result[0]
       localidade.id_localidade = localidade.cd_municipio_ibge_dv
       localidade.nm_localidade = localidade.nm_municipio_uf
       localidade.tipo = "Município"

@@ -8,6 +8,7 @@ import type { RouteLocationNormalizedLoaded } from "vue-router"
 export class TooltipBuildingService {
 
   static removeFromLabel(label: string | string[], removed_text_list: string[]){
+    if (!removed_text_list || !removed_text_list.length) return label
     for(const rem of removed_text_list){
       if (Array.isArray(label)){
         for(const label_item in label){

@@ -131,7 +131,7 @@ export class TopoJsonChartBuilderService extends D3PlusChartBuilderService {
       .data(dataset) // data to use with the visualization
       .groupBy(options.id_field) // key for which our data is unique on
       .topojsonId((t: any) => { return t.properties[options.topo_key] })
-      .detectResize(true)
+      .detectResize(false)
 
     let currentPlace = ""
     const hasTouch = this.hasTouch
