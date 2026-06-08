@@ -309,11 +309,11 @@
             <p>As citações da plataforma, em regra, devem respeitar o formato ABNT para cada Observatório, incluindo-se, na consulta, a dimensão específica consultada.</p>
             <p>Exemplos:</p>
             <ul class="mention-examples">
-              <li>Observatório do Trabalho Decente – Contexto Econômico e Social. SmartLab, 2021. Fonte original: (...). Disponível em: https://smartlabbr.org/trabalhodecente. Acesso em: 10 de ago. de 2021.</li>
-              <li>Observatório de Segurança e Saúde no Trabalho – Covid 19. Fonte original: (...). SmartLab, 2021. Disponível em: https://smartlabbr.org/sst. Acesso em: 10 de ago. de 2021.</li>
-              <li>Observatório da Erradicação do Trabalho Escravo e do Tráfico de Pessoas – Sinan/ Tráfico de Pessoas. Fonte original: (...). SmartLab, 2021. Disponível em: https://smartlabbr.org/trabalhoescravo. Acesso em: 10 de ago. de 2021.</li>
-              <li>Observatório da Prevenção e da Erradicação do Trabalho Infantil – Áreas Prioritárias e Análise Comparativa. Fonte original: (...). SmartLab, 2021. Disponível em: https://smartlabbr.org/trabalhoinfantil. Acesso em: 10 de ago. de 2021.</li>
-              <li>Observatório da Igualdade de Oportunidades no Trabalho – População em Situação de Rua. Fonte original: (...). SmartLab, 2021. Disponível em: https://smartlabbr.org/diversidade. Acesso em: 10 de ago. de 2021.</li>
+              <li>Observatório do Trabalho Decente - Contexto Econômico e Social. SmartLab, 2021. Fonte original: (...). Disponível em: {{ publicBaseUrl }}/trabalhodecente. Acesso em: 10 de ago. de 2021.</li>
+              <li>Observatório de Segurança e Saúde no Trabalho - Covid 19. Fonte original: (...). SmartLab, 2021. Disponível em: {{ publicBaseUrl }}/sst. Acesso em: 10 de ago. de 2021.</li>
+              <li>Observatório da Erradicação do Trabalho Escravo e do Tráfico de Pessoas - Sinan/ Tráfico de Pessoas. Fonte original: (...). SmartLab, 2021. Disponível em: {{ publicBaseUrl }}/trabalhoescravo. Acesso em: 10 de ago. de 2021.</li>
+              <li>Observatório da Prevenção e da Erradicação do Trabalho Infantil - Áreas Prioritárias e Análise Comparativa. Fonte original: (...). SmartLab, 2021. Disponível em: {{ publicBaseUrl }}/trabalhoinfantil. Acesso em: 10 de ago. de 2021.</li>
+              <li>Observatório da Igualdade de Oportunidades no Trabalho - População em Situação de Rua. Fonte original: (...). SmartLab, 2021. Disponível em: {{ publicBaseUrl }}/diversidade. Acesso em: 10 de ago. de 2021.</li>
             </ul>
           </v-card-text>
           <v-layout
@@ -384,6 +384,9 @@ export default {
     },
     sourceDesc: function () {
       return this.$indicatorsModel.getSourceDesc(this.structure, this.dataset, this.metadata)
+    },
+    publicBaseUrl: function () {
+      return (this.$config && this.$config.publicBaseUrl) || ''
     },
     sourceLink: function () {
       return this.$indicatorsModel.getSourceLink(this.structure, this.dataset, this.metadata)

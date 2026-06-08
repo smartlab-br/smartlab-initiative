@@ -2,7 +2,8 @@
 import VuetifyLoaderPlugin from 'vuetify-loader/lib/plugin'
 
 const localhostBaseUrl = `http://localhost:${process.env.PORT || '3000'}`
-const runtimeBaseUrl = process.env.BASE_URL || localhostBaseUrl
+const publicBaseUrl = (process.env.PUBLIC_BASE_URL || process.env.BASE_URL || localhostBaseUrl).replace(/\/$/, '')
+const axiosBaseUrl = process.env.BASE_URL || localhostBaseUrl
 
 export default {
 
@@ -20,8 +21,8 @@ export default {
       { name: 'format-detection', content: 'telephone=no' },
       { name: 'theme-color', content: '#E0E0E0' },
       { property: 'og:title', content: 'Smartlab - Promoção do Trabalho Decente' },
-      { property: 'og:url', content: runtimeBaseUrl },
-      { property: 'og:image', content: `${runtimeBaseUrl}/static/icons/smartlab.png` }
+      { property: 'og:url', content: publicBaseUrl },
+      { property: 'og:image', content: `${publicBaseUrl}/static/icons/smartlab.png` }
 
     ],
     link: [
@@ -122,13 +123,14 @@ export default {
 
   privateRuntimeConfig: {
     axios: {
-      baseURL: runtimeBaseUrl
+      baseURL: axiosBaseUrl
     }
   },
 
   publicRuntimeConfig: {
+    publicBaseUrl,
     axios: {
-      browserBaseURL: runtimeBaseUrl
+      browserBaseURL: axiosBaseUrl
     },
     gitViewConfUrl: process.env.GIT_VIEWCONF_TAG_URL,
     ga_id: process.env.GA_ID
