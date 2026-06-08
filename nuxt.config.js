@@ -1,6 +1,10 @@
 // import colors from 'vuetify/es5/util/colors'
 import VuetifyLoaderPlugin from 'vuetify-loader/lib/plugin'
 
+const localhostBaseUrl = `http://localhost:${process.env.PORT || '3000'}`
+const publicBaseUrl = (process.env.PUBLIC_BASE_URL || process.env.BASE_URL || localhostBaseUrl).replace(/\/$/, '')
+const axiosBaseUrl = process.env.BASE_URL || localhostBaseUrl
+
 export default {
 
   // Global page headers: https://go.nuxtjs.dev/config-head
@@ -17,8 +21,8 @@ export default {
       { name: 'format-detection', content: 'telephone=no' },
       { name: 'theme-color', content: '#E0E0E0' },
       { property: 'og:title', content: 'Smartlab - Promoção do Trabalho Decente' },
-      { property: 'og:url', content: 'https://smartlabbr.org' },
-      { property: 'og:image', content: 'https://smartlabbr.org/static/icons/smartlab.png' }
+      { property: 'og:url', content: publicBaseUrl },
+      { property: 'og:image', content: `${publicBaseUrl}/static/icons/smartlab.png` }
 
     ],
     link: [
@@ -109,7 +113,7 @@ export default {
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
-    baseURL: 'http://localhost:3000', // Used as fallback if no runtime config is provided
+    baseURL: localhostBaseUrl, // Used as fallback if no runtime config is provided
     proxy: true
   },
 
@@ -119,13 +123,14 @@ export default {
 
   privateRuntimeConfig: {
     axios: {
-      baseURL: process.env.BASE_URL || 'http://localhost:' + (process.env.PORT || '3000')
+      baseURL: axiosBaseUrl
     }
   },
 
   publicRuntimeConfig: {
+    publicBaseUrl,
     axios: {
-      browserBaseURL: process.env.BASE_URL || 'http://localhost:' + (process.env.PORT || '3000')
+      browserBaseURL: axiosBaseUrl
     },
     gitViewConfUrl: process.env.GIT_VIEWCONF_TAG_URL,
     ga_id: process.env.GA_ID
