@@ -13,7 +13,7 @@
         />
 
         <!-- Estado de erro -->
-        <div v-show="loadingStatusDataset === 'ERROR'" style="min-height:500px;" class="d-flex align-center justify-center">
+        <div v-if="loadingStatusDataset === 'ERROR'" style="min-height:500px;" class="d-flex align-center justify-center">
           <div class="text-error text-center">
             {{ errorMessage }}
             <v-tooltip location="bottom">
@@ -540,6 +540,9 @@ const triggerSelect = (payload: Record<string, any>) => {
   reactiveFilter.value = payload.item ?? payload.value
   updateDataStructure(payload)
 }
+
+// ── Interpol inválido ──────────────────────────────────────────────────────────
+const changeTextToInvalidInterpol = () => { invalidInterpol.value = true } 
 
 // ── Referência p/ uso nos plugins de gráficos ──────────────────────────────────
 const cmpRefs = computed(() => ({
