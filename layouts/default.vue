@@ -898,7 +898,17 @@ export default {
       graviteeUser: {}
     }
   },
-  head () { return { title: this.$route.name } },
+  head () {
+    const publicBaseUrl = (this.$config && this.$config.publicBaseUrl ? this.$config.publicBaseUrl : '').replace(/\/$/, '')
+
+    return {
+      title: this.$route.name,
+      meta: [
+        { hid: 'og:url', property: 'og:url', content: publicBaseUrl || undefined },
+        { hid: 'og:image', property: 'og:image', content: publicBaseUrl ? `${publicBaseUrl}/static/icons/smartlab.png` : undefined }
+      ]
+    }
+  },
   computed: {
     computedLoginLabel: function () {
       if (this.$store.state.user) {
