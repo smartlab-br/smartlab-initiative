@@ -1,24 +1,22 @@
 <template>
-  <v-container class="left_nav pa-0" fluid>
+  <div class="left_nav">
     <v-list class="text-center py-0">
       <template v-for="(section, index) in sectionsStructure" :key="index">
         <v-list-item v-if="!section.divider" class="pa-0">
           <v-tooltip location="right" :text="tooltip[section.name!]">
             <template #activator="{ props: tooltipProps }">
               <a v-bind="tooltipProps" @click="scrollTo('anchor_' + section.name)">
-                <v-icon
-                  :color="section.vizColor"
-                  class="ml-1 my-5"
-                >
-                  mdi-lens
-                </v-icon>
+                <span
+                  class="dot"
+                  :style="{ backgroundColor: section.vizColor }"
+                />
               </a>
             </template>
           </v-tooltip>
         </v-list-item>
       </template>
     </v-list>
-  </v-container>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -45,6 +43,9 @@ interface Props {
   sections?: SectionGroup[]
   customParams?: Record<string, any>
 }
+
+const DOT_COLOR_INACTIVE = '#3f4a54'
+const DOT_COLOR_ACTIVE = '#19cfe1'
 
 const props = defineProps<Props>()
 const emit = defineEmits<{
@@ -86,22 +87,23 @@ const buildStruct = () => {
   sectionsStructure.value = []
   if (!props.sections) return
 
-  for (const groupIndex in props.sections) {
+  for (const group of props.sections) {
     if (sectionsStructure.value.length > 0) {
       sectionsStructure.value.push({
         name: null,
         divider: true,
-        vizColor: 'primary-lighten-1'
+        vizColor: DOT_COLOR_INACTIVE
       })
     }
-    for (const itemIndex in props.sections[groupIndex].cards) {
-      const card = props.sections[groupIndex].cards[itemIndex]
+    if (!group?.cards) continue
+    for (const card of group.cards) {
+      if (!card) continue
 
       if (card.type && card.type === 'headline') {
         sectionsStructure.value.push({
           name: null,
           divider: true,
-          vizColor: 'primary-lighten-1'
+          vizColor: DOT_COLOR_INACTIVE
         })
         continue
       }
@@ -109,7 +111,7 @@ const buildStruct = () => {
       sectionsStructure.value.push({
         name: card.id,
         divider: false,
-        vizColor: 'primary-lighten-1'
+        vizColor: DOT_COLOR_INACTIVE
       })
 
       $fillDataStructure(
@@ -130,9 +132,9 @@ const assessVisibleCards = () => {
       const el = document.getElementById(item.name)
       if (el) {
         const { top, bottom } = el.getBoundingClientRect()
-        item.vizColor = (top > 0 || bottom > 0) && top < vHeight ? 'accent' : 'primary-lighten-1'
+        item.vizColor = (top > 0 || bottom > 0) && top < vHeight ? DOT_COLOR_ACTIVE : DOT_COLOR_INACTIVE
       } else {
-        item.vizColor = 'primary-lighten-1'
+        item.vizColor = DOT_COLOR_INACTIVE
       }
     }
   }
@@ -158,28 +160,63 @@ onBeforeUnmount(() => {
 </script>
 
 <style>
-.left_nav {
+ .left_nav { 
   position: fixed;
+  left: 0;
   top: 50%;
   z-index: 101;
   transform: translate(0, -50%);
-  width: 1.5em !important;
-}
-.left_nav .v-list {
-  background-color: rgba(0, 0, 0, 0) !important;
-  border-radius: 0 0.35em 0.35em 0;
-}
-.left_nav .v-list-item {
-  background-color: rgba(0, 0, 0, 0) !important;
-  height: 1.5em;
-  padding: 0;
-  min-height: unset;
-}
-.left_nav i {
-  font-size: 12px;
-}
-.left_nav a {
-  text-decoration: none;
-  cursor: pointer;
-}
+  width: 2em !important;
+  overflow: hidden !important;
+  scrollbar-width: none; /* Firefox */ } 
+  
+  /* Esconde scrollbar e botões de seta (WebKit) */ 
+ .left_nav::-webkit-scrollbar { 
+    width: 0;
+    height: 0; }
+
+ .left_nav::-webkit-scrollbar-button { 
+    display: none;
+    width: 0;
+    height: 0; } 
+    
+  .left_nav .v-list { 
+    background-color: transparent !important;
+    border-radius: 0 0.35em 0.35em 0;
+    overflow: hidden !important; 
+    margin: 0 !important; 
+    padding: 0 !important; 
+    scrollbar-width: none; /* Firefox */ } 
+    
+  .left_nav .v-list::-webkit-scrollbar { width: 0; height: 0; } 
+  .left_nav .v-list::-webkit-scrollbar-button { 
+    display: none; 
+    width: 0; 
+    height: 0; } 
+
+  .left_nav .v-list-item { 
+    background-color: transparent !important; 
+    height: auto; 
+    min-height: unset !important; 
+    margin: 0 !important; 
+    padding: 0 !important; } 
+
+  .left_nav a { 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    text-decoration: none; 
+    cursor: pointer; 
+    margin: 0 !important; 
+    padding: 4px 0 !important; 
+    line-height: 1; 
+  } 
+  .left_nav .dot { 
+    display: block; 
+    width: 10px; 
+    height: 10px; 
+    border-radius: 50%; 
+    opacity: 1; 
+    flex: 0 0 10px; 
+  } 
 </style>
