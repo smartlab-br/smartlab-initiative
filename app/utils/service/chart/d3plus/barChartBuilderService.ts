@@ -61,7 +61,8 @@ export class BarChartBuilderService extends D3PlusChartBuilderService {
       .groupBy(options.id)
       .y(options.y) // key to use for y-axis
       .x(options.x) // key to use for x-axis
-      .detectResize(true)
+      // Evita loop de re-render em alguns cards de barra (crescimento progressivo das barras).
+      .detectResize(false)
     if (options.y2) {
       grafico = grafico.y2(options.y2)
     }
