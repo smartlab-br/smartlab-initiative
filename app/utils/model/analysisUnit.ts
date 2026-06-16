@@ -376,8 +376,7 @@ export class AnalysisUnit {
         }
       }
     }
-    console.log(url)
-    // NavigationService.pushRoute(router, url)
+    NavigationService.pushRoute(router, url)
   }
 
 }

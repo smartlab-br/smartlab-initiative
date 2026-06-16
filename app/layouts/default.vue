@@ -35,7 +35,7 @@
             -->
           <div class="cursor-pointer line-height-1" style="min-width: 0;" @click="focusChangePlace()">
             <div>{{ currentAnalysisUnit.nm_localidade }}</div>
-            <div class="text-caption">{{ currentAnalysisUnit.nm_tipo }}</div>
+            <div class="text-caption">{{ tipoLocalidadeLabel }}</div>
           </div>
         </template>
       </div>
@@ -50,7 +50,8 @@
           :custom-filter="customFilter" :items="auOptions" :menu-props="{ minWidth: '380px' }"
           :loading="gsLoadingStatusSearchOptions === 'LOADING'"
           :color="gsLoadingStatusSearchOptions === 'ERROR' ? 'error' : gsLoadingStatusSearchOptions === 'LOADING' ? 'warning' : 'accent'"
-          @blur="gsItemBusca = ''">
+          @update:modelValue="onAutocompleteSelect"
+          @blur="gsItemBusca = null">
           <template #item="{ props: itemProps, item }">
             <v-list-item v-bind="itemProps" :title="undefined">
               <v-list-item-title v-if="auOptions.length < 2">
@@ -58,7 +59,7 @@
               </v-list-item-title>
               <v-row v-else no-gutters>
                 <v-col>
-                  <v-list-item-title @click="changeAnalysisUnit(router, item.raw)">
+                  <v-list-item-title>
                     {{ item.raw.label + (item.raw.scope === 'uf' ? ' (UF)' : '') }}
                   </v-list-item-title>
                 </v-col>
@@ -71,7 +72,7 @@
                         <v-col
                           v-if="!search_item.blocked && (!item.raw.exclude_from || !item.raw.exclude_from.includes(search_item.id))"
                           class="d-flex flex-column align-center pa-0"
-                          @click="changeAnalysisUnit(router, item.raw, search_item.id)">
+                          @click.stop="changeAnalysisUnit(router, item.raw, search_item.id)">
                           <v-tooltip location="bottom" :text="search_item.tooltip">
                             <template #activator="{ props }">
                               <svg 
@@ -281,9 +282,11 @@
 
 <script setup lang="ts">
 import { useTheme } from 'vuetify'
+import { useEventBus } from '@vueuse/core'
 import { useMainStore } from '~/store'
 import { useSnackbarStore } from '~/store/snackbar'
 import { TextTransformService } from "~/utils/service/singleton/textTransform"
+import { AnalysisUnit as AnalysisUnitModel } from '~/utils/model/analysisUnit'
 
 // Stores (auto-importados no Nuxt 4)
 const store = useMainStore()
@@ -304,13 +307,33 @@ const drawer = ref(false)
 const rail = ref(false)
 const seen = ref(false)
 const auOptions = ref<Place[]>([])
-const gsItemBusca = ref<string | null>(null)
+const gsItemBusca = ref<Place | null>(null)
 const gsLoadingStatusSearchOptions = ref<"" | "LOADING" | "ERROR">("")
 const isAtBottom = ref(false)
 const isPageScrollable = ref(false)
 
 // Template refs com tipagem correta para Vuetify 3
 const autocompleteChangePlace = ref<any>(null) // ou use ComponentPublicInstance
+
+// Instância do model para carregar localidade do cookie
+const analysisUnitModel = new AnalysisUnitModel()
+
+// Event bus para receber atualização da localidade exibida na toolbar
+const alterMiddleToolbarBus = useEventBus<{ localidade?: any }>('alterMiddleToolbar')
+alterMiddleToolbarBus.on((params) => {
+  const localidade = params?.localidade ?? params ?? null
+  store.setCurrentAnalysisUnitFromData(localidade)
+})
+
+// Computed: rótulo do tipo de localidade (ex: "Município Selecionado")
+const tipoLocalidadeLabel = computed(() => {
+  if (!currentAnalysisUnit.value) return ''
+  const tipo = currentAnalysisUnit.value.tipo
+  if (tipo === 'Município') return 'Município Selecionado'
+  if (tipo === 'UF') return 'UF Selecionada'
+  if (tipo) return tipo + ' Selecionado'
+  return 'Seleção Atual'
+})
 
 // Verifica se o layout está pronto para ser exibido
 const checkLayoutReady = () => {
@@ -370,6 +393,12 @@ onMounted(async () => {
   }
   checkLayoutReady()
 
+  // Carrega a localidade salva no cookie (estado persistido entre sessões)
+  const savedPlace = await analysisUnitModel.findCurrentPlace()
+  if (savedPlace) {
+    store.setCurrentAnalysisUnitFromData(savedPlace)
+  }
+
   window.addEventListener('scroll', onScroll, { passive: true })
   window.addEventListener('resize', checkScroll, { passive: true })
   setTimeout(checkScroll, 500)
@@ -396,12 +425,19 @@ const changeAnalysisUnit = (
   searchItem: Place,
   idObservatorio: string | null = null
 ) => {
-  snackAlert({ color: "warning", text: `${idObservatorio} - ${searchItem.label}` })
   try {
     AnalysisUnit.searchAnalysisUnit(router, store, searchItem, idObservatorio, observatories.value)
+    gsItemBusca.value = null
   } catch (err) {
     console.error(err)
     snackAlert({ color: "error", text: String(err) })
+  }
+}
+
+// Chamado pelo @update:modelValue do v-autocomplete (seleção por clique na área do label ou por teclado)
+const onAutocompleteSelect = (item: Place | null) => {
+  if (item && typeof item === 'object') {
+    changeAnalysisUnit(router, item)
   }
 }
 
@@ -954,7 +990,7 @@ a {
 
 .transparent-autocomplete .v-input__control,
 .transparent-autocomplete .v-input {
-  width: 20rem;
+  width: 15rem;
 }
 
 .transparent-autocomplete .v-field__overlay {

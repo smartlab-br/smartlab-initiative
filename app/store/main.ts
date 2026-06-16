@@ -165,6 +165,9 @@ export const useMainStore = defineStore("main", {
         snackbar.showSnackbar({ color: "error", text: "Erro ao carregar dados da unidade de análise escolhida (Brasil, município ou UF)" })    
       }
     },
+    setCurrentAnalysisUnitFromData(data: any) {
+      this.currentAnalysisUnitData = data ?? null
+    },
     async getPlaces() {
       const snackbar = useSnackbarStore()
       const options: Place[] = []
