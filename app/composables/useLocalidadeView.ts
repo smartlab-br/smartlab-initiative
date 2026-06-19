@@ -131,9 +131,7 @@ export function useLocalidadeView() {
     if (typeof baseObjectList === 'string') {
       indicatorRef.value = baseObjectList
     } else {
-      const base_object = Array.isArray(baseObjectList) && baseObjectList.length > 0
-        ? baseObjectList[0]
-        : baseObjectList ?? {}
+      const base_object = baseObjectList ?? {}
 
       const finalText = textTransformService.applyInterpol(
         structure,

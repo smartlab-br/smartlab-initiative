@@ -19,17 +19,18 @@ export class ObjectTransformService {
         // Apply fized value to arg
         args.push(struct.fn_args[indx].fixed)
       } else if (struct.fn_args[indx].named_prop) {
-        if (base_object) {
+        const singleBase = Array.isArray(base_object) ? base_object[0] : base_object
+        if (singleBase) {
           if (struct.fn_args[indx].base_object) {
             if (customParams && customParams[struct.fn_args[indx].base_object]) {
               args.push(customParams[struct.fn_args[indx].base_object][struct.fn_args[indx].named_prop])
-            } else if (base_object[struct.fn_args[indx].base_object]) {
-              args.push(base_object[struct.fn_args[indx].base_object][struct.fn_args[indx].named_prop])
+            } else if (singleBase[struct.fn_args[indx].base_object]) {
+              args.push(singleBase[struct.fn_args[indx].base_object][struct.fn_args[indx].named_prop])
             } else {
               args.push(undefined)
             }
           } else {
-            args.push(base_object[struct.fn_args[indx].named_prop])
+            args.push(singleBase[struct.fn_args[indx].named_prop])
           }
         } else {
           args.push(undefined)

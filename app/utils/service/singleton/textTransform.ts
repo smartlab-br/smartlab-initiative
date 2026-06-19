@@ -39,19 +39,20 @@ export class TextTransformService {
           } else if (struct.args[indx].fixed) {
             iterArg = struct.args[indx].fixed
           } else if (Array.isArray(base_object) && struct.args[indx].id) {
-            iterArg = (new Indicators()).getIndicatorValueFromStructure(struct.args[indx], null, base_object)
+            iterArg = (new Indicators()).getIndicatorValueFromStructure(struct.args[indx], base_object)
             args.push(iterArg)
             continue
           } else if (struct.args[indx].named_prop) {
-            if (base_object) {
-              iterArg = base_object[struct.args[indx].named_prop]
+            const singleBase = Array.isArray(base_object) ? base_object[0] : base_object
+            if (singleBase) {
+              iterArg = singleBase[struct.args[indx].named_prop]
             }
             if (iterArg === null || iterArg === undefined) {
               if (struct.args[indx].base_object) {
                 if (customParams[struct.args[indx].base_object]) {
                   iterArg = customParams[struct.args[indx].base_object][struct.args[indx].named_prop]
-                } else if (base_object[struct.args[indx].base_object]) {
-                  iterArg = base_object[struct.args[indx].base_object][struct.args[indx].named_prop]
+                } else if (singleBase && singleBase[struct.args[indx].base_object]) {
+                  iterArg = singleBase[struct.args[indx].base_object][struct.args[indx].named_prop]
                 }
               } else {
                 iterArg = customParams[struct.args[indx].named_prop]
