@@ -63,6 +63,7 @@ import { NumberTransformService } from "@/utils/service/singleton/numberTransfor
 import { UrlTransformService } from "@/utils/service/singleton/urlTransform"
 import { Indicators } from "@/utils/model/indicators"
 import { useBaseLayout } from "@/composables/useBaseLayout"
+import { useMainStore } from "~/store"
 
 interface Props {
   structure?: Record<string, any>
@@ -83,6 +84,13 @@ const indicators = new Indicators()
 
 const { setComplexAttribute } = useBaseLayout(props.customParams, emit)
 const { $reformDataset, $fillDataStructure, $validCharts, $leafletBasedCharts, $chartGen, $getColSize } = useNuxtApp()
+const mainStore = useMainStore()
+
+const cmpRefs = computed(() => ({
+  customParams: computed(() => props.customParams),
+  selectedTopology: computed(() => props.topology),
+  customFilters: computed(() => props.customFilters)
+}))
 
 const relevance = ref("")
 const description = ref("")
@@ -156,7 +164,9 @@ const updateReactiveDataStructure = (filterUrl: string) => {
 const triggerChartUpdates = () => {
   if (props.structure && props.structure.chart && props.structure.chart.options && props.structure.chart.type) {
     $chartGen(
-      chartId.value,
+      cmpRefs.value,
+      mainStore,
+      chartId.value ?? "",
       props.structure.chart.type,
       props.structure.chart,
       props.structure.chart.options,
@@ -176,7 +186,7 @@ const setDataset = (
 ) => {
   dataset.value = datasetValue
   metadata.value = metadataValue
-  triggerChartUpdates()
+  nextTick(() => triggerChartUpdates())
 }
 
 const fillProp = (
