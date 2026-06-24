@@ -62,12 +62,11 @@
                 <v-btn
                   size="small"
                   variant="text"
-                  color="accent"
-                  style="margin: 0px;"
+                  class="btn-dados"
                   @click="dialog = true"
                 >
                   <span :class="chartPosition === 'bottom' ? 'd-none d-lg-inline body' : 'd-none d-md-inline body'">Dados</span>
-                  <v-icon end>mdi-format-list-bulleted</v-icon>
+                  <v-icon end>mdi-table</v-icon>
                 </v-btn>
               </v-col>
             </v-row>
@@ -252,16 +251,17 @@
           </v-card-text>
           <v-card-actions class="px-3 pb-3">
             <v-spacer />
-            <v-btn
+            <!-- <v-btn
               size="small"
               color="accent"
               @click="handleDownloadClick"
             >
               <v-icon start>mdi-download</v-icon>
               Baixar
-            </v-btn>
+            </v-btn> -->
             <v-btn
               size="small"
+              variant="flat"
               color="accent"
               @click="$openBugDialog(cmpTitle)"
             >
@@ -270,6 +270,7 @@
             </v-btn>
             <v-btn
               size="small"
+              variant="flat"
               color="accent"
               @click="dialog = false"
             >
@@ -398,6 +399,8 @@ const removeFormatItems = (headers: any[]) => {
   const items = JSON.parse(JSON.stringify(headers))
   for (const item in items) {
     items[item].value = String(items[item].value).replace('fmt_', '')
+    if (!items[item].title && items[item].text) items[item].title = items[item].text
+    if (!items[item].key) items[item].key = items[item].value
   }
   return items
 }
@@ -883,6 +886,10 @@ onMounted(() => {
 <style>
 .bg-card {
   background-color: transparent !important;
+}
+
+.btn-dados:hover {
+  background-color: rgba(0, 0, 0, 0.08) !important;
 }
 
 .card-title {
