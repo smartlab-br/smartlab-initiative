@@ -19,7 +19,27 @@ export function useLocalidadeView() {
   const { $loadYamlArray, $fillDataStructure, $getEscopo, $getIdLocalidadeFromRoute } = useNuxtApp()
   const snackbar = useSnackbarStore()
   const mainStore = useMainStore()
-  const getObsId = () => mainStore.currentObsId || (route.params.obsid as string)
+
+  /**
+   * Retorna o ID do observatório atual.
+   * A store pode conter "default" quando a página de localidade é acessada
+   * pela primeira vez a partir da home, antes do watcher do layout atualizar
+   * currentObsId. Nesse caso, deriva o ID cruzando o slug da rota com a lista
+   * de observatórios (ex: slug "trabalhodecente" → id "td").
+   */
+  const getObsId = (): string => {
+    const storeId = mainStore.currentObsId
+    if (storeId && storeId !== 'default') return storeId
+
+    // Fallback: resolve o ID real a partir do slug presente na URL
+    const obsSlug = route.params.obsid as string
+    if (obsSlug && mainStore.observatories) {
+      const obs = mainStore.observatories.find(o => o.to === `/${obsSlug}` || o.to.endsWith(`/${obsSlug}`))
+      if (obs) return obs.id
+    }
+
+    return storeId || ''
+  }
   const alterMiddleToolbarBus = useEventBus<{ localidade: any }>('alterMiddleToolbar')
   const config = useRuntimeConfig()
   const yamlPath = config.public.gitViewConfUrl ? '/viewconf/' : '/smartlab-initiative-viewconf/'

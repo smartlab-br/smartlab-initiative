@@ -126,7 +126,7 @@
                 :index-tab="30 + indxDim"
                 :tag-color="dimensao.tagColor"
                 :status="dimensao.status"
-                :to="dimensao.to"
+                :to="resolveDimensaoTo(dimensao.to)"
                 :external="dimensao.external"
                 :title="dimensao.short_desc"
                 :blocked="dimensao.blocked"
@@ -440,7 +440,14 @@ watch(chartHandler, (handler) => {
 const hasOdometers = ref(false)
 const loadedOdometers = ref(false)
 
-const { smartlab, observatories, currentObs, currentObsId, currentDimension } = storeToRefs(store)
+const { smartlab, observatories, currentObs, currentObsId, currentDimension, currentAnalysisUnitId } = storeToRefs(store)
+
+// Resolve o placeholder {0} presente nas URLs de dimensão do viewconf
+const resolveDimensaoTo = (to: string): string => {
+  if (!to || !to.includes('{0}')) return to
+  const idLoc = currentAnalysisUnitId.value ?? useCookie('currentAnalysisUnit').value ?? '0'
+  return to.replace('{0}', String(idLoc))
+}
 
 const currentParallax = computed(() => {
   return parallaxFile.value
