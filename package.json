@@ -43,5 +43,8 @@
     "@types/topojson-client": "^3.1.5",
     "eslint": "^9.39.2",
     "sass": "^1.77.0"
+  },
+  "overrides": {
+    "esbuild": "0.25.0"
   }
 }
