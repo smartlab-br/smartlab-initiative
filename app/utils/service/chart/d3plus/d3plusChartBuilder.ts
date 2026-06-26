@@ -23,15 +23,25 @@ export abstract class D3PlusChartBuilderService extends GeneralChartBuilderServi
         additionalOptions
       )
       // Timeout para garantir que o tamanho do espaço onde o gráfico vai ficar já está definido.
+      const forceRender = !!additionalOptions?.forceRender
       setTimeout(
         function (chart: any) {
           const container = document.getElementById(containerId)
           if (container) { 
             container.innerHTML = "" 
           }
+          // Se forceRender (atualização por filtro), desativa o polling de visibilidade
+          // do d3plus para que o gráfico renderize imediatamente, mesmo fora da viewport.
+          if (forceRender && typeof chart.detectVisible === 'function') {
+            chart.detectVisible(false)
+          }
           chart.render()
           return chart
         }, 0, chart)
+      // Retorna o chart para que chartHandler seja definido no componente,
+      // permitindo que atualizações subsequentes (filtros) usem $chartRegen
+      // com forceRender = true ao invés de $chartGen.
+      return chart
     }
   }
 

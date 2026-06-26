@@ -13,7 +13,11 @@
       :hint="errorMessage"
       persistent-hint
       @end="sendSelection"
-    />
+    >
+      <template #thumb-label="{ modelValue }">
+        {{ Math.round(modelValue) }}
+      </template>
+    </v-range-slider>
     <v-slider
       v-else
       v-model="value" 
@@ -29,7 +33,11 @@
       :hint="errorMessage"
       persistent-hint
       @end="sendSelection"
-    />
+    >
+      <template #thumb-label="{ modelValue }">
+        {{ Math.round(modelValue) }}
+      </template>
+    </v-slider>
   </v-col>
 </template>
 
@@ -143,6 +151,30 @@ const sendDefaultSelection = () => {
 </script>
 
 <style>
+/* Vuetify 3 — formato de "pin de localização" para o thumb label */
+.v-slider-thumb__label {
+  border-radius: 50% !important;
+  min-width: 46px !important;
+  height: 46px !important;
+  padding: 0 !important;
+}
+
+/* Triângulo inferior (wedge) — aumentar para ficar proporcional ao pin */
+.v-slider-thumb__label > .v-slider-thumb__label-wedge {
+  width: 16px !important;
+  height: 16px !important;
+  bottom: calc(-8px + 0.2px) !important;
+}
+
+/* Texto dentro do label */
+.v-slider-thumb__label > div:not(.v-slider-thumb__label-wedge) {
+  color: #fff !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  transform: none !important;
+}
+
+/* Seletores legados (Vuetify 2) mantidos por compatibilidade */
 .v-input--range-slider span {
   color: #fff !important;
 }

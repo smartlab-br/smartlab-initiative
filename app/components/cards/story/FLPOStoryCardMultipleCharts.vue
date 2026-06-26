@@ -138,7 +138,8 @@
                   <v-col
                     v-for="chart in structure?.charts"
                     :key="chart.id"
-                    :class="(chart.cls ?? '') + (mdAndUp ? ' fill-height' : '')"
+                    v-bind="parseCls(chart.cls)"
+                    :class="mdAndUp ? 'fill-height' : ''"
                   >
                     <div
                       :style="cmpStyle"
@@ -412,6 +413,21 @@ const cmpRefs = computed(() => ({
 }))
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
+const parseCls = (cls?: string): Record<string, string | number> => {
+  if (!cls) return { cols: 12 }
+  const result: Record<string, string | number> = {}
+  for (const part of cls.split(' ')) {
+    const match = part.match(/^(xs|sm|md|lg|xl)(\d+)$/)
+    if (match && match[1] && match[2]) {
+      const size: string = match[1]
+      const value: string = match[2]
+      if (size === 'xs') result.cols = parseInt(value)
+      else result[size] = parseInt(value)
+    }
+  }
+  return Object.keys(result).length > 0 ? result : { cols: 12 }
+}
+
 const removeFormatItems = (headers: any[]) => {
   const items = JSON.parse(JSON.stringify(headers))
   for (const item in items) {
@@ -590,6 +606,22 @@ const setDataset = (ds: any, _rules: any, _structure: any, addedParams?: any, me
   }
 }
 
+// ── Dataset update por filtro: atualiza dados sem resetar estado de carregamento ─
+const setDatasetUpdate = (ds: any, _rules: any, _structure: any, addedParams?: any, meta?: any) => {
+  if (!dataset.value) dataset.value = {}
+  if (!metadata.value) metadata.value = {}
+
+  const id = addedParams?.id
+  if (id) {
+    dataset.value[id] = ds
+    if (meta) metadata.value[id] = meta
+
+    nextTick(() => {
+      triggerChartUpdates(id, ds, meta)
+    })
+  }
+}
+
 // ── Completar estrutura ────────────────────────────────────────────────────────
 const setReferenceInStructure = () => {
   const structure = props.structure
@@ -729,9 +761,9 @@ const fetchData = (endpoint: string | string[] | null = null) => {
 const updateDataStructure = (payload: Record<string, any>) => {
   if (!payload.rules) return
 
-  dataset.value = {}
-  datasetsComplete.value = 0
-  metadata.value = {}
+  // Não reseta dataset nem datasetsComplete para evitar que o card
+  // entre em estado de carregamento durante a atualização por filtro.
+  // Os dados existentes permanecem visíveis enquanto os novos carregam.
 
   for (const chart of props.structure?.charts ?? []) {
     let endpoint: string | string[]
@@ -753,7 +785,7 @@ const updateDataStructure = (payload: Record<string, any>) => {
       $fillDataStructure(
         chart,
         props.customParams ?? {},
-        setDataset,
+        setDatasetUpdate,
         { endpoint, id: chart.id }
       )
     } else if (payload.target?.scope && payload.target?.range) {
@@ -763,7 +795,7 @@ const updateDataStructure = (payload: Record<string, any>) => {
         $fillDataStructure(
           chart,
           props.customParams ?? {},
-          setDataset,
+          setDatasetUpdate,
           { endpoint, id: chart.id }
         )
       })
@@ -771,7 +803,7 @@ const updateDataStructure = (payload: Record<string, any>) => {
       $fillDataStructure(
         chart,
         props.customParams ?? {},
-        setDataset,
+        setDatasetUpdate,
         { endpoint, id: chart.id }
       )
     }

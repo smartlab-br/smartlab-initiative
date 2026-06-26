@@ -215,6 +215,7 @@ export default defineNuxtPlugin(() => {
   const chartRegen = (compRefs: Record<string, Ref<any>>, store: MainStore, chartHandler: any, id: string, chartType: string, structure: any, chartOptions: any, dataset: any, metadata: any, sectionIndex: number = 0) => {
     if (structure && chartOptions && validCharts.includes(chartType)) {
       const additionalOptions = buildChartAdditionalOptions(compRefs, store, chartType, structure, chartOptions, dataset, metadata, sectionIndex)
+      additionalOptions.forceRender = true
 
       return (new ChartBuilderService()).regenerateChart(
         chartHandler,

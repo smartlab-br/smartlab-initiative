@@ -1,3 +1,4 @@
+import { unref } from 'vue'
 import { TextTransformService } from "~/utils/service/singleton/textTransform"
 
 export function useBaseLayout(customParams: any, emit: any) {
@@ -36,7 +37,7 @@ export function useBaseLayout(customParams: any, emit: any) {
         }
         resolved = textTransformService.applyInterpol(
           structure,
-          customParams,
+          unref(customParams),
           base_object,
           () => emit("sendInvalidInterpol")
         )
