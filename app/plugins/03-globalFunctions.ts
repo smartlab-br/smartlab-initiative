@@ -129,6 +129,7 @@ export default defineNuxtPlugin(() => {
         },
         openingArgs: []
       },
+      store,
       tooltipFunction: chartOptions.tooltip_function ? compRefs[chartOptions.tooltip_function] : TooltipBuildingService.defaultTooltip,
       colorHandlers: {
         getColorScale: ColorsService.getColorScale,

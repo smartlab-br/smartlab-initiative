@@ -192,7 +192,7 @@ export class TopoJsonChartBuilderService extends D3PlusChartBuilderService {
           if (typeof tooltip_function === "string") {
             return tooltip_context[tooltip_function as keyof typeof tooltip_context].apply(tooltip_context, [d, additionalOptions.route, additionalOptions.headers, removed_text_list, options])
           } else {
-            return tooltip_function.apply(tooltip_context, [d, additionalOptions.route, additionalOptions.headers, removed_text_list, options])
+            return tooltip_function.apply(tooltip_context, [d, additionalOptions.route, additionalOptions.store, additionalOptions.headers, removed_text_list, options])
           }
         },
         title: () => ""
