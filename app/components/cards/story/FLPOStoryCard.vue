@@ -312,6 +312,7 @@
 import { useDisplay } from 'vuetify'
 import { Indicators } from '~/utils/model/indicators'
 import { TextTransformService } from '~/utils/service/singleton/textTransform'
+import { UrlTransformService } from '~/utils/service/singleton/urlTransform'
 import { useSnackbarStore } from '~/store/snackbar'
 import { useMainStore } from '~/store'
 import { useAuthStore } from '~/store/auth'
@@ -824,6 +825,64 @@ const changeSort = (column: string) => {
 const loadCardData = () => {
   const structure = props.structure
   if (!structure) return
+
+  // Cards baseados em template: busca a estrutura completa na API antes de renderizar
+  if (structure.card_template) {
+    let url = textTransformService.replaceArgs(
+      "/cardtemplate/{0}?datasource={1}&cd_indicador='{2}'&cd_analysis_unit={3}",
+      [
+        structure.card_template,
+        structure.datasource,
+        structure.cd_indicador,
+        props.selectedPlace ? props.selectedPlace : props.customParams?.idLocalidade
+      ]
+    )
+    if (structure.coefficient) { url = url + '&coefficient=' + structure.coefficient }
+    if (structure.term) {
+      if (typeof structure.term === 'string') {
+        url = url + '&term=' + structure.term
+      } else if (structure.term.template) {
+        url = url + '&term=' + textTransformService.applyInterpol(
+          structure.term,
+          props.customParams ?? {},
+          {}
+        )
+      }
+    }
+
+    const cardTitle = structure.title?.fixed ?? ''
+    $fetch<any>(UrlTransformService.getApiUrl(url))
+      .then((result) => {
+        Object.assign(structure, result)
+        completeStructure()
+
+        $fillDataStructure(
+          structure.title,
+          props.customParams ?? {},
+          (data: any, _rules: any, struct: any) => {
+            cmpTitle.value = typeof data === 'string'
+              ? data
+              : textTransformService.applyInterpol(struct, props.customParams ?? {}, Array.isArray(data) ? data[0] : data)
+          },
+          { attribute: 'cmpTitle', msgError: 'Falha ao carregar dados do título do card' }
+        )
+
+        $fillDataStructure(
+          structure.title_comment,
+          props.customParams ?? {},
+          (data: any, _rules: any, struct: any) => {
+            cmpTitleComment.value = typeof data === 'string'
+              ? data
+              : textTransformService.applyInterpol(struct, props.customParams ?? {}, Array.isArray(data) ? data[0] : data)
+          },
+          { attribute: 'cmpTitleComment', msgError: 'Falha ao carregar dados do card ' + cardTitle }
+        )
+
+        fetchData()
+      })
+      .catch(() => { errorMessage.value = 'Falha ao buscar dados do card ' + cardTitle })
+    return
+  }
 
   completeStructure()
 
