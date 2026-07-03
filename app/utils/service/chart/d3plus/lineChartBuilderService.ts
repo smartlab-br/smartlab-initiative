@@ -34,15 +34,25 @@ export class LineChartBuilderService extends D3PlusChartBuilderService {
       viz.shapeConfig().labelConfig.width = container?.offsetWidth
     }
 
+    if (options.order_field) {
+      slicedDS = [...slicedDS].sort((a: any, b: any) => a[options.order_field] - b[options.order_field])
+    }
+
     const xConfig: any = {}
     if (options.x_options && (options.x_options.labelInterval || options.x_options.labelMaxNumber)) {
+      const uniqueXValues: string[] = []
+      for (const row of slicedDS) {
+        if (!uniqueXValues.includes(row[options.x])) {
+          uniqueXValues.push(row[options.x])
+        }
+      }
       const labels: string[] = []
-      const interval: number = options.x_options.labelInterval ? options.x_options.labelInterval : Math.ceil(slicedDS.length / options.x_options.labelMaxNumber)
+      const interval: number = options.x_options.labelInterval ? options.x_options.labelInterval : Math.ceil(uniqueXValues.length / options.x_options.labelMaxNumber)
       if (interval > 1) {
         let index: number = 1
-        for (const row of slicedDS) {
+        for (const xVal of uniqueXValues) {
           if (index == 1 || index % interval == 0) {
-            labels.push(row[options.x])
+            labels.push(xVal)
           }
           index++
         }
