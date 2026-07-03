@@ -3,27 +3,54 @@ import { D3PlusChartBuilderService } from "./d3plusChartBuilder"
 
 export class LineChartBuilderService extends D3PlusChartBuilderService {
   prepareChart (viz: any, slicedDS: any, containerId: string, options: any, additionalOptions: any = {}) {
-    const colorCat: string[] = []
-    let colorArray: string[] | null = null
-    if (options.colorScale) {
-      colorArray = additionalOptions.colorHandlers.getColorScale(options.colorScale.name)
-    } else if (options.colorArray) {
-      colorArray = options.colorArray
+    const colorCat: Record<string, string> = {}
+    const colorField: string = options.color_id_field || options.id
+
+    // Collect unique colorField values, sorted alphabetically for deterministic color assignment
+    // (independent of the order data arrives from the API)
+    const uniqueKeys: string[] = []
+    for (const row of slicedDS) {
+      const key = row[colorField]
+      if (key != null && !uniqueKeys.includes(key)) uniqueKeys.push(key)
     }
-    if (colorArray != null) {
-      let colorIndx: number = 0
-      for (const row of slicedDS) {
-        if (colorCat[row[options.id]] === null ||
-                    colorCat[row[options.id]] === undefined) {
-          colorCat[row[options.id]] = colorArray[colorIndx]
-          colorIndx++
+    uniqueKeys.sort()
+
+    const fallbackArray: string[] | null = options.colorArray ?? null
+
+    if (options.colorScale) {
+      if (options.colorScale.type === "fixed" && options.colorScale.color_array) {
+        const fixedMap = options.colorScale.color_array
+        let autoIdx = 0
+        for (const key of uniqueKeys) {
+          if (fixedMap[key] != null) {
+            colorCat[key] = fixedMap[key]
+          } else {
+            // Case-insensitive fallback within the fixed map
+            const ciKey = Object.keys(fixedMap).find((k: string) => k.toLowerCase() === key.toLowerCase())
+            if (ciKey) {
+              colorCat[key] = fixedMap[ciKey]
+            } else if (fallbackArray && autoIdx < fallbackArray.length) {
+              colorCat[key] = fallbackArray[autoIdx++]
+            }
+          }
+        }
+      } else {
+        const namedArray: string[] | null = additionalOptions.colorHandlers.getColorScale(options.colorScale.name)
+        if (namedArray) {
+          uniqueKeys.forEach((key, idx) => {
+            colorCat[key] = namedArray[idx < namedArray.length ? idx : namedArray.length - 1]
+          })
         }
       }
+    } else if (fallbackArray) {
+      uniqueKeys.forEach((key, idx) => {
+        colorCat[key] = fallbackArray[idx < fallbackArray.length ? idx : fallbackArray.length - 1]
+      })
     }
 
     const lineConfig: any = { strokeWidth: options.stroke ? options.stroke : 3, curve: "catmullRom" }
     if (options.colorScale || options.colorArray) {
-      lineConfig.stroke = (d: any) => { return colorCat[d[options.id]] }
+      lineConfig.stroke = (d: any) => { return colorCat[d[colorField]] }
     } else if (options.color !== null && options.color !== undefined) {
       lineConfig.stroke = options.color
     }
