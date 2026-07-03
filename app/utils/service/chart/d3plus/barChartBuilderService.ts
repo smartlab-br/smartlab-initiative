@@ -75,6 +75,14 @@ export class BarChartBuilderService extends D3PlusChartBuilderService {
       } else {
         grafico = grafico.ySort(sortFuction)
       }
+    } else if (options.order_field && options.orientation !== "vertical") {
+      // Gráficos de barra horizontal com order_field: aplica ySort ascendente
+      // pelo campo x. O d3plus reverte o domínio internamente (.reverse()),
+      // portanto a ordem ascendente resulta no maior valor no topo do gráfico.
+      const xField = options.x
+      grafico = grafico.ySort((a: any, b: any) => {
+        return parseFloat(a[xField]) - parseFloat(b[xField])
+      })
     }
     return grafico
   }
