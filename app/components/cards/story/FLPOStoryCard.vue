@@ -754,7 +754,7 @@ const updateDataStructure = (payload: Record<string, any>) => {
         : updateUrlFilters(apiUrl, filters)
       if (props.structure?.chart_options) props.structure.chart_options.filterText = customFilters.value.filterText
     } else {
-      endpoint = textTransformService.applyInterpol(payload.rules.api, props.customParams ?? {}, props.customFunctions ?? {}, customFilters.value)
+      endpoint = textTransformService.applyInterpol(payload.rules.api, { ...props.customParams ?? {}, ...customFilters.value }, props.customFunctions ?? {})
     }
     fetchData(endpoint)
   } else if (payload.type && payload.type !== 'switch-group') {

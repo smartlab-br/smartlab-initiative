@@ -117,15 +117,26 @@ const isLeafletBasedCharts = (type: string): boolean => {
   return $leafletBasedCharts.includes(type)
 }
 
+const getApiOptions = (apiStruct: any): Record<string, any> | undefined => {
+  if (!apiStruct) return undefined
+  if (Array.isArray(apiStruct)) {
+    const apiWithOptions = apiStruct.find((apiItem: any) => apiItem?.options)
+    return apiWithOptions?.options
+  }
+  return apiStruct.options
+}
+
 const updateReactiveDataStructure = (filterUrl: string) => {
   let apiUrl = ""
   const baseApi = props.structure?.apiBase ? props.structure.apiBase : props.structure?.api
+  let selectedApi = baseApi
   const namedProp = props.structure?.api_reactive?.args?.[0]?.named_prop
   if (props.structure?.api_reactive &&
     props.customParams &&
     namedProp &&
     props.customParams[namedProp]) {
     apiUrl = textTransformService.applyInterpol(props.structure.api_reactive, props.customParams)
+    selectedApi = props.structure.api_reactive
   } else {
     apiUrl = textTransformService.applyInterpol(baseApi, props.customParams)
   }
@@ -134,9 +145,12 @@ const updateReactiveDataStructure = (filterUrl: string) => {
   }
   $fetch(UrlTransformService.getApiUrl(apiUrl))
     .then((result: any) => {
+      // Preserva opções de cálculo/formatação do bloco principal quando apiBase não as define.
+      const selectedApiOptions = getApiOptions(selectedApi)
+      const fallbackApiOptions = getApiOptions(props.structure?.api)
       let datasetResult = $reformDataset(
         result.dataset,
-        baseApi?.options,
+        selectedApiOptions ?? fallbackApiOptions,
         props.customParams
       )
       if (props.structure?.api_options) {
